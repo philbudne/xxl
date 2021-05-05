@@ -1,0 +1,6 @@
+var d = System.types.Dict.new();
+d["hello"] = "world";
+d[123] = 321;
+
+System.print(d["hello"]);
+System.print(d[123]);

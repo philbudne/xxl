@@ -1,0 +1,7 @@
+var a = 1;
+System.print(a);
+a += 1;
+System.print(a);
+a -= 2;
+System.print(a);
+

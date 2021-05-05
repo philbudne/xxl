@@ -1,0 +1,1290 @@
+// not -*-js-*- ("it's only a model") but edit like it is.
+// Parser for eXperimental/eXtensible Language Zero (XXL/0)
+// Blame: Phil Budne <phil@regressive.org>
+
+////////////////
+// Adapted from:
+//  parse.js
+//  Parser for Simplified JavaScript written in Simplified JavaScript
+//  From Top Down Operator Precedence
+//  http://crockford.com/javascript/tdop/tdop.html
+//  https://github.com/douglascrockford/TDOP
+//  Douglas Crockford
+//  2021-05-04
+//  Public Domain
+//
+//  "This program makes frequent use of 'this' because I wrote it when I was young and foolish."
+////////////////
+
+// PLB: NOTE!
+
+// I've compounded the 'thissyness' by making the parser into a
+// class, not SO much because one might want to have multiple
+// active parsers in the same namespace, but to make it easier to
+// override parser pieces (thru subclassing) without wholesale
+// copying (not like it was SO big to begin with!).
+
+// I've also converted it from the JavaScript "everything is an
+// object" model to uses Classes (breaking the feature that any
+// name can be used as an identifier unless it's seen as a
+// statement keyword first), to clearly indicate how an AST node
+// came into being, due to the hobgoblins of my small mind.
+// Classifying increased the source lines by 32%
+
+// But the largest growth was due to adding VM code generation
+//	which almost doubled the number of sources lines.
+
+// The individual Symbol classes could probably be declared at
+// top level *IF* the nud/led/std parsing methods were passed
+// the Parser instance as an argument.  This might be a great
+// improvement in clarity, but would mean more arg passing,
+// and chances of making a mistake.
+
+// The XXL language passes "this" as an explicit first argument
+// (like Python) to make it clear where the value is coming from.
+// At least *I* think it's a feature.
+
+// I've (so far) refrained from placing any licensing
+// terms on this file, in keeping with the spirit of the
+// original author.  But it's more than slightly likely
+// that you would be better served by using the original
+// as the starting point for some new project!!
+
+// XXX split up??
+
+// XXX move to vmcode.xxl?
+var VMCode = Class.new({
+    name: "VMCode",
+    methods: {
+	init: function (this) {	// __init??
+	    this.code = [];
+	    this.lcount = 0;	// counts down for forward labels
+	    this.forward_refs = {}; // dict of lists of insn Lists for fixups
+	    this.DEST = 2;	// index into insn List for branch destination
+	},
+
+	finish: function (this, sym) {
+	    if (sym == null) {
+		// here from end of "gen" function, used by parser.xxl "main"
+		this.emit_exit();
+	    }
+	    else {
+		// no more return statement, it has ceased to be.
+		// BUT, here at end of closures (even functions which
+		// call their "return" continuation) *AND* blocks.
+		this.emit_return(sym);
+	    }
+	    if (false) {
+		var n = 0;
+		this.code.for_each(
+		    function (inst) {
+			System.print(n, inst[0], inst[1], inst[2]);
+			n += 1;
+		    }
+		);
+		System.print("===");
+	    }
+	    return(this.code);
+	},
+
+	gen_stmts: function (this, stmts) { // generate code for list of stmts
+	    stmts.for_each(
+		function (item) {
+		    item.gen(this);
+		}
+	    );
+	},
+	_emit: function (this, op) { // worker method
+	    // XXX "peephole" here?
+	    // omit "load x" after "store x"
+	    // (but not if label just dropped)
+	    this.code.append(op);
+	},
+
+	//// per-opcode emit functions
+
+	emit_vars: function (this, names, sym) {
+	    this._emit([sym.where, "vars", names]);
+	},
+	emit_args: function (this, names, sym) {
+	    this._emit([sym.where, "args", names]);
+	},
+	emit_args2: function (this, names, rest, sym) {
+	    this._emit([sym.where, "args2", names, rest]);
+	},
+	emit_scope: function (this, leave_name, sym) {
+	    this._emit([sym.where, "scope", leave_name]);
+	},
+	emit_load: function (this, name, sym) {
+	    this._emit([sym.where, "load", name]);
+	},
+	emit_store: function (this, name, sym) {
+	    this._emit([sym.where, "store", name]);
+	},
+	emit_lit: function (this, value, sym) {
+	    this._emit([sym.where, "lit", value]);
+	},
+	emit_push: function (this, sym) {
+	    this._emit([sym.where, "push"]);
+	},
+	emit_new: function (this, class, sym) {
+	    // push TEMP onto stack, create empty container, leave in TEMP
+	    this._emit([sym.where, "new", class]);
+	},
+	emit_temp: function (this, sym) {
+	    // load AC from TEMP
+	    this._emit([sym.where, "temp"]);
+	},
+	emit_pop_temp: function (this, sym) {
+	    // load AC from TEMP, restore TEMP from stack
+	    this._emit([sym.where, "pop_temp"]);
+	},
+	emit_return: function (this, sym) {
+	    // return from call, value in AC
+	    this._emit([sym.where, "return"]);
+	},
+	emit_exit: function (this) {
+	    // VM exit; return to caller of VM.start()
+	    this._emit(["EOF", "exit"]);
+	},
+	emit_binop: function (this, op, sym) {
+	    // fetch and call binary operator "op" (constant)
+	    // for object in AC with two args: OBJ, RHS
+	    this._emit([sym.where, "binop", op]);
+	},
+	emit_unop: function (this, op, sym) {
+	    // fetch and call unary operator "op" (const)
+	    // for object in AC (no args)
+	    this._emit([sym.where, "unop", op]);
+	},
+	emit_lhsop: function (this, op, sym) {
+	    // fetch and call LHS operator "op" (const)
+	    // for object in AC w/ three args from stack: OBJ, RHS, VALUE
+	    this._emit([sym.where, "lhsop", op]);
+	},
+	emit_call: function (this, nargs, sym) {
+	    // call object in AC with nargs (constant) args on stack
+	    // call collects args in vm.args and calls AC.invoke(vm)
+	    this._emit([sym.where, "call", nargs]);
+	},
+	emit_close: function (this, code, sym) {
+	    // create closure
+	    // include function name (if any) in Closure object?!!
+	    this._emit([sym.where, "close", code]);
+	},
+	emit_append: function (this, sym) {
+	    // XXX could emit: push, temp, lit "append", binop ".", call
+	    this._emit([sym.where, "append"]);
+	},
+
+	// on PDP-10:
+	// JUMPN ac,x jumps if ac is non-zero
+	// JUMPE ac,x jumps if ac is equal to zero
+	// JUMP never jumps
+	// JUMPA always jumps, but...
+	// JRST (jump and restore (no) flags) is fastest unconditional branch.
+	emit_iftrue: function (this, label, sym) {
+	    this._emit_branch("jumpn", label, sym);
+	},
+	emit_ifnot: function (this, label, sym) {
+	    this._emit_branch("jumpe", label, sym);
+	},
+	emit_jrst: function (this, label, sym) {
+	    this._emit_branch("jrst", label, sym);
+	},
+
+	//// label management:
+	_emit_branch: function (this, instname, dest, sym) {
+	    // helper to emit a branch instruction
+	    // keeping fixups for forward refs
+
+	    // NOTE!!! label must be in this.DEST position:
+	    var inst = [sym.where, instname, dest];
+	    if (dest < 0) {		// forward ref?
+		this.forward_refs[dest].append(inst); // point to inst
+	    }
+	    this._emit(inst);
+	},
+	def_fwd_label: function (this) {
+	    // create a forward label (negative values)
+	    // references are fixed in "drop_fwd_label"
+	    this.lcount -= 1;
+	    this.forward_refs[this.lcount] = [];
+	    return(this.lcount);
+	},
+	drop_fwd_label: function (this, label) {
+	    // define location of a forward-defined label
+	    // do fixups on all references
+	    var dest = this.code.len();
+	    // XXX check if label in this.forward_refs?!
+	    this.forward_refs[label].for_each(
+		function (inst) {
+		    inst[this.DEST] = dest;	// patch destination
+		}
+	    );
+	    this.forward_refs.pop(label); // discard entry
+	},
+	get_off: function (this) {
+	    // return offset of next inst for backwards jump (loop) labels
+	    return(this.code.len());
+	}
+    } // methods
+});
+
+////////////////////////////////////////////////////////////////
+// move to pratt.xxl?
+
+var PrattParser = Class.new({
+    name: "PrattParser",
+    methods: {
+	add_symbol_class: function (this, id, klass) {
+	    this.symbol_classes[id] = klass;
+	},
+	advance: function (this, id) {
+	    if (id && this.token.id() != id) {
+		this.token.error("Expected '" + id + "'");
+	    }
+	    var t = this.get_token();
+	    if (!t) {
+		this.token = this.End.new("EOF", "(end)", null);
+		return(this.token);
+	    }
+	    var t_error = function (msg) {
+		System.error(t.where, "token error", msg);
+		System.exit(1);
+	    };
+	    var v = t.value;
+	    var a = t.type;		// arity (name,number,string,operator)
+	    var c;			// class
+	    if (a == "name") {
+		c = this.scope.find(v)
+		    || this.symbol_classes[v]
+		    || this.Symbol;	// "Undefined" on reference
+	    }
+	    else if (a == "operator") {
+		c = this.symbol_classes[v];
+		if (!c) {
+		    t_error("Unknown operator " + v);
+		}
+	    }
+	    else if (a == "string" || a == "number") {
+		c = this.Lit;	// XXX separate classes, opcodes?
+		a = "literal";
+	    }
+	    else {
+		t_error("Unexpected token " + v);
+	    }
+	    this.token = c.new(t.where, v, a); // Symbol!!!
+	    // XXX set .id ?????
+	    return(this.token);	// a Symbol!!
+	}, // advance
+	define: function (this, sym) {
+	    this.scope._define(this.Name.new(sym.where, sym.value, sym.arity));
+	},
+	expression: function (this, rbp) {
+	    var t = this.token;
+	    this.advance();
+	    var left = t.nud();
+	    while (rbp < this.token.lbp()) {
+		t = this.token;
+		this.advance();
+		left = t.led(left);
+	    }
+	    return(left);
+	}, // expression
+
+	statement: function (this) {
+	    var n = this.token;
+	    var std = n.std;
+	    if (std) {
+		this.advance();
+		return(std());
+	    }
+	    var v = this.expression(0);
+	    if (v.assignment == null && v.id() != "(") {
+		v.error("Bad expression statement.");
+	    }
+	    this.advance(";");
+	    return(v);
+	}, // statement
+
+	init: function (this) {
+	    var p = this;    // clarity, visible from subclass methods
+
+	    p.symbol_classes = {}; // string to Symbol subclass
+
+	    // defined inside class initializer so it can be overridden
+	    // by subclasses of Parser.
+	    p.Scope = Class.new({
+		name: "Scope",
+		methods: {
+		    init: function (this, parent) {
+			// dictionary of Symbol instances
+			this.def = {};
+			this.parent = parent;
+		    },
+		    _define: function (this, n) { // n is Symbol instance
+			var t = this.def[n.value];
+			if (t) { // XXX was typeof t == "object"
+			    n.error(t.reserved
+				    ? "Already reserved."
+				    : "Already defined.");
+			}
+			this.def[n.value] = n;
+		    },
+		    find: function (this, n) {
+			// n is string from lexer
+			// returns Symbol class to use
+			var e = this;
+			while (e) {
+			    var o = e.def[n];
+			    if (o) { // XXX was && typeof o != 'function'
+				return(o.class());
+			    }
+			    e = e.parent;
+			}
+			return(null);
+		    },
+		    pop: function (this) {
+			// discard top scope: returns old scope
+			return(this.parent);
+		    }
+		} // methods
+	    }); // Scope
+
+	    ////////////////
+	    // Parser Symbol (token) classes
+
+	    // defined inside class initializer so it can be overridden
+	    // by subclasses of Parser, AND so that Symbol class methods
+	    // have access to the parser object (as "p"), but this could
+	    // be done by explicitly passing the parser object to the
+	    // nud/led/std methods.
+
+	    p.Symbol = Class.new({
+		name: "Symbol",
+		methods: {
+		    init: function (this, where, value, arity) {
+			this.where = where;
+			this.value = value;
+			this.arity = arity;
+			// XXX set id, reserved??
+		    },
+		    id: function(this) {
+			return(this.value);
+		    },
+		    // "null denotation": invoked by parser at the start
+		    // of an expression.
+		    nud: function (this) { this.error("Undefined."); },
+		    // "left denotation": invoked by parser when there is
+		    //  context to the left of this symbol.
+		    led: function (this, ignore) {
+			this.error("Missing operator.");
+		    },
+		    error: function (this, msg) {
+			System.error(this.where, "ERROR: symbol", this.value, msg);
+			System.exit(1);
+		    },
+		    gen: function (this, vmcode) {
+			// XXX call gen_XXX based on this.arity???
+			this.error("No gen function.");
+		    },
+		    // XXX TEMP until class members??  set in constructor???
+		    lbp: function (this) { return(0); }
+		    // XXX reserved = True?
+		} // methods
+	    }); // Symbol
+
+	    p.Name = Class.new({
+		name: "Name",
+		supers: [p.Symbol],
+		methods: {
+		    id: function (this) { return(this.value); }, // ??? XXX member
+		    //reserved: function (this) { return(false); }, // XXX member
+		    nud: function (this) {
+			this.lvalue = true;
+			return(this);
+		    },
+		    gen: function (this, vmcode) {
+			vmcode.emit_load(this.value, this);
+		    },
+		    gen_lhs: function (this, vmcode) {
+			vmcode.emit_store(this.value, this);
+		    }
+		}
+	    });
+	    // XXX p.NAME = "(name)";??
+
+	    p.Lit = Class.new({
+		name: "Lit",
+		supers: [p.Symbol],
+		methods: {
+		    id: function (this) { return("(literal)"); }, // XXX p.LIT?
+		    nud: function (this) { return(this); },
+		    gen: function (this, vmcode) {
+			vmcode.emit_lit(this.value, this);
+		    } // gen
+		} // methods
+	    });
+
+	    // pseudo-symbol for EOF
+	    p.End = Class.new({
+		name: "End",
+		supers: [p.Symbol],
+		methods: {
+		    id: function (this) { return("(end)"); }, // XXX
+		    nud: function (this) { return(this); }
+		}
+	    });
+
+	    //////////////// operator Symbol base classes
+
+	    // Left associative infix (also base for InfixR)
+	    p.Infix = Class.new({
+		name: "Infix",
+		supers: [p.Symbol],
+		methods: {
+		    _right_assoc: function (this) { return(0); }, // XXX member
+		    led: function (this, left) {
+			this.first = left;
+			var rbp = this.lbp() - this._right_assoc();
+			this.second = p.expression(rbp);
+			this.arity = "binary";
+			return(this);
+		    },
+		    gen_infix: function (this, vmcode) {
+			this.second.gen(vmcode);
+			vmcode.emit_push(this);
+			this.first.gen(vmcode);
+			vmcode.emit_binop(this.id(), this);
+		    },
+		    gen: function (this, vmcode) {
+			// XXX have top level call gen_XXX based on arity?
+			this.gen_infix(vmcode);
+		    }
+		} // methods
+	    });
+
+	    // Right associative infix
+	    p.InfixR = Class.new({
+		name: "InfixR",
+		supers: [p.Infix],
+		methods: {
+		    _right_assoc: function (this) { return(1); } // XXX member
+		}
+	    });
+
+	    // XXX move add_infix here??
+
+	    p.Prefix = Class.new({
+		name: "Prefix",
+		supers: [p.Symbol],
+		methods: {
+		    nud: function (this) {
+			this.first = p.expression(70); // XXX member for rbp?
+			this.arity = "unary";
+			return(this);
+		    },
+		    gen_prefix: function (this, vmcode) {
+			this.first.gen(vmcode);
+			vmcode.emit_unop(this.id(), this);
+		    },
+		    gen: function (this, vmcode) { // XXX call gen_xxx on arity?
+			this.gen_prefix(vmcode);
+		    }
+		}
+	    }); // Prefix
+	} // init method
+    } // methods
+}); // PrattParser
+
+// keep in parser.xxl?
+////////////////////////////////////////////////////////////////
+// subclass PrattParser for XXL/0
+// (smallest possible eXperimental/eXtensible Language)
+// "jokes":
+// * PL/1 was IBM's "One Language to Rule Them All" for System/360
+//	(the one computer architecture anyone would ever need).
+//	PL/1 was meant to replace both FORTRAN for scientific code
+//	 and COBOL for business applications; it was a large
+//	 language which had no reserved words, and all numeric
+//	 variables were declared with their precision.
+// * XXL is the U.S. clothing size two sizes larger than "large"
+//	which I thought was a funny name for an intentionally tiny language.
+//	(the original name for the project was ASAP (As Simple As Possible).
+//	Apologies in advance for any perceived sizist slights.
+
+var Parser = Class.new({
+    name: "Parser",
+    supers: [PrattParser],
+    methods: {
+	init: function (this) {
+	    var p = this;	// for clarity, access w/in new class methods
+	    this..init();	// call superclass init
+
+	    // XXX pull up into PrattParser?
+	    var add_terminal = function (name, id) {
+		var c = Class.new({
+		    name: name,
+		    supers: [p.Symbol],
+		    methods: {
+			id: function (this) { return(id); }
+		    }
+		});
+		p.add_symbol_class(id, c);
+	    };
+	    add_terminal("Colon",  ":");
+	    add_terminal("Comma",  ",");
+	    add_terminal("Semi",   ";");
+	    add_terminal("RParen", ")");
+	    add_terminal("RBrack", "]");
+	    add_terminal("RBrace", "}");
+	    add_terminal("Else",   "else");
+
+	    p.Assign = Class.new({
+		supers: [p.InfixR],
+		name: "Assign",
+		methods: {
+		    id: function (this) { return("="); }, // XXX member
+		    lbp: function (this) { return(10); }, // XXX member
+		    assignment: function (this) { return(true); }, // XXX
+		    led: function (this, left) {
+			if (!left.lvalue) {
+			    left.error("Bad lvalue.");
+			}
+			this.first = left;
+			this.second = p.expression(9);
+			this.arity = "binary";
+			return(this);
+		    },
+		    gen: function (this, vmcode) {
+			this.second.gen(vmcode); // rhs
+			this.first.gen_lhs(vmcode); // store
+		    }
+		}
+	    });
+	    p.add_symbol_class("=", p.Assign);
+
+	    // base class for OP=
+	    p.AssignOp = Class.new({
+		name: "AssignOp",
+		supers: [p.Assign],
+		methods: {
+		    // subclass must define "aop" (want member)
+		    gen: function (this, vmcode) {
+			this.second.gen(vmcode); // rhs
+			vmcode.emit_push(this);  // save as argument
+
+			// XXX eval children of RHS once???
+
+			this.first.gen(vmcode);  // fetch lhs as variable
+			vmcode.emit_binop(this.aop(), this); // XXX aop member
+			this.first.gen_lhs(vmcode); // store in lhs
+		    }
+		}
+	    });
+
+	    var add_assignop = function (name, id, aop) {
+		var c = Class.new({
+		    name: "AssignPlus",
+		    supers: [p.AssignOp],
+		    methods: {
+			id: function (this) { return(id); }, // XXX member
+			aop: function (this) { return(aop); } // XXX member
+		    }
+		});
+		p.add_symbol_class(id, c);
+	    };
+	    add_assignop("AssignPlus",  "+=", "+");
+	    add_assignop("AssignMinus", "-=", "-");
+
+	    p.Ternary = Class.new({
+		name: "Ternary",
+		supers: [p.Symbol],
+		methods: {
+		    id: function (this) { return("?"); },
+		    lbp: function (this) { return(20); },
+		    led: function (this, left) {
+			this.first = left;
+			this.second = p.expression(0);
+			p.advance(":");
+			this.third = p.expression(0); // XXX need parser
+			this.arity = "ternary";
+			return(this);
+		    },
+		    gen: function (this, vmcode) {
+			this.first.gen(vmcode); // condition
+			var false_label = vmcode.def_fwd_label();
+			vmcode.emit_ifnot(false_label, this);
+
+			this.second.gen(vmcode); // true case
+			var done_label = vmcode.def_fwd_label();
+			vmcode.emit_jrst(done_label, this);
+
+			vmcode.drop_fwd_label(false_label);
+			this.third.gen(vmcode); // false case
+
+			vmcode.drop_fwd_label(done_label);
+		    }
+		} // methods
+	    });
+	    p.add_symbol_class("?", p.Ternary);
+
+	    p.AndIf = Class.new({
+		name: "AndIf",
+		supers: [p.InfixR],
+		methods: {
+		    id: function (this) { return("&&"); },
+		    lbp: function (this) { return(30); },
+		    gen: function (this, vmcode) {
+			this.first.gen(vmcode);
+			var done_label = vmcode.def_fwd_label();
+			vmcode.emit_ifnot(done_label, this); // lhs false: quit
+			this.second.gen(vmcode); // lhs true: eval rhs
+			vmcode.drop_fwd_label(done_label);
+		    }
+		}
+	    });
+	    p.add_symbol_class("&&", p.AndIf);
+
+	    p.OrIf = Class.new({
+		name: "OrIf",
+		supers: [p.InfixR],
+		methods: {
+		    id: function (this) { return("||"); },
+		    lbp: function (this) { return(30); },
+		    gen: function (this, vmcode) {
+			this.first.gen(vmcode); // eval lhs
+			var done_label = vmcode.def_fwd_label();
+			vmcode.emit_iftrue(done_label, this); // lhs true: done
+			this.second.gen(vmcode); // lhs false: eval rhs
+			vmcode.drop_fwd_label(done_label);
+		    }
+		}
+	    });
+	    p.add_symbol_class("||", p.OrIf);
+
+	    // XXX move to PrattParser?
+	    var add_infix = function(name, id, right, lbp) {
+		// helper to generate simple infix Symbol classes
+		var c = Class.new({
+		    name: name,
+		    supers: [right ? p.InfixR : p.Infix],
+		    methods: {
+			id: function (this) { return(id); },
+			lbp: function (this) { return(lbp); }
+		    }
+		});
+		p.add_symbol_class(id, c);
+	    };
+
+	    // right associative
+	    add_infix("Eq",  "==", true, 40);
+	    add_infix("NEq", "!=", true, 40);
+	    add_infix("LT",  "<",   true, 40);
+	    add_infix("LEq", "<=",  true, 40);
+	    add_infix("GT",  ">",   true, 40);
+	    add_infix("GEq", ">=",  true, 40);
+
+	    // left associative
+	    add_infix("Plus", "+",  false, 50);
+
+	    // minus is infix and prefix operator:
+	    p.Minus = Class.new({
+		name: "Minus",
+		supers: [p.Infix, p.Prefix],
+		methods: {
+		    id: function (this) { return("-"); },
+		    lbp: function (this) { return(50); },
+		    gen: function (this, vmcode) {
+			if (this.arity == "unary") {
+			    this.gen_prefix(vmcode);
+			}
+			else {
+			    this.gen_infix(vmcode);
+			}
+		    } // gen
+		} // methods
+	    });
+	    p.add_symbol_class("-", p.Minus);
+
+
+	    // right associative
+	    add_infix("Mult", "*",  true, 60);
+	    add_infix("Div", "/",   true, 60);
+
+	    p.Dot = Class.new({
+		name: "Dot",
+		supers: [p.Symbol],
+		methods: {
+		    id: function (this) { return("."); },
+		    lbp: function (this) { return(80); },
+		    led: function (this, left) {
+			// XXX bring back exp.NAME( ternary as optimization
+			//	(avoid creating BoundMethod)????
+			this.lvalue = true;
+			this.first = left;
+			if (p.token.arity != "name") {
+			    p.token.error("Expected a property name.");
+			}
+			p.token.arity = "literal";
+			this.second = p.token;
+			this.arity = "binary";
+			p.advance();
+			return(this);
+		    },
+		    gen: function (this, vmcode) {
+			vmcode.emit_lit(this.second.value, this); // member name
+			vmcode.emit_push(this);
+			this.first.gen(vmcode);
+			vmcode.emit_binop(this.id(), this);
+		    },
+		    gen_lhs: function (this, vmcode) {
+			vmcode.emit_push(this);	// save value to store as arg 2
+			vmcode.emit_lit(this.second.value, this); // member name
+			vmcode.emit_push(this);	// save as arg 1
+			this.first.gen(vmcode); // object
+			vmcode.emit_lhsop(this.id(), this);
+		    }
+		} // methods
+	    });
+	    p.add_symbol_class(".", p.Dot);
+
+	    p.DotDot = Class.new({
+		name: "DotDot",
+		supers: [p.Dot],
+		methods: {
+		    id: function (this) { return(".."); }
+		}
+	    });
+	    p.add_symbol_class("..", p.DotDot);
+
+	    // only used for ...rest (so far)
+	    p.DotDotDot = Class.new({
+		name: "DotDotDot",
+		supers: [p.Symbol],
+		methods: {
+		    id: function (this) { return("..."); }
+		}
+	    });
+	    p.add_symbol_class("...", p.DotDotDot);
+
+	    p.LBrack = Class.new({
+		name: "LBrack",
+		supers: [p.Infix],
+		methods: {
+		    id: function (this) { return("["); }, // XXX
+		    lbp: function (this) { return(80); }, // XXX
+		    led: function (this, left) {
+			this.first = left;
+			this.second = p.expression(0);
+			this.arity = "binary";
+			this.lvalue = true;
+			p.advance("]");
+			return(this);
+		    },
+		    nud: function (this) {
+			var a = [];
+			if (p.token.id() != "]") {
+			    while (true) {
+				a.append(p.expression(0));
+				if (p.token.id() != ",") {
+				    leave_while();
+				}
+				p.advance(",");
+			    }
+			}
+			p.advance("]");
+			this.first = a;
+			this.arity = "unary";
+			return(this);
+		    },
+		    gen: function (this, vmcode) {
+			if (this.arity == "unary") {
+			    vmcode.emit_new("List", this);
+			    this.first.for_each(
+				function (item) {
+				    item.gen(vmcode); // list item
+				    vmcode.emit_append(this);
+				}
+			    );
+			    vmcode.emit_pop_temp(this); // from emit_new
+			}
+			else {
+			    this.gen_infix(vmcode);
+			}
+		    },
+		    gen_lhs: function (this, vmcode) {
+			vmcode.emit_push(this); // value to store
+			this.second.gen(vmcode); // index
+			vmcode.emit_push(this);
+			this.first.gen(vmcode); // container
+			vmcode.emit_lhsop(this.id(), this);
+		    }
+		} // methods
+	    });
+	    p.add_symbol_class("[", p.LBrack);
+
+	    p.LParen = Class.new({
+		name: "LParen",
+		supers: [p.Infix],
+		methods: {
+		    id: function (this) { return("("); }, // XXX
+		    lbp: function (this) { return(80); }, // XXX
+		    nud: function (this) {	// (expr)
+			var e = p.expression(0);
+			p.advance(")");
+			return(e);		// this node discarded
+		    },
+		    led: function (this, left) {
+			var a = [];
+			if (p.token.id() != ")") {
+			    while (true) {
+				a.append(p.expression(0));
+				if (p.token.id() != ",") {
+				    leave_while();
+				}
+				p.advance(",");
+			    }
+			}
+			p.advance(")");
+			this.arity = "binary";
+			this.first = left;
+			this.second = a; // actuals
+			// XXX removed variable check
+			return(this);
+		    }, // led
+		    gen: function (this, vmcode) {
+			this.second.each_for(
+			    function (actual) {
+				actual.gen(vmcode);
+				vmcode.emit_push(this);
+			    }
+			);
+			this.first.gen(vmcode); // function expression
+			vmcode.emit_call(this.second.len(), this);
+		    } // gen
+		} // methods
+	    }); // LParen
+	    p.add_symbol_class("(", p.LParen);
+
+	    p.Not = Class.new({
+		name: "Not",
+		supers: [p.Prefix],
+		methods: {
+		    id: function (this) { return("!"); }
+		}
+	    });
+	    p.add_symbol_class("!", p.Not);
+
+	    p.Function = Class.new({
+		name: "Function",
+		supers: [p.Prefix],
+		methods: {
+		    id: function (this) { return("function"); },
+		    nud: function (this) {
+			var a = [];
+			p.scope = p.Scope.new(p.scope);
+			p.scope._define( // XXX want p.defname?
+			    p.Name.new(this.where, "return", "name")); //!!
+
+			if (p.token.arity == "name") { // function NAME?
+			    // NOTE!! name (currently) defined only
+			    // INSIDE the function's scope, to allow
+			    // recursive functions declared in hashes.
+			    // Would need to make "function name ..." a legal
+			    //	function expression to be useful in outer scope
+			    this.name = p.token.value;
+			    p.define(p.token); // define function name
+			    p.advance();
+			}
+			p.advance("(");
+			if (p.token.id() != ")") {
+			    var last = false;
+			    while (true) {
+				if (p.token.id() == "...") {
+				    p.advance("...");
+				    last = true;
+				}
+				if (p.token.arity != "name") {
+				    p.token.error("Expected a parameter name.");
+				}
+				p.define(p.token); // define argument
+				if (!last) {
+				    a.append(p.token);
+				}
+				else {
+				    this.third = p.token;
+				    p.advance();
+				    leave_while();
+				}
+				p.advance();
+				if (p.token.id() != ",") {
+				    leave_while();
+				}
+				p.advance(",");
+			    }
+			}
+			this.first = a;
+			p.advance(")");
+			p.advance("{");
+			this.second = p.statements();
+			p.scope = p.scope.pop();
+			p.advance("}");
+			this.arity = "function";
+			return(this);
+		    },
+		    gen: function (this, vmcode) {
+			var args = []; // could use map function
+			this.first.for_each(
+			    function (item) {
+				args.append(item.value);
+			    }
+			);
+			// generate VM code for function:
+			var fcode = VMCode.new();
+			// BEFORE ANY CALL/OP!!
+			if (this.third) { // have ...rest argument?
+			    fcode.emit_args2(args, this.third.value, this);
+			}
+			else {
+			    fcode.emit_args(args, this);
+			}
+			fcode.gen_stmts(this.second);
+			// create closure (code pointer and current scope)
+			//  XXX include this.name, if any for debug?
+			vmcode.emit_close(fcode.finish(this), this);
+		    }
+		} // methods
+	    });
+	    p.add_symbol_class("function", p.Function);
+
+	    //////////////// Statements
+
+	    // XXX reserved = true
+	    p.Stmt = Class.new({
+		name: "Stmt",
+		supers: [p.Symbol],
+		methods: {
+		    std: function (this) { this.error("No std method."); }
+		}
+	    });
+
+	    // code block AND hash constructor
+	    p.LBrace = Class.new({
+		name: "LBrace",
+		supers: [p.Stmt],
+		methods: {
+		    id: function (this) { return("{"); },
+		    nud: function (this) { // { key: value .... }
+			var a = [];
+			var n;
+			var v;
+			if (p.token.id() != "}") {
+			    while (true) {
+				n = p.token;
+				if (n.arity != "name"
+				    && n.arity != "literal") {
+				    p.token.error("Bad property name.");
+				}
+				p.advance();
+				p.advance(":");
+				n.first = p.expression(0);
+				a.append(n);
+				if (p.token.id() != ",") {
+				    leave_while();
+				}
+				p.advance(",");
+			    }
+			}
+			p.advance("}");
+			this.first = a;
+			this.arity = "unary";
+			return(this);
+		    }, // nud
+		    std: function (this, labels) { // { block } NOTE! takes arg!!
+			p.scope = p.Scope.new(p.scope);
+			if (labels) { // not defaulted to null
+			    labels.for_each(
+				function (label) {
+				    p.scope._define( // XXX want p.defname?
+					p.Name.new(this.where, label, "name"));
+				}
+			    );
+			}
+			this.first = p.statements();
+			p.scope = p.scope.pop();
+			p.advance("}");
+			this.arity = "statement";
+			return(this); // no longer discards this!
+		    },
+		    gen: function (this, vmcode, leave_name) {
+			if (this.arity == "statement") { // { block }
+			    var bcode = VMCode.new(); // block closure code
+			    bcode.emit_scope(leave_name, this);
+			    bcode.gen_stmts(this.first);
+			    vmcode.emit_close(bcode.finish(this), this);
+			    vmcode.emit_call(0, this);
+			}
+			else {	// unary { attr: value }
+			    // first is list of lit/name keys,
+			    // each with a value expression on "first"
+			    vmcode.emit_new("Dict", this);
+			    this.first.for_each(
+				function (item) {
+				    // value to store
+				    item.first.gen(vmcode);
+				    vmcode.emit_push(this);
+				    // key
+				    vmcode.emit_lit(item.value, this);
+				    vmcode.emit_push(this);
+				    vmcode.emit_temp(this); // get dict back in AC
+				    vmcode.emit_lhsop("[", this);
+				}
+			    ); // for_each
+			    vmcode.emit_pop_temp(this);
+			}
+		    } // gen
+		} // methods
+	    }); // LBrace
+	    p.add_symbol_class("{", p.LBrace);
+
+	    p.Var = Class.new({
+		name: "Var",
+		supers: [p.Stmt],
+		methods: {
+		    id: function (this) { return("var"); },
+		    std: function (this) {
+			var n;
+			var t;
+			this.arity = "statement";
+			this.first = [];
+			while (true) {
+			    n = p.token;
+			    if (n.arity != "name") {
+				n.error("Expected a new variable name.");
+			    }
+			    if (n.reserved) {
+				n.error("'" + p.token.value + "' reserved.");
+			    }
+			    p.define(n); // define variable
+			    this.first.append(n);
+			    p.advance();
+			    if (p.token.id() == "=") {
+				t = p.token;
+				p.advance("=");
+				t.first = n;
+				t.second = p.expression(0);
+				t.arity = "binary";
+				this.first.append(t);
+			    }
+			    if (p.token.id() != ",") {
+				leave_while();
+			    }
+			    p.advance(",");
+			}
+			p.advance(";");
+			return(this);
+		    },
+		    gen: function (this, vmcode) {
+			var vars = [];
+			this.first.for_each(
+			    function (item) {
+				if (item.value != "=") {
+				    vars.append(item.value);
+				}
+			    }
+			);
+			vmcode.emit_vars(vars, this);
+			this.first.for_each(
+			    function (item) {
+				if (item.value == "=") {
+				    item.second.gen(vmcode); // expr
+				    vmcode.emit_store(item.first.value, this); // var
+				}
+			    }
+			);
+		    } // gen
+		}
+	    }); // Var
+	    p.add_symbol_class("var", p.Var);
+
+	    p.If = Class.new({
+		name: "If",
+		supers: [p.Stmt],
+		methods: {
+		    id: function (this) { return("if"); },
+		    std: function (this) {	// parse
+			p.advance("(");
+			this.first = p.expression(0);
+			p.advance(")");
+			this.second = p.block();
+			// XXX change "else if" exception (crock) to "elif"?
+			if (p.token.id() == "else") {
+			    p.advance("else");
+			    this.third = p.token.id() == "if"
+				? p.statement() // no longer a list!
+				: p.block();	// (also no longer a list!)
+			}
+			else {
+			    this.third = null;
+			}
+			this.arity = "statement";
+			return(this);
+		    },
+		    gen: function (this, vmcode) { // gen
+			this.first.gen(vmcode); // condition
+			var not_true_label = vmcode.def_fwd_label();
+			vmcode.emit_ifnot(not_true_label, this);
+			this.second.gen(vmcode);
+			if (this.third) { // have else?
+			    var end_label = vmcode.def_fwd_label();
+			    vmcode.emit_jrst(end_label, this);
+			    vmcode.drop_fwd_label(not_true_label);
+			    this.third.gen(vmcode);	  // else stmt(s)
+			    vmcode.drop_fwd_label(end_label);
+			}
+			else {
+			    vmcode.drop_fwd_label(not_true_label);
+			}
+		    } // if.gen
+		}
+	    }); // If
+	    p.add_symbol_class("if", p.If);
+
+	    p.While = Class.new({
+		name: "While",
+		supers: [p.Stmt],
+		methods: {
+		    id: function (this) { return("while"); }, // XXX
+		    std: function (this) {	// parse
+			p.advance("(");
+			this.first = p.expression(0);
+			p.advance(")");
+			this.second = p.block(["leave_while", "continue_while"]);
+			this.arity = "statement";
+			return(this);
+		    },
+		    gen: function (this, vmcode) { // gen
+			// XXX optimize: check if this.first is "true"?????
+			// XXX optimize: only wrap if "leave" label referenced??
+			// XXX XXX require explicit labels for break/continue!!
+
+			// wrap entire while statement
+			var wcode = VMCode.new();
+			wcode.emit_scope("leave_while", this);
+			var top_label = wcode.get_off();
+			this.first.gen(wcode); // condition
+			var done_label = wcode.def_fwd_label();
+			wcode.emit_ifnot(done_label, this);
+			this.second.gen(wcode, "continue_while"); // block
+			wcode.emit_jrst(top_label, this); // use continue??????
+			wcode.drop_fwd_label(done_label);
+
+			// create closure around entire while stmt and invoke
+			vmcode.emit_close(wcode.finish(this), this);
+			vmcode.emit_call(0, this);
+		    }
+		}
+	    }); // p.while
+	    p.add_symbol_class("while", p.While);
+	}, // Parser.init()
+	statements: function (this) {
+	    var a = [];
+	    var s;
+	    while (true) {
+		if (this.token.id() == "}"
+		    || this.token.id() == "(end)") { // this.END?
+		    leave_while();
+		}
+		s = this.statement();
+		if (s) {
+		    a.append(s);
+		}
+	    }
+	    return(a);		// always array
+	}, // statements
+	block: function (this, labels) {
+	    // TEMP? labels is null or list of labels to auto-declare in block
+	    var t = this.token;
+	    this.advance("{");
+	    return(t.std(labels));
+	},
+	start_parse: function (this, fname) {
+	    this.scope = this.Scope.new(null);
+	    this.get_token = System.tokenizer(fname, '=<>!+-*&|/%^.', '=<>&|.'); // returns generator
+	    this.token = null;	// current Symbol object
+
+	    var predef = function (name) { // XXX make a base class method?
+		// direct:
+		this.scope._define(this.Name.new("@predef", name, "name"));
+	    };
+
+	    predef("Class");
+	    predef("System");
+
+	    // declare these as unwritable??
+	    predef("false");
+	    predef("null");
+	    predef("true");
+	    predef("__main__");
+				   
+	    this.advance();	// prime the pump
+	},
+	parse: function (this, fname) {	// parse whole file
+	    this.start_parse(fname);
+	    var s = this.statements();
+	    this.advance("(end)"); // p.END?
+	    this.scope = this.scope.pop();
+	    return(s);
+	}
+    } // Parser methods
+});
+
+////////////////
+// all of the following are "well known" symbols for system.py:
+
+var gen = function (stmts) {	// tree is list of top level stmts/exprs
+    var vmcode = VMCode.new();
+    vmcode.gen_stmts(stmts);
+    return(vmcode.finish(null));
+}; // gen()
+
+var parser = Parser.new();
+var parse = parser.parse;
+
+var parse_and_gen_one_stmt = function (parser) {
+    if (parser.token
+	&& (parser.token.id() == "}"
+	    || parser.token.id() == "(end)")) { // parser.END?
+	return(null);
+    }
+    return(gen([parser.statement()]));
+};
+
+////////////////
+// for regression testing, creating .vmx files (esp. parser.vmx!)
+
+// NOTE!
+//	compiling test programs to a .vmx file
+//	running it w/ "xxl.py -t -x foo.vmx args ...."
+//	makes it easier to set pdb breakpoints in VM
+//	since parser is not run on source file!
+//	(tho you can always call System.break in your program)
+
+if (__main__) {			
+    if (System.argv.len() < 1) {
+	System.error("Usage: parser SOURCEFILE");
+	System.exit(1);
+    }
+    else {
+	var parser = Parser.new();
+	var result = parser.parse(System.argv[0]);
+	// XXX take option to not call gen (dump AST)
+	// XXX maybe option to serialize in a format
+	//	that loads faster than JSON????
+	result = gen(result);
+	System.print(System.tree(result));
+	System.exit(0);
+    }
+}

@@ -1,0 +1,6 @@
+if (__main__) {
+	System.print("__main__ is true");
+}
+else {
+	System.print("__main__ is false");
+}

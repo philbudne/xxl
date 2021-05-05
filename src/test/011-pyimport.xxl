@@ -1,0 +1,5 @@
+var sys = System.pyimport("sys");
+var w = sys.stdout.write;
+w("hello world\n");
+
+sys.stdout.write("hello again\n");

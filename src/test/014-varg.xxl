@@ -1,0 +1,9 @@
+var f = function (...rest) {
+	System.print(rest);
+};
+f(1,2,3);
+
+var g = function (format, ...rest) {
+	System.print(format, rest);
+};
+g("format", 1,2,3);

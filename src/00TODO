@@ -1,0 +1,75 @@
+FIX
+====
+*** Make class.name a member (s/__name/name/; flush method?!)!!!
+*** Instance: "invoke" method look for "(" binop (pass args as list?)!!!
+*** Implement leave labels, flush automagic leave_while, continue_while
+	https://www2.cs.arizona.edu/classes/cs520/spring06/bliss.pdf p.12
+		fix do_while test
+Only allow one variable at a time to be defined??? (pedantic option?)
+
+make function name () .... define in local scope?
+	close2 patches -- need to make "function foo() {}" a valid expr stmt
+make a full expression language??
+invoke_function/method (using new VM) won't work nicely with Continuations?
+	add return_function/return_method that does: return(callable())
+run "__extensions__" (pass importer's initial scope? iscope.System??)
+Get rid of PyObjClass and use '(' binop for calls?
+always preload a (bootstrap.vmx) file??
+	load System object
+	including "System.parser = System.import_vmx('parser.vmx');"
+	for_each, each_for, map, map2 (take arg for "ignore" value)
+	Object.instance_of(...) .class()?
+Need Dict.items() to implement for_each: pyfunc generator?
+Fix all access to System types!!!
+break import cycles??
+tokenizer: take \u{XX...} instead of \uXXXX!!!
+revive "reserved" attribute??
+true/null/false are writable!!!???
+fix print -- write natively? need Str.join
+
+TEST
+====
+str & repr methods (& Str.join)
+	Callables
+	write print/error as native functions
+
+CLEANUP
+=======
+flush JSObject?
+	used for System/System.types -- use Object?
+	import -- return Module!
+	tokenizer -- return List?
+Do wrapping in CPyFunc/CPyObj?
+test if implementing VM as chain of if's (on ints)
+	instead step on Instr objects is faster
+Have pyfunc "invoke" method (un)wrap args/results??
+	wrap as tail call
+split up parser.xxl (into pratt,xlparser,vmcode??)
+Make CInstances (more) transparent??
+	CClosure.get_code method??
+Make Scopes transparent??
+	System.scope()?? (need PyScopeFunc)
+implement methods, class members, class methods via descriptors???
+reenable MethodInstr (replace lit/push/./call), avoid BoundMethod
+make native Tokenizer (gonna be slow!)
+	need str[n], str.ord() str.isalpha() str.isdigit()?
+	arbitrary spans of op chars
+	allow unicode
+		in identifiers (if leading A-Za-z_ ??)
+		else "operator" (may not contain alphanumeric)
+	/* */ comments?
+	"""string""" (or use some unicode chars for quoting?)
+
+FEATURES (or extensions)
+========================
+Object: dir() method?? or make props visible as Dict in __props property?
+load compressed vmx files!!
+make obj_get of unknown property an error
+	(depended on by .std lookup)
+	add "hasattr" method?
+exceptions (using Continuations)
+"in" operator for collections?
+port VM to rpython?!
+
+
+

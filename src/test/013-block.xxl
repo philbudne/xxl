@@ -1,0 +1,21 @@
+var a = 1;
+if (true) {
+    var a = 2;
+    System.print(a);
+}
+System.print(a);
+
+if (false) {
+}
+else{
+    var a = 2;
+    System.print(a);
+}
+System.print(a);
+
+while (true) {
+    var a = 2;
+    System.print(a);
+    leave_while();
+}
+System.print(a);

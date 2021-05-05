@@ -1,0 +1,5 @@
+System.print("hello world");
+
+var a = 1;
+
+var func = function () { System.print("foo.func"); };

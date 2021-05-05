@@ -1,0 +1,5 @@
+var a, b;
+
+a = b = 1;
+System.print(a);
+System.print(b);

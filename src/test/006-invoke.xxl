@@ -1,0 +1,17 @@
+var MyClass = Class.new({
+    name: "MyClass",
+    methods: {
+	init: function (this, x) {
+	    this.x = x;
+	},
+	method: function (this, a, b) {
+	    System.print(a);
+	    System.print(b);
+	    System.print(this.x);
+	}
+    }
+});
+
+var obj = MyClass.new(3);
+obj.method(1,2);
+
