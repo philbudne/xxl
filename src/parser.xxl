@@ -289,7 +289,7 @@ var PrattParser = Class.new({
 	    if (!this._next_token) {
 		this._next_token = this._gtok();
 	    }
-	    return(this._next_token());
+	    return(this._next_token);
 	},
 	define: function (this, sym) {
 	    this.scope._define(this.Name.new(sym.where, sym.value, sym.arity));
@@ -306,8 +306,30 @@ var PrattParser = Class.new({
 	    return(left);
 	}, // expression
 
-	statement: function (this) {
+	statement: function (this, labeled) {
 	    var n = this.token;
+
+	    if (n.arity == "name") { // possible label name?
+		var next = this.peek();
+		if (next.id() == ":") {
+		    if (next.reserved) {
+			next.error("'" + next.value + "' reserved.");
+		    }
+		    if (labeled) { // nested labels?
+			// would generate nested closures!
+			n.error("statement already labeled");
+		    }
+		    var nn = this.Label.new(n.where, n.value, "name"); //!!
+		    // XXX enter new scope!!!
+		    this.define(nn); // define variable
+		    nn.arity = "statement";
+		    this.advance(); // eat name
+		    this.advance(":"); // eat ":"
+		    nn.first = this.statement(true); // recurse!
+		    // XXX leave scope
+		    return(nn);
+		} // peek == ":"
+	    } // name
 	    var std = n.std;
 	    if (std) {
 		this.advance();
@@ -1031,7 +1053,7 @@ var Parser = Class.new({
 			this.arity = "statement";
 			return(this); // no longer discards this!
 		    },
-		    gen: function (this, vmcode, leave_name) {
+		    gen: function (this, vmcode) {
 			if (this.arity == "statement") { // { block }
 			    var bcode = VMCode.new(); // block closure code
 			    bcode.emit_scope(this.label, this);
@@ -1171,6 +1193,7 @@ var Parser = Class.new({
 		supers: [p.Stmt],
 		methods: {
 		    id: function (this) { return("label"); },
+		    // REMOVE ME!!!
 		    std: function (this) {	// parse
 			var n = p.token;
 			if (n.arity != "name") {
@@ -1256,7 +1279,7 @@ var Parser = Class.new({
 	}, // statements
 	block: function (this) {
 	    var t = this.token;
-	    if (t.arity == "name") {
+	    if (t.arity == "name") { // label name?
 		var label = t.id();
 		this.advance();
 		this.advance(":");
