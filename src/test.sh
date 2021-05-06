@@ -10,7 +10,7 @@ if [ "x$CMD" = x ]; then
 fi
 
 for x in test/[0-9]*.xxl; do
-    $CMD $OPTIONS $x > $x.tmp
+    $CMD $OPTIONS $x > $x.tmp 2>&1
     if cmp $x.tmp $x.ref; then
 	echo $x: OK
 	rm -f $x.tmp
