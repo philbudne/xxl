@@ -18,6 +18,8 @@ until further notice!!!*
 
 * [Syntax](doc/syntax.md) -- core language syntax
 
+* [Adding a statement](doc/adding-statement.md) -- example of adding new statement syntax
+
 * [Priorities](doc/priorities.md) -- a loose ordering of design priorities
 
 * [Influences](doc/influences.md) -- language influences
