@@ -1,6 +1,7 @@
 // tokenize this file!!!
 var token = System.tokenizer("test/008-token.xxl", '=<>!+-*&|/%^', '=<>&|'); // returns generator
 
+leave_while:
 while (true) {
     var t = token();
     if (!t) {

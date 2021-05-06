@@ -13,6 +13,7 @@ else{
 }
 System.print(a);
 
+leave_while:
 while (true) {
     var a = 2;
     System.print(a);

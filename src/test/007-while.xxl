@@ -4,6 +4,7 @@ while (i <= 5) {
     i += 1;
 }
 
+leave_while:
 while (true) {
     i -= 1;
     System.print(i);
