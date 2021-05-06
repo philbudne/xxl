@@ -311,7 +311,6 @@ var PrattParser = Class.new({
 	    if (n.arity == "name") { // possible label name?
 		var next = this.peek();
 		if (next.id() == ":") {
-		    System.error("found label");
 		    if (next.reserved) {
 			next.error("'" + next.value + "' reserved.");
 		    }
@@ -320,7 +319,7 @@ var PrattParser = Class.new({
 			n.error("statement already labeled");
 		    }
 		    var nn = this.Label.new(n.where, n.value, "name"); //!!
-		    return(nn.std());
+		    nn.std();
 		    // XXX leave scope
 		    return(nn);
 		} // peek == ":"
@@ -816,7 +815,7 @@ var Parser = Class.new({
 		    nud: function (this) {
 			var a = [];
 			if (p.token.id() != "]") {
-			  label leave_while:
+			  leave_while:
 			    while (true) {
 				a.append(p.expression(0));
 				if (p.token.id() != ",") {
@@ -870,7 +869,7 @@ var Parser = Class.new({
 		    led: function (this, left) {
 			var a = [];
 			if (p.token.id() != ")") {
-			  label leave_while:
+			  leave_while:
 			    while (true) {
 				a.append(p.expression(0));
 				if (p.token.id() != ",") {
@@ -933,7 +932,7 @@ var Parser = Class.new({
 			p.advance("(");
 			if (p.token.id() != ")") {
 			    var last = false;
-			  label leave_while:
+			  leave_while:
 			    while (true) {
 				if (p.token.id() == "...") {
 				    p.advance("...");
@@ -1014,7 +1013,7 @@ var Parser = Class.new({
 			var n;
 			var v;
 			if (p.token.id() != "}") {
-			  label leave_while:
+			  leave_while:
 			    while (true) {
 				n = p.token;
 				if (n.arity != "name"
@@ -1089,7 +1088,7 @@ var Parser = Class.new({
 			var t;
 			this.arity = "statement";
 			this.first = [];
-		      label leave_while:
+		      leave_while:
 			while (true) {
 			    n = p.token;
 			    if (n.arity != "name") {
@@ -1217,7 +1216,7 @@ var Parser = Class.new({
 		    } // label.gen
 		}
 	    }); // Label
-	    p.add_symbol_class("label", p.Label);
+	    // NOTE! not a keyword!
 
 	    p.While = Class.new({
 		name: "While",
@@ -1260,7 +1259,7 @@ var Parser = Class.new({
 	statements: function (this) {
 	    var a = [];
 	    var s;
-	  label leave_while:
+	  leave_while:
 	    while (true) {
 		if (this.token.id() == "}"
 		    || this.token.id() == "(end)") { // this.END?
