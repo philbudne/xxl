@@ -1,15 +1,15 @@
 FIX
 ====
-*** Make class.name a member (s/__name/name/; flush method?!)!!!
-*** Instance: "invoke" method look for "(" binop (pass args as list?)!!!
+*** Make class.name a member (s/__name/name/; flush method?!)???!!!
 *** Implement leave labels, flush automagic leave_while, continue_while
 	https://www2.cs.arizona.edu/classes/cs520/spring06/bliss.pdf p.12
 		fix do_while test
-Only allow one variable at a time to be defined??? (pedantic option?)
+** Only allow one variable at a time to be defined??? (pedantic option?)
 
-make function name () .... define in local scope?
+make function name () .... define name in local scope?
 	close2 patches -- need to make "function foo() {}" a valid expr stmt
 make a full expression language??
+	Are "[" and "{" ambiguous?? forbid at "top level"??
 invoke_function/method (using new VM) won't work nicely with Continuations?
 	add return_function/return_method that does: return(callable())
 run "__extensions__" (pass importer's initial scope? iscope.System??)
@@ -17,15 +17,17 @@ Get rid of PyObjClass and use '(' binop for calls?
 always preload a (bootstrap.vmx) file??
 	load System object
 	including "System.parser = System.import_vmx('parser.vmx');"
-	for_each, each_for, map, map2 (take arg for "ignore" value)
+	native code for_each, each_for, map, map2 (take arg for "ignore" value)
 	Object.instance_of(...) .class()?
-Need Dict.items() to implement for_each: pyfunc generator?
-Fix all access to System types!!!
+	Need Dict.items() to implement for_each??
+
+Fix all access to System types (get from module top level scope??)
 break import cycles??
 tokenizer: take \u{XX...} instead of \uXXXX!!!
-revive "reserved" attribute??
-true/null/false are writable!!!???
-fix print -- write natively? need Str.join
+revive "reserved" attribute in parser?!!
+true/null/false are writable!!!??? (bug or feature?)
+fix print -- write natively?
+	Str.join would be helpful!
 
 TEST
 ====
@@ -63,13 +65,10 @@ make native Tokenizer (gonna be slow!)
 FEATURES (or extensions)
 ========================
 Object: dir() method?? or make props visible as Dict in __props property?
-load compressed vmx files!!
+load compressed vmx (JSON) files and/or use some faster serialization library!!
 make obj_get of unknown property an error
 	(depended on by .std lookup)
 	add "hasattr" method?
 exceptions (using Continuations)
 "in" operator for collections?
 port VM to rpython?!
-
-
-
