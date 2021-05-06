@@ -1,0 +1,27 @@
+var cwcc = function (f) { // call w/ current continuation (scheme call/cc)
+    f(return);		  // call f with our return continuation!
+};
+
+// http://matt.might.net/articles/programming-with-continuations--exceptions-backtracking-search-threads-generators-coroutines/
+
+var f1 = function () {
+    var start = false;
+    var i = 0;
+    if (!start) {
+	// first time, capture continuation (eg; setjmp)
+	cwcc(
+	    function (cc) {
+		start = cc;
+	    }
+	);
+	System.print("here");
+    }
+
+    System.print("invoking start");
+    i += 1;
+    if (i == 5) {
+	return(0);
+    }
+    start();
+}; // f1
+f1();

@@ -1,0 +1,92 @@
+// -*-js-*-
+// http://matt.might.net/articles/programming-with-continuations--exceptions-backtracking-search-threads-generators-coroutines/
+// http://matt.might.net/articles/programming-with-continuations--exceptions-backtracking-search-threads-generators-coroutines/coop-threads.scm
+
+var thread_queue = [];		// list of continuation
+var halt = false;		// continuation
+
+var current_continuation = function () { return(return); };
+
+var TRACE = System.argv.len() > 0;
+var trace = function (a, b, c) {
+    if (TRACE) {
+	if (c) {
+	    System.print(a, b, c);
+	}
+	else {
+	    System.print(a, b);
+	}
+    }
+};
+
+var quit = function () {
+    if (thread_queue.len() > 0) {
+	trace("quit; queue len =", thread_queue.len());
+	var next_thread = thread_queue.pop(0);
+	next_thread("resume");
+    }
+    trace("quit, queue empty");
+    halt();
+};
+
+var spawn = function (thunk) {
+    var cc = current_continuation();
+    trace("spawn", cc);
+    if (cc != "resume") {
+	thread_queue.append(cc);
+	thunk();
+	System.print("thunk returned, calling quit");
+	quit();
+    }
+};
+
+var yield = function () {
+    var cc = current_continuation();
+    trace("yield", cc, thread_queue.len());
+    if (cc != "resume" && thread_queue.len() > 0) {
+	var next_thread = thread_queue.pop(0);
+	thread_queue.append(cc);
+	next_thread("resume");
+    }
+};
+
+var start_threads = function () {
+    var cc = current_continuation();
+    trace("start_threads", cc);
+    if (cc) {
+	halt = function () {
+	    trace("halting");
+	    cc(false);
+	};
+	if (thread_queue.len() > 0) {
+	    var next_thread = thread_queue.pop(0);
+	    next_thread("resume");
+	}
+    }
+};
+
+//// Example cooperatively threaded program
+
+var counter = 10;
+
+var make_thread_thunk = function (name) {
+    var loop = function () {
+	while (true) {
+	    if (counter < 0) {
+		trace("thread", name, "calling quit");
+		quit();
+	    }
+	    System.print("thread", name, "counter", counter);
+	    counter -= 1;
+	    trace("thread", name, "calling yield");
+	    yield();
+	    trace("thread", name, "back from yield");
+	}
+    };
+    return(loop);
+};
+
+spawn(make_thread_thunk("a"));
+spawn(make_thread_thunk("b"));
+spawn(make_thread_thunk("c"));
+start_threads();

@@ -1,0 +1,24 @@
+// http://matt.might.net/articles/programming-with-continuations--exceptions-backtracking-search-threads-generators-coroutines/
+// http://matt.might.net/articles/programming-with-continuations--exceptions-backtracking-search-threads-generators-coroutines/gowhen.scm
+
+var cwcc = function (f) { // call w/ current continuation (scheme call/cc)
+    f(return);		  // call f with our return continuation!
+};
+
+var right_now = function () {
+    return(return);
+};
+
+var go_when = function (then) {
+    then(then);
+};
+
+// An infinite loop:
+if (true) {
+    var i = 0;
+    var the_beginning = right_now();
+    System.print("Hello, world!");
+    if ((i += 1) < 4) {
+	go_when(the_beginning);
+    }
+}
