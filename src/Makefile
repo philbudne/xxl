@@ -29,7 +29,8 @@ install: tested
 	./save.sh
 	cp $(C) $(PARSER_VMX)	
 
-RUNVMX=time ./$(XXL) -x
+#TIME=time -p
+RUNVMX=$(TIME) ./$(XXL) -x
 
 # step A: run PARSER_VMX on PARSER_SRC generating VMX
 # Compiles, but DOES NOT RUN new source.
