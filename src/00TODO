@@ -1,5 +1,9 @@
 FIX
 ====
+*** TEST labels w/ "do.xxl"
+	add back
+*** add while tests
+
 *** Make class.name a member (s/__name/name/; flush method?!)???!!!
 
 ** Only allow one variable at a time to be defined??? (pedantic option?)
