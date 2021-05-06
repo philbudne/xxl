@@ -457,8 +457,9 @@ class ArgsInstr(VMInstr1):
         if len(vm.args) > len(self.value):
             # XXX pass remaining args to optional *arg in function decl!!
             # (pass name as second arg to instr); need to wrap in List.
-            raise VMError("%s: too many arguments. got %d, expected %d" % \
-                          (self.where, len(self.value), len(vm.args)))
+            # NOTE: Exception: a user error!
+            raise Exception("%s: too many arguments. got %d, expected %d" % \
+                            (self.where, len(vm.args), len(self.value)))
         # NOTE: scope.func_scope() creates a cactus stack of scopes
         vm.scope = vm.scope.func_scope(vm.fp)
         for formal in self.value:  # loop for formals
