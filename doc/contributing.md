@@ -3,9 +3,10 @@
 * Since the language is intentionally plastic, divergence
   may be inevitable, but it would be better to have cooperation.
 
-* See [language influences](influences.md)
-
-*  See [discussion of design priorities](prioriries.md)
+* See:
+  * [language influences](influences.md)
+  * [discussion of design priorities](prioriries.md)
+  * [formatting/style guide](style.md)
 
 * Overall: be kind and decent.
 

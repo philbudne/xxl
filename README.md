@@ -4,8 +4,8 @@ A self-hosting extensible language, VM/type system in Python3.
 
 **WARNING** the code and laguage are *HIGHLY* fluid!
 
-Please consider this a toy, not suitable for serious projects,
-until further notice!!!
+*Please consider this a toy, not suitable for serious projects,
+until further notice!!!*
 
 ### Overall:
 
@@ -16,13 +16,15 @@ until further notice!!!
 
 * Has a test suite of simple programs for when something breaks
 
+* [Syntax](doc/syntax.md) -- core language syntax
+
 * [Priorities](doc/priorities.md) -- a loose ordering of design priorities
 
 * [Influences](doc/influences.md) -- language influences
 
-* [Contributing](doc/contributing.md) -- please read this before creating a bug report, or a pull request
+* [Style](doc/style.md) -- language style guide
 
-* [Syntax and Style](doc/syntax.md) -- language syntax and style
+* [Contributing](doc/contributing.md) -- please read this before creating a bug report, or a pull request
 
 * [Bootstrapping](doc/bootstrapping.md) -- reminder on bootstrapping features
 
@@ -38,6 +40,6 @@ until further notice!!!
      variables were declared with their precision.
 
 * Intended to be the smallest possible core language,
-  one that no one "needs"
+  one that no one "needs" to use.
 
-* XXL is the U.S. clothing size two sizes larger than "large"
+* XXL is the U.S. clothing size two sizes larger than "large".

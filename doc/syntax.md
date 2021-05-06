@@ -1,24 +1,3 @@
-# STYLE
-
-* Variable, member and method names in_snake_case.
-	_names should be treated as private.
-	__names are reserved.
-
-* Class names in CamelCase (But, *sigh* the System object is not a Class)
-
-* Indent and line breakage:
-  * indent at four spaces
-  * assume tab stops at eight spaces
-  * no spaces before or between tabs
-  * a statement that ends with a block does not take a ";"
-  * "{" on the same line as the statement
-  * "}" on a line by itself, at same indent as opening statement
-	(unless tokens after the "}" are part of the statement,
-	 in which case they should follow the "}",
-	and the statement should be terminated with ";")
-  * *NOT* currently consistent line breakage and operators!!
-	(but probably should be)
-
 # SYNTAX
 
 * Largely adopted wholesale from Doug Crockford's original parser:
