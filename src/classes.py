@@ -204,7 +204,7 @@ class CBoundMethod(Instance):
         self.method = method
 
     def __repr__(self):
-        return "<BoundMethod: %s>" % self.method
+        return "<BoundMethod: %s %s>" % (self.obj, self.method)
         
     def invoke(self, vm):
         vm.args.insert(0, self.obj) # prepend saved "this" to arguments
