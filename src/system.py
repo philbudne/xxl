@@ -63,10 +63,10 @@ def isstr(x):                   # XXX TEMP
 
 ################ debug:
 
-def sys_break(x):
+def sys_break(x=None):
     """
     break to python debugger to debug VM
-    argument available as `x`
+    argument (if any) available as `x`
     """
     import pdb; pdb.set_trace() # or breakpoint()?
 
@@ -294,7 +294,7 @@ def parse(filename, scope, dump): # XXX take trace?
     return vmx.convert_instrs(j, scope) # convert to list of Python Instrs
 
 # called only from import_worker
-def parse_and_execute(src, scope, trace):
+def parse_and_execute(src, scope, trace, trace_parser):
     """
     parse `src` file and execute one statement at a time
     (allows parser extensions to take effect immediately)
@@ -304,7 +304,7 @@ def parse_and_execute(src, scope, trace):
     sys_parser = sys_obj.getprop('parser') # System.parser
     parser_obj = sys_parser.getprop('parser');
 
-    vmx.invoke_method(parser_obj, 'start_parse', scope, [src])
+    vmx.invoke_method(parser_obj, 'start_parse', scope, [src], trace)
 
     # top level function, takes parser object, returns List or null
     # XXX call gen inside loop, appending to same code block!?
@@ -315,19 +315,19 @@ def parse_and_execute(src, scope, trace):
     #   and return a Closure that can be called?
     while True:
         # run "parse_and_gen_one_stmt", turn into Python list of lists:
-        js = obj2python_json(vmx.invoke_function(p1, scope, [parser_obj]))
+        js = obj2python_json(
+        vmx.invoke_function(p1, scope, [parser_obj], trace_parser))
 
         if not js:              # need to confirm EOF?
             break
 
         # convert into Python list of Instrs (scope for type name lookup)
         code = vmx.convert_instrs(js, scope)
-
-        # UGH: invoke a new VM to execute code
-        v = vmx.VM(code, scope)
         try:
+            # UGH: invoke a new VM to execute code
+            v = vmx.VM(code, scope)
             if trace:
-                v.start_stats(trace)
+                v.start_trace()
             else:
                 v.start()
         except SystemExit:
@@ -382,7 +382,7 @@ def import_worker(src_file=None, vmx_file=None, trace=False,
         vmx.load_and_run_vmx(vmx_file, scope, False, trace)
     else:
         # parse source using System.parser.parse() -- loaded above!
-        parse_and_execute(src_file, scope, trace)
+        parse_and_execute(src_file, scope, trace, trace_parser)
     return scope                # XXX return as Module class Instance?
 
 ################################################################
