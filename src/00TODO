@@ -4,7 +4,7 @@ FIX
 
 ** Only allow one variable at a time to be defined??? (pedantic option?)
 
-make function name () .... define name in local scope?
+make function name () .... define name in local scope?????
 	close2 patches -- need to make "function foo() {}" a valid expr stmt
 make a full expression language??
 	Are "[" and "{" ambiguous?? forbid at "top level"??
