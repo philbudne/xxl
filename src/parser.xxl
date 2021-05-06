@@ -240,14 +240,10 @@ var PrattParser = Class.new({
 	add_symbol_class: function (this, id, klass) {
 	    this.symbol_classes[id] = klass;
 	},
-	advance: function (this, id) {
-	    if (id && this.token.id() != id) {
-		this.token.error("Expected '" + id + "'");
-	    }
+	_gtok: function (this) {
 	    var t = this.get_token();
 	    if (!t) {
-		this.token = this.End.new("EOF", "(end)", null);
-		return(this.token);
+		return(this.End.new("EOF", "(end)", null));
 	    }
 	    var t_error = function (msg) {
 		System.error(t.where, "token error", msg);
@@ -274,10 +270,27 @@ var PrattParser = Class.new({
 	    else {
 		t_error("Unexpected token " + v);
 	    }
-	    this.token = c.new(t.where, v, a); // Symbol!!!
-	    // XXX set .id ?????
+	    return(c.new(t.where, v, a)); // Symbol!!!
+	}, // _gtok
+	advance: function (this, id) {
+	    if (id && this.token.id() != id) {
+		this.token.error("Expected '" + id + "'");
+	    }
+	    if (this._next_token) {
+		this.token = this._next_token;
+		this._next_token = null;
+	    }
+	    else {
+		this.token = this._gtok();
+	    }
 	    return(this.token);	// a Symbol!!
-	}, // advance
+	},
+	peek: function (this) {	// peek at token after this.token
+	    if (!this._next_token) {
+		this._next_token = this._gtok();
+	    }
+	    return(this._next_token());
+	},
 	define: function (this, sym) {
 	    this.scope._define(this.Name.new(sym.where, sym.value, sym.arity));
 	},
