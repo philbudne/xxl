@@ -1,9 +1,7 @@
 FIX
 ====
 *** Make class.name a member (s/__name/name/; flush method?!)???!!!
-*** Implement leave labels, flush automagic leave_while, continue_while
-	https://www2.cs.arizona.edu/classes/cs520/spring06/bliss.pdf p.12
-		fix do_while test
+
 ** Only allow one variable at a time to be defined??? (pedantic option?)
 
 make function name () .... define name in local scope?
