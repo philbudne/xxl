@@ -4,6 +4,7 @@ while (i <= 5) {
     i += 1;
 }
 
+System.print("break");
 leave_while:
 while (true) {
     i -= 1;
@@ -11,4 +12,13 @@ while (true) {
     if (i == 0) {
 	leave_while();
     }
+}
+
+System.print("continue");
+i = 0;
+while (i < 5) continue: {
+    i += 1;
+    System.print(i);
+    continue();
+    System.print("here");
 }
