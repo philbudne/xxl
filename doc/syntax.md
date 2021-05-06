@@ -46,13 +46,18 @@
 ```
 FILE:   STMT …
 
-STMT:   «if» «(» EXPR «)» «{» STMT … «}»
-                [ «else» «if» «(» EXPR «)» «{» STMT … «}» ]…
-                [ «else» «{» STMT … «}» ] |
-        «while» «(» EXPR «)» «{» STMT … «}» |
+STMT:	[ NAME ":"] UNLABELED_STMT
+
+UNLABELED_STMT:
+        «if» «(» EXPR «)» BLOCK
+                [ «else» «if» «(» EXPR «)» BLOCK ]…
+                [ «else» BLOCK ] |
+        «while» «(» EXPR «)» BLOCK |
         «var» NAME [«=» EXPR] «;» |
         FUNCTION_CALL «;» |
         ASSIGNMENT «;»
+
+BLOCK:	[NAME «:»] «{» STMT … «}»
 
 EXPR:   NAME |
         NUMBER |
@@ -125,11 +130,13 @@ STRING: «'» [ANYTHING_EXCEPT_NEWLINE_OR_SINGLE_QUOTE]… «'» |
 
 * All statement blocks inside braces are closures, with their own scope.
 
-* inside a while loop
-    * "leave_while" is a variable with continuation to exit the	loop.
-    * "continue_while" is a variable with a continuation to continue the loop.
+* Statements and blocks may be labeled.
 
-  ***NOTE!!*** {leave,continue}_while may be replaced with labeled stmts), SOON!
+	The label will appear as a variable containing a continuation
+	to leave the labeled construct.
+
+	(labling a statements will cause it to be wrapped in a closure;
+	 blocks are already closures).
 
 * All instances have a class (in __class property)
 
