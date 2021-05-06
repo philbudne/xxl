@@ -82,6 +82,15 @@ class VM:
             self.pc += 1        # jumps will overwrite
             ir.step(self)       # execute instruction
 
+    def start_trace(self):
+        self.run = True         # cleared by 'exit' instr
+        while self.run:
+            # NOTE! self.ir for debug.
+            self.ir = ir = self.cb[self.pc] # instruction register
+            self.pc += 1        # jumps will overwrite
+            ir.step(self)       # execute instruction
+            print(ir, self.ac)
+
     def start_stats(self, trace):
         # stats
         op_count = {}
@@ -579,7 +588,7 @@ class NewInstr(VMInstr1):
 ################
 
 # used for init, str, repr
-def invoke_method(obj, method, scope, args=[]):
+def invoke_method(obj, method, scope, args=[], trace=False):
     """
     call an `obj` method from Python
     `method` is Python string
@@ -590,9 +599,9 @@ def invoke_method(obj, method, scope, args=[]):
     m = classes.find_in_class(obj, method)
     if not m or m is classes.null_value:
         raise Exception("method %s not found" % method)
-    return invoke_function(m, scope, args)
+    return invoke_function(m, scope, args, trace)
 
-def invoke_function(func, scope, args=[]):
+def invoke_function(func, scope, args=[], trace=False):
     """
     `func` is CInstance to be called
     `scope` is used to find System object
@@ -623,8 +632,10 @@ def invoke_function(func, scope, args=[]):
     vm.ac = func
     # XXX wrap in try to display errors in closures invoked from Python!!!
     # XXX execute in caller VM for traceback?!
-    # XXX honor caller VM trace!!
-    vm.start()                  
+    if trace:
+        vm.start_trace()
+    else:
+        vm.start()
     return vm.ac
 
 ################
@@ -665,8 +676,10 @@ def run_code(code, scope, stats, trace):
     vm = VM(code, scope)
 
     try:
-        if stats or trace:
+        if stats:
             vm.start_stats(trace)
+        elif trace:
+            vm.start_trace()
         else:
             vm.start()
     except SystemExit:
