@@ -47,7 +47,7 @@ Mid February 2016: Python mockup of techniques for Continuations
 
 Late February 2016: last changes to jsparse.py
 
-*LULL*
+**LULL**
 
 Early April 2021:
 	ported code to Python3
