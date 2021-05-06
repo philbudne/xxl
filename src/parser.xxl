@@ -276,9 +276,9 @@ var PrattParser = Class.new({
 	    if (id && this.token.id() != id) {
 		this.token.error("Expected '" + id + "'");
 	    }
-	    if (this._next_token) {
+	    if (this._next_token) { // saved from peek?
 		this.token = this._next_token;
-		this._next_token = null;
+		this._next_token = null; // consume it
 	    }
 	    else {
 		this.token = this._gtok();
@@ -308,10 +308,10 @@ var PrattParser = Class.new({
 
 	statement: function (this, labeled) {
 	    var n = this.token;
-
 	    if (n.arity == "name") { // possible label name?
 		var next = this.peek();
 		if (next.id() == ":") {
+		    System.error("found label");
 		    if (next.reserved) {
 			next.error("'" + next.value + "' reserved.");
 		    }
@@ -320,12 +320,7 @@ var PrattParser = Class.new({
 			n.error("statement already labeled");
 		    }
 		    var nn = this.Label.new(n.where, n.value, "name"); //!!
-		    // XXX enter new scope!!!
-		    this.define(nn); // define variable
-		    nn.arity = "statement";
-		    this.advance(); // eat name
-		    this.advance(":"); // eat ":"
-		    nn.first = this.statement(true); // recurse!
+		    return(nn.std());
 		    // XXX leave scope
 		    return(nn);
 		} // peek == ":"
@@ -1202,13 +1197,14 @@ var Parser = Class.new({
 			if (n.reserved) {
 			    n.error("'" + p.token.value + "' reserved.");
 			}
-			// XXX will be in new closure/scope
+			// XXX enter new scope
 			p.define(n); // define variable
 			this.arity = "statement";
 			this.first = n;
 			p.advance();
 			p.advance(":");
-			this.second = p.statement();
+			this.second = p.statement(); // recurse!
+			// XXX leave scope
 			return(this);
 		    },
 		    gen: function (this, vmcode) { // gen
