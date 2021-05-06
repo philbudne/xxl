@@ -253,7 +253,7 @@ var PrattParser = Class.new({
 	    var a = t.type;		// arity (name,number,string,operator)
 	    var c;			// class
 	    if (a == "name") {
-		c = this.scope.find(v)
+		c = this.scope.find_class(v)
 		    || this.symbol_classes[v]
 		    || this.Symbol;	// "Undefined" on reference
 	    }
@@ -286,12 +286,21 @@ var PrattParser = Class.new({
 	    return(this.token);	// a Symbol!!
 	},
 	peek: function (this) {	// peek at token after this.token
+	    // you can only peek one token ahead!
 	    if (!this._next_token) {
 		this._next_token = this._gtok();
 	    }
 	    return(this._next_token);
 	},
 	define: function (this, sym) {
+	    // sym is a Parser Symbol (or Name if previously seen) instance
+	    // declare as a Name in the current scope.
+// PLB 2021-05-06 -- someday?? optional??? lots of "this" complaints!
+	    var prev = this.scope.find_definition(sym.value);
+	    if (prev) {
+		// XXX make fatal?
+		sym.warning("shadows previous definition at " + prev.where);
+	    }
 	    this.scope._define(this.Name.new(sym.where, sym.value, sym.arity));
 	},
 	expression: function (this, rbp) {
@@ -309,17 +318,18 @@ var PrattParser = Class.new({
 	statement: function (this, labeled) {
 	    var n = this.token;
 	    if (n.arity == "name") { // possible label name?
-		var next = this.peek();
+		var next = this.peek(); // peek at next token
 		if (next.id() == ":") {
-		    if (next.reserved) {
-			next.error("'" + next.value + "' reserved.");
+		    // will be defined inside of a new scope (closure)
+		    if (n.reserved) { // XXX ???
+			n.error("'" + n.value + "' reserved.");
 		    }
 		    if (labeled) { // nested labels?
-			// would generate nested closures!
+			// would generate nested closures! could just chain them on...
 			n.error("statement already labeled");
 		    }
 		    var nn = this.Label.new(n.where, n.value, "name"); //!!
-		    nn.std();
+		    nn.std();	// call Label.std
 		    // XXX leave scope
 		    return(nn);
 		} // peek == ":"
@@ -337,8 +347,8 @@ var PrattParser = Class.new({
 	    return(v);
 	}, // statement
 
-	init: function (this) {
-	    var p = this;    // clarity, visible from subclass methods
+	init: function (this_parser) {
+	    var p = this_parser; // clarity, visible from subclass methods
 
 	    p.symbol_classes = {}; // string to Symbol subclass
 
@@ -361,14 +371,23 @@ var PrattParser = Class.new({
 			}
 			this.def[n.value] = n;
 		    },
-		    find: function (this, n) {
+		    find_class: function (this, n) {
 			// n is string from lexer
 			// returns Symbol class to use
+			var sym = this.find_definition(n);
+			if (sym) {
+			    return(sym.class());
+			}
+			return(null);
+		    },
+		    find_definition: function (this, n) {
+			// n is string from lexer
+			// returns definition (Symbol instance)
 			var e = this;
 			while (e) {
 			    var o = e.def[n];
-			    if (o) { // XXX was && typeof o != 'function'
-				return(o.class());
+			    if (o) {
+				return(o);
 			    }
 			    e = e.parent;
 			}
@@ -413,6 +432,9 @@ var PrattParser = Class.new({
 		    error: function (this, msg) {
 			System.error(this.where, "ERROR: symbol", this.value, msg);
 			System.exit(1);
+		    },
+		    warning: function (this, msg) {
+			System.error(this.where, "WARNING: symbol", this.value, msg);
 		    },
 		    gen: function (this, vmcode) {
 			// XXX call gen_XXX based on this.arity???
@@ -547,9 +569,9 @@ var Parser = Class.new({
     name: "Parser",
     supers: [PrattParser],
     methods: {
-	init: function (this) {
-	    var p = this;	// for clarity, access w/in new class methods
-	    this..init();	// call superclass init
+	init: function (this_parser) {
+	    var p = this_parser; // for clarity, access w/in new class methods
+	    p..init();		 // call superclass init
 
 	    // XXX pull up into PrattParser?
 	    var add_terminal = function (name, id) {
@@ -1327,13 +1349,13 @@ var gen = function (stmts) {	// tree is list of top level stmts/exprs
 var parser = Parser.new();
 var parse = parser.parse;
 
-var parse_and_gen_one_stmt = function (parser) {
-    if (parser.token
-	&& (parser.token.id() == "}"
-	    || parser.token.id() == "(end)")) { // parser.END?
+var parse_and_gen_one_stmt = function (p) { // p is parser instance
+    if (p.token
+	&& (p.token.id() == "}"
+	    || p.token.id() == "(end)")) { // parser.END?
 	return(null);
     }
-    return(gen([parser.statement()]));
+    return(gen([p.statement()]));
 };
 
 ////////////////
@@ -1352,8 +1374,8 @@ if (__main__) {
 	System.exit(1);
     }
     else {
-	var parser = Parser.new();
-	var result = parser.parse(System.argv[0]);
+	var p = Parser.new();
+	var result = p.parse(System.argv[0]);
 	// XXX take option to not call gen (dump AST)
 	// XXX maybe option to serialize in a format
 	//	that loads faster than JSON????
