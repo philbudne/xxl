@@ -547,6 +547,9 @@ def obj_get_in_supers(l, r):
 def obj_class(this):
     return this.getclass()
 
+def obj_call(l, r):
+    raise Exception("%s not callable" % l.classname())
+
 Object.setprop(const.METHODS, _mkdict({
     const.INIT: pyfunc(obj_init),
     'class': pyfunc(obj_class), # clutter!? might as well be a normal property?!
@@ -560,6 +563,7 @@ Object.setprop(const.BINOPS, _mkdict({
     '..': pyfunc(obj_get_in_supers),
     '==': pyfunc(obj_eq),
     '!=': pyfunc(obj_ne),
+    '(': pyfunc(obj_call),
 }))
 Object.setprop(const.UNOPS, _mkdict({
     '!': pyfunc(obj_not),
