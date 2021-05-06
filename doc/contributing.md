@@ -1,23 +1,19 @@
-* Contributions welcome!
+# Contributions welcome!
 
-  Especially since, with an intentionally plastic language,
-  incompatible variants are likely inevtiable (due to differences in
-  opinion and taste).
+* Since the language is intentionally plastic, divergence
+  may be inevitable, but it would be better to have cooperation.
 
-  The author has some strong opinions, but may not be cut out (or
-  desire) to be a "benevolent dictator for life"
+* See [language influences](influences.md)
 
-  See 00influences
+*  See [discussion of design priorities](prioriries.md)
 
-  See 00philosophy file for a discussion of design philosophy.
-
-  Overall: be kind and decent.
+* Overall: be kind and decent.
 
 	I have not read enough codes of conduct in their entirety
 	to have any opinions on what to choose.
 
-  Remember humans with feelings will perceive the light
-  patterns that are the result of your typing.  Please consider that:
+*  Remember humans with feelings will perceive the light
+   patterns that are the result of your typing.  Please consider that:
 
   * Asking a question such as "I can't help wondering why.....", will
     DEFINITELY make your missive a less bitter pill to swallow than
@@ -25,7 +21,7 @@
 
   * I'm not a genius (and no longer wish I was one), and while I've
     joked I have flypaper between my ears for my ability to remember
-    minutiae, I likely don't have a ready answer to EVERY question.
+    random minutiae, I likely don't have a ready answer to EVERY question.
     But there are DEFINITELY places where I was lost in the fog,
     and battered my way out (hopefully leaving a comment).
 
@@ -43,7 +39,7 @@
     discussion.  If this becomes a "project" then using github issue
     tracking (and dropping refs to the issue numbers in the code)
     
-    More than three X's are an indication of greater concern.
+  * More than three X's are an indication of greater concern.
 
-    TEMP is an indication that this is a place where the solution
+  * TEMP is an indication that this is a place where the solution
     is hoped/anticipated to be temporary.

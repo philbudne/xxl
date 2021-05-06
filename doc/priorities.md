@@ -1,34 +1,37 @@
-Priorities (loosely ordered):
+# Priorities (loosely ordered):
 
-simplicity / ease of understanding
+* simplicity / ease of understanding
 
-minimal: avoid clutter in the core
+* minimal: avoid clutter in the core
+
 	the less carved into stone, the better.
 	methods >> functions >> syntax
 
-correctness:
+* correctness:
 	everything should work
 
-uniformity/generality:
+* uniformity/generality:
+
 	minimum of magic or crockery (special cases)
 	Principle of Least Astonishment
 
-extensible
+* extensible
 
-expressive power
+* expressive power
 	primatives chosen for usefulness in creating language features
 
-"high albedo" (reflectivity)
+* "high albedo" (reflectivity)
+
 	minimum of hidden machinery
 	(entirety of class system is visible from programs;
 	 VM code & scopes *currently* less so)
 
-performance: avoid premature optimization
+* performance: avoid premature optimization
 
-modularity
+* modularity
 
-ease of use / useful diagnostics
+* ease of use / useful diagnostics
 	this is not a language for beginners
 
-safety
+* safety
 	this is not a language for beginners

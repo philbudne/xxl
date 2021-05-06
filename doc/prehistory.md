@@ -38,11 +38,13 @@ Late January 2016: started work on interpreter for jsparse.py output
 
 Early February 2016:
 	jsparse.js running in asap.py interpreter (native Python types)
+
 Mid February 2016: Python mockup of techniques for Continuations
 		from Kent Dybvig's dissertation
 		"Three Implementation Models for Scheme"
 		https://www.cs.unm.edu/~williams/cs491/three-imp.pdf
 	last modifications to ppo.js (PrattParser as object)
+
 Late February 2016: last changes to jsparse.py
 
 *LULL*
@@ -51,9 +53,11 @@ Early April 2021:
 	ported code to Python3
 	first attempt to generate VM code in ppo.js
 	modified to jsparse.py to generate VM code (never used)
+
 Mid April 2021:
 	second attempt at generating VM code in ppo.js, running under asap.py
 	ppo.js self-generated code running under VM
+
 Late April 2021:
 	ppo.js using Class.new, called ppoc.js self compiling
 	import & pyimport restored to working order

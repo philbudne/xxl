@@ -1,22 +1,26 @@
-NAMING
-======
+# STYLE
 
-Variable, member and method names in_snake_case.
+* Variable, member and method names in_snake_case.
 	_names should be treated as private.
 	__names are reserved.
 
-Class names in CamelCase (But, *sigh* the System object is not a Class)
+* Class names in CamelCase (But, *sigh* the System object is not a Class)
 
-SYNTAX
-======
+* K&R style placement of {}'s
 
-Largely adopted from Doug Crockfor's TDOP demo:
+* intents levels at 4 spaces
+
+* assume tab stops at 8 spaces
+
+# SYNTAX
+
+* Largely adopted from Doug Crockfor's TDOP demo:
 http://crockford.com/javascript/tdop/tdop.html
 
-ALL flow control statements take a { block },
+* ALL flow control statements take a { block },
 except "else", which can take another "if"
 
-An _approximate_ grammar (subject to change, including at runtime!):
+* An _approximate_ grammar (subject to change, including at runtime!):
 
 FILE:   STMT ...
 

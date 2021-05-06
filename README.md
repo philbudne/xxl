@@ -1,37 +1,33 @@
-eXtensible eXperimenal Language version Zero (XXL/0) (*)
+# eXtensible eXperimenal Language version Zero (XXL/0) [(*)](#intended-jokes)
 
-A self-hosting extensible language, written in Python3.
+A self-hosting extensible language, VM/type system in Python3.
 
 *WARNING* the code and laguage are HIGHLY fluid!
 
 Please consider this a toy!!
 
-Overall:
+## Overall:
 
-A sandbox for testing out ideas for "little languages"
+* A sandbox for testing out ideas for "little languages"
 
-PRIMARILY came at this as a language/compiler person.
+* The base language contains enough to write the compiler;
+	(the compiler gives itself good coverage).
 
-The base language contains enough to write the compiler.
-(the compiler gives itself good coverage)
+* Has a test suite of simple programs for when something breaks
 
-Has a test suite of simple programs for when something breaks
+* [Priorities](doc/priorities.md) -- a loose ordering of design priorities
 
-doc/priorities -- a loose ordering of design priorities
+* [Influences](doc/influences.md) -- language influences
 
-doc/influences.md -- language influences
+* [Contributing](doc/contributing.md) -- please read this before creating a bug report, or a pull request
 
-doc/contributing.md -- please read this before creating a bug report, or a pull request
+* [Syntax and Style](doc/syntax.md) -- language syntax and style
 
-doc/priorities.md -- design priorities
+* [Bootstrapping](doc/bootstrapping.md) -- reminder on bootstrapping features
 
-doc/syntax.md -- language syntax and style
+* [Prehistory](doc/prehistory.md) -- early influences and pre-github history
 
-doc/bootstrapping.md -- reminder on bootstrapping features
-
-doc/prehistory.md -- early influences and pre-github history
-
-(*) Intended jokes:
+### Intended jokes
 
 * PL/1 was IBM's "One Language to Rule Them All" for System/360
      (the one computer architecture anyone would ever need).
