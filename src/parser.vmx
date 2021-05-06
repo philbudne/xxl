@@ -25527,190 +25527,369 @@
       0
      ],
      [
-      "parser.xxl:1015:18",
+      "parser.xxl:1015:12",
+      "lit",
+      "label"
+     ],
+     [
+      "parser.xxl:1015:12",
+      "push"
+     ],
+     [
+      "parser.xxl:1015:8",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1015:12",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1015:4",
+      "jumpe",
+      30
+     ],
+     [
+      "parser.xxl:1015:20",
+      "close",
+      [
+       [
+        "parser.xxl:1015:20",
+        "scope",
+        null
+       ],
+       [
+        "parser.xxl:1017:40",
+        "lit",
+        "name"
+       ],
+       [
+        "parser.xxl:1017:15",
+        "push"
+       ],
+       [
+        "parser.xxl:1017:32",
+        "lit",
+        "label"
+       ],
+       [
+        "parser.xxl:1017:32",
+        "push"
+       ],
+       [
+        "parser.xxl:1017:28",
+        "load",
+        "this"
+       ],
+       [
+        "parser.xxl:1017:32",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1017:15",
+        "push"
+       ],
+       [
+        "parser.xxl:1017:20",
+        "lit",
+        "where"
+       ],
+       [
+        "parser.xxl:1017:20",
+        "push"
+       ],
+       [
+        "parser.xxl:1017:16",
+        "load",
+        "this"
+       ],
+       [
+        "parser.xxl:1017:20",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1017:15",
+        "push"
+       ],
+       [
+        "parser.xxl:1017:11",
+        "lit",
+        "new"
+       ],
+       [
+        "parser.xxl:1017:11",
+        "push"
+       ],
+       [
+        "parser.xxl:1017:6",
+        "lit",
+        "Name"
+       ],
+       [
+        "parser.xxl:1017:6",
+        "push"
+       ],
+       [
+        "parser.xxl:1017:5",
+        "load",
+        "p"
+       ],
+       [
+        "parser.xxl:1017:6",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1017:11",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1017:15",
+        "call",
+        3
+       ],
+       [
+        "parser.xxl:1016:23",
+        "push"
+       ],
+       [
+        "parser.xxl:1016:15",
+        "lit",
+        "_define"
+       ],
+       [
+        "parser.xxl:1016:15",
+        "push"
+       ],
+       [
+        "parser.xxl:1016:9",
+        "lit",
+        "scope"
+       ],
+       [
+        "parser.xxl:1016:9",
+        "push"
+       ],
+       [
+        "parser.xxl:1016:8",
+        "load",
+        "p"
+       ],
+       [
+        "parser.xxl:1016:9",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1016:15",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1016:23",
+        "call",
+        1
+       ],
+       [
+        "parser.xxl:1015:20",
+        "return"
+       ]
+      ]
+     ],
+     [
+      "parser.xxl:1015:20",
+      "call",
+      0
+     ],
+     [
+      "parser.xxl:1019:18",
       "lit",
       "statements"
      ],
      [
-      "parser.xxl:1015:18",
+      "parser.xxl:1019:18",
       "push"
      ],
      [
-      "parser.xxl:1015:17",
+      "parser.xxl:1019:17",
       "load",
       "p"
      ],
      [
-      "parser.xxl:1015:18",
+      "parser.xxl:1019:18",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1015:29",
+      "parser.xxl:1019:29",
       "call",
       0
      ],
      [
-      "parser.xxl:1015:8",
+      "parser.xxl:1019:8",
       "push"
      ],
      [
-      "parser.xxl:1015:8",
+      "parser.xxl:1019:8",
       "lit",
       "first"
      ],
      [
-      "parser.xxl:1015:8",
-      "push"
-     ],
-     [
-      "parser.xxl:1015:4",
-      "load",
-      "this"
-     ],
-     [
-      "parser.xxl:1015:8",
-      "lhsop",
-      "."
-     ],
-     [
-      "parser.xxl:1016:21",
-      "lit",
-      "pop"
-     ],
-     [
-      "parser.xxl:1016:21",
-      "push"
-     ],
-     [
-      "parser.xxl:1016:15",
-      "lit",
-      "scope"
-     ],
-     [
-      "parser.xxl:1016:15",
-      "push"
-     ],
-     [
-      "parser.xxl:1016:14",
-      "load",
-      "p"
-     ],
-     [
-      "parser.xxl:1016:15",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1016:21",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1016:25",
-      "call",
-      0
-     ],
-     [
-      "parser.xxl:1016:5",
-      "push"
-     ],
-     [
-      "parser.xxl:1016:5",
-      "lit",
-      "scope"
-     ],
-     [
-      "parser.xxl:1016:5",
-      "push"
-     ],
-     [
-      "parser.xxl:1016:4",
-      "load",
-      "p"
-     ],
-     [
-      "parser.xxl:1016:5",
-      "lhsop",
-      "."
-     ],
-     [
-      "parser.xxl:1017:14",
-      "lit",
-      "}"
-     ],
-     [
-      "parser.xxl:1017:13",
-      "push"
-     ],
-     [
-      "parser.xxl:1017:5",
-      "lit",
-      "advance"
-     ],
-     [
-      "parser.xxl:1017:5",
-      "push"
-     ],
-     [
-      "parser.xxl:1017:4",
-      "load",
-      "p"
-     ],
-     [
-      "parser.xxl:1017:5",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1017:13",
-      "call",
-      1
-     ],
-     [
-      "parser.xxl:1018:17",
-      "lit",
-      "statement"
-     ],
-     [
-      "parser.xxl:1018:8",
-      "push"
-     ],
-     [
-      "parser.xxl:1018:8",
-      "lit",
-      "arity"
-     ],
-     [
-      "parser.xxl:1018:8",
-      "push"
-     ],
-     [
-      "parser.xxl:1018:4",
-      "load",
-      "this"
-     ],
-     [
-      "parser.xxl:1018:8",
-      "lhsop",
-      "."
-     ],
-     [
-      "parser.xxl:1019:11",
-      "load",
-      "this"
-     ],
-     [
-      "parser.xxl:1019:10",
+      "parser.xxl:1019:8",
       "push"
      ],
      [
       "parser.xxl:1019:4",
       "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1019:8",
+      "lhsop",
+      "."
+     ],
+     [
+      "parser.xxl:1020:21",
+      "lit",
+      "pop"
+     ],
+     [
+      "parser.xxl:1020:21",
+      "push"
+     ],
+     [
+      "parser.xxl:1020:15",
+      "lit",
+      "scope"
+     ],
+     [
+      "parser.xxl:1020:15",
+      "push"
+     ],
+     [
+      "parser.xxl:1020:14",
+      "load",
+      "p"
+     ],
+     [
+      "parser.xxl:1020:15",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1020:21",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1020:25",
+      "call",
+      0
+     ],
+     [
+      "parser.xxl:1020:5",
+      "push"
+     ],
+     [
+      "parser.xxl:1020:5",
+      "lit",
+      "scope"
+     ],
+     [
+      "parser.xxl:1020:5",
+      "push"
+     ],
+     [
+      "parser.xxl:1020:4",
+      "load",
+      "p"
+     ],
+     [
+      "parser.xxl:1020:5",
+      "lhsop",
+      "."
+     ],
+     [
+      "parser.xxl:1021:14",
+      "lit",
+      "}"
+     ],
+     [
+      "parser.xxl:1021:13",
+      "push"
+     ],
+     [
+      "parser.xxl:1021:5",
+      "lit",
+      "advance"
+     ],
+     [
+      "parser.xxl:1021:5",
+      "push"
+     ],
+     [
+      "parser.xxl:1021:4",
+      "load",
+      "p"
+     ],
+     [
+      "parser.xxl:1021:5",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1021:13",
+      "call",
+      1
+     ],
+     [
+      "parser.xxl:1022:17",
+      "lit",
+      "statement"
+     ],
+     [
+      "parser.xxl:1022:8",
+      "push"
+     ],
+     [
+      "parser.xxl:1022:8",
+      "lit",
+      "arity"
+     ],
+     [
+      "parser.xxl:1022:8",
+      "push"
+     ],
+     [
+      "parser.xxl:1022:4",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1022:8",
+      "lhsop",
+      "."
+     ],
+     [
+      "parser.xxl:1023:11",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1023:10",
+      "push"
+     ],
+     [
+      "parser.xxl:1023:4",
+      "load",
       "return"
      ],
      [
-      "parser.xxl:1019:10",
+      "parser.xxl:1023:10",
       "call",
       1
      ],
@@ -25743,11 +25922,11 @@
     "["
    ],
    [
-    "parser.xxl:1021:12",
+    "parser.xxl:1025:12",
     "close",
     [
      [
-      "parser.xxl:1021:12",
+      "parser.xxl:1025:12",
       "args",
       [
        "this",
@@ -25756,533 +25935,435 @@
       ]
      ],
      [
-      "parser.xxl:1022:22",
+      "parser.xxl:1026:22",
       "lit",
       "statement"
      ],
      [
-      "parser.xxl:1022:19",
+      "parser.xxl:1026:19",
       "push"
      ],
      [
-      "parser.xxl:1022:12",
+      "parser.xxl:1026:12",
       "lit",
       "arity"
      ],
      [
-      "parser.xxl:1022:12",
+      "parser.xxl:1026:12",
       "push"
      ],
      [
-      "parser.xxl:1022:8",
+      "parser.xxl:1026:8",
       "load",
       "this"
      ],
      [
-      "parser.xxl:1022:12",
+      "parser.xxl:1026:12",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1022:19",
+      "parser.xxl:1026:19",
       "binop",
       "=="
      ],
      [
-      "parser.xxl:1022:4",
+      "parser.xxl:1026:4",
       "jumpe",
       12
      ],
      [
-      "parser.xxl:1022:35",
+      "parser.xxl:1026:35",
       "close",
       [
        [
-        "parser.xxl:1022:35",
+        "parser.xxl:1026:35",
         "scope",
         null
        ],
        [
-        "parser.xxl:1023:8",
+        "parser.xxl:1027:8",
         "vars",
         [
          "bcode"
         ]
        ],
        [
-        "parser.xxl:1023:26",
+        "parser.xxl:1027:26",
         "lit",
         "new"
        ],
        [
-        "parser.xxl:1023:26",
+        "parser.xxl:1027:26",
         "push"
        ],
        [
-        "parser.xxl:1023:20",
+        "parser.xxl:1027:20",
         "load",
         "VMCode"
        ],
        [
-        "parser.xxl:1023:26",
+        "parser.xxl:1027:26",
         "binop",
         "."
        ],
        [
-        "parser.xxl:1023:30",
+        "parser.xxl:1027:30",
         "call",
         0
        ],
        [
-        "parser.xxl:1023:8",
+        "parser.xxl:1027:8",
         "store",
         "bcode"
        ],
        [
-        "parser.xxl:1024:37",
+        "parser.xxl:1028:51",
         "load",
         "this"
        ],
        [
-        "parser.xxl:1024:24",
+        "parser.xxl:1028:24",
         "push"
        ],
        [
-        "parser.xxl:1024:25",
+        "parser.xxl:1028:29",
+        "lit",
+        "label"
+       ],
+       [
+        "parser.xxl:1028:29",
+        "push"
+       ],
+       [
+        "parser.xxl:1028:25",
+        "load",
+        "this"
+       ],
+       [
+        "parser.xxl:1028:29",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1028:36",
+        "jumpn",
+        16
+       ],
+       [
+        "parser.xxl:1028:39",
         "load",
         "leave_name"
        ],
        [
-        "parser.xxl:1024:24",
+        "parser.xxl:1028:24",
         "push"
        ],
        [
-        "parser.xxl:1024:13",
+        "parser.xxl:1028:13",
         "lit",
         "emit_scope"
        ],
        [
-        "parser.xxl:1024:13",
+        "parser.xxl:1028:13",
         "push"
        ],
        [
-        "parser.xxl:1024:8",
+        "parser.xxl:1028:8",
         "load",
         "bcode"
        ],
        [
-        "parser.xxl:1024:13",
+        "parser.xxl:1028:13",
         "binop",
         "."
        ],
        [
-        "parser.xxl:1024:24",
+        "parser.xxl:1028:24",
         "call",
         2
        ],
        [
-        "parser.xxl:1025:28",
+        "parser.xxl:1029:28",
         "lit",
         "first"
        ],
        [
-        "parser.xxl:1025:28",
+        "parser.xxl:1029:28",
         "push"
        ],
        [
-        "parser.xxl:1025:24",
+        "parser.xxl:1029:24",
         "load",
         "this"
        ],
        [
-        "parser.xxl:1025:28",
+        "parser.xxl:1029:28",
         "binop",
         "."
        ],
        [
-        "parser.xxl:1025:23",
+        "parser.xxl:1029:23",
         "push"
        ],
        [
-        "parser.xxl:1025:13",
+        "parser.xxl:1029:13",
         "lit",
         "gen_stmts"
        ],
        [
-        "parser.xxl:1025:13",
+        "parser.xxl:1029:13",
         "push"
        ],
        [
-        "parser.xxl:1025:8",
+        "parser.xxl:1029:8",
         "load",
         "bcode"
        ],
        [
-        "parser.xxl:1025:13",
+        "parser.xxl:1029:13",
         "binop",
         "."
        ],
        [
-        "parser.xxl:1025:23",
+        "parser.xxl:1029:23",
         "call",
         1
        ],
        [
-        "parser.xxl:1026:46",
+        "parser.xxl:1030:46",
         "load",
         "this"
        ],
        [
-        "parser.xxl:1026:25",
+        "parser.xxl:1030:25",
         "push"
        ],
        [
-        "parser.xxl:1026:39",
+        "parser.xxl:1030:39",
         "load",
         "this"
        ],
        [
-        "parser.xxl:1026:38",
+        "parser.xxl:1030:38",
         "push"
        ],
        [
-        "parser.xxl:1026:31",
+        "parser.xxl:1030:31",
         "lit",
         "finish"
        ],
        [
-        "parser.xxl:1026:31",
+        "parser.xxl:1030:31",
         "push"
        ],
        [
-        "parser.xxl:1026:26",
+        "parser.xxl:1030:26",
         "load",
         "bcode"
        ],
        [
-        "parser.xxl:1026:31",
+        "parser.xxl:1030:31",
         "binop",
         "."
        ],
        [
-        "parser.xxl:1026:38",
+        "parser.xxl:1030:38",
         "call",
         1
        ],
        [
-        "parser.xxl:1026:25",
+        "parser.xxl:1030:25",
         "push"
        ],
        [
-        "parser.xxl:1026:14",
+        "parser.xxl:1030:14",
         "lit",
         "emit_close"
        ],
        [
-        "parser.xxl:1026:14",
+        "parser.xxl:1030:14",
         "push"
        ],
        [
-        "parser.xxl:1026:8",
+        "parser.xxl:1030:8",
         "load",
         "vmcode"
        ],
        [
-        "parser.xxl:1026:14",
+        "parser.xxl:1030:14",
         "binop",
         "."
        ],
        [
-        "parser.xxl:1026:25",
+        "parser.xxl:1030:25",
         "call",
         2
        ],
        [
-        "parser.xxl:1027:28",
+        "parser.xxl:1031:28",
         "load",
         "this"
        ],
        [
-        "parser.xxl:1027:24",
+        "parser.xxl:1031:24",
         "push"
        ],
        [
-        "parser.xxl:1027:25",
+        "parser.xxl:1031:25",
         "lit",
         0
        ],
        [
-        "parser.xxl:1027:24",
+        "parser.xxl:1031:24",
         "push"
        ],
        [
-        "parser.xxl:1027:14",
+        "parser.xxl:1031:14",
         "lit",
         "emit_call"
        ],
        [
-        "parser.xxl:1027:14",
+        "parser.xxl:1031:14",
         "push"
        ],
        [
-        "parser.xxl:1027:8",
+        "parser.xxl:1031:8",
         "load",
         "vmcode"
        ],
        [
-        "parser.xxl:1027:14",
+        "parser.xxl:1031:14",
         "binop",
         "."
        ],
        [
-        "parser.xxl:1027:24",
+        "parser.xxl:1031:24",
         "call",
         2
        ],
        [
-        "parser.xxl:1022:35",
+        "parser.xxl:1026:35",
         "return"
        ]
       ]
      ],
      [
-      "parser.xxl:1022:35",
+      "parser.xxl:1026:35",
       "call",
       0
      ],
      [
-      "parser.xxl:1022:4",
+      "parser.xxl:1026:4",
       "jrst",
       14
      ],
      [
-      "parser.xxl:1029:9",
+      "parser.xxl:1033:9",
       "close",
       [
        [
-        "parser.xxl:1029:9",
+        "parser.xxl:1033:9",
         "scope",
         null
        ],
        [
-        "parser.xxl:1032:32",
+        "parser.xxl:1036:32",
         "load",
         "this"
        ],
        [
-        "parser.xxl:1032:23",
+        "parser.xxl:1036:23",
         "push"
        ],
        [
-        "parser.xxl:1032:24",
+        "parser.xxl:1036:24",
         "lit",
         "Dict"
        ],
        [
-        "parser.xxl:1032:23",
+        "parser.xxl:1036:23",
         "push"
        ],
        [
-        "parser.xxl:1032:14",
+        "parser.xxl:1036:14",
         "lit",
         "emit_new"
        ],
        [
-        "parser.xxl:1032:14",
+        "parser.xxl:1036:14",
         "push"
        ],
        [
-        "parser.xxl:1032:8",
+        "parser.xxl:1036:8",
         "load",
         "vmcode"
        ],
        [
-        "parser.xxl:1032:14",
+        "parser.xxl:1036:14",
         "binop",
         "."
        ],
        [
-        "parser.xxl:1032:23",
+        "parser.xxl:1036:23",
         "call",
         2
        ],
        [
-        "parser.xxl:1034:5",
+        "parser.xxl:1038:5",
         "close",
         [
          [
-          "parser.xxl:1034:5",
+          "parser.xxl:1038:5",
           "args",
           [
            "item"
           ]
          ],
          [
-          "parser.xxl:1036:24",
+          "parser.xxl:1040:24",
           "load",
           "vmcode"
          ],
          [
-          "parser.xxl:1036:23",
+          "parser.xxl:1040:23",
           "push"
          ],
          [
-          "parser.xxl:1036:19",
+          "parser.xxl:1040:19",
           "lit",
           "gen"
          ],
          [
-          "parser.xxl:1036:19",
+          "parser.xxl:1040:19",
           "push"
          ],
          [
-          "parser.xxl:1036:13",
+          "parser.xxl:1040:13",
           "lit",
           "first"
          ],
          [
-          "parser.xxl:1036:13",
-          "push"
-         ],
-         [
-          "parser.xxl:1036:9",
-          "load",
-          "item"
-         ],
-         [
-          "parser.xxl:1036:13",
-          "binop",
-          "."
-         ],
-         [
-          "parser.xxl:1036:19",
-          "binop",
-          "."
-         ],
-         [
-          "parser.xxl:1036:23",
-          "call",
-          1
-         ],
-         [
-          "parser.xxl:1037:26",
-          "load",
-          "this"
-         ],
-         [
-          "parser.xxl:1037:25",
-          "push"
-         ],
-         [
-          "parser.xxl:1037:15",
-          "lit",
-          "emit_push"
-         ],
-         [
-          "parser.xxl:1037:15",
-          "push"
-         ],
-         [
-          "parser.xxl:1037:9",
-          "load",
-          "vmcode"
-         ],
-         [
-          "parser.xxl:1037:15",
-          "binop",
-          "."
-         ],
-         [
-          "parser.xxl:1037:25",
-          "call",
-          1
-         ],
-         [
-          "parser.xxl:1039:37",
-          "load",
-          "this"
-         ],
-         [
-          "parser.xxl:1039:24",
-          "push"
-         ],
-         [
-          "parser.xxl:1039:29",
-          "lit",
-          "value"
-         ],
-         [
-          "parser.xxl:1039:29",
-          "push"
-         ],
-         [
-          "parser.xxl:1039:25",
-          "load",
-          "item"
-         ],
-         [
-          "parser.xxl:1039:29",
-          "binop",
-          "."
-         ],
-         [
-          "parser.xxl:1039:24",
-          "push"
-         ],
-         [
-          "parser.xxl:1039:15",
-          "lit",
-          "emit_lit"
-         ],
-         [
-          "parser.xxl:1039:15",
-          "push"
-         ],
-         [
-          "parser.xxl:1039:9",
-          "load",
-          "vmcode"
-         ],
-         [
-          "parser.xxl:1039:15",
-          "binop",
-          "."
-         ],
-         [
-          "parser.xxl:1039:24",
-          "call",
-          2
-         ],
-         [
-          "parser.xxl:1040:26",
-          "load",
-          "this"
-         ],
-         [
-          "parser.xxl:1040:25",
-          "push"
-         ],
-         [
-          "parser.xxl:1040:15",
-          "lit",
-          "emit_push"
-         ],
-         [
-          "parser.xxl:1040:15",
+          "parser.xxl:1040:13",
           "push"
          ],
          [
           "parser.xxl:1040:9",
           "load",
-          "vmcode"
+          "item"
          ],
          [
-          "parser.xxl:1040:15",
+          "parser.xxl:1040:13",
           "binop",
           "."
          ],
          [
-          "parser.xxl:1040:25",
+          "parser.xxl:1040:19",
+          "binop",
+          "."
+         ],
+         [
+          "parser.xxl:1040:23",
           "call",
           1
          ],
@@ -26298,7 +26379,7 @@
          [
           "parser.xxl:1041:15",
           "lit",
-          "emit_temp"
+          "emit_push"
          ],
          [
           "parser.xxl:1041:15",
@@ -26320,141 +26401,263 @@
           1
          ],
          [
-          "parser.xxl:1042:32",
+          "parser.xxl:1043:37",
           "load",
           "this"
          ],
          [
-          "parser.xxl:1042:26",
+          "parser.xxl:1043:24",
           "push"
          ],
          [
-          "parser.xxl:1042:27",
+          "parser.xxl:1043:29",
           "lit",
-          "["
+          "value"
          ],
          [
-          "parser.xxl:1042:26",
+          "parser.xxl:1043:29",
           "push"
          ],
          [
-          "parser.xxl:1042:15",
-          "lit",
-          "emit_lhsop"
-         ],
-         [
-          "parser.xxl:1042:15",
-          "push"
-         ],
-         [
-          "parser.xxl:1042:9",
+          "parser.xxl:1043:25",
           "load",
-          "vmcode"
+          "item"
          ],
          [
-          "parser.xxl:1042:15",
+          "parser.xxl:1043:29",
           "binop",
           "."
          ],
          [
-          "parser.xxl:1042:26",
+          "parser.xxl:1043:24",
+          "push"
+         ],
+         [
+          "parser.xxl:1043:15",
+          "lit",
+          "emit_lit"
+         ],
+         [
+          "parser.xxl:1043:15",
+          "push"
+         ],
+         [
+          "parser.xxl:1043:9",
+          "load",
+          "vmcode"
+         ],
+         [
+          "parser.xxl:1043:15",
+          "binop",
+          "."
+         ],
+         [
+          "parser.xxl:1043:24",
           "call",
           2
          ],
          [
-          "parser.xxl:1034:5",
+          "parser.xxl:1044:26",
+          "load",
+          "this"
+         ],
+         [
+          "parser.xxl:1044:25",
+          "push"
+         ],
+         [
+          "parser.xxl:1044:15",
+          "lit",
+          "emit_push"
+         ],
+         [
+          "parser.xxl:1044:15",
+          "push"
+         ],
+         [
+          "parser.xxl:1044:9",
+          "load",
+          "vmcode"
+         ],
+         [
+          "parser.xxl:1044:15",
+          "binop",
+          "."
+         ],
+         [
+          "parser.xxl:1044:25",
+          "call",
+          1
+         ],
+         [
+          "parser.xxl:1045:26",
+          "load",
+          "this"
+         ],
+         [
+          "parser.xxl:1045:25",
+          "push"
+         ],
+         [
+          "parser.xxl:1045:15",
+          "lit",
+          "emit_temp"
+         ],
+         [
+          "parser.xxl:1045:15",
+          "push"
+         ],
+         [
+          "parser.xxl:1045:9",
+          "load",
+          "vmcode"
+         ],
+         [
+          "parser.xxl:1045:15",
+          "binop",
+          "."
+         ],
+         [
+          "parser.xxl:1045:25",
+          "call",
+          1
+         ],
+         [
+          "parser.xxl:1046:32",
+          "load",
+          "this"
+         ],
+         [
+          "parser.xxl:1046:26",
+          "push"
+         ],
+         [
+          "parser.xxl:1046:27",
+          "lit",
+          "["
+         ],
+         [
+          "parser.xxl:1046:26",
+          "push"
+         ],
+         [
+          "parser.xxl:1046:15",
+          "lit",
+          "emit_lhsop"
+         ],
+         [
+          "parser.xxl:1046:15",
+          "push"
+         ],
+         [
+          "parser.xxl:1046:9",
+          "load",
+          "vmcode"
+         ],
+         [
+          "parser.xxl:1046:15",
+          "binop",
+          "."
+         ],
+         [
+          "parser.xxl:1046:26",
+          "call",
+          2
+         ],
+         [
+          "parser.xxl:1038:5",
           "return"
          ]
         ]
        ],
        [
-        "parser.xxl:1033:27",
+        "parser.xxl:1037:27",
         "push"
        ],
        [
-        "parser.xxl:1033:18",
+        "parser.xxl:1037:18",
         "lit",
         "for_each"
        ],
        [
-        "parser.xxl:1033:18",
+        "parser.xxl:1037:18",
         "push"
        ],
        [
-        "parser.xxl:1033:12",
+        "parser.xxl:1037:12",
         "lit",
         "first"
        ],
        [
-        "parser.xxl:1033:12",
+        "parser.xxl:1037:12",
         "push"
        ],
        [
-        "parser.xxl:1033:8",
+        "parser.xxl:1037:8",
         "load",
         "this"
        ],
        [
-        "parser.xxl:1033:12",
+        "parser.xxl:1037:12",
         "binop",
         "."
        ],
        [
-        "parser.xxl:1033:18",
+        "parser.xxl:1037:18",
         "binop",
         "."
        ],
        [
-        "parser.xxl:1033:27",
+        "parser.xxl:1037:27",
         "call",
         1
        ],
        [
-        "parser.xxl:1045:29",
+        "parser.xxl:1049:29",
         "load",
         "this"
        ],
        [
-        "parser.xxl:1045:28",
+        "parser.xxl:1049:28",
         "push"
        ],
        [
-        "parser.xxl:1045:14",
+        "parser.xxl:1049:14",
         "lit",
         "emit_pop_temp"
        ],
        [
-        "parser.xxl:1045:14",
+        "parser.xxl:1049:14",
         "push"
        ],
        [
-        "parser.xxl:1045:8",
+        "parser.xxl:1049:8",
         "load",
         "vmcode"
        ],
        [
-        "parser.xxl:1045:14",
+        "parser.xxl:1049:14",
         "binop",
         "."
        ],
        [
-        "parser.xxl:1045:28",
+        "parser.xxl:1049:28",
         "call",
         1
        ],
        [
-        "parser.xxl:1029:9",
+        "parser.xxl:1033:9",
         "return"
        ]
       ]
      ],
      [
-      "parser.xxl:1029:9",
+      "parser.xxl:1033:9",
       "call",
       0
      ],
      [
-      "parser.xxl:1021:12",
+      "parser.xxl:1025:12",
       "return"
      ]
     ]
@@ -26563,442 +26766,327 @@
     "."
    ],
    [
-    "parser.xxl:1050:31",
+    "parser.xxl:1054:31",
     "lit",
     "LBrace"
    ],
    [
-    "parser.xxl:1050:31",
+    "parser.xxl:1054:31",
     "push"
    ],
    [
-    "parser.xxl:1050:30",
+    "parser.xxl:1054:30",
     "load",
     "p"
    ],
    [
-    "parser.xxl:1050:31",
+    "parser.xxl:1054:31",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1050:24",
+    "parser.xxl:1054:24",
     "push"
    ],
    [
-    "parser.xxl:1050:25",
+    "parser.xxl:1054:25",
     "lit",
     "{"
    ],
    [
-    "parser.xxl:1050:24",
+    "parser.xxl:1054:24",
     "push"
    ],
    [
-    "parser.xxl:1050:7",
+    "parser.xxl:1054:7",
     "lit",
     "add_symbol_class"
    ],
    [
-    "parser.xxl:1050:7",
+    "parser.xxl:1054:7",
     "push"
    ],
    [
-    "parser.xxl:1050:6",
+    "parser.xxl:1054:6",
     "load",
     "p"
    ],
    [
-    "parser.xxl:1050:7",
+    "parser.xxl:1054:7",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1050:24",
+    "parser.xxl:1054:24",
     "call",
     2
    ],
    [
-    "parser.xxl:1052:24",
+    "parser.xxl:1056:24",
     "new",
     "Dict"
    ],
    [
-    "parser.xxl:1053:9",
+    "parser.xxl:1057:9",
     "lit",
     "Var"
    ],
    [
-    "parser.xxl:1052:24",
+    "parser.xxl:1056:24",
     "push"
    ],
    [
-    "parser.xxl:1052:24",
+    "parser.xxl:1056:24",
     "lit",
     "name"
    ],
    [
-    "parser.xxl:1052:24",
+    "parser.xxl:1056:24",
     "push"
    ],
    [
-    "parser.xxl:1052:24",
+    "parser.xxl:1056:24",
     "temp"
    ],
    [
-    "parser.xxl:1052:24",
+    "parser.xxl:1056:24",
     "lhsop",
     "["
    ],
    [
-    "parser.xxl:1054:11",
+    "parser.xxl:1058:11",
     "new",
     "List"
    ],
    [
-    "parser.xxl:1054:13",
+    "parser.xxl:1058:13",
     "lit",
     "Stmt"
    ],
    [
-    "parser.xxl:1054:13",
+    "parser.xxl:1058:13",
     "push"
    ],
    [
-    "parser.xxl:1054:12",
+    "parser.xxl:1058:12",
     "load",
     "p"
    ],
    [
-    "parser.xxl:1054:13",
+    "parser.xxl:1058:13",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1054:11",
+    "parser.xxl:1058:11",
     "append"
    ],
    [
-    "parser.xxl:1054:11",
+    "parser.xxl:1058:11",
     "pop_temp"
    ],
    [
-    "parser.xxl:1052:24",
+    "parser.xxl:1056:24",
     "push"
    ],
    [
-    "parser.xxl:1052:24",
+    "parser.xxl:1056:24",
     "lit",
     "supers"
    ],
    [
-    "parser.xxl:1052:24",
+    "parser.xxl:1056:24",
     "push"
    ],
    [
-    "parser.xxl:1052:24",
+    "parser.xxl:1056:24",
     "temp"
    ],
    [
-    "parser.xxl:1052:24",
+    "parser.xxl:1056:24",
     "lhsop",
     "["
    ],
    [
-    "parser.xxl:1055:12",
+    "parser.xxl:1059:12",
     "new",
     "Dict"
    ],
    [
-    "parser.xxl:1056:11",
+    "parser.xxl:1060:11",
     "close",
     [
      [
-      "parser.xxl:1056:11",
+      "parser.xxl:1060:11",
       "args",
       [
        "this"
       ]
      ],
      [
-      "parser.xxl:1056:36",
+      "parser.xxl:1060:36",
       "lit",
       "var"
      ],
      [
-      "parser.xxl:1056:35",
+      "parser.xxl:1060:35",
       "push"
      ],
      [
-      "parser.xxl:1056:29",
+      "parser.xxl:1060:29",
       "load",
       "return"
      ],
      [
-      "parser.xxl:1056:35",
+      "parser.xxl:1060:35",
       "call",
       1
      ],
      [
-      "parser.xxl:1056:11",
+      "parser.xxl:1060:11",
       "return"
      ]
     ]
    ],
    [
-    "parser.xxl:1055:12",
+    "parser.xxl:1059:12",
     "push"
    ],
    [
-    "parser.xxl:1055:12",
+    "parser.xxl:1059:12",
     "lit",
     "id"
    ],
    [
-    "parser.xxl:1055:12",
+    "parser.xxl:1059:12",
     "push"
    ],
    [
-    "parser.xxl:1055:12",
+    "parser.xxl:1059:12",
     "temp"
    ],
    [
-    "parser.xxl:1055:12",
+    "parser.xxl:1059:12",
     "lhsop",
     "["
    ],
    [
-    "parser.xxl:1057:12",
+    "parser.xxl:1061:12",
     "close",
     [
      [
-      "parser.xxl:1057:12",
+      "parser.xxl:1061:12",
       "args",
       [
        "this"
       ]
      ],
      [
-      "parser.xxl:1058:4",
+      "parser.xxl:1062:4",
       "vars",
       [
        "n"
       ]
      ],
      [
-      "parser.xxl:1059:4",
+      "parser.xxl:1063:4",
       "vars",
       [
        "t"
       ]
      ],
      [
-      "parser.xxl:1060:17",
+      "parser.xxl:1064:17",
       "lit",
       "statement"
      ],
      [
-      "parser.xxl:1060:8",
+      "parser.xxl:1064:8",
       "push"
      ],
      [
-      "parser.xxl:1060:8",
+      "parser.xxl:1064:8",
       "lit",
       "arity"
      ],
      [
-      "parser.xxl:1060:8",
+      "parser.xxl:1064:8",
       "push"
      ],
      [
-      "parser.xxl:1060:4",
+      "parser.xxl:1064:4",
       "load",
       "this"
      ],
      [
-      "parser.xxl:1060:8",
+      "parser.xxl:1064:8",
       "lhsop",
       "."
      ],
      [
-      "parser.xxl:1061:17",
+      "parser.xxl:1065:17",
       "new",
       "List"
      ],
      [
-      "parser.xxl:1061:17",
+      "parser.xxl:1065:17",
       "pop_temp"
      ],
      [
-      "parser.xxl:1061:8",
+      "parser.xxl:1065:8",
       "push"
      ],
      [
-      "parser.xxl:1061:8",
+      "parser.xxl:1065:8",
       "lit",
       "first"
      ],
      [
-      "parser.xxl:1061:8",
+      "parser.xxl:1065:8",
       "push"
      ],
      [
-      "parser.xxl:1061:4",
+      "parser.xxl:1065:4",
       "load",
       "this"
      ],
      [
-      "parser.xxl:1061:8",
+      "parser.xxl:1065:8",
       "lhsop",
       "."
      ],
      [
-      "parser.xxl:1062:4",
+      "parser.xxl:1066:4",
       "close",
       [
        [
-        "parser.xxl:1062:4",
+        "parser.xxl:1066:4",
         "scope",
         "leave_while"
        ],
        [
-        "parser.xxl:1062:11",
+        "parser.xxl:1066:11",
         "load",
         "true"
        ],
        [
-        "parser.xxl:1062:4",
+        "parser.xxl:1066:4",
         "jumpe",
         6
        ],
        [
-        "parser.xxl:1062:17",
+        "parser.xxl:1066:17",
         "close",
         [
          [
-          "parser.xxl:1062:17",
+          "parser.xxl:1066:17",
           "scope",
           "continue_while"
          ],
          [
-          "parser.xxl:1063:13",
-          "lit",
-          "token"
-         ],
-         [
-          "parser.xxl:1063:13",
-          "push"
-         ],
-         [
-          "parser.xxl:1063:12",
-          "load",
-          "p"
-         ],
-         [
-          "parser.xxl:1063:13",
-          "binop",
-          "."
-         ],
-         [
-          "parser.xxl:1063:8",
-          "store",
-          "n"
-         ],
-         [
-          "parser.xxl:1064:23",
-          "lit",
-          "name"
-         ],
-         [
-          "parser.xxl:1064:20",
-          "push"
-         ],
-         [
-          "parser.xxl:1064:13",
-          "lit",
-          "arity"
-         ],
-         [
-          "parser.xxl:1064:13",
-          "push"
-         ],
-         [
-          "parser.xxl:1064:12",
-          "load",
-          "n"
-         ],
-         [
-          "parser.xxl:1064:13",
-          "binop",
-          "."
-         ],
-         [
-          "parser.xxl:1064:20",
-          "binop",
-          "!="
-         ],
-         [
-          "parser.xxl:1064:8",
-          "jumpe",
-          16
-         ],
-         [
-          "parser.xxl:1064:31",
-          "close",
-          [
-           [
-            "parser.xxl:1064:31",
-            "scope",
-            null
-           ],
-           [
-            "parser.xxl:1065:13",
-            "lit",
-            "Expected a new variable name."
-           ],
-           [
-            "parser.xxl:1065:12",
-            "push"
-           ],
-           [
-            "parser.xxl:1065:6",
-            "lit",
-            "error"
-           ],
-           [
-            "parser.xxl:1065:6",
-            "push"
-           ],
-           [
-            "parser.xxl:1065:5",
-            "load",
-            "n"
-           ],
-           [
-            "parser.xxl:1065:6",
-            "binop",
-            "."
-           ],
-           [
-            "parser.xxl:1065:12",
-            "call",
-            1
-           ],
-           [
-            "parser.xxl:1064:31",
-            "return"
-           ]
-          ]
-         ],
-         [
-          "parser.xxl:1064:31",
-          "call",
-          0
-         ],
-         [
           "parser.xxl:1067:13",
           "lit",
-          "reserved"
+          "token"
          ],
          [
           "parser.xxl:1067:13",
@@ -27007,7 +27095,7 @@
          [
           "parser.xxl:1067:12",
           "load",
-          "n"
+          "p"
          ],
          [
           "parser.xxl:1067:13",
@@ -27016,748 +27104,863 @@
          ],
          [
           "parser.xxl:1067:8",
-          "jumpe",
-          23
+          "store",
+          "n"
          ],
          [
-          "parser.xxl:1067:24",
+          "parser.xxl:1068:23",
+          "lit",
+          "name"
+         ],
+         [
+          "parser.xxl:1068:20",
+          "push"
+         ],
+         [
+          "parser.xxl:1068:13",
+          "lit",
+          "arity"
+         ],
+         [
+          "parser.xxl:1068:13",
+          "push"
+         ],
+         [
+          "parser.xxl:1068:12",
+          "load",
+          "n"
+         ],
+         [
+          "parser.xxl:1068:13",
+          "binop",
+          "."
+         ],
+         [
+          "parser.xxl:1068:20",
+          "binop",
+          "!="
+         ],
+         [
+          "parser.xxl:1068:8",
+          "jumpe",
+          16
+         ],
+         [
+          "parser.xxl:1068:31",
           "close",
           [
            [
-            "parser.xxl:1067:24",
+            "parser.xxl:1068:31",
             "scope",
             null
            ],
            [
-            "parser.xxl:1068:35",
+            "parser.xxl:1069:13",
             "lit",
-            "' reserved."
+            "Expected a new variable name."
            ],
            [
-            "parser.xxl:1068:33",
+            "parser.xxl:1069:12",
             "push"
            ],
            [
-            "parser.xxl:1068:26",
-            "lit",
-            "value"
-           ],
-           [
-            "parser.xxl:1068:26",
-            "push"
-           ],
-           [
-            "parser.xxl:1068:20",
-            "lit",
-            "token"
-           ],
-           [
-            "parser.xxl:1068:20",
-            "push"
-           ],
-           [
-            "parser.xxl:1068:19",
-            "load",
-            "p"
-           ],
-           [
-            "parser.xxl:1068:20",
-            "binop",
-            "."
-           ],
-           [
-            "parser.xxl:1068:26",
-            "binop",
-            "."
-           ],
-           [
-            "parser.xxl:1068:17",
-            "push"
-           ],
-           [
-            "parser.xxl:1068:13",
-            "lit",
-            "'"
-           ],
-           [
-            "parser.xxl:1068:17",
-            "binop",
-            "+"
-           ],
-           [
-            "parser.xxl:1068:33",
-            "binop",
-            "+"
-           ],
-           [
-            "parser.xxl:1068:12",
-            "push"
-           ],
-           [
-            "parser.xxl:1068:6",
+            "parser.xxl:1069:6",
             "lit",
             "error"
            ],
            [
-            "parser.xxl:1068:6",
+            "parser.xxl:1069:6",
             "push"
            ],
            [
-            "parser.xxl:1068:5",
+            "parser.xxl:1069:5",
             "load",
             "n"
            ],
            [
-            "parser.xxl:1068:6",
+            "parser.xxl:1069:6",
             "binop",
             "."
            ],
            [
-            "parser.xxl:1068:12",
+            "parser.xxl:1069:12",
             "call",
             1
            ],
            [
-            "parser.xxl:1067:24",
+            "parser.xxl:1068:31",
             "return"
            ]
           ]
          ],
          [
-          "parser.xxl:1067:24",
+          "parser.xxl:1068:31",
           "call",
           0
          ],
          [
-          "parser.xxl:1070:17",
+          "parser.xxl:1071:13",
+          "lit",
+          "reserved"
+         ],
+         [
+          "parser.xxl:1071:13",
+          "push"
+         ],
+         [
+          "parser.xxl:1071:12",
           "load",
           "n"
          ],
          [
-          "parser.xxl:1070:16",
-          "push"
-         ],
-         [
-          "parser.xxl:1070:9",
-          "lit",
-          "define"
-         ],
-         [
-          "parser.xxl:1070:9",
-          "push"
-         ],
-         [
-          "parser.xxl:1070:8",
-          "load",
-          "p"
-         ],
-         [
-          "parser.xxl:1070:9",
+          "parser.xxl:1071:13",
           "binop",
           "."
-         ],
-         [
-          "parser.xxl:1070:16",
-          "call",
-          1
-         ],
-         [
-          "parser.xxl:1071:26",
-          "load",
-          "n"
-         ],
-         [
-          "parser.xxl:1071:25",
-          "push"
-         ],
-         [
-          "parser.xxl:1071:18",
-          "lit",
-          "append"
-         ],
-         [
-          "parser.xxl:1071:18",
-          "push"
-         ],
-         [
-          "parser.xxl:1071:12",
-          "lit",
-          "first"
-         ],
-         [
-          "parser.xxl:1071:12",
-          "push"
          ],
          [
           "parser.xxl:1071:8",
-          "load",
-          "this"
-         ],
-         [
-          "parser.xxl:1071:12",
-          "binop",
-          "."
-         ],
-         [
-          "parser.xxl:1071:18",
-          "binop",
-          "."
-         ],
-         [
-          "parser.xxl:1071:25",
-          "call",
-          1
-         ],
-         [
-          "parser.xxl:1072:9",
-          "lit",
-          "advance"
-         ],
-         [
-          "parser.xxl:1072:9",
-          "push"
-         ],
-         [
-          "parser.xxl:1072:8",
-          "load",
-          "p"
-         ],
-         [
-          "parser.xxl:1072:9",
-          "binop",
-          "."
-         ],
-         [
-          "parser.xxl:1072:17",
-          "call",
-          0
-         ],
-         [
-          "parser.xxl:1073:28",
-          "lit",
-          "="
-         ],
-         [
-          "parser.xxl:1073:25",
-          "push"
-         ],
-         [
-          "parser.xxl:1073:19",
-          "lit",
-          "id"
-         ],
-         [
-          "parser.xxl:1073:19",
-          "push"
-         ],
-         [
-          "parser.xxl:1073:13",
-          "lit",
-          "token"
-         ],
-         [
-          "parser.xxl:1073:13",
-          "push"
-         ],
-         [
-          "parser.xxl:1073:12",
-          "load",
-          "p"
-         ],
-         [
-          "parser.xxl:1073:13",
-          "binop",
-          "."
-         ],
-         [
-          "parser.xxl:1073:19",
-          "binop",
-          "."
-         ],
-         [
-          "parser.xxl:1073:22",
-          "call",
-          0
-         ],
-         [
-          "parser.xxl:1073:25",
-          "binop",
-          "=="
-         ],
-         [
-          "parser.xxl:1073:8",
           "jumpe",
-          59
+          23
          ],
          [
-          "parser.xxl:1073:33",
+          "parser.xxl:1071:24",
           "close",
           [
            [
-            "parser.xxl:1073:33",
+            "parser.xxl:1071:24",
             "scope",
             null
            ],
            [
-            "parser.xxl:1074:10",
+            "parser.xxl:1072:35",
+            "lit",
+            "' reserved."
+           ],
+           [
+            "parser.xxl:1072:33",
+            "push"
+           ],
+           [
+            "parser.xxl:1072:26",
+            "lit",
+            "value"
+           ],
+           [
+            "parser.xxl:1072:26",
+            "push"
+           ],
+           [
+            "parser.xxl:1072:20",
             "lit",
             "token"
            ],
            [
-            "parser.xxl:1074:10",
+            "parser.xxl:1072:20",
             "push"
            ],
            [
-            "parser.xxl:1074:9",
+            "parser.xxl:1072:19",
             "load",
             "p"
            ],
            [
-            "parser.xxl:1074:10",
+            "parser.xxl:1072:20",
             "binop",
             "."
            ],
            [
-            "parser.xxl:1074:5",
-            "store",
-            "t"
-           ],
-           [
-            "parser.xxl:1075:15",
-            "lit",
-            "="
-           ],
-           [
-            "parser.xxl:1075:14",
-            "push"
-           ],
-           [
-            "parser.xxl:1075:6",
-            "lit",
-            "advance"
-           ],
-           [
-            "parser.xxl:1075:6",
-            "push"
-           ],
-           [
-            "parser.xxl:1075:5",
-            "load",
-            "p"
-           ],
-           [
-            "parser.xxl:1075:6",
+            "parser.xxl:1072:26",
             "binop",
             "."
            ],
            [
-            "parser.xxl:1075:14",
-            "call",
-            1
+            "parser.xxl:1072:17",
+            "push"
            ],
            [
-            "parser.xxl:1076:15",
+            "parser.xxl:1072:13",
+            "lit",
+            "'"
+           ],
+           [
+            "parser.xxl:1072:17",
+            "binop",
+            "+"
+           ],
+           [
+            "parser.xxl:1072:33",
+            "binop",
+            "+"
+           ],
+           [
+            "parser.xxl:1072:12",
+            "push"
+           ],
+           [
+            "parser.xxl:1072:6",
+            "lit",
+            "error"
+           ],
+           [
+            "parser.xxl:1072:6",
+            "push"
+           ],
+           [
+            "parser.xxl:1072:5",
             "load",
             "n"
            ],
            [
-            "parser.xxl:1076:6",
-            "push"
-           ],
-           [
-            "parser.xxl:1076:6",
-            "lit",
-            "first"
-           ],
-           [
-            "parser.xxl:1076:6",
-            "push"
-           ],
-           [
-            "parser.xxl:1076:5",
-            "load",
-            "t"
-           ],
-           [
-            "parser.xxl:1076:6",
-            "lhsop",
-            "."
-           ],
-           [
-            "parser.xxl:1077:29",
-            "lit",
-            0
-           ],
-           [
-            "parser.xxl:1077:28",
-            "push"
-           ],
-           [
-            "parser.xxl:1077:17",
-            "lit",
-            "expression"
-           ],
-           [
-            "parser.xxl:1077:17",
-            "push"
-           ],
-           [
-            "parser.xxl:1077:16",
-            "load",
-            "p"
-           ],
-           [
-            "parser.xxl:1077:17",
+            "parser.xxl:1072:6",
             "binop",
             "."
            ],
            [
-            "parser.xxl:1077:28",
+            "parser.xxl:1072:12",
             "call",
             1
            ],
            [
-            "parser.xxl:1077:6",
-            "push"
+            "parser.xxl:1071:24",
+            "return"
+           ]
+          ]
+         ],
+         [
+          "parser.xxl:1071:24",
+          "call",
+          0
+         ],
+         [
+          "parser.xxl:1074:17",
+          "load",
+          "n"
+         ],
+         [
+          "parser.xxl:1074:16",
+          "push"
+         ],
+         [
+          "parser.xxl:1074:9",
+          "lit",
+          "define"
+         ],
+         [
+          "parser.xxl:1074:9",
+          "push"
+         ],
+         [
+          "parser.xxl:1074:8",
+          "load",
+          "p"
+         ],
+         [
+          "parser.xxl:1074:9",
+          "binop",
+          "."
+         ],
+         [
+          "parser.xxl:1074:16",
+          "call",
+          1
+         ],
+         [
+          "parser.xxl:1075:26",
+          "load",
+          "n"
+         ],
+         [
+          "parser.xxl:1075:25",
+          "push"
+         ],
+         [
+          "parser.xxl:1075:18",
+          "lit",
+          "append"
+         ],
+         [
+          "parser.xxl:1075:18",
+          "push"
+         ],
+         [
+          "parser.xxl:1075:12",
+          "lit",
+          "first"
+         ],
+         [
+          "parser.xxl:1075:12",
+          "push"
+         ],
+         [
+          "parser.xxl:1075:8",
+          "load",
+          "this"
+         ],
+         [
+          "parser.xxl:1075:12",
+          "binop",
+          "."
+         ],
+         [
+          "parser.xxl:1075:18",
+          "binop",
+          "."
+         ],
+         [
+          "parser.xxl:1075:25",
+          "call",
+          1
+         ],
+         [
+          "parser.xxl:1076:9",
+          "lit",
+          "advance"
+         ],
+         [
+          "parser.xxl:1076:9",
+          "push"
+         ],
+         [
+          "parser.xxl:1076:8",
+          "load",
+          "p"
+         ],
+         [
+          "parser.xxl:1076:9",
+          "binop",
+          "."
+         ],
+         [
+          "parser.xxl:1076:17",
+          "call",
+          0
+         ],
+         [
+          "parser.xxl:1077:28",
+          "lit",
+          "="
+         ],
+         [
+          "parser.xxl:1077:25",
+          "push"
+         ],
+         [
+          "parser.xxl:1077:19",
+          "lit",
+          "id"
+         ],
+         [
+          "parser.xxl:1077:19",
+          "push"
+         ],
+         [
+          "parser.xxl:1077:13",
+          "lit",
+          "token"
+         ],
+         [
+          "parser.xxl:1077:13",
+          "push"
+         ],
+         [
+          "parser.xxl:1077:12",
+          "load",
+          "p"
+         ],
+         [
+          "parser.xxl:1077:13",
+          "binop",
+          "."
+         ],
+         [
+          "parser.xxl:1077:19",
+          "binop",
+          "."
+         ],
+         [
+          "parser.xxl:1077:22",
+          "call",
+          0
+         ],
+         [
+          "parser.xxl:1077:25",
+          "binop",
+          "=="
+         ],
+         [
+          "parser.xxl:1077:8",
+          "jumpe",
+          59
+         ],
+         [
+          "parser.xxl:1077:33",
+          "close",
+          [
+           [
+            "parser.xxl:1077:33",
+            "scope",
+            null
            ],
            [
-            "parser.xxl:1077:6",
+            "parser.xxl:1078:10",
             "lit",
-            "second"
+            "token"
            ],
            [
-            "parser.xxl:1077:6",
+            "parser.xxl:1078:10",
             "push"
            ],
            [
-            "parser.xxl:1077:5",
+            "parser.xxl:1078:9",
             "load",
-            "t"
+            "p"
            ],
            [
-            "parser.xxl:1077:6",
-            "lhsop",
+            "parser.xxl:1078:10",
+            "binop",
             "."
-           ],
-           [
-            "parser.xxl:1078:15",
-            "lit",
-            "binary"
-           ],
-           [
-            "parser.xxl:1078:6",
-            "push"
-           ],
-           [
-            "parser.xxl:1078:6",
-            "lit",
-            "arity"
-           ],
-           [
-            "parser.xxl:1078:6",
-            "push"
            ],
            [
             "parser.xxl:1078:5",
-            "load",
+            "store",
             "t"
-           ],
-           [
-            "parser.xxl:1078:6",
-            "lhsop",
-            "."
-           ],
-           [
-            "parser.xxl:1079:23",
-            "load",
-            "t"
-           ],
-           [
-            "parser.xxl:1079:22",
-            "push"
            ],
            [
             "parser.xxl:1079:15",
             "lit",
-            "append"
+            "="
            ],
            [
-            "parser.xxl:1079:15",
+            "parser.xxl:1079:14",
             "push"
            ],
            [
-            "parser.xxl:1079:9",
+            "parser.xxl:1079:6",
             "lit",
-            "first"
+            "advance"
            ],
            [
-            "parser.xxl:1079:9",
+            "parser.xxl:1079:6",
             "push"
            ],
            [
             "parser.xxl:1079:5",
             "load",
-            "this"
+            "p"
            ],
            [
-            "parser.xxl:1079:9",
+            "parser.xxl:1079:6",
             "binop",
             "."
            ],
            [
-            "parser.xxl:1079:15",
-            "binop",
-            "."
-           ],
-           [
-            "parser.xxl:1079:22",
+            "parser.xxl:1079:14",
             "call",
             1
            ],
            [
-            "parser.xxl:1073:33",
-            "return"
-           ]
-          ]
-         ],
-         [
-          "parser.xxl:1073:33",
-          "call",
-          0
-         ],
-         [
-          "parser.xxl:1081:28",
-          "lit",
-          ","
-         ],
-         [
-          "parser.xxl:1081:25",
-          "push"
-         ],
-         [
-          "parser.xxl:1081:19",
-          "lit",
-          "id"
-         ],
-         [
-          "parser.xxl:1081:19",
-          "push"
-         ],
-         [
-          "parser.xxl:1081:13",
-          "lit",
-          "token"
-         ],
-         [
-          "parser.xxl:1081:13",
-          "push"
-         ],
-         [
-          "parser.xxl:1081:12",
-          "load",
-          "p"
-         ],
-         [
-          "parser.xxl:1081:13",
-          "binop",
-          "."
-         ],
-         [
-          "parser.xxl:1081:19",
-          "binop",
-          "."
-         ],
-         [
-          "parser.xxl:1081:22",
-          "call",
-          0
-         ],
-         [
-          "parser.xxl:1081:25",
-          "binop",
-          "!="
-         ],
-         [
-          "parser.xxl:1081:8",
-          "jumpe",
-          73
-         ],
-         [
-          "parser.xxl:1081:33",
-          "close",
-          [
+            "parser.xxl:1080:15",
+            "load",
+            "n"
+           ],
            [
-            "parser.xxl:1081:33",
-            "scope",
-            null
+            "parser.xxl:1080:6",
+            "push"
+           ],
+           [
+            "parser.xxl:1080:6",
+            "lit",
+            "first"
+           ],
+           [
+            "parser.xxl:1080:6",
+            "push"
+           ],
+           [
+            "parser.xxl:1080:5",
+            "load",
+            "t"
+           ],
+           [
+            "parser.xxl:1080:6",
+            "lhsop",
+            "."
+           ],
+           [
+            "parser.xxl:1081:29",
+            "lit",
+            0
+           ],
+           [
+            "parser.xxl:1081:28",
+            "push"
+           ],
+           [
+            "parser.xxl:1081:17",
+            "lit",
+            "expression"
+           ],
+           [
+            "parser.xxl:1081:17",
+            "push"
+           ],
+           [
+            "parser.xxl:1081:16",
+            "load",
+            "p"
+           ],
+           [
+            "parser.xxl:1081:17",
+            "binop",
+            "."
+           ],
+           [
+            "parser.xxl:1081:28",
+            "call",
+            1
+           ],
+           [
+            "parser.xxl:1081:6",
+            "push"
+           ],
+           [
+            "parser.xxl:1081:6",
+            "lit",
+            "second"
+           ],
+           [
+            "parser.xxl:1081:6",
+            "push"
+           ],
+           [
+            "parser.xxl:1081:5",
+            "load",
+            "t"
+           ],
+           [
+            "parser.xxl:1081:6",
+            "lhsop",
+            "."
+           ],
+           [
+            "parser.xxl:1082:15",
+            "lit",
+            "binary"
+           ],
+           [
+            "parser.xxl:1082:6",
+            "push"
+           ],
+           [
+            "parser.xxl:1082:6",
+            "lit",
+            "arity"
+           ],
+           [
+            "parser.xxl:1082:6",
+            "push"
            ],
            [
             "parser.xxl:1082:5",
             "load",
-            "leave_while"
+            "t"
            ],
            [
-            "parser.xxl:1082:16",
+            "parser.xxl:1082:6",
+            "lhsop",
+            "."
+           ],
+           [
+            "parser.xxl:1083:23",
+            "load",
+            "t"
+           ],
+           [
+            "parser.xxl:1083:22",
+            "push"
+           ],
+           [
+            "parser.xxl:1083:15",
+            "lit",
+            "append"
+           ],
+           [
+            "parser.xxl:1083:15",
+            "push"
+           ],
+           [
+            "parser.xxl:1083:9",
+            "lit",
+            "first"
+           ],
+           [
+            "parser.xxl:1083:9",
+            "push"
+           ],
+           [
+            "parser.xxl:1083:5",
+            "load",
+            "this"
+           ],
+           [
+            "parser.xxl:1083:9",
+            "binop",
+            "."
+           ],
+           [
+            "parser.xxl:1083:15",
+            "binop",
+            "."
+           ],
+           [
+            "parser.xxl:1083:22",
             "call",
-            0
+            1
            ],
            [
-            "parser.xxl:1081:33",
+            "parser.xxl:1077:33",
             "return"
            ]
           ]
          ],
          [
-          "parser.xxl:1081:33",
+          "parser.xxl:1077:33",
           "call",
           0
          ],
          [
-          "parser.xxl:1084:18",
+          "parser.xxl:1085:28",
           "lit",
           ","
          ],
          [
-          "parser.xxl:1084:17",
+          "parser.xxl:1085:25",
           "push"
          ],
          [
-          "parser.xxl:1084:9",
+          "parser.xxl:1085:19",
           "lit",
-          "advance"
+          "id"
          ],
          [
-          "parser.xxl:1084:9",
+          "parser.xxl:1085:19",
           "push"
          ],
          [
-          "parser.xxl:1084:8",
+          "parser.xxl:1085:13",
+          "lit",
+          "token"
+         ],
+         [
+          "parser.xxl:1085:13",
+          "push"
+         ],
+         [
+          "parser.xxl:1085:12",
           "load",
           "p"
          ],
          [
-          "parser.xxl:1084:9",
+          "parser.xxl:1085:13",
           "binop",
           "."
          ],
          [
-          "parser.xxl:1084:17",
+          "parser.xxl:1085:19",
+          "binop",
+          "."
+         ],
+         [
+          "parser.xxl:1085:22",
+          "call",
+          0
+         ],
+         [
+          "parser.xxl:1085:25",
+          "binop",
+          "!="
+         ],
+         [
+          "parser.xxl:1085:8",
+          "jumpe",
+          73
+         ],
+         [
+          "parser.xxl:1085:33",
+          "close",
+          [
+           [
+            "parser.xxl:1085:33",
+            "scope",
+            null
+           ],
+           [
+            "parser.xxl:1086:5",
+            "load",
+            "leave_while"
+           ],
+           [
+            "parser.xxl:1086:16",
+            "call",
+            0
+           ],
+           [
+            "parser.xxl:1085:33",
+            "return"
+           ]
+          ]
+         ],
+         [
+          "parser.xxl:1085:33",
+          "call",
+          0
+         ],
+         [
+          "parser.xxl:1088:18",
+          "lit",
+          ","
+         ],
+         [
+          "parser.xxl:1088:17",
+          "push"
+         ],
+         [
+          "parser.xxl:1088:9",
+          "lit",
+          "advance"
+         ],
+         [
+          "parser.xxl:1088:9",
+          "push"
+         ],
+         [
+          "parser.xxl:1088:8",
+          "load",
+          "p"
+         ],
+         [
+          "parser.xxl:1088:9",
+          "binop",
+          "."
+         ],
+         [
+          "parser.xxl:1088:17",
           "call",
           1
          ],
          [
-          "parser.xxl:1062:17",
+          "parser.xxl:1066:17",
           "return"
          ]
         ]
        ],
        [
-        "parser.xxl:1062:17",
+        "parser.xxl:1066:17",
         "call",
         0
        ],
        [
-        "parser.xxl:1062:4",
+        "parser.xxl:1066:4",
         "jrst",
         1
        ],
        [
-        "parser.xxl:1062:4",
+        "parser.xxl:1066:4",
         "return"
        ]
       ]
      ],
      [
-      "parser.xxl:1062:4",
+      "parser.xxl:1066:4",
       "call",
       0
      ],
      [
-      "parser.xxl:1086:14",
+      "parser.xxl:1090:14",
       "lit",
       ";"
      ],
      [
-      "parser.xxl:1086:13",
+      "parser.xxl:1090:13",
       "push"
      ],
      [
-      "parser.xxl:1086:5",
+      "parser.xxl:1090:5",
       "lit",
       "advance"
      ],
      [
-      "parser.xxl:1086:5",
+      "parser.xxl:1090:5",
       "push"
      ],
      [
-      "parser.xxl:1086:4",
+      "parser.xxl:1090:4",
       "load",
       "p"
      ],
      [
-      "parser.xxl:1086:5",
+      "parser.xxl:1090:5",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1086:13",
+      "parser.xxl:1090:13",
       "call",
       1
      ],
      [
-      "parser.xxl:1087:11",
+      "parser.xxl:1091:11",
       "load",
       "this"
      ],
      [
-      "parser.xxl:1087:10",
+      "parser.xxl:1091:10",
       "push"
      ],
      [
-      "parser.xxl:1087:4",
+      "parser.xxl:1091:4",
       "load",
       "return"
      ],
      [
-      "parser.xxl:1087:10",
+      "parser.xxl:1091:10",
       "call",
       1
      ],
      [
-      "parser.xxl:1057:12",
+      "parser.xxl:1061:12",
       "return"
      ]
     ]
    ],
    [
-    "parser.xxl:1055:12",
+    "parser.xxl:1059:12",
     "push"
    ],
    [
-    "parser.xxl:1055:12",
+    "parser.xxl:1059:12",
     "lit",
     "std"
    ],
    [
-    "parser.xxl:1055:12",
+    "parser.xxl:1059:12",
     "push"
    ],
    [
-    "parser.xxl:1055:12",
+    "parser.xxl:1059:12",
     "temp"
    ],
    [
-    "parser.xxl:1055:12",
+    "parser.xxl:1059:12",
     "lhsop",
     "["
    ],
    [
-    "parser.xxl:1089:12",
+    "parser.xxl:1093:12",
     "close",
     [
      [
-      "parser.xxl:1089:12",
+      "parser.xxl:1093:12",
       "args",
       [
        "this",
@@ -27765,1365 +27968,1269 @@
       ]
      ],
      [
-      "parser.xxl:1090:4",
+      "parser.xxl:1094:4",
       "vars",
       [
        "vars"
       ]
      ],
      [
-      "parser.xxl:1090:15",
+      "parser.xxl:1094:15",
       "new",
       "List"
      ],
      [
-      "parser.xxl:1090:15",
+      "parser.xxl:1094:15",
       "pop_temp"
      ],
      [
-      "parser.xxl:1090:4",
+      "parser.xxl:1094:4",
       "store",
       "vars"
      ],
      [
-      "parser.xxl:1092:8",
+      "parser.xxl:1096:8",
       "close",
       [
        [
-        "parser.xxl:1092:8",
+        "parser.xxl:1096:8",
         "args",
         [
          "item"
         ]
        ],
        [
-        "parser.xxl:1093:23",
+        "parser.xxl:1097:23",
         "lit",
         "="
        ],
        [
-        "parser.xxl:1093:20",
+        "parser.xxl:1097:20",
         "push"
        ],
        [
-        "parser.xxl:1093:13",
+        "parser.xxl:1097:13",
         "lit",
         "value"
        ],
        [
-        "parser.xxl:1093:13",
+        "parser.xxl:1097:13",
         "push"
        ],
        [
-        "parser.xxl:1093:9",
+        "parser.xxl:1097:9",
         "load",
         "item"
        ],
        [
-        "parser.xxl:1093:13",
+        "parser.xxl:1097:13",
         "binop",
         "."
        ],
        [
-        "parser.xxl:1093:20",
+        "parser.xxl:1097:20",
         "binop",
         "!="
        ],
        [
-        "parser.xxl:1093:5",
+        "parser.xxl:1097:5",
         "jumpe",
         11
        ],
        [
-        "parser.xxl:1093:28",
+        "parser.xxl:1097:28",
         "close",
         [
          [
-          "parser.xxl:1093:28",
+          "parser.xxl:1097:28",
           "scope",
           null
          ],
          [
-          "parser.xxl:1094:25",
+          "parser.xxl:1098:25",
           "lit",
           "value"
          ],
          [
-          "parser.xxl:1094:25",
+          "parser.xxl:1098:25",
           "push"
          ],
          [
-          "parser.xxl:1094:21",
+          "parser.xxl:1098:21",
           "load",
           "item"
          ],
          [
-          "parser.xxl:1094:25",
+          "parser.xxl:1098:25",
           "binop",
           "."
          ],
          [
-          "parser.xxl:1094:20",
+          "parser.xxl:1098:20",
           "push"
          ],
          [
-          "parser.xxl:1094:13",
+          "parser.xxl:1098:13",
           "lit",
           "append"
          ],
          [
-          "parser.xxl:1094:13",
+          "parser.xxl:1098:13",
           "push"
          ],
          [
-          "parser.xxl:1094:9",
+          "parser.xxl:1098:9",
           "load",
           "vars"
          ],
          [
-          "parser.xxl:1094:13",
+          "parser.xxl:1098:13",
           "binop",
           "."
          ],
          [
-          "parser.xxl:1094:20",
+          "parser.xxl:1098:20",
           "call",
           1
          ],
          [
-          "parser.xxl:1093:28",
+          "parser.xxl:1097:28",
           "return"
          ]
         ]
        ],
        [
-        "parser.xxl:1093:28",
+        "parser.xxl:1097:28",
         "call",
         0
        ],
        [
-        "parser.xxl:1092:8",
+        "parser.xxl:1096:8",
         "return"
        ]
       ]
      ],
      [
-      "parser.xxl:1091:23",
+      "parser.xxl:1095:23",
       "push"
      ],
      [
-      "parser.xxl:1091:14",
+      "parser.xxl:1095:14",
       "lit",
       "for_each"
      ],
      [
-      "parser.xxl:1091:14",
+      "parser.xxl:1095:14",
       "push"
      ],
      [
-      "parser.xxl:1091:8",
+      "parser.xxl:1095:8",
       "lit",
       "first"
      ],
      [
-      "parser.xxl:1091:8",
+      "parser.xxl:1095:8",
       "push"
      ],
      [
-      "parser.xxl:1091:4",
+      "parser.xxl:1095:4",
       "load",
       "this"
      ],
      [
-      "parser.xxl:1091:8",
+      "parser.xxl:1095:8",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1091:14",
+      "parser.xxl:1095:14",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1091:23",
+      "parser.xxl:1095:23",
       "call",
       1
      ],
      [
-      "parser.xxl:1098:27",
+      "parser.xxl:1102:27",
       "load",
       "this"
      ],
      [
-      "parser.xxl:1098:20",
+      "parser.xxl:1102:20",
       "push"
      ],
      [
-      "parser.xxl:1098:21",
+      "parser.xxl:1102:21",
       "load",
       "vars"
      ],
      [
-      "parser.xxl:1098:20",
+      "parser.xxl:1102:20",
       "push"
      ],
      [
-      "parser.xxl:1098:10",
+      "parser.xxl:1102:10",
       "lit",
       "emit_vars"
      ],
      [
-      "parser.xxl:1098:10",
+      "parser.xxl:1102:10",
       "push"
      ],
      [
-      "parser.xxl:1098:4",
+      "parser.xxl:1102:4",
       "load",
       "vmcode"
      ],
      [
-      "parser.xxl:1098:10",
+      "parser.xxl:1102:10",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1098:20",
+      "parser.xxl:1102:20",
       "call",
       2
      ],
      [
-      "parser.xxl:1100:8",
+      "parser.xxl:1104:8",
       "close",
       [
        [
-        "parser.xxl:1100:8",
+        "parser.xxl:1104:8",
         "args",
         [
          "item"
         ]
        ],
        [
-        "parser.xxl:1101:23",
+        "parser.xxl:1105:23",
         "lit",
         "="
        ],
        [
-        "parser.xxl:1101:20",
+        "parser.xxl:1105:20",
         "push"
        ],
        [
-        "parser.xxl:1101:13",
+        "parser.xxl:1105:13",
         "lit",
         "value"
        ],
        [
-        "parser.xxl:1101:13",
+        "parser.xxl:1105:13",
         "push"
        ],
        [
-        "parser.xxl:1101:9",
+        "parser.xxl:1105:9",
         "load",
         "item"
        ],
        [
-        "parser.xxl:1101:13",
+        "parser.xxl:1105:13",
         "binop",
         "."
        ],
        [
-        "parser.xxl:1101:20",
+        "parser.xxl:1105:20",
         "binop",
         "=="
        ],
        [
-        "parser.xxl:1101:5",
+        "parser.xxl:1105:5",
         "jumpe",
         11
        ],
        [
-        "parser.xxl:1101:28",
+        "parser.xxl:1105:28",
         "close",
         [
          [
-          "parser.xxl:1101:28",
+          "parser.xxl:1105:28",
           "scope",
           null
          ],
          [
-          "parser.xxl:1102:25",
+          "parser.xxl:1106:25",
           "load",
           "vmcode"
          ],
          [
-          "parser.xxl:1102:24",
+          "parser.xxl:1106:24",
           "push"
          ],
          [
-          "parser.xxl:1102:20",
+          "parser.xxl:1106:20",
           "lit",
           "gen"
          ],
          [
-          "parser.xxl:1102:20",
+          "parser.xxl:1106:20",
           "push"
          ],
          [
-          "parser.xxl:1102:13",
+          "parser.xxl:1106:13",
           "lit",
           "second"
          ],
          [
-          "parser.xxl:1102:13",
+          "parser.xxl:1106:13",
           "push"
          ],
          [
-          "parser.xxl:1102:9",
+          "parser.xxl:1106:9",
           "load",
           "item"
          ],
          [
-          "parser.xxl:1102:13",
+          "parser.xxl:1106:13",
           "binop",
           "."
          ],
          [
-          "parser.xxl:1102:20",
+          "parser.xxl:1106:20",
           "binop",
           "."
          ],
          [
-          "parser.xxl:1102:24",
+          "parser.xxl:1106:24",
           "call",
           1
          ],
          [
-          "parser.xxl:1103:45",
+          "parser.xxl:1107:45",
           "load",
           "this"
          ],
          [
-          "parser.xxl:1103:26",
+          "parser.xxl:1107:26",
           "push"
          ],
          [
-          "parser.xxl:1103:37",
+          "parser.xxl:1107:37",
           "lit",
           "value"
          ],
          [
-          "parser.xxl:1103:37",
+          "parser.xxl:1107:37",
           "push"
          ],
          [
-          "parser.xxl:1103:31",
+          "parser.xxl:1107:31",
           "lit",
           "first"
          ],
          [
-          "parser.xxl:1103:31",
+          "parser.xxl:1107:31",
           "push"
          ],
          [
-          "parser.xxl:1103:27",
+          "parser.xxl:1107:27",
           "load",
           "item"
          ],
          [
-          "parser.xxl:1103:31",
+          "parser.xxl:1107:31",
           "binop",
           "."
          ],
          [
-          "parser.xxl:1103:37",
+          "parser.xxl:1107:37",
           "binop",
           "."
          ],
          [
-          "parser.xxl:1103:26",
+          "parser.xxl:1107:26",
           "push"
          ],
          [
-          "parser.xxl:1103:15",
+          "parser.xxl:1107:15",
           "lit",
           "emit_store"
          ],
          [
-          "parser.xxl:1103:15",
+          "parser.xxl:1107:15",
           "push"
          ],
          [
-          "parser.xxl:1103:9",
+          "parser.xxl:1107:9",
           "load",
           "vmcode"
          ],
          [
-          "parser.xxl:1103:15",
+          "parser.xxl:1107:15",
           "binop",
           "."
          ],
          [
-          "parser.xxl:1103:26",
+          "parser.xxl:1107:26",
           "call",
           2
          ],
          [
-          "parser.xxl:1101:28",
+          "parser.xxl:1105:28",
           "return"
          ]
         ]
        ],
        [
-        "parser.xxl:1101:28",
+        "parser.xxl:1105:28",
         "call",
         0
        ],
        [
-        "parser.xxl:1100:8",
+        "parser.xxl:1104:8",
         "return"
        ]
       ]
      ],
      [
-      "parser.xxl:1099:23",
+      "parser.xxl:1103:23",
       "push"
      ],
      [
-      "parser.xxl:1099:14",
+      "parser.xxl:1103:14",
       "lit",
       "for_each"
      ],
      [
-      "parser.xxl:1099:14",
+      "parser.xxl:1103:14",
       "push"
      ],
      [
-      "parser.xxl:1099:8",
+      "parser.xxl:1103:8",
       "lit",
       "first"
      ],
      [
-      "parser.xxl:1099:8",
+      "parser.xxl:1103:8",
       "push"
      ],
      [
-      "parser.xxl:1099:4",
+      "parser.xxl:1103:4",
       "load",
       "this"
      ],
      [
-      "parser.xxl:1099:8",
+      "parser.xxl:1103:8",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1099:14",
+      "parser.xxl:1103:14",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1099:23",
+      "parser.xxl:1103:23",
       "call",
       1
      ],
      [
-      "parser.xxl:1089:12",
+      "parser.xxl:1093:12",
       "return"
      ]
     ]
    ],
    [
-    "parser.xxl:1055:12",
+    "parser.xxl:1059:12",
     "push"
    ],
    [
-    "parser.xxl:1055:12",
+    "parser.xxl:1059:12",
     "lit",
     "gen"
    ],
    [
-    "parser.xxl:1055:12",
+    "parser.xxl:1059:12",
     "push"
    ],
    [
-    "parser.xxl:1055:12",
+    "parser.xxl:1059:12",
     "temp"
    ],
    [
-    "parser.xxl:1055:12",
+    "parser.xxl:1059:12",
     "lhsop",
     "["
    ],
    [
-    "parser.xxl:1055:12",
+    "parser.xxl:1059:12",
     "pop_temp"
    ],
    [
-    "parser.xxl:1052:24",
+    "parser.xxl:1056:24",
     "push"
    ],
    [
-    "parser.xxl:1052:24",
+    "parser.xxl:1056:24",
     "lit",
     "methods"
    ],
    [
-    "parser.xxl:1052:24",
+    "parser.xxl:1056:24",
     "push"
    ],
    [
-    "parser.xxl:1052:24",
+    "parser.xxl:1056:24",
     "temp"
    ],
    [
-    "parser.xxl:1052:24",
+    "parser.xxl:1056:24",
     "lhsop",
     "["
    ],
    [
-    "parser.xxl:1052:24",
+    "parser.xxl:1056:24",
     "pop_temp"
    ],
    [
-    "parser.xxl:1052:23",
+    "parser.xxl:1056:23",
     "push"
    ],
    [
-    "parser.xxl:1052:19",
+    "parser.xxl:1056:19",
     "lit",
     "new"
    ],
    [
-    "parser.xxl:1052:19",
+    "parser.xxl:1056:19",
     "push"
    ],
    [
-    "parser.xxl:1052:14",
+    "parser.xxl:1056:14",
     "load",
     "Class"
    ],
    [
-    "parser.xxl:1052:19",
+    "parser.xxl:1056:19",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1052:23",
+    "parser.xxl:1056:23",
     "call",
     1
    ],
    [
-    "parser.xxl:1052:7",
+    "parser.xxl:1056:7",
     "push"
    ],
    [
-    "parser.xxl:1052:7",
+    "parser.xxl:1056:7",
     "lit",
     "Var"
    ],
    [
-    "parser.xxl:1052:7",
+    "parser.xxl:1056:7",
     "push"
    ],
    [
-    "parser.xxl:1052:6",
+    "parser.xxl:1056:6",
     "load",
     "p"
    ],
    [
-    "parser.xxl:1052:7",
+    "parser.xxl:1056:7",
     "lhsop",
     "."
    ],
    [
-    "parser.xxl:1110:33",
+    "parser.xxl:1114:33",
     "lit",
     "Var"
    ],
    [
-    "parser.xxl:1110:33",
+    "parser.xxl:1114:33",
     "push"
    ],
    [
-    "parser.xxl:1110:32",
+    "parser.xxl:1114:32",
     "load",
     "p"
    ],
    [
-    "parser.xxl:1110:33",
+    "parser.xxl:1114:33",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1110:24",
+    "parser.xxl:1114:24",
     "push"
    ],
    [
-    "parser.xxl:1110:25",
+    "parser.xxl:1114:25",
     "lit",
     "var"
    ],
    [
-    "parser.xxl:1110:24",
+    "parser.xxl:1114:24",
     "push"
    ],
    [
-    "parser.xxl:1110:7",
+    "parser.xxl:1114:7",
     "lit",
     "add_symbol_class"
    ],
    [
-    "parser.xxl:1110:7",
+    "parser.xxl:1114:7",
     "push"
    ],
    [
-    "parser.xxl:1110:6",
+    "parser.xxl:1114:6",
     "load",
     "p"
    ],
    [
-    "parser.xxl:1110:7",
+    "parser.xxl:1114:7",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1110:24",
+    "parser.xxl:1114:24",
     "call",
     2
    ],
    [
-    "parser.xxl:1112:23",
+    "parser.xxl:1116:23",
     "new",
     "Dict"
    ],
    [
-    "parser.xxl:1113:9",
+    "parser.xxl:1117:9",
     "lit",
     "If"
    ],
    [
-    "parser.xxl:1112:23",
+    "parser.xxl:1116:23",
     "push"
    ],
    [
-    "parser.xxl:1112:23",
+    "parser.xxl:1116:23",
     "lit",
     "name"
    ],
    [
-    "parser.xxl:1112:23",
+    "parser.xxl:1116:23",
     "push"
    ],
    [
-    "parser.xxl:1112:23",
+    "parser.xxl:1116:23",
     "temp"
    ],
    [
-    "parser.xxl:1112:23",
+    "parser.xxl:1116:23",
     "lhsop",
     "["
    ],
    [
-    "parser.xxl:1114:11",
+    "parser.xxl:1118:11",
     "new",
     "List"
    ],
    [
-    "parser.xxl:1114:13",
+    "parser.xxl:1118:13",
     "lit",
     "Stmt"
    ],
    [
-    "parser.xxl:1114:13",
+    "parser.xxl:1118:13",
     "push"
    ],
    [
-    "parser.xxl:1114:12",
+    "parser.xxl:1118:12",
     "load",
     "p"
    ],
    [
-    "parser.xxl:1114:13",
+    "parser.xxl:1118:13",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1114:11",
+    "parser.xxl:1118:11",
     "append"
    ],
    [
-    "parser.xxl:1114:11",
+    "parser.xxl:1118:11",
     "pop_temp"
    ],
    [
-    "parser.xxl:1112:23",
+    "parser.xxl:1116:23",
     "push"
    ],
    [
-    "parser.xxl:1112:23",
+    "parser.xxl:1116:23",
     "lit",
     "supers"
    ],
    [
-    "parser.xxl:1112:23",
+    "parser.xxl:1116:23",
     "push"
    ],
    [
-    "parser.xxl:1112:23",
+    "parser.xxl:1116:23",
     "temp"
    ],
    [
-    "parser.xxl:1112:23",
+    "parser.xxl:1116:23",
     "lhsop",
     "["
    ],
    [
-    "parser.xxl:1115:12",
+    "parser.xxl:1119:12",
     "new",
     "Dict"
    ],
    [
-    "parser.xxl:1116:11",
+    "parser.xxl:1120:11",
     "close",
     [
      [
-      "parser.xxl:1116:11",
+      "parser.xxl:1120:11",
       "args",
       [
        "this"
       ]
      ],
      [
-      "parser.xxl:1116:36",
+      "parser.xxl:1120:36",
       "lit",
       "if"
      ],
      [
-      "parser.xxl:1116:35",
+      "parser.xxl:1120:35",
       "push"
      ],
      [
-      "parser.xxl:1116:29",
+      "parser.xxl:1120:29",
       "load",
       "return"
      ],
      [
-      "parser.xxl:1116:35",
+      "parser.xxl:1120:35",
       "call",
       1
      ],
      [
-      "parser.xxl:1116:11",
+      "parser.xxl:1120:11",
       "return"
      ]
     ]
    ],
    [
-    "parser.xxl:1115:12",
+    "parser.xxl:1119:12",
     "push"
    ],
    [
-    "parser.xxl:1115:12",
+    "parser.xxl:1119:12",
     "lit",
     "id"
    ],
    [
-    "parser.xxl:1115:12",
+    "parser.xxl:1119:12",
     "push"
    ],
    [
-    "parser.xxl:1115:12",
+    "parser.xxl:1119:12",
     "temp"
    ],
    [
-    "parser.xxl:1115:12",
+    "parser.xxl:1119:12",
     "lhsop",
     "["
    ],
    [
-    "parser.xxl:1117:12",
+    "parser.xxl:1121:12",
     "close",
     [
      [
-      "parser.xxl:1117:12",
+      "parser.xxl:1121:12",
       "args",
       [
        "this"
       ]
      ],
      [
-      "parser.xxl:1118:14",
+      "parser.xxl:1122:14",
       "lit",
       "("
      ],
      [
-      "parser.xxl:1118:13",
+      "parser.xxl:1122:13",
       "push"
      ],
      [
-      "parser.xxl:1118:5",
+      "parser.xxl:1122:5",
       "lit",
       "advance"
      ],
      [
-      "parser.xxl:1118:5",
+      "parser.xxl:1122:5",
       "push"
      ],
      [
-      "parser.xxl:1118:4",
+      "parser.xxl:1122:4",
       "load",
       "p"
      ],
      [
-      "parser.xxl:1118:5",
+      "parser.xxl:1122:5",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1118:13",
+      "parser.xxl:1122:13",
       "call",
       1
      ],
      [
-      "parser.xxl:1119:30",
+      "parser.xxl:1123:30",
       "lit",
       0
      ],
      [
-      "parser.xxl:1119:29",
+      "parser.xxl:1123:29",
       "push"
      ],
      [
-      "parser.xxl:1119:18",
+      "parser.xxl:1123:18",
       "lit",
       "expression"
      ],
      [
-      "parser.xxl:1119:18",
+      "parser.xxl:1123:18",
       "push"
      ],
      [
-      "parser.xxl:1119:17",
+      "parser.xxl:1123:17",
       "load",
       "p"
      ],
      [
-      "parser.xxl:1119:18",
+      "parser.xxl:1123:18",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1119:29",
+      "parser.xxl:1123:29",
       "call",
       1
      ],
      [
-      "parser.xxl:1119:8",
-      "push"
-     ],
-     [
-      "parser.xxl:1119:8",
-      "lit",
-      "first"
-     ],
-     [
-      "parser.xxl:1119:8",
-      "push"
-     ],
-     [
-      "parser.xxl:1119:4",
-      "load",
-      "this"
-     ],
-     [
-      "parser.xxl:1119:8",
-      "lhsop",
-      "."
-     ],
-     [
-      "parser.xxl:1120:14",
-      "lit",
-      ")"
-     ],
-     [
-      "parser.xxl:1120:13",
-      "push"
-     ],
-     [
-      "parser.xxl:1120:5",
-      "lit",
-      "advance"
-     ],
-     [
-      "parser.xxl:1120:5",
-      "push"
-     ],
-     [
-      "parser.xxl:1120:4",
-      "load",
-      "p"
-     ],
-     [
-      "parser.xxl:1120:5",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1120:13",
-      "call",
-      1
-     ],
-     [
-      "parser.xxl:1121:19",
-      "lit",
-      "block"
-     ],
-     [
-      "parser.xxl:1121:19",
-      "push"
-     ],
-     [
-      "parser.xxl:1121:18",
-      "load",
-      "p"
-     ],
-     [
-      "parser.xxl:1121:19",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1121:25",
-      "call",
-      0
-     ],
-     [
-      "parser.xxl:1121:8",
-      "push"
-     ],
-     [
-      "parser.xxl:1121:8",
-      "lit",
-      "second"
-     ],
-     [
-      "parser.xxl:1121:8",
-      "push"
-     ],
-     [
-      "parser.xxl:1121:4",
-      "load",
-      "this"
-     ],
-     [
-      "parser.xxl:1121:8",
-      "lhsop",
-      "."
-     ],
-     [
-      "parser.xxl:1123:24",
-      "lit",
-      "else"
-     ],
-     [
-      "parser.xxl:1123:21",
-      "push"
-     ],
-     [
-      "parser.xxl:1123:15",
-      "lit",
-      "id"
-     ],
-     [
-      "parser.xxl:1123:15",
-      "push"
-     ],
-     [
-      "parser.xxl:1123:9",
-      "lit",
-      "token"
-     ],
-     [
-      "parser.xxl:1123:9",
+      "parser.xxl:1123:8",
       "push"
      ],
      [
       "parser.xxl:1123:8",
-      "load",
-      "p"
-     ],
-     [
-      "parser.xxl:1123:9",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1123:15",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1123:18",
-      "call",
-      0
-     ],
-     [
-      "parser.xxl:1123:21",
-      "binop",
-      "=="
-     ],
-     [
-      "parser.xxl:1123:4",
-      "jumpe",
-      52
-     ],
-     [
-      "parser.xxl:1123:32",
-      "close",
-      [
-       [
-        "parser.xxl:1123:32",
-        "scope",
-        null
-       ],
-       [
-        "parser.xxl:1124:18",
-        "lit",
-        "else"
-       ],
-       [
-        "parser.xxl:1124:17",
-        "push"
-       ],
-       [
-        "parser.xxl:1124:9",
-        "lit",
-        "advance"
-       ],
-       [
-        "parser.xxl:1124:9",
-        "push"
-       ],
-       [
-        "parser.xxl:1124:8",
-        "load",
-        "p"
-       ],
-       [
-        "parser.xxl:1124:9",
-        "binop",
-        "."
-       ],
-       [
-        "parser.xxl:1124:17",
-        "call",
-        1
-       ],
-       [
-        "parser.xxl:1125:37",
-        "lit",
-        "if"
-       ],
-       [
-        "parser.xxl:1125:34",
-        "push"
-       ],
-       [
-        "parser.xxl:1125:28",
-        "lit",
-        "id"
-       ],
-       [
-        "parser.xxl:1125:28",
-        "push"
-       ],
-       [
-        "parser.xxl:1125:22",
-        "lit",
-        "token"
-       ],
-       [
-        "parser.xxl:1125:22",
-        "push"
-       ],
-       [
-        "parser.xxl:1125:21",
-        "load",
-        "p"
-       ],
-       [
-        "parser.xxl:1125:22",
-        "binop",
-        "."
-       ],
-       [
-        "parser.xxl:1125:28",
-        "binop",
-        "."
-       ],
-       [
-        "parser.xxl:1125:31",
-        "call",
-        0
-       ],
-       [
-        "parser.xxl:1125:34",
-        "binop",
-        "=="
-       ],
-       [
-        "parser.xxl:1126:5",
-        "jumpe",
-        26
-       ],
-       [
-        "parser.xxl:1126:8",
-        "lit",
-        "statement"
-       ],
-       [
-        "parser.xxl:1126:8",
-        "push"
-       ],
-       [
-        "parser.xxl:1126:7",
-        "load",
-        "p"
-       ],
-       [
-        "parser.xxl:1126:8",
-        "binop",
-        "."
-       ],
-       [
-        "parser.xxl:1126:18",
-        "call",
-        0
-       ],
-       [
-        "parser.xxl:1126:5",
-        "jrst",
-        31
-       ],
-       [
-        "parser.xxl:1127:8",
-        "lit",
-        "block"
-       ],
-       [
-        "parser.xxl:1127:8",
-        "push"
-       ],
-       [
-        "parser.xxl:1127:7",
-        "load",
-        "p"
-       ],
-       [
-        "parser.xxl:1127:8",
-        "binop",
-        "."
-       ],
-       [
-        "parser.xxl:1127:14",
-        "call",
-        0
-       ],
-       [
-        "parser.xxl:1125:12",
-        "push"
-       ],
-       [
-        "parser.xxl:1125:12",
-        "lit",
-        "third"
-       ],
-       [
-        "parser.xxl:1125:12",
-        "push"
-       ],
-       [
-        "parser.xxl:1125:8",
-        "load",
-        "this"
-       ],
-       [
-        "parser.xxl:1125:12",
-        "lhsop",
-        "."
-       ],
-       [
-        "parser.xxl:1123:32",
-        "return"
-       ]
-      ]
-     ],
-     [
-      "parser.xxl:1123:32",
-      "call",
-      0
-     ],
-     [
-      "parser.xxl:1123:4",
-      "jrst",
-      54
-     ],
-     [
-      "parser.xxl:1129:9",
-      "close",
-      [
-       [
-        "parser.xxl:1129:9",
-        "scope",
-        null
-       ],
-       [
-        "parser.xxl:1130:21",
-        "load",
-        "null"
-       ],
-       [
-        "parser.xxl:1130:12",
-        "push"
-       ],
-       [
-        "parser.xxl:1130:12",
-        "lit",
-        "third"
-       ],
-       [
-        "parser.xxl:1130:12",
-        "push"
-       ],
-       [
-        "parser.xxl:1130:8",
-        "load",
-        "this"
-       ],
-       [
-        "parser.xxl:1130:12",
-        "lhsop",
-        "."
-       ],
-       [
-        "parser.xxl:1129:9",
-        "return"
-       ]
-      ]
-     ],
-     [
-      "parser.xxl:1129:9",
-      "call",
-      0
-     ],
-     [
-      "parser.xxl:1132:17",
       "lit",
-      "statement"
+      "first"
      ],
      [
-      "parser.xxl:1132:8",
+      "parser.xxl:1123:8",
       "push"
      ],
      [
-      "parser.xxl:1132:8",
-      "lit",
-      "arity"
-     ],
-     [
-      "parser.xxl:1132:8",
-      "push"
-     ],
-     [
-      "parser.xxl:1132:4",
+      "parser.xxl:1123:4",
       "load",
       "this"
      ],
      [
-      "parser.xxl:1132:8",
+      "parser.xxl:1123:8",
       "lhsop",
       "."
      ],
      [
-      "parser.xxl:1133:11",
-      "load",
-      "this"
+      "parser.xxl:1124:14",
+      "lit",
+      ")"
      ],
      [
-      "parser.xxl:1133:10",
+      "parser.xxl:1124:13",
       "push"
      ],
      [
-      "parser.xxl:1133:4",
-      "load",
-      "return"
+      "parser.xxl:1124:5",
+      "lit",
+      "advance"
      ],
      [
-      "parser.xxl:1133:10",
+      "parser.xxl:1124:5",
+      "push"
+     ],
+     [
+      "parser.xxl:1124:4",
+      "load",
+      "p"
+     ],
+     [
+      "parser.xxl:1124:5",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1124:13",
       "call",
       1
      ],
      [
-      "parser.xxl:1117:12",
-      "return"
-     ]
-    ]
-   ],
-   [
-    "parser.xxl:1115:12",
-    "push"
-   ],
-   [
-    "parser.xxl:1115:12",
-    "lit",
-    "std"
-   ],
-   [
-    "parser.xxl:1115:12",
-    "push"
-   ],
-   [
-    "parser.xxl:1115:12",
-    "temp"
-   ],
-   [
-    "parser.xxl:1115:12",
-    "lhsop",
-    "["
-   ],
-   [
-    "parser.xxl:1135:12",
-    "close",
-    [
-     [
-      "parser.xxl:1135:12",
-      "args",
-      [
-       "this",
-       "vmcode"
-      ]
+      "parser.xxl:1125:19",
+      "lit",
+      "block"
      ],
      [
-      "parser.xxl:1136:19",
-      "load",
-      "vmcode"
-     ],
-     [
-      "parser.xxl:1136:18",
+      "parser.xxl:1125:19",
       "push"
      ],
      [
-      "parser.xxl:1136:14",
-      "lit",
-      "gen"
+      "parser.xxl:1125:18",
+      "load",
+      "p"
      ],
      [
-      "parser.xxl:1136:14",
+      "parser.xxl:1125:19",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1125:25",
+      "call",
+      0
+     ],
+     [
+      "parser.xxl:1125:8",
+      "push"
+     ],
+     [
+      "parser.xxl:1125:8",
+      "lit",
+      "second"
+     ],
+     [
+      "parser.xxl:1125:8",
+      "push"
+     ],
+     [
+      "parser.xxl:1125:4",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1125:8",
+      "lhsop",
+      "."
+     ],
+     [
+      "parser.xxl:1127:24",
+      "lit",
+      "else"
+     ],
+     [
+      "parser.xxl:1127:21",
+      "push"
+     ],
+     [
+      "parser.xxl:1127:15",
+      "lit",
+      "id"
+     ],
+     [
+      "parser.xxl:1127:15",
+      "push"
+     ],
+     [
+      "parser.xxl:1127:9",
+      "lit",
+      "token"
+     ],
+     [
+      "parser.xxl:1127:9",
+      "push"
+     ],
+     [
+      "parser.xxl:1127:8",
+      "load",
+      "p"
+     ],
+     [
+      "parser.xxl:1127:9",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1127:15",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1127:18",
+      "call",
+      0
+     ],
+     [
+      "parser.xxl:1127:21",
+      "binop",
+      "=="
+     ],
+     [
+      "parser.xxl:1127:4",
+      "jumpe",
+      52
+     ],
+     [
+      "parser.xxl:1127:32",
+      "close",
+      [
+       [
+        "parser.xxl:1127:32",
+        "scope",
+        null
+       ],
+       [
+        "parser.xxl:1128:18",
+        "lit",
+        "else"
+       ],
+       [
+        "parser.xxl:1128:17",
+        "push"
+       ],
+       [
+        "parser.xxl:1128:9",
+        "lit",
+        "advance"
+       ],
+       [
+        "parser.xxl:1128:9",
+        "push"
+       ],
+       [
+        "parser.xxl:1128:8",
+        "load",
+        "p"
+       ],
+       [
+        "parser.xxl:1128:9",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1128:17",
+        "call",
+        1
+       ],
+       [
+        "parser.xxl:1129:37",
+        "lit",
+        "if"
+       ],
+       [
+        "parser.xxl:1129:34",
+        "push"
+       ],
+       [
+        "parser.xxl:1129:28",
+        "lit",
+        "id"
+       ],
+       [
+        "parser.xxl:1129:28",
+        "push"
+       ],
+       [
+        "parser.xxl:1129:22",
+        "lit",
+        "token"
+       ],
+       [
+        "parser.xxl:1129:22",
+        "push"
+       ],
+       [
+        "parser.xxl:1129:21",
+        "load",
+        "p"
+       ],
+       [
+        "parser.xxl:1129:22",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1129:28",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1129:31",
+        "call",
+        0
+       ],
+       [
+        "parser.xxl:1129:34",
+        "binop",
+        "=="
+       ],
+       [
+        "parser.xxl:1130:5",
+        "jumpe",
+        26
+       ],
+       [
+        "parser.xxl:1130:8",
+        "lit",
+        "statement"
+       ],
+       [
+        "parser.xxl:1130:8",
+        "push"
+       ],
+       [
+        "parser.xxl:1130:7",
+        "load",
+        "p"
+       ],
+       [
+        "parser.xxl:1130:8",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1130:18",
+        "call",
+        0
+       ],
+       [
+        "parser.xxl:1130:5",
+        "jrst",
+        31
+       ],
+       [
+        "parser.xxl:1131:8",
+        "lit",
+        "block"
+       ],
+       [
+        "parser.xxl:1131:8",
+        "push"
+       ],
+       [
+        "parser.xxl:1131:7",
+        "load",
+        "p"
+       ],
+       [
+        "parser.xxl:1131:8",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1131:14",
+        "call",
+        0
+       ],
+       [
+        "parser.xxl:1129:12",
+        "push"
+       ],
+       [
+        "parser.xxl:1129:12",
+        "lit",
+        "third"
+       ],
+       [
+        "parser.xxl:1129:12",
+        "push"
+       ],
+       [
+        "parser.xxl:1129:8",
+        "load",
+        "this"
+       ],
+       [
+        "parser.xxl:1129:12",
+        "lhsop",
+        "."
+       ],
+       [
+        "parser.xxl:1127:32",
+        "return"
+       ]
+      ]
+     ],
+     [
+      "parser.xxl:1127:32",
+      "call",
+      0
+     ],
+     [
+      "parser.xxl:1127:4",
+      "jrst",
+      54
+     ],
+     [
+      "parser.xxl:1133:9",
+      "close",
+      [
+       [
+        "parser.xxl:1133:9",
+        "scope",
+        null
+       ],
+       [
+        "parser.xxl:1134:21",
+        "load",
+        "null"
+       ],
+       [
+        "parser.xxl:1134:12",
+        "push"
+       ],
+       [
+        "parser.xxl:1134:12",
+        "lit",
+        "third"
+       ],
+       [
+        "parser.xxl:1134:12",
+        "push"
+       ],
+       [
+        "parser.xxl:1134:8",
+        "load",
+        "this"
+       ],
+       [
+        "parser.xxl:1134:12",
+        "lhsop",
+        "."
+       ],
+       [
+        "parser.xxl:1133:9",
+        "return"
+       ]
+      ]
+     ],
+     [
+      "parser.xxl:1133:9",
+      "call",
+      0
+     ],
+     [
+      "parser.xxl:1136:17",
+      "lit",
+      "statement"
+     ],
+     [
+      "parser.xxl:1136:8",
       "push"
      ],
      [
       "parser.xxl:1136:8",
       "lit",
-      "first"
+      "arity"
      ],
      [
       "parser.xxl:1136:8",
@@ -29136,1043 +29243,62 @@
      ],
      [
       "parser.xxl:1136:8",
-      "binop",
+      "lhsop",
       "."
      ],
      [
-      "parser.xxl:1136:14",
-      "binop",
-      "."
+      "parser.xxl:1137:11",
+      "load",
+      "this"
      ],
      [
-      "parser.xxl:1136:18",
-      "call",
-      1
+      "parser.xxl:1137:10",
+      "push"
      ],
      [
       "parser.xxl:1137:4",
-      "vars",
-      [
-       "not_true_label"
-      ]
-     ],
-     [
-      "parser.xxl:1137:31",
-      "lit",
-      "def_fwd_label"
-     ],
-     [
-      "parser.xxl:1137:31",
-      "push"
-     ],
-     [
-      "parser.xxl:1137:25",
       "load",
-      "vmcode"
+      "return"
      ],
      [
-      "parser.xxl:1137:31",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1137:45",
-      "call",
-      0
-     ],
-     [
-      "parser.xxl:1137:4",
-      "store",
-      "not_true_label"
-     ],
-     [
-      "parser.xxl:1138:38",
-      "load",
-      "this"
-     ],
-     [
-      "parser.xxl:1138:21",
-      "push"
-     ],
-     [
-      "parser.xxl:1138:22",
-      "load",
-      "not_true_label"
-     ],
-     [
-      "parser.xxl:1138:21",
-      "push"
-     ],
-     [
-      "parser.xxl:1138:10",
-      "lit",
-      "emit_ifnot"
-     ],
-     [
-      "parser.xxl:1138:10",
-      "push"
-     ],
-     [
-      "parser.xxl:1138:4",
-      "load",
-      "vmcode"
-     ],
-     [
-      "parser.xxl:1138:10",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1138:21",
-      "call",
-      2
-     ],
-     [
-      "parser.xxl:1139:20",
-      "load",
-      "vmcode"
-     ],
-     [
-      "parser.xxl:1139:19",
-      "push"
-     ],
-     [
-      "parser.xxl:1139:15",
-      "lit",
-      "gen"
-     ],
-     [
-      "parser.xxl:1139:15",
-      "push"
-     ],
-     [
-      "parser.xxl:1139:8",
-      "lit",
-      "second"
-     ],
-     [
-      "parser.xxl:1139:8",
-      "push"
-     ],
-     [
-      "parser.xxl:1139:4",
-      "load",
-      "this"
-     ],
-     [
-      "parser.xxl:1139:8",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1139:15",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1139:19",
+      "parser.xxl:1137:10",
       "call",
       1
      ],
      [
-      "parser.xxl:1140:12",
-      "lit",
-      "third"
-     ],
-     [
-      "parser.xxl:1140:12",
-      "push"
-     ],
-     [
-      "parser.xxl:1140:8",
-      "load",
-      "this"
-     ],
-     [
-      "parser.xxl:1140:12",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1140:4",
-      "jumpe",
-      45
-     ],
-     [
-      "parser.xxl:1140:20",
-      "close",
-      [
-       [
-        "parser.xxl:1140:20",
-        "scope",
-        null
-       ],
-       [
-        "parser.xxl:1141:8",
-        "vars",
-        [
-         "end_label"
-        ]
-       ],
-       [
-        "parser.xxl:1141:30",
-        "lit",
-        "def_fwd_label"
-       ],
-       [
-        "parser.xxl:1141:30",
-        "push"
-       ],
-       [
-        "parser.xxl:1141:24",
-        "load",
-        "vmcode"
-       ],
-       [
-        "parser.xxl:1141:30",
-        "binop",
-        "."
-       ],
-       [
-        "parser.xxl:1141:44",
-        "call",
-        0
-       ],
-       [
-        "parser.xxl:1141:8",
-        "store",
-        "end_label"
-       ],
-       [
-        "parser.xxl:1142:36",
-        "load",
-        "this"
-       ],
-       [
-        "parser.xxl:1142:24",
-        "push"
-       ],
-       [
-        "parser.xxl:1142:25",
-        "load",
-        "end_label"
-       ],
-       [
-        "parser.xxl:1142:24",
-        "push"
-       ],
-       [
-        "parser.xxl:1142:14",
-        "lit",
-        "emit_jrst"
-       ],
-       [
-        "parser.xxl:1142:14",
-        "push"
-       ],
-       [
-        "parser.xxl:1142:8",
-        "load",
-        "vmcode"
-       ],
-       [
-        "parser.xxl:1142:14",
-        "binop",
-        "."
-       ],
-       [
-        "parser.xxl:1142:24",
-        "call",
-        2
-       ],
-       [
-        "parser.xxl:1143:30",
-        "load",
-        "not_true_label"
-       ],
-       [
-        "parser.xxl:1143:29",
-        "push"
-       ],
-       [
-        "parser.xxl:1143:14",
-        "lit",
-        "drop_fwd_label"
-       ],
-       [
-        "parser.xxl:1143:14",
-        "push"
-       ],
-       [
-        "parser.xxl:1143:8",
-        "load",
-        "vmcode"
-       ],
-       [
-        "parser.xxl:1143:14",
-        "binop",
-        "."
-       ],
-       [
-        "parser.xxl:1143:29",
-        "call",
-        1
-       ],
-       [
-        "parser.xxl:1144:23",
-        "load",
-        "vmcode"
-       ],
-       [
-        "parser.xxl:1144:22",
-        "push"
-       ],
-       [
-        "parser.xxl:1144:18",
-        "lit",
-        "gen"
-       ],
-       [
-        "parser.xxl:1144:18",
-        "push"
-       ],
-       [
-        "parser.xxl:1144:12",
-        "lit",
-        "third"
-       ],
-       [
-        "parser.xxl:1144:12",
-        "push"
-       ],
-       [
-        "parser.xxl:1144:8",
-        "load",
-        "this"
-       ],
-       [
-        "parser.xxl:1144:12",
-        "binop",
-        "."
-       ],
-       [
-        "parser.xxl:1144:18",
-        "binop",
-        "."
-       ],
-       [
-        "parser.xxl:1144:22",
-        "call",
-        1
-       ],
-       [
-        "parser.xxl:1145:30",
-        "load",
-        "end_label"
-       ],
-       [
-        "parser.xxl:1145:29",
-        "push"
-       ],
-       [
-        "parser.xxl:1145:14",
-        "lit",
-        "drop_fwd_label"
-       ],
-       [
-        "parser.xxl:1145:14",
-        "push"
-       ],
-       [
-        "parser.xxl:1145:8",
-        "load",
-        "vmcode"
-       ],
-       [
-        "parser.xxl:1145:14",
-        "binop",
-        "."
-       ],
-       [
-        "parser.xxl:1145:29",
-        "call",
-        1
-       ],
-       [
-        "parser.xxl:1140:20",
-        "return"
-       ]
-      ]
-     ],
-     [
-      "parser.xxl:1140:20",
-      "call",
-      0
-     ],
-     [
-      "parser.xxl:1140:4",
-      "jrst",
-      47
-     ],
-     [
-      "parser.xxl:1147:9",
-      "close",
-      [
-       [
-        "parser.xxl:1147:9",
-        "scope",
-        null
-       ],
-       [
-        "parser.xxl:1148:30",
-        "load",
-        "not_true_label"
-       ],
-       [
-        "parser.xxl:1148:29",
-        "push"
-       ],
-       [
-        "parser.xxl:1148:14",
-        "lit",
-        "drop_fwd_label"
-       ],
-       [
-        "parser.xxl:1148:14",
-        "push"
-       ],
-       [
-        "parser.xxl:1148:8",
-        "load",
-        "vmcode"
-       ],
-       [
-        "parser.xxl:1148:14",
-        "binop",
-        "."
-       ],
-       [
-        "parser.xxl:1148:29",
-        "call",
-        1
-       ],
-       [
-        "parser.xxl:1147:9",
-        "return"
-       ]
-      ]
-     ],
-     [
-      "parser.xxl:1147:9",
-      "call",
-      0
-     ],
-     [
-      "parser.xxl:1135:12",
+      "parser.xxl:1121:12",
       "return"
      ]
     ]
    ],
    [
-    "parser.xxl:1115:12",
+    "parser.xxl:1119:12",
     "push"
    ],
    [
-    "parser.xxl:1115:12",
-    "lit",
-    "gen"
-   ],
-   [
-    "parser.xxl:1115:12",
-    "push"
-   ],
-   [
-    "parser.xxl:1115:12",
-    "temp"
-   ],
-   [
-    "parser.xxl:1115:12",
-    "lhsop",
-    "["
-   ],
-   [
-    "parser.xxl:1115:12",
-    "pop_temp"
-   ],
-   [
-    "parser.xxl:1112:23",
-    "push"
-   ],
-   [
-    "parser.xxl:1112:23",
-    "lit",
-    "methods"
-   ],
-   [
-    "parser.xxl:1112:23",
-    "push"
-   ],
-   [
-    "parser.xxl:1112:23",
-    "temp"
-   ],
-   [
-    "parser.xxl:1112:23",
-    "lhsop",
-    "["
-   ],
-   [
-    "parser.xxl:1112:23",
-    "pop_temp"
-   ],
-   [
-    "parser.xxl:1112:22",
-    "push"
-   ],
-   [
-    "parser.xxl:1112:18",
-    "lit",
-    "new"
-   ],
-   [
-    "parser.xxl:1112:18",
-    "push"
-   ],
-   [
-    "parser.xxl:1112:13",
-    "load",
-    "Class"
-   ],
-   [
-    "parser.xxl:1112:18",
-    "binop",
-    "."
-   ],
-   [
-    "parser.xxl:1112:22",
-    "call",
-    1
-   ],
-   [
-    "parser.xxl:1112:7",
-    "push"
-   ],
-   [
-    "parser.xxl:1112:7",
-    "lit",
-    "If"
-   ],
-   [
-    "parser.xxl:1112:7",
-    "push"
-   ],
-   [
-    "parser.xxl:1112:6",
-    "load",
-    "p"
-   ],
-   [
-    "parser.xxl:1112:7",
-    "lhsop",
-    "."
-   ],
-   [
-    "parser.xxl:1153:32",
-    "lit",
-    "If"
-   ],
-   [
-    "parser.xxl:1153:32",
-    "push"
-   ],
-   [
-    "parser.xxl:1153:31",
-    "load",
-    "p"
-   ],
-   [
-    "parser.xxl:1153:32",
-    "binop",
-    "."
-   ],
-   [
-    "parser.xxl:1153:24",
-    "push"
-   ],
-   [
-    "parser.xxl:1153:25",
-    "lit",
-    "if"
-   ],
-   [
-    "parser.xxl:1153:24",
-    "push"
-   ],
-   [
-    "parser.xxl:1153:7",
-    "lit",
-    "add_symbol_class"
-   ],
-   [
-    "parser.xxl:1153:7",
-    "push"
-   ],
-   [
-    "parser.xxl:1153:6",
-    "load",
-    "p"
-   ],
-   [
-    "parser.xxl:1153:7",
-    "binop",
-    "."
-   ],
-   [
-    "parser.xxl:1153:24",
-    "call",
-    2
-   ],
-   [
-    "parser.xxl:1155:26",
-    "new",
-    "Dict"
-   ],
-   [
-    "parser.xxl:1156:9",
-    "lit",
-    "While"
-   ],
-   [
-    "parser.xxl:1155:26",
-    "push"
-   ],
-   [
-    "parser.xxl:1155:26",
-    "lit",
-    "name"
-   ],
-   [
-    "parser.xxl:1155:26",
-    "push"
-   ],
-   [
-    "parser.xxl:1155:26",
-    "temp"
-   ],
-   [
-    "parser.xxl:1155:26",
-    "lhsop",
-    "["
-   ],
-   [
-    "parser.xxl:1157:11",
-    "new",
-    "List"
-   ],
-   [
-    "parser.xxl:1157:13",
-    "lit",
-    "Stmt"
-   ],
-   [
-    "parser.xxl:1157:13",
-    "push"
-   ],
-   [
-    "parser.xxl:1157:12",
-    "load",
-    "p"
-   ],
-   [
-    "parser.xxl:1157:13",
-    "binop",
-    "."
-   ],
-   [
-    "parser.xxl:1157:11",
-    "append"
-   ],
-   [
-    "parser.xxl:1157:11",
-    "pop_temp"
-   ],
-   [
-    "parser.xxl:1155:26",
-    "push"
-   ],
-   [
-    "parser.xxl:1155:26",
-    "lit",
-    "supers"
-   ],
-   [
-    "parser.xxl:1155:26",
-    "push"
-   ],
-   [
-    "parser.xxl:1155:26",
-    "temp"
-   ],
-   [
-    "parser.xxl:1155:26",
-    "lhsop",
-    "["
-   ],
-   [
-    "parser.xxl:1158:12",
-    "new",
-    "Dict"
-   ],
-   [
-    "parser.xxl:1159:11",
-    "close",
-    [
-     [
-      "parser.xxl:1159:11",
-      "args",
-      [
-       "this"
-      ]
-     ],
-     [
-      "parser.xxl:1159:36",
-      "lit",
-      "while"
-     ],
-     [
-      "parser.xxl:1159:35",
-      "push"
-     ],
-     [
-      "parser.xxl:1159:29",
-      "load",
-      "return"
-     ],
-     [
-      "parser.xxl:1159:35",
-      "call",
-      1
-     ],
-     [
-      "parser.xxl:1159:11",
-      "return"
-     ]
-    ]
-   ],
-   [
-    "parser.xxl:1158:12",
-    "push"
-   ],
-   [
-    "parser.xxl:1158:12",
-    "lit",
-    "id"
-   ],
-   [
-    "parser.xxl:1158:12",
-    "push"
-   ],
-   [
-    "parser.xxl:1158:12",
-    "temp"
-   ],
-   [
-    "parser.xxl:1158:12",
-    "lhsop",
-    "["
-   ],
-   [
-    "parser.xxl:1160:12",
-    "close",
-    [
-     [
-      "parser.xxl:1160:12",
-      "args",
-      [
-       "this"
-      ]
-     ],
-     [
-      "parser.xxl:1161:14",
-      "lit",
-      "("
-     ],
-     [
-      "parser.xxl:1161:13",
-      "push"
-     ],
-     [
-      "parser.xxl:1161:5",
-      "lit",
-      "advance"
-     ],
-     [
-      "parser.xxl:1161:5",
-      "push"
-     ],
-     [
-      "parser.xxl:1161:4",
-      "load",
-      "p"
-     ],
-     [
-      "parser.xxl:1161:5",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1161:13",
-      "call",
-      1
-     ],
-     [
-      "parser.xxl:1162:30",
-      "lit",
-      0
-     ],
-     [
-      "parser.xxl:1162:29",
-      "push"
-     ],
-     [
-      "parser.xxl:1162:18",
-      "lit",
-      "expression"
-     ],
-     [
-      "parser.xxl:1162:18",
-      "push"
-     ],
-     [
-      "parser.xxl:1162:17",
-      "load",
-      "p"
-     ],
-     [
-      "parser.xxl:1162:18",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1162:29",
-      "call",
-      1
-     ],
-     [
-      "parser.xxl:1162:8",
-      "push"
-     ],
-     [
-      "parser.xxl:1162:8",
-      "lit",
-      "first"
-     ],
-     [
-      "parser.xxl:1162:8",
-      "push"
-     ],
-     [
-      "parser.xxl:1162:4",
-      "load",
-      "this"
-     ],
-     [
-      "parser.xxl:1162:8",
-      "lhsop",
-      "."
-     ],
-     [
-      "parser.xxl:1163:14",
-      "lit",
-      ")"
-     ],
-     [
-      "parser.xxl:1163:13",
-      "push"
-     ],
-     [
-      "parser.xxl:1163:5",
-      "lit",
-      "advance"
-     ],
-     [
-      "parser.xxl:1163:5",
-      "push"
-     ],
-     [
-      "parser.xxl:1163:4",
-      "load",
-      "p"
-     ],
-     [
-      "parser.xxl:1163:5",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1163:13",
-      "call",
-      1
-     ],
-     [
-      "parser.xxl:1164:26",
-      "new",
-      "List"
-     ],
-     [
-      "parser.xxl:1164:27",
-      "lit",
-      "leave_while"
-     ],
-     [
-      "parser.xxl:1164:26",
-      "append"
-     ],
-     [
-      "parser.xxl:1164:42",
-      "lit",
-      "continue_while"
-     ],
-     [
-      "parser.xxl:1164:26",
-      "append"
-     ],
-     [
-      "parser.xxl:1164:26",
-      "pop_temp"
-     ],
-     [
-      "parser.xxl:1164:25",
-      "push"
-     ],
-     [
-      "parser.xxl:1164:19",
-      "lit",
-      "block"
-     ],
-     [
-      "parser.xxl:1164:19",
-      "push"
-     ],
-     [
-      "parser.xxl:1164:18",
-      "load",
-      "p"
-     ],
-     [
-      "parser.xxl:1164:19",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1164:25",
-      "call",
-      1
-     ],
-     [
-      "parser.xxl:1164:8",
-      "push"
-     ],
-     [
-      "parser.xxl:1164:8",
-      "lit",
-      "second"
-     ],
-     [
-      "parser.xxl:1164:8",
-      "push"
-     ],
-     [
-      "parser.xxl:1164:4",
-      "load",
-      "this"
-     ],
-     [
-      "parser.xxl:1164:8",
-      "lhsop",
-      "."
-     ],
-     [
-      "parser.xxl:1165:17",
-      "lit",
-      "statement"
-     ],
-     [
-      "parser.xxl:1165:8",
-      "push"
-     ],
-     [
-      "parser.xxl:1165:8",
-      "lit",
-      "arity"
-     ],
-     [
-      "parser.xxl:1165:8",
-      "push"
-     ],
-     [
-      "parser.xxl:1165:4",
-      "load",
-      "this"
-     ],
-     [
-      "parser.xxl:1165:8",
-      "lhsop",
-      "."
-     ],
-     [
-      "parser.xxl:1166:11",
-      "load",
-      "this"
-     ],
-     [
-      "parser.xxl:1166:10",
-      "push"
-     ],
-     [
-      "parser.xxl:1166:4",
-      "load",
-      "return"
-     ],
-     [
-      "parser.xxl:1166:10",
-      "call",
-      1
-     ],
-     [
-      "parser.xxl:1160:12",
-      "return"
-     ]
-    ]
-   ],
-   [
-    "parser.xxl:1158:12",
-    "push"
-   ],
-   [
-    "parser.xxl:1158:12",
+    "parser.xxl:1119:12",
     "lit",
     "std"
    ],
    [
-    "parser.xxl:1158:12",
+    "parser.xxl:1119:12",
     "push"
    ],
    [
-    "parser.xxl:1158:12",
+    "parser.xxl:1119:12",
     "temp"
    ],
    [
-    "parser.xxl:1158:12",
+    "parser.xxl:1119:12",
     "lhsop",
     "["
    ],
    [
-    "parser.xxl:1168:12",
+    "parser.xxl:1139:12",
     "close",
     [
      [
-      "parser.xxl:1168:12",
+      "parser.xxl:1139:12",
       "args",
       [
        "this",
@@ -30180,467 +29306,1505 @@
       ]
      ],
      [
-      "parser.xxl:1174:4",
-      "vars",
-      [
-       "wcode"
-      ]
+      "parser.xxl:1140:19",
+      "load",
+      "vmcode"
      ],
      [
-      "parser.xxl:1174:22",
-      "lit",
-      "new"
-     ],
-     [
-      "parser.xxl:1174:22",
+      "parser.xxl:1140:18",
       "push"
      ],
      [
-      "parser.xxl:1174:16",
-      "load",
-      "VMCode"
+      "parser.xxl:1140:14",
+      "lit",
+      "gen"
      ],
      [
-      "parser.xxl:1174:22",
-      "binop",
-      "."
+      "parser.xxl:1140:14",
+      "push"
      ],
      [
-      "parser.xxl:1174:26",
-      "call",
-      0
+      "parser.xxl:1140:8",
+      "lit",
+      "first"
      ],
      [
-      "parser.xxl:1174:4",
-      "store",
-      "wcode"
+      "parser.xxl:1140:8",
+      "push"
      ],
      [
-      "parser.xxl:1175:36",
+      "parser.xxl:1140:4",
       "load",
       "this"
      ],
      [
-      "parser.xxl:1175:20",
+      "parser.xxl:1140:8",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1140:14",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1140:18",
+      "call",
+      1
+     ],
+     [
+      "parser.xxl:1141:4",
+      "vars",
+      [
+       "not_true_label"
+      ]
+     ],
+     [
+      "parser.xxl:1141:31",
+      "lit",
+      "def_fwd_label"
+     ],
+     [
+      "parser.xxl:1141:31",
       "push"
      ],
      [
-      "parser.xxl:1175:21",
-      "lit",
-      "leave_while"
+      "parser.xxl:1141:25",
+      "load",
+      "vmcode"
      ],
      [
-      "parser.xxl:1175:20",
+      "parser.xxl:1141:31",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1141:45",
+      "call",
+      0
+     ],
+     [
+      "parser.xxl:1141:4",
+      "store",
+      "not_true_label"
+     ],
+     [
+      "parser.xxl:1142:38",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1142:21",
       "push"
      ],
      [
-      "parser.xxl:1175:9",
-      "lit",
-      "emit_scope"
+      "parser.xxl:1142:22",
+      "load",
+      "not_true_label"
      ],
      [
-      "parser.xxl:1175:9",
+      "parser.xxl:1142:21",
+      "push"
+     ],
+     [
+      "parser.xxl:1142:10",
+      "lit",
+      "emit_ifnot"
+     ],
+     [
+      "parser.xxl:1142:10",
+      "push"
+     ],
+     [
+      "parser.xxl:1142:4",
+      "load",
+      "vmcode"
+     ],
+     [
+      "parser.xxl:1142:10",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1142:21",
+      "call",
+      2
+     ],
+     [
+      "parser.xxl:1143:20",
+      "load",
+      "vmcode"
+     ],
+     [
+      "parser.xxl:1143:19",
+      "push"
+     ],
+     [
+      "parser.xxl:1143:15",
+      "lit",
+      "gen"
+     ],
+     [
+      "parser.xxl:1143:15",
+      "push"
+     ],
+     [
+      "parser.xxl:1143:8",
+      "lit",
+      "second"
+     ],
+     [
+      "parser.xxl:1143:8",
+      "push"
+     ],
+     [
+      "parser.xxl:1143:4",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1143:8",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1143:15",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1143:19",
+      "call",
+      1
+     ],
+     [
+      "parser.xxl:1144:12",
+      "lit",
+      "third"
+     ],
+     [
+      "parser.xxl:1144:12",
+      "push"
+     ],
+     [
+      "parser.xxl:1144:8",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1144:12",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1144:4",
+      "jumpe",
+      45
+     ],
+     [
+      "parser.xxl:1144:20",
+      "close",
+      [
+       [
+        "parser.xxl:1144:20",
+        "scope",
+        null
+       ],
+       [
+        "parser.xxl:1145:8",
+        "vars",
+        [
+         "end_label"
+        ]
+       ],
+       [
+        "parser.xxl:1145:30",
+        "lit",
+        "def_fwd_label"
+       ],
+       [
+        "parser.xxl:1145:30",
+        "push"
+       ],
+       [
+        "parser.xxl:1145:24",
+        "load",
+        "vmcode"
+       ],
+       [
+        "parser.xxl:1145:30",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1145:44",
+        "call",
+        0
+       ],
+       [
+        "parser.xxl:1145:8",
+        "store",
+        "end_label"
+       ],
+       [
+        "parser.xxl:1146:36",
+        "load",
+        "this"
+       ],
+       [
+        "parser.xxl:1146:24",
+        "push"
+       ],
+       [
+        "parser.xxl:1146:25",
+        "load",
+        "end_label"
+       ],
+       [
+        "parser.xxl:1146:24",
+        "push"
+       ],
+       [
+        "parser.xxl:1146:14",
+        "lit",
+        "emit_jrst"
+       ],
+       [
+        "parser.xxl:1146:14",
+        "push"
+       ],
+       [
+        "parser.xxl:1146:8",
+        "load",
+        "vmcode"
+       ],
+       [
+        "parser.xxl:1146:14",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1146:24",
+        "call",
+        2
+       ],
+       [
+        "parser.xxl:1147:30",
+        "load",
+        "not_true_label"
+       ],
+       [
+        "parser.xxl:1147:29",
+        "push"
+       ],
+       [
+        "parser.xxl:1147:14",
+        "lit",
+        "drop_fwd_label"
+       ],
+       [
+        "parser.xxl:1147:14",
+        "push"
+       ],
+       [
+        "parser.xxl:1147:8",
+        "load",
+        "vmcode"
+       ],
+       [
+        "parser.xxl:1147:14",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1147:29",
+        "call",
+        1
+       ],
+       [
+        "parser.xxl:1148:23",
+        "load",
+        "vmcode"
+       ],
+       [
+        "parser.xxl:1148:22",
+        "push"
+       ],
+       [
+        "parser.xxl:1148:18",
+        "lit",
+        "gen"
+       ],
+       [
+        "parser.xxl:1148:18",
+        "push"
+       ],
+       [
+        "parser.xxl:1148:12",
+        "lit",
+        "third"
+       ],
+       [
+        "parser.xxl:1148:12",
+        "push"
+       ],
+       [
+        "parser.xxl:1148:8",
+        "load",
+        "this"
+       ],
+       [
+        "parser.xxl:1148:12",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1148:18",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1148:22",
+        "call",
+        1
+       ],
+       [
+        "parser.xxl:1149:30",
+        "load",
+        "end_label"
+       ],
+       [
+        "parser.xxl:1149:29",
+        "push"
+       ],
+       [
+        "parser.xxl:1149:14",
+        "lit",
+        "drop_fwd_label"
+       ],
+       [
+        "parser.xxl:1149:14",
+        "push"
+       ],
+       [
+        "parser.xxl:1149:8",
+        "load",
+        "vmcode"
+       ],
+       [
+        "parser.xxl:1149:14",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1149:29",
+        "call",
+        1
+       ],
+       [
+        "parser.xxl:1144:20",
+        "return"
+       ]
+      ]
+     ],
+     [
+      "parser.xxl:1144:20",
+      "call",
+      0
+     ],
+     [
+      "parser.xxl:1144:4",
+      "jrst",
+      47
+     ],
+     [
+      "parser.xxl:1151:9",
+      "close",
+      [
+       [
+        "parser.xxl:1151:9",
+        "scope",
+        null
+       ],
+       [
+        "parser.xxl:1152:30",
+        "load",
+        "not_true_label"
+       ],
+       [
+        "parser.xxl:1152:29",
+        "push"
+       ],
+       [
+        "parser.xxl:1152:14",
+        "lit",
+        "drop_fwd_label"
+       ],
+       [
+        "parser.xxl:1152:14",
+        "push"
+       ],
+       [
+        "parser.xxl:1152:8",
+        "load",
+        "vmcode"
+       ],
+       [
+        "parser.xxl:1152:14",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1152:29",
+        "call",
+        1
+       ],
+       [
+        "parser.xxl:1151:9",
+        "return"
+       ]
+      ]
+     ],
+     [
+      "parser.xxl:1151:9",
+      "call",
+      0
+     ],
+     [
+      "parser.xxl:1139:12",
+      "return"
+     ]
+    ]
+   ],
+   [
+    "parser.xxl:1119:12",
+    "push"
+   ],
+   [
+    "parser.xxl:1119:12",
+    "lit",
+    "gen"
+   ],
+   [
+    "parser.xxl:1119:12",
+    "push"
+   ],
+   [
+    "parser.xxl:1119:12",
+    "temp"
+   ],
+   [
+    "parser.xxl:1119:12",
+    "lhsop",
+    "["
+   ],
+   [
+    "parser.xxl:1119:12",
+    "pop_temp"
+   ],
+   [
+    "parser.xxl:1116:23",
+    "push"
+   ],
+   [
+    "parser.xxl:1116:23",
+    "lit",
+    "methods"
+   ],
+   [
+    "parser.xxl:1116:23",
+    "push"
+   ],
+   [
+    "parser.xxl:1116:23",
+    "temp"
+   ],
+   [
+    "parser.xxl:1116:23",
+    "lhsop",
+    "["
+   ],
+   [
+    "parser.xxl:1116:23",
+    "pop_temp"
+   ],
+   [
+    "parser.xxl:1116:22",
+    "push"
+   ],
+   [
+    "parser.xxl:1116:18",
+    "lit",
+    "new"
+   ],
+   [
+    "parser.xxl:1116:18",
+    "push"
+   ],
+   [
+    "parser.xxl:1116:13",
+    "load",
+    "Class"
+   ],
+   [
+    "parser.xxl:1116:18",
+    "binop",
+    "."
+   ],
+   [
+    "parser.xxl:1116:22",
+    "call",
+    1
+   ],
+   [
+    "parser.xxl:1116:7",
+    "push"
+   ],
+   [
+    "parser.xxl:1116:7",
+    "lit",
+    "If"
+   ],
+   [
+    "parser.xxl:1116:7",
+    "push"
+   ],
+   [
+    "parser.xxl:1116:6",
+    "load",
+    "p"
+   ],
+   [
+    "parser.xxl:1116:7",
+    "lhsop",
+    "."
+   ],
+   [
+    "parser.xxl:1157:32",
+    "lit",
+    "If"
+   ],
+   [
+    "parser.xxl:1157:32",
+    "push"
+   ],
+   [
+    "parser.xxl:1157:31",
+    "load",
+    "p"
+   ],
+   [
+    "parser.xxl:1157:32",
+    "binop",
+    "."
+   ],
+   [
+    "parser.xxl:1157:24",
+    "push"
+   ],
+   [
+    "parser.xxl:1157:25",
+    "lit",
+    "if"
+   ],
+   [
+    "parser.xxl:1157:24",
+    "push"
+   ],
+   [
+    "parser.xxl:1157:7",
+    "lit",
+    "add_symbol_class"
+   ],
+   [
+    "parser.xxl:1157:7",
+    "push"
+   ],
+   [
+    "parser.xxl:1157:6",
+    "load",
+    "p"
+   ],
+   [
+    "parser.xxl:1157:7",
+    "binop",
+    "."
+   ],
+   [
+    "parser.xxl:1157:24",
+    "call",
+    2
+   ],
+   [
+    "parser.xxl:1159:26",
+    "new",
+    "Dict"
+   ],
+   [
+    "parser.xxl:1160:9",
+    "lit",
+    "Label"
+   ],
+   [
+    "parser.xxl:1159:26",
+    "push"
+   ],
+   [
+    "parser.xxl:1159:26",
+    "lit",
+    "name"
+   ],
+   [
+    "parser.xxl:1159:26",
+    "push"
+   ],
+   [
+    "parser.xxl:1159:26",
+    "temp"
+   ],
+   [
+    "parser.xxl:1159:26",
+    "lhsop",
+    "["
+   ],
+   [
+    "parser.xxl:1161:11",
+    "new",
+    "List"
+   ],
+   [
+    "parser.xxl:1161:13",
+    "lit",
+    "Stmt"
+   ],
+   [
+    "parser.xxl:1161:13",
+    "push"
+   ],
+   [
+    "parser.xxl:1161:12",
+    "load",
+    "p"
+   ],
+   [
+    "parser.xxl:1161:13",
+    "binop",
+    "."
+   ],
+   [
+    "parser.xxl:1161:11",
+    "append"
+   ],
+   [
+    "parser.xxl:1161:11",
+    "pop_temp"
+   ],
+   [
+    "parser.xxl:1159:26",
+    "push"
+   ],
+   [
+    "parser.xxl:1159:26",
+    "lit",
+    "supers"
+   ],
+   [
+    "parser.xxl:1159:26",
+    "push"
+   ],
+   [
+    "parser.xxl:1159:26",
+    "temp"
+   ],
+   [
+    "parser.xxl:1159:26",
+    "lhsop",
+    "["
+   ],
+   [
+    "parser.xxl:1162:12",
+    "new",
+    "Dict"
+   ],
+   [
+    "parser.xxl:1163:11",
+    "close",
+    [
+     [
+      "parser.xxl:1163:11",
+      "args",
+      [
+       "this"
+      ]
+     ],
+     [
+      "parser.xxl:1163:36",
+      "lit",
+      "label"
+     ],
+     [
+      "parser.xxl:1163:35",
+      "push"
+     ],
+     [
+      "parser.xxl:1163:29",
+      "load",
+      "return"
+     ],
+     [
+      "parser.xxl:1163:35",
+      "call",
+      1
+     ],
+     [
+      "parser.xxl:1163:11",
+      "return"
+     ]
+    ]
+   ],
+   [
+    "parser.xxl:1162:12",
+    "push"
+   ],
+   [
+    "parser.xxl:1162:12",
+    "lit",
+    "id"
+   ],
+   [
+    "parser.xxl:1162:12",
+    "push"
+   ],
+   [
+    "parser.xxl:1162:12",
+    "temp"
+   ],
+   [
+    "parser.xxl:1162:12",
+    "lhsop",
+    "["
+   ],
+   [
+    "parser.xxl:1164:12",
+    "close",
+    [
+     [
+      "parser.xxl:1164:12",
+      "args",
+      [
+       "this"
+      ]
+     ],
+     [
+      "parser.xxl:1165:4",
+      "vars",
+      [
+       "n"
+      ]
+     ],
+     [
+      "parser.xxl:1165:13",
+      "lit",
+      "token"
+     ],
+     [
+      "parser.xxl:1165:13",
+      "push"
+     ],
+     [
+      "parser.xxl:1165:12",
+      "load",
+      "p"
+     ],
+     [
+      "parser.xxl:1165:13",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1165:4",
+      "store",
+      "n"
+     ],
+     [
+      "parser.xxl:1166:19",
+      "lit",
+      "name"
+     ],
+     [
+      "parser.xxl:1166:16",
+      "push"
+     ],
+     [
+      "parser.xxl:1166:9",
+      "lit",
+      "arity"
+     ],
+     [
+      "parser.xxl:1166:9",
+      "push"
+     ],
+     [
+      "parser.xxl:1166:8",
+      "load",
+      "n"
+     ],
+     [
+      "parser.xxl:1166:9",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1166:16",
+      "binop",
+      "!="
+     ],
+     [
+      "parser.xxl:1166:4",
+      "jumpe",
+      17
+     ],
+     [
+      "parser.xxl:1166:27",
+      "close",
+      [
+       [
+        "parser.xxl:1166:27",
+        "scope",
+        null
+       ],
+       [
+        "parser.xxl:1167:16",
+        "lit",
+        "Expected a label name."
+       ],
+       [
+        "parser.xxl:1167:15",
+        "push"
+       ],
+       [
+        "parser.xxl:1167:9",
+        "lit",
+        "error"
+       ],
+       [
+        "parser.xxl:1167:9",
+        "push"
+       ],
+       [
+        "parser.xxl:1167:8",
+        "load",
+        "n"
+       ],
+       [
+        "parser.xxl:1167:9",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1167:15",
+        "call",
+        1
+       ],
+       [
+        "parser.xxl:1166:27",
+        "return"
+       ]
+      ]
+     ],
+     [
+      "parser.xxl:1166:27",
+      "call",
+      0
+     ],
+     [
+      "parser.xxl:1169:9",
+      "lit",
+      "reserved"
+     ],
+     [
+      "parser.xxl:1169:9",
+      "push"
+     ],
+     [
+      "parser.xxl:1169:8",
+      "load",
+      "n"
+     ],
+     [
+      "parser.xxl:1169:9",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1169:4",
+      "jumpe",
+      24
+     ],
+     [
+      "parser.xxl:1169:20",
+      "close",
+      [
+       [
+        "parser.xxl:1169:20",
+        "scope",
+        null
+       ],
+       [
+        "parser.xxl:1170:38",
+        "lit",
+        "' reserved."
+       ],
+       [
+        "parser.xxl:1170:36",
+        "push"
+       ],
+       [
+        "parser.xxl:1170:29",
+        "lit",
+        "value"
+       ],
+       [
+        "parser.xxl:1170:29",
+        "push"
+       ],
+       [
+        "parser.xxl:1170:23",
+        "lit",
+        "token"
+       ],
+       [
+        "parser.xxl:1170:23",
+        "push"
+       ],
+       [
+        "parser.xxl:1170:22",
+        "load",
+        "p"
+       ],
+       [
+        "parser.xxl:1170:23",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1170:29",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1170:20",
+        "push"
+       ],
+       [
+        "parser.xxl:1170:16",
+        "lit",
+        "'"
+       ],
+       [
+        "parser.xxl:1170:20",
+        "binop",
+        "+"
+       ],
+       [
+        "parser.xxl:1170:36",
+        "binop",
+        "+"
+       ],
+       [
+        "parser.xxl:1170:15",
+        "push"
+       ],
+       [
+        "parser.xxl:1170:9",
+        "lit",
+        "error"
+       ],
+       [
+        "parser.xxl:1170:9",
+        "push"
+       ],
+       [
+        "parser.xxl:1170:8",
+        "load",
+        "n"
+       ],
+       [
+        "parser.xxl:1170:9",
+        "binop",
+        "."
+       ],
+       [
+        "parser.xxl:1170:15",
+        "call",
+        1
+       ],
+       [
+        "parser.xxl:1169:20",
+        "return"
+       ]
+      ]
+     ],
+     [
+      "parser.xxl:1169:20",
+      "call",
+      0
+     ],
+     [
+      "parser.xxl:1173:13",
+      "load",
+      "n"
+     ],
+     [
+      "parser.xxl:1173:12",
+      "push"
+     ],
+     [
+      "parser.xxl:1173:5",
+      "lit",
+      "define"
+     ],
+     [
+      "parser.xxl:1173:5",
+      "push"
+     ],
+     [
+      "parser.xxl:1173:4",
+      "load",
+      "p"
+     ],
+     [
+      "parser.xxl:1173:5",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1173:12",
+      "call",
+      1
+     ],
+     [
+      "parser.xxl:1174:17",
+      "lit",
+      "statement"
+     ],
+     [
+      "parser.xxl:1174:8",
+      "push"
+     ],
+     [
+      "parser.xxl:1174:8",
+      "lit",
+      "arity"
+     ],
+     [
+      "parser.xxl:1174:8",
+      "push"
+     ],
+     [
+      "parser.xxl:1174:4",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1174:8",
+      "lhsop",
+      "."
+     ],
+     [
+      "parser.xxl:1175:17",
+      "load",
+      "n"
+     ],
+     [
+      "parser.xxl:1175:8",
+      "push"
+     ],
+     [
+      "parser.xxl:1175:8",
+      "lit",
+      "first"
+     ],
+     [
+      "parser.xxl:1175:8",
       "push"
      ],
      [
       "parser.xxl:1175:4",
       "load",
-      "wcode"
+      "this"
      ],
      [
-      "parser.xxl:1175:9",
-      "binop",
+      "parser.xxl:1175:8",
+      "lhsop",
       "."
      ],
      [
-      "parser.xxl:1175:20",
-      "call",
-      2
-     ],
-     [
-      "parser.xxl:1176:4",
-      "vars",
-      [
-       "top_label"
-      ]
-     ],
-     [
-      "parser.xxl:1176:25",
+      "parser.xxl:1176:5",
       "lit",
-      "get_off"
+      "advance"
      ],
      [
-      "parser.xxl:1176:25",
+      "parser.xxl:1176:5",
       "push"
      ],
      [
-      "parser.xxl:1176:20",
+      "parser.xxl:1176:4",
       "load",
-      "wcode"
+      "p"
      ],
      [
-      "parser.xxl:1176:25",
+      "parser.xxl:1176:5",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1176:33",
+      "parser.xxl:1176:13",
       "call",
       0
      ],
      [
-      "parser.xxl:1176:4",
-      "store",
-      "top_label"
+      "parser.xxl:1177:14",
+      "lit",
+      ":"
      ],
      [
-      "parser.xxl:1177:19",
-      "load",
-      "wcode"
-     ],
-     [
-      "parser.xxl:1177:18",
+      "parser.xxl:1177:13",
       "push"
      ],
      [
-      "parser.xxl:1177:14",
+      "parser.xxl:1177:5",
       "lit",
-      "gen"
+      "advance"
      ],
      [
-      "parser.xxl:1177:14",
-      "push"
-     ],
-     [
-      "parser.xxl:1177:8",
-      "lit",
-      "first"
-     ],
-     [
-      "parser.xxl:1177:8",
+      "parser.xxl:1177:5",
       "push"
      ],
      [
       "parser.xxl:1177:4",
       "load",
-      "this"
+      "p"
      ],
      [
-      "parser.xxl:1177:8",
+      "parser.xxl:1177:5",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1177:14",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1177:18",
+      "parser.xxl:1177:13",
       "call",
       1
      ],
      [
-      "parser.xxl:1178:4",
-      "vars",
-      [
-       "done_label"
-      ]
-     ],
-     [
-      "parser.xxl:1178:26",
+      "parser.xxl:1178:19",
       "lit",
-      "def_fwd_label"
+      "statement"
      ],
      [
-      "parser.xxl:1178:26",
+      "parser.xxl:1178:19",
       "push"
      ],
      [
-      "parser.xxl:1178:21",
+      "parser.xxl:1178:18",
       "load",
-      "wcode"
+      "p"
      ],
      [
-      "parser.xxl:1178:26",
+      "parser.xxl:1178:19",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1178:40",
+      "parser.xxl:1178:29",
       "call",
       0
      ],
      [
-      "parser.xxl:1178:4",
-      "store",
-      "done_label"
+      "parser.xxl:1178:8",
+      "push"
      ],
      [
-      "parser.xxl:1179:33",
+      "parser.xxl:1178:8",
+      "lit",
+      "second"
+     ],
+     [
+      "parser.xxl:1178:8",
+      "push"
+     ],
+     [
+      "parser.xxl:1178:4",
       "load",
       "this"
      ],
      [
-      "parser.xxl:1179:20",
-      "push"
+      "parser.xxl:1178:8",
+      "lhsop",
+      "."
      ],
      [
-      "parser.xxl:1179:21",
+      "parser.xxl:1179:11",
       "load",
-      "done_label"
+      "this"
      ],
      [
-      "parser.xxl:1179:20",
-      "push"
-     ],
-     [
-      "parser.xxl:1179:9",
-      "lit",
-      "emit_ifnot"
-     ],
-     [
-      "parser.xxl:1179:9",
+      "parser.xxl:1179:10",
       "push"
      ],
      [
       "parser.xxl:1179:4",
       "load",
-      "wcode"
+      "return"
      ],
      [
-      "parser.xxl:1179:9",
+      "parser.xxl:1179:10",
+      "call",
+      1
+     ],
+     [
+      "parser.xxl:1164:12",
+      "return"
+     ]
+    ]
+   ],
+   [
+    "parser.xxl:1162:12",
+    "push"
+   ],
+   [
+    "parser.xxl:1162:12",
+    "lit",
+    "std"
+   ],
+   [
+    "parser.xxl:1162:12",
+    "push"
+   ],
+   [
+    "parser.xxl:1162:12",
+    "temp"
+   ],
+   [
+    "parser.xxl:1162:12",
+    "lhsop",
+    "["
+   ],
+   [
+    "parser.xxl:1181:12",
+    "close",
+    [
+     [
+      "parser.xxl:1181:12",
+      "args",
+      [
+       "this",
+       "vmcode"
+      ]
+     ],
+     [
+      "parser.xxl:1183:4",
+      "vars",
+      [
+       "lcode"
+      ]
+     ],
+     [
+      "parser.xxl:1183:22",
+      "lit",
+      "new"
+     ],
+     [
+      "parser.xxl:1183:22",
+      "push"
+     ],
+     [
+      "parser.xxl:1183:16",
+      "load",
+      "VMCode"
+     ],
+     [
+      "parser.xxl:1183:22",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1179:20",
+      "parser.xxl:1183:26",
+      "call",
+      0
+     ],
+     [
+      "parser.xxl:1183:4",
+      "store",
+      "lcode"
+     ],
+     [
+      "parser.xxl:1184:39",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1184:20",
+      "push"
+     ],
+     [
+      "parser.xxl:1184:31",
+      "lit",
+      "value"
+     ],
+     [
+      "parser.xxl:1184:31",
+      "push"
+     ],
+     [
+      "parser.xxl:1184:25",
+      "lit",
+      "first"
+     ],
+     [
+      "parser.xxl:1184:25",
+      "push"
+     ],
+     [
+      "parser.xxl:1184:21",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1184:25",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1184:31",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1184:20",
+      "push"
+     ],
+     [
+      "parser.xxl:1184:9",
+      "lit",
+      "emit_scope"
+     ],
+     [
+      "parser.xxl:1184:9",
+      "push"
+     ],
+     [
+      "parser.xxl:1184:4",
+      "load",
+      "lcode"
+     ],
+     [
+      "parser.xxl:1184:9",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1184:20",
       "call",
       2
      ],
      [
-      "parser.xxl:1180:27",
-      "lit",
-      "continue_while"
-     ],
-     [
-      "parser.xxl:1180:19",
-      "push"
-     ],
-     [
-      "parser.xxl:1180:20",
+      "parser.xxl:1185:20",
       "load",
-      "wcode"
+      "lcode"
      ],
      [
-      "parser.xxl:1180:19",
+      "parser.xxl:1185:19",
       "push"
      ],
      [
-      "parser.xxl:1180:15",
+      "parser.xxl:1185:15",
       "lit",
       "gen"
      ],
      [
-      "parser.xxl:1180:15",
+      "parser.xxl:1185:15",
       "push"
      ],
      [
-      "parser.xxl:1180:8",
+      "parser.xxl:1185:8",
       "lit",
       "second"
      ],
      [
-      "parser.xxl:1180:8",
-      "push"
-     ],
-     [
-      "parser.xxl:1180:4",
-      "load",
-      "this"
-     ],
-     [
-      "parser.xxl:1180:8",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1180:15",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1180:19",
-      "call",
-      2
-     ],
-     [
-      "parser.xxl:1181:31",
-      "load",
-      "this"
-     ],
-     [
-      "parser.xxl:1181:19",
-      "push"
-     ],
-     [
-      "parser.xxl:1181:20",
-      "load",
-      "top_label"
-     ],
-     [
-      "parser.xxl:1181:19",
-      "push"
-     ],
-     [
-      "parser.xxl:1181:9",
-      "lit",
-      "emit_jrst"
-     ],
-     [
-      "parser.xxl:1181:9",
-      "push"
-     ],
-     [
-      "parser.xxl:1181:4",
-      "load",
-      "wcode"
-     ],
-     [
-      "parser.xxl:1181:9",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1181:19",
-      "call",
-      2
-     ],
-     [
-      "parser.xxl:1182:25",
-      "load",
-      "done_label"
-     ],
-     [
-      "parser.xxl:1182:24",
-      "push"
-     ],
-     [
-      "parser.xxl:1182:9",
-      "lit",
-      "drop_fwd_label"
-     ],
-     [
-      "parser.xxl:1182:9",
-      "push"
-     ],
-     [
-      "parser.xxl:1182:4",
-      "load",
-      "wcode"
-     ],
-     [
-      "parser.xxl:1182:9",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1182:24",
-      "call",
-      1
-     ],
-     [
-      "parser.xxl:1185:42",
-      "load",
-      "this"
-     ],
-     [
-      "parser.xxl:1185:21",
-      "push"
-     ],
-     [
-      "parser.xxl:1185:35",
-      "load",
-      "this"
-     ],
-     [
-      "parser.xxl:1185:34",
-      "push"
-     ],
-     [
-      "parser.xxl:1185:27",
-      "lit",
-      "finish"
-     ],
-     [
-      "parser.xxl:1185:27",
-      "push"
-     ],
-     [
-      "parser.xxl:1185:22",
-      "load",
-      "wcode"
-     ],
-     [
-      "parser.xxl:1185:27",
-      "binop",
-      "."
-     ],
-     [
-      "parser.xxl:1185:34",
-      "call",
-      1
-     ],
-     [
-      "parser.xxl:1185:21",
-      "push"
-     ],
-     [
-      "parser.xxl:1185:10",
-      "lit",
-      "emit_close"
-     ],
-     [
-      "parser.xxl:1185:10",
+      "parser.xxl:1185:8",
       "push"
      ],
      [
       "parser.xxl:1185:4",
       "load",
-      "vmcode"
+      "this"
      ],
      [
-      "parser.xxl:1185:10",
+      "parser.xxl:1185:8",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1185:21",
-      "call",
-      2
+      "parser.xxl:1185:15",
+      "binop",
+      "."
      ],
      [
-      "parser.xxl:1186:24",
+      "parser.xxl:1185:19",
+      "call",
+      1
+     ],
+     [
+      "parser.xxl:1186:42",
       "load",
       "this"
      ],
      [
-      "parser.xxl:1186:20",
+      "parser.xxl:1186:21",
       "push"
      ],
      [
-      "parser.xxl:1186:21",
-      "lit",
-      0
+      "parser.xxl:1186:35",
+      "load",
+      "this"
      ],
      [
-      "parser.xxl:1186:20",
+      "parser.xxl:1186:34",
+      "push"
+     ],
+     [
+      "parser.xxl:1186:27",
+      "lit",
+      "finish"
+     ],
+     [
+      "parser.xxl:1186:27",
+      "push"
+     ],
+     [
+      "parser.xxl:1186:22",
+      "load",
+      "lcode"
+     ],
+     [
+      "parser.xxl:1186:27",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1186:34",
+      "call",
+      1
+     ],
+     [
+      "parser.xxl:1186:21",
       "push"
      ],
      [
       "parser.xxl:1186:10",
       "lit",
-      "emit_call"
+      "emit_close"
      ],
      [
       "parser.xxl:1186:10",
@@ -30657,172 +30821,1299 @@
       "."
      ],
      [
-      "parser.xxl:1186:20",
+      "parser.xxl:1186:21",
       "call",
       2
      ],
      [
-      "parser.xxl:1168:12",
+      "parser.xxl:1187:24",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1187:20",
+      "push"
+     ],
+     [
+      "parser.xxl:1187:21",
+      "lit",
+      0
+     ],
+     [
+      "parser.xxl:1187:20",
+      "push"
+     ],
+     [
+      "parser.xxl:1187:10",
+      "lit",
+      "emit_call"
+     ],
+     [
+      "parser.xxl:1187:10",
+      "push"
+     ],
+     [
+      "parser.xxl:1187:4",
+      "load",
+      "vmcode"
+     ],
+     [
+      "parser.xxl:1187:10",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1187:20",
+      "call",
+      2
+     ],
+     [
+      "parser.xxl:1181:12",
       "return"
      ]
     ]
    ],
    [
-    "parser.xxl:1158:12",
+    "parser.xxl:1162:12",
     "push"
    ],
    [
-    "parser.xxl:1158:12",
+    "parser.xxl:1162:12",
     "lit",
     "gen"
    ],
    [
-    "parser.xxl:1158:12",
+    "parser.xxl:1162:12",
     "push"
    ],
    [
-    "parser.xxl:1158:12",
+    "parser.xxl:1162:12",
     "temp"
    ],
    [
-    "parser.xxl:1158:12",
+    "parser.xxl:1162:12",
     "lhsop",
     "["
    ],
    [
-    "parser.xxl:1158:12",
+    "parser.xxl:1162:12",
     "pop_temp"
    ],
    [
-    "parser.xxl:1155:26",
+    "parser.xxl:1159:26",
     "push"
    ],
    [
-    "parser.xxl:1155:26",
+    "parser.xxl:1159:26",
     "lit",
     "methods"
    ],
    [
-    "parser.xxl:1155:26",
+    "parser.xxl:1159:26",
     "push"
    ],
    [
-    "parser.xxl:1155:26",
+    "parser.xxl:1159:26",
     "temp"
    ],
    [
-    "parser.xxl:1155:26",
+    "parser.xxl:1159:26",
     "lhsop",
     "["
    ],
    [
-    "parser.xxl:1155:26",
+    "parser.xxl:1159:26",
     "pop_temp"
    ],
    [
-    "parser.xxl:1155:25",
+    "parser.xxl:1159:25",
     "push"
    ],
    [
-    "parser.xxl:1155:21",
+    "parser.xxl:1159:21",
     "lit",
     "new"
    ],
    [
-    "parser.xxl:1155:21",
+    "parser.xxl:1159:21",
     "push"
    ],
    [
-    "parser.xxl:1155:16",
+    "parser.xxl:1159:16",
     "load",
     "Class"
    ],
    [
-    "parser.xxl:1155:21",
+    "parser.xxl:1159:21",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1155:25",
+    "parser.xxl:1159:25",
     "call",
     1
    ],
    [
-    "parser.xxl:1155:7",
+    "parser.xxl:1159:7",
     "push"
    ],
    [
-    "parser.xxl:1155:7",
+    "parser.xxl:1159:7",
     "lit",
-    "While"
+    "Label"
    ],
    [
-    "parser.xxl:1155:7",
+    "parser.xxl:1159:7",
     "push"
    ],
    [
-    "parser.xxl:1155:6",
+    "parser.xxl:1159:6",
     "load",
     "p"
    ],
    [
-    "parser.xxl:1155:7",
+    "parser.xxl:1159:7",
     "lhsop",
     "."
    ],
    [
-    "parser.xxl:1190:35",
+    "parser.xxl:1191:35",
     "lit",
-    "While"
+    "Label"
    ],
    [
-    "parser.xxl:1190:35",
+    "parser.xxl:1191:35",
     "push"
    ],
    [
-    "parser.xxl:1190:34",
+    "parser.xxl:1191:34",
     "load",
     "p"
    ],
    [
-    "parser.xxl:1190:35",
+    "parser.xxl:1191:35",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1190:24",
+    "parser.xxl:1191:24",
     "push"
    ],
    [
-    "parser.xxl:1190:25",
+    "parser.xxl:1191:25",
     "lit",
-    "while"
+    "label"
    ],
    [
-    "parser.xxl:1190:24",
+    "parser.xxl:1191:24",
     "push"
    ],
    [
-    "parser.xxl:1190:7",
+    "parser.xxl:1191:7",
     "lit",
     "add_symbol_class"
    ],
    [
-    "parser.xxl:1190:7",
+    "parser.xxl:1191:7",
     "push"
    ],
    [
-    "parser.xxl:1190:6",
+    "parser.xxl:1191:6",
     "load",
     "p"
    ],
    [
-    "parser.xxl:1190:7",
+    "parser.xxl:1191:7",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1190:24",
+    "parser.xxl:1191:24",
+    "call",
+    2
+   ],
+   [
+    "parser.xxl:1193:26",
+    "new",
+    "Dict"
+   ],
+   [
+    "parser.xxl:1194:9",
+    "lit",
+    "While"
+   ],
+   [
+    "parser.xxl:1193:26",
+    "push"
+   ],
+   [
+    "parser.xxl:1193:26",
+    "lit",
+    "name"
+   ],
+   [
+    "parser.xxl:1193:26",
+    "push"
+   ],
+   [
+    "parser.xxl:1193:26",
+    "temp"
+   ],
+   [
+    "parser.xxl:1193:26",
+    "lhsop",
+    "["
+   ],
+   [
+    "parser.xxl:1195:11",
+    "new",
+    "List"
+   ],
+   [
+    "parser.xxl:1195:13",
+    "lit",
+    "Stmt"
+   ],
+   [
+    "parser.xxl:1195:13",
+    "push"
+   ],
+   [
+    "parser.xxl:1195:12",
+    "load",
+    "p"
+   ],
+   [
+    "parser.xxl:1195:13",
+    "binop",
+    "."
+   ],
+   [
+    "parser.xxl:1195:11",
+    "append"
+   ],
+   [
+    "parser.xxl:1195:11",
+    "pop_temp"
+   ],
+   [
+    "parser.xxl:1193:26",
+    "push"
+   ],
+   [
+    "parser.xxl:1193:26",
+    "lit",
+    "supers"
+   ],
+   [
+    "parser.xxl:1193:26",
+    "push"
+   ],
+   [
+    "parser.xxl:1193:26",
+    "temp"
+   ],
+   [
+    "parser.xxl:1193:26",
+    "lhsop",
+    "["
+   ],
+   [
+    "parser.xxl:1196:12",
+    "new",
+    "Dict"
+   ],
+   [
+    "parser.xxl:1197:11",
+    "close",
+    [
+     [
+      "parser.xxl:1197:11",
+      "args",
+      [
+       "this"
+      ]
+     ],
+     [
+      "parser.xxl:1197:36",
+      "lit",
+      "while"
+     ],
+     [
+      "parser.xxl:1197:35",
+      "push"
+     ],
+     [
+      "parser.xxl:1197:29",
+      "load",
+      "return"
+     ],
+     [
+      "parser.xxl:1197:35",
+      "call",
+      1
+     ],
+     [
+      "parser.xxl:1197:11",
+      "return"
+     ]
+    ]
+   ],
+   [
+    "parser.xxl:1196:12",
+    "push"
+   ],
+   [
+    "parser.xxl:1196:12",
+    "lit",
+    "id"
+   ],
+   [
+    "parser.xxl:1196:12",
+    "push"
+   ],
+   [
+    "parser.xxl:1196:12",
+    "temp"
+   ],
+   [
+    "parser.xxl:1196:12",
+    "lhsop",
+    "["
+   ],
+   [
+    "parser.xxl:1198:12",
+    "close",
+    [
+     [
+      "parser.xxl:1198:12",
+      "args",
+      [
+       "this"
+      ]
+     ],
+     [
+      "parser.xxl:1199:14",
+      "lit",
+      "("
+     ],
+     [
+      "parser.xxl:1199:13",
+      "push"
+     ],
+     [
+      "parser.xxl:1199:5",
+      "lit",
+      "advance"
+     ],
+     [
+      "parser.xxl:1199:5",
+      "push"
+     ],
+     [
+      "parser.xxl:1199:4",
+      "load",
+      "p"
+     ],
+     [
+      "parser.xxl:1199:5",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1199:13",
+      "call",
+      1
+     ],
+     [
+      "parser.xxl:1200:30",
+      "lit",
+      0
+     ],
+     [
+      "parser.xxl:1200:29",
+      "push"
+     ],
+     [
+      "parser.xxl:1200:18",
+      "lit",
+      "expression"
+     ],
+     [
+      "parser.xxl:1200:18",
+      "push"
+     ],
+     [
+      "parser.xxl:1200:17",
+      "load",
+      "p"
+     ],
+     [
+      "parser.xxl:1200:18",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1200:29",
+      "call",
+      1
+     ],
+     [
+      "parser.xxl:1200:8",
+      "push"
+     ],
+     [
+      "parser.xxl:1200:8",
+      "lit",
+      "first"
+     ],
+     [
+      "parser.xxl:1200:8",
+      "push"
+     ],
+     [
+      "parser.xxl:1200:4",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1200:8",
+      "lhsop",
+      "."
+     ],
+     [
+      "parser.xxl:1201:14",
+      "lit",
+      ")"
+     ],
+     [
+      "parser.xxl:1201:13",
+      "push"
+     ],
+     [
+      "parser.xxl:1201:5",
+      "lit",
+      "advance"
+     ],
+     [
+      "parser.xxl:1201:5",
+      "push"
+     ],
+     [
+      "parser.xxl:1201:4",
+      "load",
+      "p"
+     ],
+     [
+      "parser.xxl:1201:5",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1201:13",
+      "call",
+      1
+     ],
+     [
+      "parser.xxl:1202:26",
+      "new",
+      "List"
+     ],
+     [
+      "parser.xxl:1202:27",
+      "lit",
+      "leave_while"
+     ],
+     [
+      "parser.xxl:1202:26",
+      "append"
+     ],
+     [
+      "parser.xxl:1202:42",
+      "lit",
+      "continue_while"
+     ],
+     [
+      "parser.xxl:1202:26",
+      "append"
+     ],
+     [
+      "parser.xxl:1202:26",
+      "pop_temp"
+     ],
+     [
+      "parser.xxl:1202:25",
+      "push"
+     ],
+     [
+      "parser.xxl:1202:19",
+      "lit",
+      "block"
+     ],
+     [
+      "parser.xxl:1202:19",
+      "push"
+     ],
+     [
+      "parser.xxl:1202:18",
+      "load",
+      "p"
+     ],
+     [
+      "parser.xxl:1202:19",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1202:25",
+      "call",
+      1
+     ],
+     [
+      "parser.xxl:1202:8",
+      "push"
+     ],
+     [
+      "parser.xxl:1202:8",
+      "lit",
+      "second"
+     ],
+     [
+      "parser.xxl:1202:8",
+      "push"
+     ],
+     [
+      "parser.xxl:1202:4",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1202:8",
+      "lhsop",
+      "."
+     ],
+     [
+      "parser.xxl:1203:17",
+      "lit",
+      "statement"
+     ],
+     [
+      "parser.xxl:1203:8",
+      "push"
+     ],
+     [
+      "parser.xxl:1203:8",
+      "lit",
+      "arity"
+     ],
+     [
+      "parser.xxl:1203:8",
+      "push"
+     ],
+     [
+      "parser.xxl:1203:4",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1203:8",
+      "lhsop",
+      "."
+     ],
+     [
+      "parser.xxl:1204:11",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1204:10",
+      "push"
+     ],
+     [
+      "parser.xxl:1204:4",
+      "load",
+      "return"
+     ],
+     [
+      "parser.xxl:1204:10",
+      "call",
+      1
+     ],
+     [
+      "parser.xxl:1198:12",
+      "return"
+     ]
+    ]
+   ],
+   [
+    "parser.xxl:1196:12",
+    "push"
+   ],
+   [
+    "parser.xxl:1196:12",
+    "lit",
+    "std"
+   ],
+   [
+    "parser.xxl:1196:12",
+    "push"
+   ],
+   [
+    "parser.xxl:1196:12",
+    "temp"
+   ],
+   [
+    "parser.xxl:1196:12",
+    "lhsop",
+    "["
+   ],
+   [
+    "parser.xxl:1206:12",
+    "close",
+    [
+     [
+      "parser.xxl:1206:12",
+      "args",
+      [
+       "this",
+       "vmcode"
+      ]
+     ],
+     [
+      "parser.xxl:1212:4",
+      "vars",
+      [
+       "wcode"
+      ]
+     ],
+     [
+      "parser.xxl:1212:22",
+      "lit",
+      "new"
+     ],
+     [
+      "parser.xxl:1212:22",
+      "push"
+     ],
+     [
+      "parser.xxl:1212:16",
+      "load",
+      "VMCode"
+     ],
+     [
+      "parser.xxl:1212:22",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1212:26",
+      "call",
+      0
+     ],
+     [
+      "parser.xxl:1212:4",
+      "store",
+      "wcode"
+     ],
+     [
+      "parser.xxl:1213:36",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1213:20",
+      "push"
+     ],
+     [
+      "parser.xxl:1213:21",
+      "lit",
+      "leave_while"
+     ],
+     [
+      "parser.xxl:1213:20",
+      "push"
+     ],
+     [
+      "parser.xxl:1213:9",
+      "lit",
+      "emit_scope"
+     ],
+     [
+      "parser.xxl:1213:9",
+      "push"
+     ],
+     [
+      "parser.xxl:1213:4",
+      "load",
+      "wcode"
+     ],
+     [
+      "parser.xxl:1213:9",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1213:20",
+      "call",
+      2
+     ],
+     [
+      "parser.xxl:1214:4",
+      "vars",
+      [
+       "top_label"
+      ]
+     ],
+     [
+      "parser.xxl:1214:25",
+      "lit",
+      "get_off"
+     ],
+     [
+      "parser.xxl:1214:25",
+      "push"
+     ],
+     [
+      "parser.xxl:1214:20",
+      "load",
+      "wcode"
+     ],
+     [
+      "parser.xxl:1214:25",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1214:33",
+      "call",
+      0
+     ],
+     [
+      "parser.xxl:1214:4",
+      "store",
+      "top_label"
+     ],
+     [
+      "parser.xxl:1215:19",
+      "load",
+      "wcode"
+     ],
+     [
+      "parser.xxl:1215:18",
+      "push"
+     ],
+     [
+      "parser.xxl:1215:14",
+      "lit",
+      "gen"
+     ],
+     [
+      "parser.xxl:1215:14",
+      "push"
+     ],
+     [
+      "parser.xxl:1215:8",
+      "lit",
+      "first"
+     ],
+     [
+      "parser.xxl:1215:8",
+      "push"
+     ],
+     [
+      "parser.xxl:1215:4",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1215:8",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1215:14",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1215:18",
+      "call",
+      1
+     ],
+     [
+      "parser.xxl:1216:4",
+      "vars",
+      [
+       "done_label"
+      ]
+     ],
+     [
+      "parser.xxl:1216:26",
+      "lit",
+      "def_fwd_label"
+     ],
+     [
+      "parser.xxl:1216:26",
+      "push"
+     ],
+     [
+      "parser.xxl:1216:21",
+      "load",
+      "wcode"
+     ],
+     [
+      "parser.xxl:1216:26",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1216:40",
+      "call",
+      0
+     ],
+     [
+      "parser.xxl:1216:4",
+      "store",
+      "done_label"
+     ],
+     [
+      "parser.xxl:1217:33",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1217:20",
+      "push"
+     ],
+     [
+      "parser.xxl:1217:21",
+      "load",
+      "done_label"
+     ],
+     [
+      "parser.xxl:1217:20",
+      "push"
+     ],
+     [
+      "parser.xxl:1217:9",
+      "lit",
+      "emit_ifnot"
+     ],
+     [
+      "parser.xxl:1217:9",
+      "push"
+     ],
+     [
+      "parser.xxl:1217:4",
+      "load",
+      "wcode"
+     ],
+     [
+      "parser.xxl:1217:9",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1217:20",
+      "call",
+      2
+     ],
+     [
+      "parser.xxl:1218:20",
+      "load",
+      "wcode"
+     ],
+     [
+      "parser.xxl:1218:19",
+      "push"
+     ],
+     [
+      "parser.xxl:1218:15",
+      "lit",
+      "gen"
+     ],
+     [
+      "parser.xxl:1218:15",
+      "push"
+     ],
+     [
+      "parser.xxl:1218:8",
+      "lit",
+      "second"
+     ],
+     [
+      "parser.xxl:1218:8",
+      "push"
+     ],
+     [
+      "parser.xxl:1218:4",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1218:8",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1218:15",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1218:19",
+      "call",
+      1
+     ],
+     [
+      "parser.xxl:1219:31",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1219:19",
+      "push"
+     ],
+     [
+      "parser.xxl:1219:20",
+      "load",
+      "top_label"
+     ],
+     [
+      "parser.xxl:1219:19",
+      "push"
+     ],
+     [
+      "parser.xxl:1219:9",
+      "lit",
+      "emit_jrst"
+     ],
+     [
+      "parser.xxl:1219:9",
+      "push"
+     ],
+     [
+      "parser.xxl:1219:4",
+      "load",
+      "wcode"
+     ],
+     [
+      "parser.xxl:1219:9",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1219:19",
+      "call",
+      2
+     ],
+     [
+      "parser.xxl:1220:25",
+      "load",
+      "done_label"
+     ],
+     [
+      "parser.xxl:1220:24",
+      "push"
+     ],
+     [
+      "parser.xxl:1220:9",
+      "lit",
+      "drop_fwd_label"
+     ],
+     [
+      "parser.xxl:1220:9",
+      "push"
+     ],
+     [
+      "parser.xxl:1220:4",
+      "load",
+      "wcode"
+     ],
+     [
+      "parser.xxl:1220:9",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1220:24",
+      "call",
+      1
+     ],
+     [
+      "parser.xxl:1223:42",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1223:21",
+      "push"
+     ],
+     [
+      "parser.xxl:1223:35",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1223:34",
+      "push"
+     ],
+     [
+      "parser.xxl:1223:27",
+      "lit",
+      "finish"
+     ],
+     [
+      "parser.xxl:1223:27",
+      "push"
+     ],
+     [
+      "parser.xxl:1223:22",
+      "load",
+      "wcode"
+     ],
+     [
+      "parser.xxl:1223:27",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1223:34",
+      "call",
+      1
+     ],
+     [
+      "parser.xxl:1223:21",
+      "push"
+     ],
+     [
+      "parser.xxl:1223:10",
+      "lit",
+      "emit_close"
+     ],
+     [
+      "parser.xxl:1223:10",
+      "push"
+     ],
+     [
+      "parser.xxl:1223:4",
+      "load",
+      "vmcode"
+     ],
+     [
+      "parser.xxl:1223:10",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1223:21",
+      "call",
+      2
+     ],
+     [
+      "parser.xxl:1224:24",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1224:20",
+      "push"
+     ],
+     [
+      "parser.xxl:1224:21",
+      "lit",
+      0
+     ],
+     [
+      "parser.xxl:1224:20",
+      "push"
+     ],
+     [
+      "parser.xxl:1224:10",
+      "lit",
+      "emit_call"
+     ],
+     [
+      "parser.xxl:1224:10",
+      "push"
+     ],
+     [
+      "parser.xxl:1224:4",
+      "load",
+      "vmcode"
+     ],
+     [
+      "parser.xxl:1224:10",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1224:20",
+      "call",
+      2
+     ],
+     [
+      "parser.xxl:1206:12",
+      "return"
+     ]
+    ]
+   ],
+   [
+    "parser.xxl:1196:12",
+    "push"
+   ],
+   [
+    "parser.xxl:1196:12",
+    "lit",
+    "gen"
+   ],
+   [
+    "parser.xxl:1196:12",
+    "push"
+   ],
+   [
+    "parser.xxl:1196:12",
+    "temp"
+   ],
+   [
+    "parser.xxl:1196:12",
+    "lhsop",
+    "["
+   ],
+   [
+    "parser.xxl:1196:12",
+    "pop_temp"
+   ],
+   [
+    "parser.xxl:1193:26",
+    "push"
+   ],
+   [
+    "parser.xxl:1193:26",
+    "lit",
+    "methods"
+   ],
+   [
+    "parser.xxl:1193:26",
+    "push"
+   ],
+   [
+    "parser.xxl:1193:26",
+    "temp"
+   ],
+   [
+    "parser.xxl:1193:26",
+    "lhsop",
+    "["
+   ],
+   [
+    "parser.xxl:1193:26",
+    "pop_temp"
+   ],
+   [
+    "parser.xxl:1193:25",
+    "push"
+   ],
+   [
+    "parser.xxl:1193:21",
+    "lit",
+    "new"
+   ],
+   [
+    "parser.xxl:1193:21",
+    "push"
+   ],
+   [
+    "parser.xxl:1193:16",
+    "load",
+    "Class"
+   ],
+   [
+    "parser.xxl:1193:21",
+    "binop",
+    "."
+   ],
+   [
+    "parser.xxl:1193:25",
+    "call",
+    1
+   ],
+   [
+    "parser.xxl:1193:7",
+    "push"
+   ],
+   [
+    "parser.xxl:1193:7",
+    "lit",
+    "While"
+   ],
+   [
+    "parser.xxl:1193:7",
+    "push"
+   ],
+   [
+    "parser.xxl:1193:6",
+    "load",
+    "p"
+   ],
+   [
+    "parser.xxl:1193:7",
+    "lhsop",
+    "."
+   ],
+   [
+    "parser.xxl:1228:35",
+    "lit",
+    "While"
+   ],
+   [
+    "parser.xxl:1228:35",
+    "push"
+   ],
+   [
+    "parser.xxl:1228:34",
+    "load",
+    "p"
+   ],
+   [
+    "parser.xxl:1228:35",
+    "binop",
+    "."
+   ],
+   [
+    "parser.xxl:1228:24",
+    "push"
+   ],
+   [
+    "parser.xxl:1228:25",
+    "lit",
+    "while"
+   ],
+   [
+    "parser.xxl:1228:24",
+    "push"
+   ],
+   [
+    "parser.xxl:1228:7",
+    "lit",
+    "add_symbol_class"
+   ],
+   [
+    "parser.xxl:1228:7",
+    "push"
+   ],
+   [
+    "parser.xxl:1228:6",
+    "load",
+    "p"
+   ],
+   [
+    "parser.xxl:1228:7",
+    "binop",
+    "."
+   ],
+   [
+    "parser.xxl:1228:24",
     "call",
     2
    ],
@@ -30855,356 +32146,356 @@
   "["
  ],
  [
-  "parser.xxl:1192:14",
+  "parser.xxl:1230:14",
   "close",
   [
    [
-    "parser.xxl:1192:14",
+    "parser.xxl:1230:14",
     "args",
     [
      "this"
     ]
    ],
    [
-    "parser.xxl:1193:6",
+    "parser.xxl:1231:6",
     "vars",
     [
      "a"
     ]
    ],
    [
-    "parser.xxl:1193:14",
+    "parser.xxl:1231:14",
     "new",
     "List"
    ],
    [
-    "parser.xxl:1193:14",
+    "parser.xxl:1231:14",
     "pop_temp"
    ],
    [
-    "parser.xxl:1193:6",
+    "parser.xxl:1231:6",
     "store",
     "a"
    ],
    [
-    "parser.xxl:1194:6",
+    "parser.xxl:1232:6",
     "vars",
     [
      "s"
     ]
    ],
    [
-    "parser.xxl:1195:6",
+    "parser.xxl:1233:6",
     "close",
     [
      [
-      "parser.xxl:1195:6",
+      "parser.xxl:1233:6",
       "scope",
       "leave_while"
      ],
      [
-      "parser.xxl:1195:13",
+      "parser.xxl:1233:13",
       "load",
       "true"
      ],
      [
-      "parser.xxl:1195:6",
+      "parser.xxl:1233:6",
       "jumpe",
       6
      ],
      [
-      "parser.xxl:1195:19",
+      "parser.xxl:1233:19",
       "close",
       [
        [
-        "parser.xxl:1195:19",
+        "parser.xxl:1233:19",
         "scope",
         "continue_while"
        ],
        [
-        "parser.xxl:1196:26",
+        "parser.xxl:1234:26",
         "lit",
         "}"
        ],
        [
-        "parser.xxl:1196:23",
+        "parser.xxl:1234:23",
         "push"
        ],
        [
-        "parser.xxl:1196:17",
+        "parser.xxl:1234:17",
         "lit",
         "id"
        ],
        [
-        "parser.xxl:1196:17",
+        "parser.xxl:1234:17",
         "push"
        ],
        [
-        "parser.xxl:1196:11",
+        "parser.xxl:1234:11",
         "lit",
         "token"
        ],
        [
-        "parser.xxl:1196:11",
+        "parser.xxl:1234:11",
         "push"
        ],
        [
-        "parser.xxl:1196:7",
+        "parser.xxl:1234:7",
         "load",
         "this"
        ],
        [
-        "parser.xxl:1196:11",
+        "parser.xxl:1234:11",
         "binop",
         "."
        ],
        [
-        "parser.xxl:1196:17",
+        "parser.xxl:1234:17",
         "binop",
         "."
        ],
        [
-        "parser.xxl:1196:20",
+        "parser.xxl:1234:20",
         "call",
         0
        ],
        [
-        "parser.xxl:1196:23",
+        "parser.xxl:1234:23",
         "binop",
         "=="
        ],
        [
-        "parser.xxl:1197:7",
+        "parser.xxl:1235:7",
         "jumpn",
         24
        ],
        [
-        "parser.xxl:1197:29",
+        "parser.xxl:1235:29",
         "lit",
         "(end)"
        ],
        [
-        "parser.xxl:1197:26",
+        "parser.xxl:1235:26",
         "push"
        ],
        [
-        "parser.xxl:1197:20",
+        "parser.xxl:1235:20",
         "lit",
         "id"
        ],
        [
-        "parser.xxl:1197:20",
+        "parser.xxl:1235:20",
         "push"
        ],
        [
-        "parser.xxl:1197:14",
+        "parser.xxl:1235:14",
         "lit",
         "token"
        ],
        [
-        "parser.xxl:1197:14",
+        "parser.xxl:1235:14",
         "push"
        ],
        [
-        "parser.xxl:1197:10",
+        "parser.xxl:1235:10",
         "load",
         "this"
        ],
        [
-        "parser.xxl:1197:14",
+        "parser.xxl:1235:14",
         "binop",
         "."
        ],
        [
-        "parser.xxl:1197:20",
+        "parser.xxl:1235:20",
         "binop",
         "."
        ],
        [
-        "parser.xxl:1197:23",
+        "parser.xxl:1235:23",
         "call",
         0
        ],
        [
-        "parser.xxl:1197:26",
+        "parser.xxl:1235:26",
         "binop",
         "=="
        ],
        [
-        "parser.xxl:1196:3",
+        "parser.xxl:1234:3",
         "jumpe",
         27
        ],
        [
-        "parser.xxl:1197:38",
+        "parser.xxl:1235:38",
         "close",
         [
          [
-          "parser.xxl:1197:38",
+          "parser.xxl:1235:38",
           "scope",
           null
          ],
          [
-          "parser.xxl:1198:7",
+          "parser.xxl:1236:7",
           "load",
           "leave_while"
          ],
          [
-          "parser.xxl:1198:18",
+          "parser.xxl:1236:18",
           "call",
           0
          ],
          [
-          "parser.xxl:1197:38",
+          "parser.xxl:1235:38",
           "return"
          ]
         ]
        ],
        [
-        "parser.xxl:1197:38",
+        "parser.xxl:1235:38",
         "call",
         0
        ],
        [
-        "parser.xxl:1200:11",
+        "parser.xxl:1238:11",
         "lit",
         "statement"
        ],
        [
-        "parser.xxl:1200:11",
+        "parser.xxl:1238:11",
         "push"
        ],
        [
-        "parser.xxl:1200:7",
+        "parser.xxl:1238:7",
         "load",
         "this"
        ],
        [
-        "parser.xxl:1200:11",
+        "parser.xxl:1238:11",
         "binop",
         "."
        ],
        [
-        "parser.xxl:1200:21",
+        "parser.xxl:1238:21",
         "call",
         0
        ],
        [
-        "parser.xxl:1200:3",
+        "parser.xxl:1238:3",
         "store",
         "s"
        ],
        [
-        "parser.xxl:1201:7",
+        "parser.xxl:1239:7",
         "load",
         "s"
        ],
        [
-        "parser.xxl:1201:3",
+        "parser.xxl:1239:3",
         "jumpe",
         37
        ],
        [
-        "parser.xxl:1201:10",
+        "parser.xxl:1239:10",
         "close",
         [
          [
-          "parser.xxl:1201:10",
+          "parser.xxl:1239:10",
           "scope",
           null
          ],
          [
-          "parser.xxl:1202:16",
+          "parser.xxl:1240:16",
           "load",
           "s"
          ],
          [
-          "parser.xxl:1202:15",
+          "parser.xxl:1240:15",
           "push"
          ],
          [
-          "parser.xxl:1202:8",
+          "parser.xxl:1240:8",
           "lit",
           "append"
          ],
          [
-          "parser.xxl:1202:8",
+          "parser.xxl:1240:8",
           "push"
          ],
          [
-          "parser.xxl:1202:7",
+          "parser.xxl:1240:7",
           "load",
           "a"
          ],
          [
-          "parser.xxl:1202:8",
+          "parser.xxl:1240:8",
           "binop",
           "."
          ],
          [
-          "parser.xxl:1202:15",
+          "parser.xxl:1240:15",
           "call",
           1
          ],
          [
-          "parser.xxl:1201:10",
+          "parser.xxl:1239:10",
           "return"
          ]
         ]
        ],
        [
-        "parser.xxl:1201:10",
+        "parser.xxl:1239:10",
         "call",
         0
        ],
        [
-        "parser.xxl:1195:19",
+        "parser.xxl:1233:19",
         "return"
        ]
       ]
      ],
      [
-      "parser.xxl:1195:19",
+      "parser.xxl:1233:19",
       "call",
       0
      ],
      [
-      "parser.xxl:1195:6",
+      "parser.xxl:1233:6",
       "jrst",
       1
      ],
      [
-      "parser.xxl:1195:6",
+      "parser.xxl:1233:6",
       "return"
      ]
     ]
    ],
    [
-    "parser.xxl:1195:6",
+    "parser.xxl:1233:6",
     "call",
     0
    ],
    [
-    "parser.xxl:1205:13",
+    "parser.xxl:1243:13",
     "load",
     "a"
    ],
    [
-    "parser.xxl:1205:12",
+    "parser.xxl:1243:12",
     "push"
    ],
    [
-    "parser.xxl:1205:6",
+    "parser.xxl:1243:6",
     "load",
     "return"
    ],
    [
-    "parser.xxl:1205:12",
+    "parser.xxl:1243:12",
     "call",
     1
    ],
    [
-    "parser.xxl:1192:14",
+    "parser.xxl:1230:14",
     "return"
    ]
   ]
@@ -31232,11 +32523,11 @@
   "["
  ],
  [
-  "parser.xxl:1207:9",
+  "parser.xxl:1245:9",
   "close",
   [
    [
-    "parser.xxl:1207:9",
+    "parser.xxl:1245:9",
     "args",
     [
      "this",
@@ -31244,118 +32535,340 @@
     ]
    ],
    [
-    "parser.xxl:1209:6",
+    "parser.xxl:1246:6",
     "vars",
     [
      "t"
     ]
    ],
    [
-    "parser.xxl:1209:18",
+    "parser.xxl:1246:18",
     "lit",
     "token"
    ],
    [
-    "parser.xxl:1209:18",
+    "parser.xxl:1246:18",
     "push"
    ],
    [
-    "parser.xxl:1209:14",
+    "parser.xxl:1246:14",
     "load",
     "this"
    ],
    [
-    "parser.xxl:1209:18",
+    "parser.xxl:1246:18",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1209:6",
+    "parser.xxl:1246:6",
     "store",
     "t"
    ],
    [
-    "parser.xxl:1210:19",
+    "parser.xxl:1247:30",
     "lit",
-    "{"
+    "Symbol"
    ],
    [
-    "parser.xxl:1210:18",
+    "parser.xxl:1247:27",
     "push"
    ],
    [
-    "parser.xxl:1210:10",
+    "parser.xxl:1247:19",
     "lit",
-    "advance"
+    "__name"
    ],
    [
-    "parser.xxl:1210:10",
+    "parser.xxl:1247:19",
     "push"
    ],
    [
-    "parser.xxl:1210:6",
-    "load",
-    "this"
-   ],
-   [
-    "parser.xxl:1210:10",
-    "binop",
-    "."
-   ],
-   [
-    "parser.xxl:1210:18",
-    "call",
-    1
-   ],
-   [
-    "parser.xxl:1211:19",
-    "load",
-    "labels"
-   ],
-   [
-    "parser.xxl:1211:18",
-    "push"
-   ],
-   [
-    "parser.xxl:1211:14",
+    "parser.xxl:1247:11",
     "lit",
-    "std"
+    "class"
    ],
    [
-    "parser.xxl:1211:14",
+    "parser.xxl:1247:11",
     "push"
    ],
    [
-    "parser.xxl:1211:13",
+    "parser.xxl:1247:10",
     "load",
     "t"
    ],
    [
-    "parser.xxl:1211:14",
+    "parser.xxl:1247:11",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1211:18",
+    "parser.xxl:1247:17",
+    "call",
+    0
+   ],
+   [
+    "parser.xxl:1247:19",
+    "binop",
+    "."
+   ],
+   [
+    "parser.xxl:1247:27",
+    "binop",
+    "=="
+   ],
+   [
+    "parser.xxl:1247:6",
+    "jumpe",
+    21
+   ],
+   [
+    "parser.xxl:1247:40",
+    "close",
+    [
+     [
+      "parser.xxl:1247:40",
+      "scope",
+      null
+     ],
+     [
+      "parser.xxl:1248:3",
+      "vars",
+      [
+       "label"
+      ]
+     ],
+     [
+      "parser.xxl:1248:16",
+      "lit",
+      "id"
+     ],
+     [
+      "parser.xxl:1248:16",
+      "push"
+     ],
+     [
+      "parser.xxl:1248:15",
+      "load",
+      "t"
+     ],
+     [
+      "parser.xxl:1248:16",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1248:19",
+      "call",
+      0
+     ],
+     [
+      "parser.xxl:1248:3",
+      "store",
+      "label"
+     ],
+     [
+      "parser.xxl:1249:7",
+      "lit",
+      "advance"
+     ],
+     [
+      "parser.xxl:1249:7",
+      "push"
+     ],
+     [
+      "parser.xxl:1249:3",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1249:7",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1249:15",
+      "call",
+      0
+     ],
+     [
+      "parser.xxl:1250:16",
+      "lit",
+      ":"
+     ],
+     [
+      "parser.xxl:1250:15",
+      "push"
+     ],
+     [
+      "parser.xxl:1250:7",
+      "lit",
+      "advance"
+     ],
+     [
+      "parser.xxl:1250:7",
+      "push"
+     ],
+     [
+      "parser.xxl:1250:3",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1250:7",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1250:15",
+      "call",
+      1
+     ],
+     [
+      "parser.xxl:1251:11",
+      "lit",
+      "token"
+     ],
+     [
+      "parser.xxl:1251:11",
+      "push"
+     ],
+     [
+      "parser.xxl:1251:7",
+      "load",
+      "this"
+     ],
+     [
+      "parser.xxl:1251:11",
+      "binop",
+      "."
+     ],
+     [
+      "parser.xxl:1251:3",
+      "store",
+      "t"
+     ],
+     [
+      "parser.xxl:1252:13",
+      "load",
+      "label"
+     ],
+     [
+      "parser.xxl:1252:4",
+      "push"
+     ],
+     [
+      "parser.xxl:1252:4",
+      "lit",
+      "label"
+     ],
+     [
+      "parser.xxl:1252:4",
+      "push"
+     ],
+     [
+      "parser.xxl:1252:3",
+      "load",
+      "t"
+     ],
+     [
+      "parser.xxl:1252:4",
+      "lhsop",
+      "."
+     ],
+     [
+      "parser.xxl:1247:40",
+      "return"
+     ]
+    ]
+   ],
+   [
+    "parser.xxl:1247:40",
+    "call",
+    0
+   ],
+   [
+    "parser.xxl:1254:19",
+    "lit",
+    "{"
+   ],
+   [
+    "parser.xxl:1254:18",
+    "push"
+   ],
+   [
+    "parser.xxl:1254:10",
+    "lit",
+    "advance"
+   ],
+   [
+    "parser.xxl:1254:10",
+    "push"
+   ],
+   [
+    "parser.xxl:1254:6",
+    "load",
+    "this"
+   ],
+   [
+    "parser.xxl:1254:10",
+    "binop",
+    "."
+   ],
+   [
+    "parser.xxl:1254:18",
     "call",
     1
    ],
    [
-    "parser.xxl:1211:12",
+    "parser.xxl:1255:19",
+    "load",
+    "labels"
+   ],
+   [
+    "parser.xxl:1255:18",
     "push"
    ],
    [
-    "parser.xxl:1211:6",
+    "parser.xxl:1255:14",
+    "lit",
+    "std"
+   ],
+   [
+    "parser.xxl:1255:14",
+    "push"
+   ],
+   [
+    "parser.xxl:1255:13",
+    "load",
+    "t"
+   ],
+   [
+    "parser.xxl:1255:14",
+    "binop",
+    "."
+   ],
+   [
+    "parser.xxl:1255:18",
+    "call",
+    1
+   ],
+   [
+    "parser.xxl:1255:12",
+    "push"
+   ],
+   [
+    "parser.xxl:1255:6",
     "load",
     "return"
    ],
    [
-    "parser.xxl:1211:12",
+    "parser.xxl:1255:12",
     "call",
     1
    ],
    [
-    "parser.xxl:1207:9",
+    "parser.xxl:1245:9",
     "return"
    ]
   ]
@@ -31383,11 +32896,11 @@
   "["
  ],
  [
-  "parser.xxl:1213:15",
+  "parser.xxl:1257:15",
   "close",
   [
    [
-    "parser.xxl:1213:15",
+    "parser.xxl:1257:15",
     "args",
     [
      "this",
@@ -31395,453 +32908,453 @@
     ]
    ],
    [
-    "parser.xxl:1214:34",
+    "parser.xxl:1258:34",
     "load",
     "null"
    ],
    [
-    "parser.xxl:1214:33",
+    "parser.xxl:1258:33",
     "push"
    ],
    [
-    "parser.xxl:1214:29",
+    "parser.xxl:1258:29",
     "lit",
     "new"
    ],
    [
-    "parser.xxl:1214:29",
+    "parser.xxl:1258:29",
     "push"
    ],
    [
-    "parser.xxl:1214:23",
+    "parser.xxl:1258:23",
     "lit",
     "Scope"
    ],
    [
-    "parser.xxl:1214:23",
+    "parser.xxl:1258:23",
     "push"
    ],
    [
-    "parser.xxl:1214:19",
+    "parser.xxl:1258:19",
     "load",
     "this"
    ],
    [
-    "parser.xxl:1214:23",
+    "parser.xxl:1258:23",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1214:29",
+    "parser.xxl:1258:29",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1214:33",
+    "parser.xxl:1258:33",
     "call",
     1
    ],
    [
-    "parser.xxl:1214:10",
+    "parser.xxl:1258:10",
     "push"
    ],
    [
-    "parser.xxl:1214:10",
+    "parser.xxl:1258:10",
     "lit",
     "scope"
    ],
    [
-    "parser.xxl:1214:10",
+    "parser.xxl:1258:10",
     "push"
    ],
    [
-    "parser.xxl:1214:6",
+    "parser.xxl:1258:6",
     "load",
     "this"
    ],
    [
-    "parser.xxl:1214:10",
+    "parser.xxl:1258:10",
     "lhsop",
     "."
    ],
    [
-    "parser.xxl:1215:64",
+    "parser.xxl:1259:64",
     "lit",
     "=<>&|."
    ],
    [
-    "parser.xxl:1215:39",
+    "parser.xxl:1259:39",
     "push"
    ],
    [
-    "parser.xxl:1215:47",
+    "parser.xxl:1259:47",
     "lit",
     "=<>!+-*&|/%^."
    ],
    [
-    "parser.xxl:1215:39",
+    "parser.xxl:1259:39",
     "push"
    ],
    [
-    "parser.xxl:1215:40",
+    "parser.xxl:1259:40",
     "load",
     "fname"
    ],
    [
-    "parser.xxl:1215:39",
+    "parser.xxl:1259:39",
     "push"
    ],
    [
-    "parser.xxl:1215:29",
+    "parser.xxl:1259:29",
     "lit",
     "tokenizer"
    ],
    [
-    "parser.xxl:1215:29",
+    "parser.xxl:1259:29",
     "push"
    ],
    [
-    "parser.xxl:1215:23",
+    "parser.xxl:1259:23",
     "load",
     "System"
    ],
    [
-    "parser.xxl:1215:29",
+    "parser.xxl:1259:29",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1215:39",
+    "parser.xxl:1259:39",
     "call",
     3
    ],
    [
-    "parser.xxl:1215:10",
+    "parser.xxl:1259:10",
     "push"
    ],
    [
-    "parser.xxl:1215:10",
+    "parser.xxl:1259:10",
     "lit",
     "get_token"
    ],
    [
-    "parser.xxl:1215:10",
+    "parser.xxl:1259:10",
     "push"
    ],
    [
-    "parser.xxl:1215:6",
+    "parser.xxl:1259:6",
     "load",
     "this"
    ],
    [
-    "parser.xxl:1215:10",
+    "parser.xxl:1259:10",
     "lhsop",
     "."
    ],
    [
-    "parser.xxl:1216:19",
+    "parser.xxl:1260:19",
     "load",
     "null"
    ],
    [
-    "parser.xxl:1216:10",
+    "parser.xxl:1260:10",
     "push"
    ],
    [
-    "parser.xxl:1216:10",
+    "parser.xxl:1260:10",
     "lit",
     "token"
    ],
    [
-    "parser.xxl:1216:10",
+    "parser.xxl:1260:10",
     "push"
    ],
    [
-    "parser.xxl:1216:6",
+    "parser.xxl:1260:6",
     "load",
     "this"
    ],
    [
-    "parser.xxl:1216:10",
+    "parser.xxl:1260:10",
     "lhsop",
     "."
    ],
    [
-    "parser.xxl:1218:6",
+    "parser.xxl:1262:6",
     "vars",
     [
      "predef"
     ]
    ],
    [
-    "parser.xxl:1218:19",
+    "parser.xxl:1262:19",
     "close",
     [
      [
-      "parser.xxl:1218:19",
+      "parser.xxl:1262:19",
       "args",
       [
        "name"
       ]
      ],
      [
-      "parser.xxl:1220:53",
+      "parser.xxl:1264:53",
       "lit",
       "name"
      ],
      [
-      "parser.xxl:1220:35",
+      "parser.xxl:1264:35",
       "push"
      ],
      [
-      "parser.xxl:1220:47",
+      "parser.xxl:1264:47",
       "load",
       "name"
      ],
      [
-      "parser.xxl:1220:35",
+      "parser.xxl:1264:35",
       "push"
      ],
      [
-      "parser.xxl:1220:36",
+      "parser.xxl:1264:36",
       "lit",
       "@predef"
      ],
      [
-      "parser.xxl:1220:35",
+      "parser.xxl:1264:35",
       "push"
      ],
      [
-      "parser.xxl:1220:31",
+      "parser.xxl:1264:31",
       "lit",
       "new"
      ],
      [
-      "parser.xxl:1220:31",
+      "parser.xxl:1264:31",
       "push"
      ],
      [
-      "parser.xxl:1220:26",
+      "parser.xxl:1264:26",
       "lit",
       "Name"
      ],
      [
-      "parser.xxl:1220:26",
+      "parser.xxl:1264:26",
       "push"
      ],
      [
-      "parser.xxl:1220:22",
+      "parser.xxl:1264:22",
       "load",
       "this"
      ],
      [
-      "parser.xxl:1220:26",
+      "parser.xxl:1264:26",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1220:31",
+      "parser.xxl:1264:31",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1220:35",
+      "parser.xxl:1264:35",
       "call",
       3
      ],
      [
-      "parser.xxl:1220:21",
+      "parser.xxl:1264:21",
       "push"
      ],
      [
-      "parser.xxl:1220:13",
+      "parser.xxl:1264:13",
       "lit",
       "_define"
      ],
      [
-      "parser.xxl:1220:13",
+      "parser.xxl:1264:13",
       "push"
      ],
      [
-      "parser.xxl:1220:7",
+      "parser.xxl:1264:7",
       "lit",
       "scope"
      ],
      [
-      "parser.xxl:1220:7",
+      "parser.xxl:1264:7",
       "push"
      ],
      [
-      "parser.xxl:1220:3",
+      "parser.xxl:1264:3",
       "load",
       "this"
      ],
      [
-      "parser.xxl:1220:7",
+      "parser.xxl:1264:7",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1220:13",
+      "parser.xxl:1264:13",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1220:21",
+      "parser.xxl:1264:21",
       "call",
       1
      ],
      [
-      "parser.xxl:1218:19",
+      "parser.xxl:1262:19",
       "return"
      ]
     ]
    ],
    [
-    "parser.xxl:1218:6",
+    "parser.xxl:1262:6",
     "store",
     "predef"
    ],
    [
-    "parser.xxl:1223:13",
+    "parser.xxl:1267:13",
     "lit",
     "Class"
    ],
    [
-    "parser.xxl:1223:12",
+    "parser.xxl:1267:12",
     "push"
    ],
    [
-    "parser.xxl:1223:6",
+    "parser.xxl:1267:6",
     "load",
     "predef"
    ],
    [
-    "parser.xxl:1223:12",
+    "parser.xxl:1267:12",
     "call",
     1
    ],
    [
-    "parser.xxl:1224:13",
+    "parser.xxl:1268:13",
     "lit",
     "System"
    ],
    [
-    "parser.xxl:1224:12",
+    "parser.xxl:1268:12",
     "push"
    ],
    [
-    "parser.xxl:1224:6",
+    "parser.xxl:1268:6",
     "load",
     "predef"
    ],
    [
-    "parser.xxl:1224:12",
+    "parser.xxl:1268:12",
     "call",
     1
    ],
    [
-    "parser.xxl:1227:13",
+    "parser.xxl:1271:13",
     "lit",
     "false"
    ],
    [
-    "parser.xxl:1227:12",
+    "parser.xxl:1271:12",
     "push"
    ],
    [
-    "parser.xxl:1227:6",
+    "parser.xxl:1271:6",
     "load",
     "predef"
    ],
    [
-    "parser.xxl:1227:12",
+    "parser.xxl:1271:12",
     "call",
     1
    ],
    [
-    "parser.xxl:1228:13",
+    "parser.xxl:1272:13",
     "lit",
     "null"
    ],
    [
-    "parser.xxl:1228:12",
+    "parser.xxl:1272:12",
     "push"
    ],
    [
-    "parser.xxl:1228:6",
+    "parser.xxl:1272:6",
     "load",
     "predef"
    ],
    [
-    "parser.xxl:1228:12",
+    "parser.xxl:1272:12",
     "call",
     1
    ],
    [
-    "parser.xxl:1229:13",
+    "parser.xxl:1273:13",
     "lit",
     "true"
    ],
    [
-    "parser.xxl:1229:12",
+    "parser.xxl:1273:12",
     "push"
    ],
    [
-    "parser.xxl:1229:6",
+    "parser.xxl:1273:6",
     "load",
     "predef"
    ],
    [
-    "parser.xxl:1229:12",
+    "parser.xxl:1273:12",
     "call",
     1
    ],
    [
-    "parser.xxl:1230:13",
+    "parser.xxl:1274:13",
     "lit",
     "__main__"
    ],
    [
-    "parser.xxl:1230:12",
+    "parser.xxl:1274:12",
     "push"
    ],
    [
-    "parser.xxl:1230:6",
+    "parser.xxl:1274:6",
     "load",
     "predef"
    ],
    [
-    "parser.xxl:1230:12",
+    "parser.xxl:1274:12",
     "call",
     1
    ],
    [
-    "parser.xxl:1232:10",
+    "parser.xxl:1276:10",
     "lit",
     "advance"
    ],
    [
-    "parser.xxl:1232:10",
+    "parser.xxl:1276:10",
     "push"
    ],
    [
-    "parser.xxl:1232:6",
+    "parser.xxl:1276:6",
     "load",
     "this"
    ],
    [
-    "parser.xxl:1232:10",
+    "parser.xxl:1276:10",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1232:18",
+    "parser.xxl:1276:18",
     "call",
     0
    ],
    [
-    "parser.xxl:1213:15",
+    "parser.xxl:1257:15",
     "return"
    ]
   ]
@@ -31869,11 +33382,11 @@
   "["
  ],
  [
-  "parser.xxl:1234:9",
+  "parser.xxl:1278:9",
   "close",
   [
    [
-    "parser.xxl:1234:9",
+    "parser.xxl:1278:9",
     "args",
     [
      "this",
@@ -31881,189 +33394,189 @@
     ]
    ],
    [
-    "parser.xxl:1235:23",
+    "parser.xxl:1279:23",
     "load",
     "fname"
    ],
    [
-    "parser.xxl:1235:22",
+    "parser.xxl:1279:22",
     "push"
    ],
    [
-    "parser.xxl:1235:10",
+    "parser.xxl:1279:10",
     "lit",
     "start_parse"
    ],
    [
-    "parser.xxl:1235:10",
+    "parser.xxl:1279:10",
     "push"
    ],
    [
-    "parser.xxl:1235:6",
+    "parser.xxl:1279:6",
     "load",
     "this"
    ],
    [
-    "parser.xxl:1235:10",
+    "parser.xxl:1279:10",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1235:22",
+    "parser.xxl:1279:22",
     "call",
     1
    ],
    [
-    "parser.xxl:1236:6",
+    "parser.xxl:1280:6",
     "vars",
     [
      "s"
     ]
    ],
    [
-    "parser.xxl:1236:18",
+    "parser.xxl:1280:18",
     "lit",
     "statements"
    ],
    [
-    "parser.xxl:1236:18",
+    "parser.xxl:1280:18",
     "push"
    ],
    [
-    "parser.xxl:1236:14",
+    "parser.xxl:1280:14",
     "load",
     "this"
    ],
    [
-    "parser.xxl:1236:18",
+    "parser.xxl:1280:18",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1236:29",
+    "parser.xxl:1280:29",
     "call",
     0
    ],
    [
-    "parser.xxl:1236:6",
+    "parser.xxl:1280:6",
     "store",
     "s"
    ],
    [
-    "parser.xxl:1237:19",
+    "parser.xxl:1281:19",
     "lit",
     "(end)"
    ],
    [
-    "parser.xxl:1237:18",
+    "parser.xxl:1281:18",
     "push"
    ],
    [
-    "parser.xxl:1237:10",
+    "parser.xxl:1281:10",
     "lit",
     "advance"
    ],
    [
-    "parser.xxl:1237:10",
+    "parser.xxl:1281:10",
     "push"
    ],
    [
-    "parser.xxl:1237:6",
+    "parser.xxl:1281:6",
     "load",
     "this"
    ],
    [
-    "parser.xxl:1237:10",
+    "parser.xxl:1281:10",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1237:18",
+    "parser.xxl:1281:18",
     "call",
     1
    ],
    [
-    "parser.xxl:1238:29",
+    "parser.xxl:1282:29",
     "lit",
     "pop"
    ],
    [
-    "parser.xxl:1238:29",
+    "parser.xxl:1282:29",
     "push"
    ],
    [
-    "parser.xxl:1238:23",
+    "parser.xxl:1282:23",
     "lit",
     "scope"
    ],
    [
-    "parser.xxl:1238:23",
+    "parser.xxl:1282:23",
     "push"
    ],
    [
-    "parser.xxl:1238:19",
+    "parser.xxl:1282:19",
     "load",
     "this"
    ],
    [
-    "parser.xxl:1238:23",
+    "parser.xxl:1282:23",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1238:29",
+    "parser.xxl:1282:29",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1238:33",
+    "parser.xxl:1282:33",
     "call",
     0
    ],
    [
-    "parser.xxl:1238:10",
+    "parser.xxl:1282:10",
     "push"
    ],
    [
-    "parser.xxl:1238:10",
+    "parser.xxl:1282:10",
     "lit",
     "scope"
    ],
    [
-    "parser.xxl:1238:10",
+    "parser.xxl:1282:10",
     "push"
    ],
    [
-    "parser.xxl:1238:6",
+    "parser.xxl:1282:6",
     "load",
     "this"
    ],
    [
-    "parser.xxl:1238:10",
+    "parser.xxl:1282:10",
     "lhsop",
     "."
    ],
    [
-    "parser.xxl:1239:13",
+    "parser.xxl:1283:13",
     "load",
     "s"
    ],
    [
-    "parser.xxl:1239:12",
+    "parser.xxl:1283:12",
     "push"
    ],
    [
-    "parser.xxl:1239:6",
+    "parser.xxl:1283:6",
     "load",
     "return"
    ],
    [
-    "parser.xxl:1239:12",
+    "parser.xxl:1283:12",
     "call",
     1
    ],
    [
-    "parser.xxl:1234:9",
+    "parser.xxl:1278:9",
     "return"
    ]
   ]
@@ -32154,910 +33667,910 @@
   "Parser"
  ],
  [
-  "parser.xxl:1247:1",
+  "parser.xxl:1291:1",
   "vars",
   [
    "gen"
   ]
  ],
  [
-  "parser.xxl:1247:11",
+  "parser.xxl:1291:11",
   "close",
   [
    [
-    "parser.xxl:1247:11",
+    "parser.xxl:1291:11",
     "args",
     [
      "stmts"
     ]
    ],
    [
-    "parser.xxl:1248:5",
+    "parser.xxl:1292:5",
     "vars",
     [
      "vmcode"
     ]
    ],
    [
-    "parser.xxl:1248:24",
+    "parser.xxl:1292:24",
     "lit",
     "new"
    ],
    [
-    "parser.xxl:1248:24",
+    "parser.xxl:1292:24",
     "push"
    ],
    [
-    "parser.xxl:1248:18",
+    "parser.xxl:1292:18",
     "load",
     "VMCode"
    ],
    [
-    "parser.xxl:1248:24",
+    "parser.xxl:1292:24",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1248:28",
+    "parser.xxl:1292:28",
     "call",
     0
    ],
    [
-    "parser.xxl:1248:5",
+    "parser.xxl:1292:5",
     "store",
     "vmcode"
    ],
    [
-    "parser.xxl:1249:22",
+    "parser.xxl:1293:22",
     "load",
     "stmts"
    ],
    [
-    "parser.xxl:1249:21",
+    "parser.xxl:1293:21",
     "push"
    ],
    [
-    "parser.xxl:1249:11",
+    "parser.xxl:1293:11",
     "lit",
     "gen_stmts"
    ],
    [
-    "parser.xxl:1249:11",
+    "parser.xxl:1293:11",
     "push"
    ],
    [
-    "parser.xxl:1249:5",
+    "parser.xxl:1293:5",
     "load",
     "vmcode"
    ],
    [
-    "parser.xxl:1249:11",
+    "parser.xxl:1293:11",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1249:21",
+    "parser.xxl:1293:21",
     "call",
     1
    ],
    [
-    "parser.xxl:1250:26",
+    "parser.xxl:1294:26",
     "load",
     "null"
    ],
    [
-    "parser.xxl:1250:25",
+    "parser.xxl:1294:25",
     "push"
    ],
    [
-    "parser.xxl:1250:18",
+    "parser.xxl:1294:18",
     "lit",
     "finish"
    ],
    [
-    "parser.xxl:1250:18",
+    "parser.xxl:1294:18",
     "push"
    ],
    [
-    "parser.xxl:1250:12",
+    "parser.xxl:1294:12",
     "load",
     "vmcode"
    ],
    [
-    "parser.xxl:1250:18",
+    "parser.xxl:1294:18",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1250:25",
+    "parser.xxl:1294:25",
     "call",
     1
    ],
    [
-    "parser.xxl:1250:11",
+    "parser.xxl:1294:11",
     "push"
    ],
    [
-    "parser.xxl:1250:5",
+    "parser.xxl:1294:5",
     "load",
     "return"
    ],
    [
-    "parser.xxl:1250:11",
+    "parser.xxl:1294:11",
     "call",
     1
    ],
    [
-    "parser.xxl:1247:11",
+    "parser.xxl:1291:11",
     "return"
    ]
   ]
  ],
  [
-  "parser.xxl:1247:1",
+  "parser.xxl:1291:1",
   "store",
   "gen"
  ],
  [
-  "parser.xxl:1253:1",
+  "parser.xxl:1297:1",
   "vars",
   [
    "parser"
   ]
  ],
  [
-  "parser.xxl:1253:20",
+  "parser.xxl:1297:20",
   "lit",
   "new"
  ],
  [
-  "parser.xxl:1253:20",
+  "parser.xxl:1297:20",
   "push"
  ],
  [
-  "parser.xxl:1253:14",
+  "parser.xxl:1297:14",
   "load",
   "Parser"
  ],
  [
-  "parser.xxl:1253:20",
+  "parser.xxl:1297:20",
   "binop",
   "."
  ],
  [
-  "parser.xxl:1253:24",
+  "parser.xxl:1297:24",
   "call",
   0
  ],
  [
-  "parser.xxl:1253:1",
+  "parser.xxl:1297:1",
   "store",
   "parser"
  ],
  [
-  "parser.xxl:1254:1",
+  "parser.xxl:1298:1",
   "vars",
   [
    "parse"
   ]
  ],
  [
-  "parser.xxl:1254:19",
+  "parser.xxl:1298:19",
   "lit",
   "parse"
  ],
  [
-  "parser.xxl:1254:19",
+  "parser.xxl:1298:19",
   "push"
  ],
  [
-  "parser.xxl:1254:13",
+  "parser.xxl:1298:13",
   "load",
   "parser"
  ],
  [
-  "parser.xxl:1254:19",
+  "parser.xxl:1298:19",
   "binop",
   "."
  ],
  [
-  "parser.xxl:1254:1",
+  "parser.xxl:1298:1",
   "store",
   "parse"
  ],
  [
-  "parser.xxl:1256:1",
+  "parser.xxl:1300:1",
   "vars",
   [
    "parse_and_gen_one_stmt"
   ]
  ],
  [
-  "parser.xxl:1256:30",
+  "parser.xxl:1300:30",
   "close",
   [
    [
-    "parser.xxl:1256:30",
+    "parser.xxl:1300:30",
     "args",
     [
      "parser"
     ]
    ],
    [
-    "parser.xxl:1257:15",
+    "parser.xxl:1301:15",
     "lit",
     "token"
    ],
    [
-    "parser.xxl:1257:15",
+    "parser.xxl:1301:15",
     "push"
    ],
    [
-    "parser.xxl:1257:9",
+    "parser.xxl:1301:9",
     "load",
     "parser"
    ],
    [
-    "parser.xxl:1257:15",
+    "parser.xxl:1301:15",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1258:2",
+    "parser.xxl:1302:2",
     "jumpe",
     29
    ],
    [
-    "parser.xxl:1258:27",
+    "parser.xxl:1302:27",
     "lit",
     "}"
    ],
    [
-    "parser.xxl:1258:24",
+    "parser.xxl:1302:24",
     "push"
    ],
    [
-    "parser.xxl:1258:18",
+    "parser.xxl:1302:18",
     "lit",
     "id"
    ],
    [
-    "parser.xxl:1258:18",
+    "parser.xxl:1302:18",
     "push"
    ],
    [
-    "parser.xxl:1258:12",
+    "parser.xxl:1302:12",
     "lit",
     "token"
    ],
    [
-    "parser.xxl:1258:12",
+    "parser.xxl:1302:12",
     "push"
    ],
    [
-    "parser.xxl:1258:6",
+    "parser.xxl:1302:6",
     "load",
     "parser"
    ],
    [
-    "parser.xxl:1258:12",
+    "parser.xxl:1302:12",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1258:18",
+    "parser.xxl:1302:18",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1258:21",
+    "parser.xxl:1302:21",
     "call",
     0
    ],
    [
-    "parser.xxl:1258:24",
+    "parser.xxl:1302:24",
     "binop",
     "=="
    ],
    [
-    "parser.xxl:1259:6",
+    "parser.xxl:1303:6",
     "jumpn",
     29
    ],
    [
-    "parser.xxl:1259:30",
+    "parser.xxl:1303:30",
     "lit",
     "(end)"
    ],
    [
-    "parser.xxl:1259:27",
+    "parser.xxl:1303:27",
     "push"
    ],
    [
-    "parser.xxl:1259:21",
+    "parser.xxl:1303:21",
     "lit",
     "id"
    ],
    [
-    "parser.xxl:1259:21",
+    "parser.xxl:1303:21",
     "push"
    ],
    [
-    "parser.xxl:1259:15",
+    "parser.xxl:1303:15",
     "lit",
     "token"
    ],
    [
-    "parser.xxl:1259:15",
+    "parser.xxl:1303:15",
     "push"
    ],
    [
-    "parser.xxl:1259:9",
+    "parser.xxl:1303:9",
     "load",
     "parser"
    ],
    [
-    "parser.xxl:1259:15",
+    "parser.xxl:1303:15",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1259:21",
+    "parser.xxl:1303:21",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1259:24",
+    "parser.xxl:1303:24",
     "call",
     0
    ],
    [
-    "parser.xxl:1259:27",
+    "parser.xxl:1303:27",
     "binop",
     "=="
    ],
    [
-    "parser.xxl:1257:5",
+    "parser.xxl:1301:5",
     "jumpe",
     32
    ],
    [
-    "parser.xxl:1259:40",
+    "parser.xxl:1303:40",
     "close",
     [
      [
-      "parser.xxl:1259:40",
+      "parser.xxl:1303:40",
       "scope",
       null
      ],
      [
-      "parser.xxl:1260:9",
+      "parser.xxl:1304:9",
       "load",
       "null"
      ],
      [
-      "parser.xxl:1260:8",
+      "parser.xxl:1304:8",
       "push"
      ],
      [
-      "parser.xxl:1260:2",
+      "parser.xxl:1304:2",
       "load",
       "return"
      ],
      [
-      "parser.xxl:1260:8",
+      "parser.xxl:1304:8",
       "call",
       1
      ],
      [
-      "parser.xxl:1259:40",
+      "parser.xxl:1303:40",
       "return"
      ]
     ]
    ],
    [
-    "parser.xxl:1259:40",
+    "parser.xxl:1303:40",
     "call",
     0
    ],
    [
-    "parser.xxl:1262:16",
+    "parser.xxl:1306:16",
     "new",
     "List"
    ],
    [
-    "parser.xxl:1262:23",
+    "parser.xxl:1306:23",
     "lit",
     "statement"
    ],
    [
-    "parser.xxl:1262:23",
+    "parser.xxl:1306:23",
     "push"
    ],
    [
-    "parser.xxl:1262:17",
+    "parser.xxl:1306:17",
     "load",
     "parser"
    ],
    [
-    "parser.xxl:1262:23",
+    "parser.xxl:1306:23",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1262:33",
+    "parser.xxl:1306:33",
     "call",
     0
    ],
    [
-    "parser.xxl:1262:16",
+    "parser.xxl:1306:16",
     "append"
    ],
    [
-    "parser.xxl:1262:16",
+    "parser.xxl:1306:16",
     "pop_temp"
    ],
    [
-    "parser.xxl:1262:15",
+    "parser.xxl:1306:15",
     "push"
    ],
    [
-    "parser.xxl:1262:12",
+    "parser.xxl:1306:12",
     "load",
     "gen"
    ],
    [
-    "parser.xxl:1262:15",
+    "parser.xxl:1306:15",
     "call",
     1
    ],
    [
-    "parser.xxl:1262:11",
+    "parser.xxl:1306:11",
     "push"
    ],
    [
-    "parser.xxl:1262:5",
+    "parser.xxl:1306:5",
     "load",
     "return"
    ],
    [
-    "parser.xxl:1262:11",
+    "parser.xxl:1306:11",
     "call",
     1
    ],
    [
-    "parser.xxl:1256:30",
+    "parser.xxl:1300:30",
     "return"
    ]
   ]
  ],
  [
-  "parser.xxl:1256:1",
+  "parser.xxl:1300:1",
   "store",
   "parse_and_gen_one_stmt"
  ],
  [
-  "parser.xxl:1275:5",
+  "parser.xxl:1319:5",
   "load",
   "__main__"
  ],
  [
-  "parser.xxl:1275:1",
+  "parser.xxl:1319:1",
   "jumpe",
   347
  ],
  [
-  "parser.xxl:1275:15",
+  "parser.xxl:1319:15",
   "close",
   [
    [
-    "parser.xxl:1275:15",
+    "parser.xxl:1319:15",
     "scope",
     null
    ],
    [
-    "parser.xxl:1276:29",
+    "parser.xxl:1320:29",
     "lit",
     1
    ],
    [
-    "parser.xxl:1276:27",
+    "parser.xxl:1320:27",
     "push"
    ],
    [
-    "parser.xxl:1276:20",
+    "parser.xxl:1320:20",
     "lit",
     "len"
    ],
    [
-    "parser.xxl:1276:20",
+    "parser.xxl:1320:20",
     "push"
    ],
    [
-    "parser.xxl:1276:15",
+    "parser.xxl:1320:15",
     "lit",
     "argv"
    ],
    [
-    "parser.xxl:1276:15",
+    "parser.xxl:1320:15",
     "push"
    ],
    [
-    "parser.xxl:1276:9",
+    "parser.xxl:1320:9",
     "load",
     "System"
    ],
    [
-    "parser.xxl:1276:15",
+    "parser.xxl:1320:15",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1276:20",
+    "parser.xxl:1320:20",
     "binop",
     "."
    ],
    [
-    "parser.xxl:1276:24",
+    "parser.xxl:1320:24",
     "call",
     0
    ],
    [
-    "parser.xxl:1276:27",
+    "parser.xxl:1320:27",
     "binop",
     "<"
    ],
    [
-    "parser.xxl:1276:5",
+    "parser.xxl:1320:5",
     "jumpe",
     16
    ],
    [
-    "parser.xxl:1276:32",
+    "parser.xxl:1320:32",
     "close",
     [
      [
-      "parser.xxl:1276:32",
+      "parser.xxl:1320:32",
       "scope",
       null
      ],
      [
-      "parser.xxl:1277:15",
+      "parser.xxl:1321:15",
       "lit",
       "Usage: parser SOURCEFILE"
      ],
      [
-      "parser.xxl:1277:14",
+      "parser.xxl:1321:14",
       "push"
      ],
      [
-      "parser.xxl:1277:8",
+      "parser.xxl:1321:8",
       "lit",
       "error"
      ],
      [
-      "parser.xxl:1277:8",
+      "parser.xxl:1321:8",
       "push"
      ],
      [
-      "parser.xxl:1277:2",
+      "parser.xxl:1321:2",
       "load",
       "System"
      ],
      [
-      "parser.xxl:1277:8",
+      "parser.xxl:1321:8",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1277:14",
+      "parser.xxl:1321:14",
       "call",
       1
      ],
      [
-      "parser.xxl:1278:14",
+      "parser.xxl:1322:14",
       "lit",
       1
      ],
      [
-      "parser.xxl:1278:13",
+      "parser.xxl:1322:13",
       "push"
      ],
      [
-      "parser.xxl:1278:8",
+      "parser.xxl:1322:8",
       "lit",
       "exit"
      ],
      [
-      "parser.xxl:1278:8",
+      "parser.xxl:1322:8",
       "push"
      ],
      [
-      "parser.xxl:1278:2",
+      "parser.xxl:1322:2",
       "load",
       "System"
      ],
      [
-      "parser.xxl:1278:8",
+      "parser.xxl:1322:8",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1278:13",
+      "parser.xxl:1322:13",
       "call",
       1
      ],
      [
-      "parser.xxl:1276:32",
+      "parser.xxl:1320:32",
       "return"
      ]
     ]
    ],
    [
-    "parser.xxl:1276:32",
+    "parser.xxl:1320:32",
     "call",
     0
    ],
    [
-    "parser.xxl:1276:5",
+    "parser.xxl:1320:5",
     "jrst",
     18
    ],
    [
-    "parser.xxl:1280:10",
+    "parser.xxl:1324:10",
     "close",
     [
      [
-      "parser.xxl:1280:10",
+      "parser.xxl:1324:10",
       "scope",
       null
      ],
      [
-      "parser.xxl:1281:2",
+      "parser.xxl:1325:2",
       "vars",
       [
        "parser"
       ]
      ],
      [
-      "parser.xxl:1281:21",
+      "parser.xxl:1325:21",
       "lit",
       "new"
      ],
      [
-      "parser.xxl:1281:21",
+      "parser.xxl:1325:21",
       "push"
      ],
      [
-      "parser.xxl:1281:15",
+      "parser.xxl:1325:15",
       "load",
       "Parser"
      ],
      [
-      "parser.xxl:1281:21",
+      "parser.xxl:1325:21",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1281:25",
+      "parser.xxl:1325:25",
       "call",
       0
      ],
      [
-      "parser.xxl:1281:2",
+      "parser.xxl:1325:2",
       "store",
       "parser"
      ],
      [
-      "parser.xxl:1282:2",
+      "parser.xxl:1326:2",
       "vars",
       [
        "result"
       ]
      ],
      [
-      "parser.xxl:1282:40",
+      "parser.xxl:1326:40",
       "lit",
       0
      ],
      [
-      "parser.xxl:1282:39",
+      "parser.xxl:1326:39",
       "push"
      ],
      [
-      "parser.xxl:1282:34",
+      "parser.xxl:1326:34",
       "lit",
       "argv"
      ],
      [
-      "parser.xxl:1282:34",
+      "parser.xxl:1326:34",
       "push"
      ],
      [
-      "parser.xxl:1282:28",
+      "parser.xxl:1326:28",
       "load",
       "System"
      ],
      [
-      "parser.xxl:1282:34",
+      "parser.xxl:1326:34",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1282:39",
+      "parser.xxl:1326:39",
       "binop",
       "["
      ],
      [
-      "parser.xxl:1282:27",
+      "parser.xxl:1326:27",
       "push"
      ],
      [
-      "parser.xxl:1282:21",
+      "parser.xxl:1326:21",
       "lit",
       "parse"
      ],
      [
-      "parser.xxl:1282:21",
+      "parser.xxl:1326:21",
       "push"
      ],
      [
-      "parser.xxl:1282:15",
+      "parser.xxl:1326:15",
       "load",
       "parser"
      ],
      [
-      "parser.xxl:1282:21",
+      "parser.xxl:1326:21",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1282:27",
+      "parser.xxl:1326:27",
       "call",
       1
      ],
      [
-      "parser.xxl:1282:2",
+      "parser.xxl:1326:2",
       "store",
       "result"
      ],
      [
-      "parser.xxl:1286:15",
+      "parser.xxl:1330:15",
       "load",
       "result"
      ],
      [
-      "parser.xxl:1286:14",
+      "parser.xxl:1330:14",
       "push"
      ],
      [
-      "parser.xxl:1286:11",
+      "parser.xxl:1330:11",
       "load",
       "gen"
      ],
      [
-      "parser.xxl:1286:14",
+      "parser.xxl:1330:14",
       "call",
       1
      ],
      [
-      "parser.xxl:1286:2",
+      "parser.xxl:1330:2",
       "store",
       "result"
      ],
      [
-      "parser.xxl:1287:27",
+      "parser.xxl:1331:27",
       "load",
       "result"
      ],
      [
-      "parser.xxl:1287:26",
+      "parser.xxl:1331:26",
       "push"
      ],
      [
-      "parser.xxl:1287:21",
+      "parser.xxl:1331:21",
       "lit",
       "tree"
      ],
      [
-      "parser.xxl:1287:21",
+      "parser.xxl:1331:21",
       "push"
      ],
      [
-      "parser.xxl:1287:15",
+      "parser.xxl:1331:15",
       "load",
       "System"
      ],
      [
-      "parser.xxl:1287:21",
+      "parser.xxl:1331:21",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1287:26",
+      "parser.xxl:1331:26",
       "call",
       1
      ],
      [
-      "parser.xxl:1287:14",
+      "parser.xxl:1331:14",
       "push"
      ],
      [
-      "parser.xxl:1287:8",
+      "parser.xxl:1331:8",
       "lit",
       "print"
      ],
      [
-      "parser.xxl:1287:8",
+      "parser.xxl:1331:8",
       "push"
      ],
      [
-      "parser.xxl:1287:2",
+      "parser.xxl:1331:2",
       "load",
       "System"
      ],
      [
-      "parser.xxl:1287:8",
+      "parser.xxl:1331:8",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1287:14",
+      "parser.xxl:1331:14",
       "call",
       1
      ],
      [
-      "parser.xxl:1288:14",
+      "parser.xxl:1332:14",
       "lit",
       0
      ],
      [
-      "parser.xxl:1288:13",
+      "parser.xxl:1332:13",
       "push"
      ],
      [
-      "parser.xxl:1288:8",
+      "parser.xxl:1332:8",
       "lit",
       "exit"
      ],
      [
-      "parser.xxl:1288:8",
+      "parser.xxl:1332:8",
       "push"
      ],
      [
-      "parser.xxl:1288:2",
+      "parser.xxl:1332:2",
       "load",
       "System"
      ],
      [
-      "parser.xxl:1288:8",
+      "parser.xxl:1332:8",
       "binop",
       "."
      ],
      [
-      "parser.xxl:1288:13",
+      "parser.xxl:1332:13",
       "call",
       1
      ],
      [
-      "parser.xxl:1280:10",
+      "parser.xxl:1324:10",
       "return"
      ]
     ]
    ],
    [
-    "parser.xxl:1280:10",
+    "parser.xxl:1324:10",
     "call",
     0
    ],
    [
-    "parser.xxl:1275:15",
+    "parser.xxl:1319:15",
     "return"
    ]
   ]
  ],
  [
-  "parser.xxl:1275:15",
+  "parser.xxl:1319:15",
   "call",
   0
  ],

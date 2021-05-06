@@ -1002,7 +1002,7 @@ var Parser = Class.new({
 			this.arity = "unary";
 			return(this);
 		    }, // nud
-		    std: function (this, labels) { // { block } NOTE! takes arg!!
+		    std: function (this, labels) { // { block }
 			p.scope = p.Scope.new(p.scope);
 			if (labels) { // not defaulted to null
 			    labels.for_each(
@@ -1011,6 +1011,10 @@ var Parser = Class.new({
 					p.Name.new(this.where, label, "name"));
 				}
 			    );
+			}
+			if (this.label) {
+			    p.scope._define( // XXX want p.defname?
+				p.Name.new(this.where, this.label, "name"));
 			}
 			this.first = p.statements();
 			p.scope = p.scope.pop();
@@ -1021,7 +1025,7 @@ var Parser = Class.new({
 		    gen: function (this, vmcode, leave_name) {
 			if (this.arity == "statement") { // { block }
 			    var bcode = VMCode.new(); // block closure code
-			    bcode.emit_scope(leave_name, this);
+			    bcode.emit_scope(this.label || leave_name, this);
 			    bcode.gen_stmts(this.first);
 			    vmcode.emit_close(bcode.finish(this), this);
 			    vmcode.emit_call(0, this);
@@ -1152,6 +1156,40 @@ var Parser = Class.new({
 	    }); // If
 	    p.add_symbol_class("if", p.If);
 
+	    p.Label = Class.new({
+		name: "Label",
+		supers: [p.Stmt],
+		methods: {
+		    id: function (this) { return("label"); },
+		    std: function (this) {	// parse
+			var n = p.token;
+			if (n.arity != "name") {
+			    n.error("Expected a label name.");
+			}
+			if (n.reserved) {
+			    n.error("'" + p.token.value + "' reserved.");
+			}
+			// XXX will be in new closure/scope
+			p.define(n); // define variable
+			this.arity = "statement";
+			this.first = n;
+			p.advance();
+			p.advance(":");
+			this.second = p.statement();
+			return(this);
+		    },
+		    gen: function (this, vmcode) { // gen
+			// wrap entire statement in a closure w/ leave label
+			var lcode = VMCode.new();
+			lcode.emit_scope(this.first.value, this);
+			this.second.gen(lcode);
+			vmcode.emit_close(lcode.finish(this), this);
+			vmcode.emit_call(0, this);
+		    } // label.gen
+		}
+	    }); // Label
+	    p.add_symbol_class("label", p.Label);
+
 	    p.While = Class.new({
 		name: "While",
 		supers: [p.Stmt],
@@ -1177,8 +1215,8 @@ var Parser = Class.new({
 			this.first.gen(wcode); // condition
 			var done_label = wcode.def_fwd_label();
 			wcode.emit_ifnot(done_label, this);
-			this.second.gen(wcode, "continue_while"); // block
-			wcode.emit_jrst(top_label, this); // use continue??????
+			this.second.gen(wcode); // block
+			wcode.emit_jrst(top_label, this);
 			wcode.drop_fwd_label(done_label);
 
 			// create closure around entire while stmt and invoke
@@ -1205,8 +1243,14 @@ var Parser = Class.new({
 	    return(a);		// always array
 	}, // statements
 	block: function (this, labels) {
-	    // TEMP? labels is null or list of labels to auto-declare in block
 	    var t = this.token;
+	    if (t.class().__name == "Symbol") { // XXX want instance_of
+		var label = t.id();
+		this.advance();
+		this.advance(":");
+		t = this.token;
+		t.label = label;
+	    }
 	    this.advance("{");
 	    return(t.std(labels));
 	},
