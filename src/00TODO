@@ -2,16 +2,17 @@ FIX
 ====
 *** Make class.name a member (s/__name/name/; flush method?!)???!!!
 
-** add Python I/O doc file
+*** have invoke_function/method use current VM??
+	have CallInstr save_frame (instead of CClosure.invoke)?
 
 ** add .git/pre-commit check?
 
-** Only allow one variable at a time to be defined??? (pedantic option?)
+** -s (stats) broken
 
 make function name () .... define name in local scope?????
 	close2 patches -- need to make "function foo() {}" a valid expr stmt
 make a full expression language??
-	Are "[" and "{" ambiguous?? forbid at "top level"??
+	is "{" ambiguous?? forbid at "top level"??
 invoke_function/method (using new VM) won't work nicely with Continuations?
 	add return_function/return_method that does: return(callable())
 run "__extensions__" (pass importer's initial scope? iscope.System??)

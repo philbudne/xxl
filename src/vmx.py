@@ -429,16 +429,15 @@ class ExitInstr(VMInstr0):
         vm.run = False
 
 @reginstr
-class VarsInstr(VMInstr1):
+class VarInstr(VMInstr1):
     """
-    declare variables in current scope.
-    Python list of Python strings in self.value
+    declare a variable in current scope.
+    Python string in self.value
     """
-    name = "vars"
+    name = "var"
 
     def step(self, vm):
-        for var in self.value:
-            vm.scope.defvar(var, classes.null_value)
+        vm.scope.defvar(self.value, classes.null_value)
 
 @reginstr
 class ArgsInstr(VMInstr1):

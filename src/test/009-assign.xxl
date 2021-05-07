@@ -1,5 +1,7 @@
-var a, b;
-
+var a;
+var b;
+var c = 1;
 a = b = 1;
 System.print(a);
 System.print(b);
+System.print(c);

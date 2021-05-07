@@ -103,8 +103,8 @@ var VMCode = Class.new({
 
 	//// per-opcode emit functions
 
-	emit_vars: function (this, names, sym) {
-	    this._emit([sym.where, "vars", names]);
+	emit_var: function (this, name, sym) {
+	    this._emit([sym.where, "var", name]);
 	},
 	emit_args: function (this, names, sym) {
 	    this._emit([sym.where, "args", names]);
@@ -1072,56 +1072,31 @@ var Parser = Class.new({
 		methods: {
 		    id: function (this) { return("var"); },
 		    std: function (this) {
-			var n;
 			var t;
 			this.arity = "statement";
-			this.first = [];
-		      leave_while:
-			while (true) {
-			    n = p.token;
-			    if (n.arity != "name") {
-				n.error("Expected a new variable name.");
-			    }
-			    if (n.reserved) {
-				n.error("'" + p.token.value + "' reserved.");
-			    }
-			    p.define(n); // define variable
-			    this.first.append(n);
-			    p.advance();
-			    if (p.token.id() == "=") {
-				t = p.token;
-				p.advance("=");
-				t.first = n;
-				t.second = p.expression(0);
-				t.arity = "binary";
-				this.first.append(t);
-			    }
-			    if (p.token.id() != ",") {
-				leave_while();
-			    }
-			    p.advance(",");
+			var n = p.token;
+			if (n.arity != "name") {
+			    n.error("Expected a new variable name.");
+			}
+			if (n.reserved) {
+			    n.error("'" + p.token.value + "' reserved.");
+			}
+			p.define(n); // define variable
+			this.first = n;
+			p.advance();
+			if (p.token.id() == "=") {
+			    p.advance("=");
+			    this.second = p.expression(0);
 			}
 			p.advance(";");
 			return(this);
 		    },
 		    gen: function (this, vmcode) {
-			var vars = [];
-			this.first.for_each(
-			    function (item) {
-				if (item.value != "=") {
-				    vars.append(item.value);
-				}
-			    }
-			);
-			vmcode.emit_vars(vars, this);
-			this.first.for_each(
-			    function (item) {
-				if (item.value == "=") {
-				    item.second.gen(vmcode); // expr
-				    vmcode.emit_store(item.first.value, this); // var
-				}
-			    }
-			);
+			vmcode.emit_var(this.first.value, this);
+			if (this.second) {
+			    this.second.gen(vmcode); // expr
+			    vmcode.emit_store(this.first.value, this); // var
+			}
 		    } // gen
 		}
 	    }); // Var
@@ -1300,16 +1275,17 @@ var Parser = Class.new({
 	    }
 	    return(a);		// always array
 	}, // statements
-	block: function (this) {
+	block: function (this) { // [LABEL ":"] "{" STATEMENTS "}"
 	    var t = this.token;
+	    var label;
 	    if (t.arity == "name") { // label name?
-		var label = t.id();
+		label = t.id();
 		this.advance();
 		this.advance(":");
 		t = this.token;
-		t.label = label;
 	    }
 	    this.advance("{");
+	    t.label = label;	// attach label (if any) to LBrace
 	    return(t.std());
 	},
 	start_parse: function (this, fname) {
