@@ -9,12 +9,19 @@ until further notice!!!*
 
 ### Overall:
 
+* Based on [Douglas Crockford's](http://crockford.com/)
+	[JavaScript parser](http://crockford.com/javascript/tdop/tdop.html)
+	based on [Vaughan Pratt's](http://boole.stanford.edu/pratt.html)
+	[Top Down Operator Precedence Parsing](http://web.archive.org/web/20151223215421/http://hall.org.ua/halls/wizzard/pdf/Vaughan.Pratt.TDOP.pdf) technique.
+
+* JavaScript-like syntax, Python3-like types,
+	new statements, operators and classes can be created at runtime.
+
 * A sandbox for testing out ideas for "little languages"
 
 * The base language contains enough to write the compiler;
-	(the compiler gives itself good coverage).
-
-* Has a test suite of simple programs for when something breaks
+	(the compiler gives itself good coverage),
+	plus a regression test suite.
 
 * [Syntax](doc/syntax.md) -- core language syntax
 
