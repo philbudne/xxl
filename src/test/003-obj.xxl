@@ -1,2 +1,5 @@
 var a = {'x': 1};
 System.print(a['x']);
+
+a[1] = true;
+System.print(a[1]);
