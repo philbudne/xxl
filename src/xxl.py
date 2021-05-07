@@ -74,10 +74,11 @@ fname = args.pop(0)
 
 # common arguments:
 import_args = {
-    "trace": trace,
-    "main": True,
-    "args": args,               # remains of the argv
     fname_arg: fname,           # vmx_file or src_file
+    "args": args,               # remains of the argv
+    "main": True,
+    "stats": stats,
+    "trace": trace,
     "trace_parser": trace_parser
 }
 system.import_worker(**import_args)

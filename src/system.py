@@ -296,7 +296,7 @@ def parse(filename, scope, dump): # XXX take trace?
     return vmx.convert_instrs(j, scope) # convert to list of Python Instrs
 
 # called only from import_worker
-def parse_and_execute(src, scope, trace, trace_parser):
+def parse_and_execute(src, scope, stats, trace, trace_parser):
     """
     parse `src` file and execute one statement at a time
     (allows parser extensions to take effect immediately)
@@ -365,7 +365,7 @@ def sys_import(filename):
 #       sys_import (System.import function)
 #       load_parser (called from here!)
 def import_worker(src_file=None, vmx_file=None, trace=False,
-                  parser=True, trace_parser=False,
+                  parser=True, stats=False, trace_parser=False,
                   main=False, args=[]):
     """
     Takes either `src_file` or `vmx_file`
@@ -381,10 +381,10 @@ def import_worker(src_file=None, vmx_file=None, trace=False,
 
     if vmx_file:
         # here (recursively) from load_parser to load parser.vmx!!
-        vmx.load_and_run_vmx(vmx_file, scope, False, trace)
+        vmx.load_and_run_vmx(vmx_file, scope, stats, trace)
     else:
         # parse source using System.parser.parse() -- loaded above!
-        parse_and_execute(src_file, scope, trace, trace_parser)
+        parse_and_execute(src_file, scope, stats, trace, trace_parser)
     return scope                # XXX return as Module class Instance?
 
 ################################################################
