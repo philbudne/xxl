@@ -26,7 +26,6 @@ tested:	$(B) $(C)
 	date > tested
 
 install: tested
-	./save.sh
 	cp $(C) $(PARSER_VMX)	
 
 #TIME=time -p
