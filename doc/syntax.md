@@ -50,7 +50,7 @@ EXPR:   NAME |
         UNOP EXPR |                     (precedence 70)
         «function» [ NAME ] «(» [ FORMALS ] «)» «{» STMTS … «}» | (precedence 70)
         EXPR MULDIV EXPR |              (precedence 60)
-        EXPR ADDSUB EXPR |              (precedence 50, left associative)
+        EXPR PLUSMINUS EXPR |              (precedence 50, left associative)
         EXPR RELOP EXPR |               (precedence 40)
         EXPR BOOLOP EXPR |              (precedence 30)
         EXPR «?» EXPR «:» EXPR |        (precedence 20)
@@ -72,14 +72,13 @@ RELOP:  «==» | «!=» | «<» | «<=» | «>» | «>=»
 
 MULDIV: «*» | «/»
 
-ADDSUB: «+» | «-»
+PLUSMINUS: «+» | «-»
 
 LHS:    NAME
         EXPR «.» NAME
         EXPR «[» EXPR «]»
 
-NUMBER:
-        DIGIT… [«.» DIGIT…] [ E [ADDSUB] DIGIT… ]
+NUMBER: DIGIT… [«.» [DIGIT]…] [ E [PLUSMINUS] DIGIT… ]
 
 E:      «e» | «E»
 
