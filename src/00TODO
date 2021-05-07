@@ -2,6 +2,10 @@ FIX
 ====
 *** Make class.name a member (s/__name/name/; flush method?!)???!!!
 
+** add Python I/O doc file
+
+** add .git/pre-commit check?
+
 ** Only allow one variable at a time to be defined??? (pedantic option?)
 
 make function name () .... define name in local scope?????
