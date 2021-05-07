@@ -1,0 +1,3 @@
+var a = {foo: 1};
+System.print(a.pop("foo"));
+System.print(a);
