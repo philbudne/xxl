@@ -440,7 +440,7 @@ def obj_not(x):
 def obj_put(l, r, value):
     # XXX check for VInstance?
     l.setprop(r.value, value)
-    return value
+    return value                # lhsop MUST return value
 
 def find_in_supers(l, rv):
     """
@@ -680,7 +680,7 @@ def dict_put(l, r, value):
     entry = r.value             # XXX need hash method!
 #    print "dict_put", l, entry, value
     l.value[entry] = value
-    return value
+    return value                # lhsop MUST return value
 
 def dict_get(l, r):
     entry = r.value             # XXX need hash method!
@@ -699,8 +699,8 @@ def dict_pop(obj, arg):
 Dict.setprop(const.METHODS, _mkdict({
     'len': pyfunc(val_len),
     'str': pyfunc(val_str),
-    'repr': pyfunc(val_repr),   # XXX
-    'str': pyfunc(val_str),     # XXX
+    'repr': pyfunc(val_repr),
+    'str': pyfunc(val_str),
     'pop': pyfunc(dict_pop),
     const.INIT: pyfunc(dict_init),
 }))
