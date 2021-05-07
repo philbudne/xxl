@@ -366,7 +366,7 @@ for klass, supers in _saved_supers.items():
 # internal object w/ direct invoke methods
 #       (avoids binop lookup)
 # XXX use metaclass that prohibits user call of 'new' method?
-Callable = defclass(Class, 'Callable', [Object]) # virtual
+Callable = defclass(Class, 'Callable', [Object]) # virtual XXX FLUSH?
 # all backed by Python CXyZzy classes with invoke methods:
 Closure = defclass(Class, 'Closure', [Callable])
 BoundMethod = defclass(Class, 'BoundMethod', [Callable])
@@ -968,7 +968,8 @@ Callable.setprop(const.METHODS, _mkdict({
 ################ PyObjClass meta-class for PyObject
 #               (creates PInstance for direct invoke)
 
-# XXX eliminate by having PyObject use '(' binop???
+# XXX eliminate by having PyObject provide '(' binop???
+#       (cleaner, but slower)
 
 def unwrap(x):
     if hasattr(x, 'value'):     # faster than isistance(x, VInstance)??
@@ -1018,7 +1019,7 @@ PyObj.setprop(const.BINOPS, _mkdict({
     '.': pyfunc(pyobj_get),     # gets Python object attr!
 }))
 
-# XXX TODO LHSOPS for '.' and '[' ?!!!
+# XXX TODO LHSOPS for '.' and '[' ?!!! need to unwrap values!
 
 ################################################################
 

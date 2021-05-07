@@ -1,13 +1,15 @@
 FIX
 ====
-*** Make class.name a member (s/__name/name/; flush method?!)???!!!
-
 *** have invoke_function/method use current VM??
 	have CallInstr save_frame (instead of CClosure.invoke)?
+		(all CInstances will need to restore)
+		need VM method to load codebase and pc?!
 
 ** add .git/pre-commit check?
 
 ** -s (stats) broken
+
+flush Callable superclass?
 
 make function name () .... define name in local scope?????
 	close2 patches -- need to make "function foo() {}" a valid expr stmt
@@ -16,6 +18,7 @@ make a full expression language??
 invoke_function/method (using new VM) won't work nicely with Continuations?
 	add return_function/return_method that does: return(callable())
 run "__extensions__" (pass importer's initial scope? iscope.System??)
+	(unless requested not to!)
 Get rid of PyObjClass and use '(' binop for calls?
 always preload a (bootstrap.vmx) file??
 	load System object
