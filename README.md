@@ -29,6 +29,8 @@ until further notice!!!*
 
 * [Adding a statement](doc/adding-statement.md) -- example of adding new statement syntax
 
+* [Adding an operator](doc/adding-operator.md) -- example of adding an operator
+
 * [Priorities](doc/priorities.md) -- a loose ordering of design priorities
 
 * [Influences](doc/influences.md) -- language influences
