@@ -22,7 +22,7 @@ VM=	$(XXL) vmx.py classes.py const.py jslex.py system.py scopes.py
 #	otherwise they should be identical.
 tested:	$(B) $(C)
 	cmp $(B) $(C)
-	# run full test suite???
+	XXL_PARSER=$(C) ./test.sh
 	date > tested
 
 install: tested
