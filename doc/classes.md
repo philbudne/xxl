@@ -3,18 +3,21 @@
 * Object (base class)
 * Class (metaclass for all classes)
 * Str (unicode string, using Python3 str)
-* Number (Python3 int or real)
-* List (Python3 list)
-* Dict (Python3 dict)
-* Bool (Python3 bool)
-* Null (Python3 NonType)
-* Closure (a "function")
-* PyFunc (a Python3 function or bound method
-* BoundMethod (a method (PyFunc or Closure) bound to an Object)
+* Number (using Python3 int or real)
+* List (using Python3 list)
+* Dict (using Python3 dict)
+	fetch of a non-existent entry returns Null.
+* Bool (using Python3 bool)
+* Null (using Python3 NoneType)
+* Closure (a "function"; VM Code + scope)
+* PyFunc (a Python3 callable)
+* BoundMethod (a function bound to an Object)
+	passes object as first (this) argument
 * PyObj (created by System.pyimport)
 * Continuation (created when calling a Closure or BoundMethod)
+	available as `return` variable
 
-All intrinsic Classes are available in System.types.ClassName
+All intrinsic Classes are available as System.types.ClassName
 
 ## Creating Classes
 
@@ -44,8 +47,8 @@ New classes are created with Class.new:
 ```
 
 * lhsops methods are called when the binary operator is on the left hand side
-	of an ASSIGNOP, and are passed the value to store, and should
-	return that value!!!
+	of an ASSIGNOP, and are passed the value to store, and must
+	return that value.
 
 * "." on an Object (on the right hand side of an ASSIGNOP)
 	will return a callable BoundMethod if the NAME is found as a method.
