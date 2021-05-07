@@ -24,6 +24,8 @@ until further notice!!!*
 
 * [Influences](doc/influences.md) -- language influences
 
+* [Python](doc/python.md) -- interfacing with Python code
+
 * [Style](doc/style.md) -- language style guide
 
 * [Contributing](doc/contributing.md) -- please read this before creating a bug report, or a pull request
