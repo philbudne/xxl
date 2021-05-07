@@ -1,0 +1,4 @@
+System.print("hello"[0]);
+System.print("hello".slice(2));
+System.print("hello".slice(2,3));
+
