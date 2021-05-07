@@ -295,7 +295,6 @@ var PrattParser = Class.new({
 	define: function (this, sym) {
 	    // sym is a Parser Symbol (or Name if previously seen) instance
 	    // declare as a Name in the current scope.
-// PLB 2021-05-06 -- someday?? optional??? lots of "this" complaints!
 	    var prev = this.scope.find_definition(sym.value);
 	    if (prev) {
 		// XXX make fatal?
