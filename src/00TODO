@@ -9,6 +9,8 @@ FIX
 
 ** -s (stats) broken
 
+** add Dict [keys(), values(), &] items()
+
 flush Callable superclass?
 
 make function name () .... define name in local scope?????
@@ -25,7 +27,6 @@ always preload a (bootstrap.vmx) file??
 	including "System.parser = System.import_vmx('parser.vmx');"
 	native code for_each, each_for, map, map2 (take arg for "ignore" value)
 	Object.instance_of(...) .class()?
-	Need Dict.items() to implement for_each??
 
 Fix all access to System types (get from module top level scope??)
 break import cycles??
