@@ -295,12 +295,16 @@ var PrattParser = Class.new({
 	define: function (this, sym) {
 	    // sym is a Parser Symbol (or Name if previously seen) instance
 	    // declare as a Name in the current scope.
+
+	    // look for previous definition (in an outer scope)
 	    var prev = this.scope.find_definition(sym.value);
+
+	    // give fatal error for duplicate first!
+	    this.scope._define(this.Name.new(sym.where, sym.value, sym.arity));
 	    if (prev) {
 		// XXX make fatal?
 		sym.warning("shadows previous definition at " + prev.where);
 	    }
-	    this.scope._define(this.Name.new(sym.where, sym.value, sym.arity));
 	},
 	expression: function (this, rbp) {
 	    var t = this.token;
