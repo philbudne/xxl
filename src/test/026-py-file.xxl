@@ -1,0 +1,8 @@
+var io = System.pyimport("io");
+var sys = System.pyimport("sys");
+var f = io.open('test/026-py-file.xxl');
+
+var line;
+while ((line = f.readline()) != '') {
+    sys.stdout.write(line);
+}
