@@ -347,7 +347,7 @@ var PrattParser = Class.new({
 	}, // statement
 
 	init: function (this_parser) {
-	    var p = this_parser; // clarity, visible from subclass methods
+	    var p = this_parser; // brevity
 
 	    p.symbol_classes = {}; // string to Symbol subclass
 
@@ -569,27 +569,16 @@ var Parser = Class.new({
     supers: [PrattParser],
     methods: {
 	init: function (this_parser) {
-	    var p = this_parser; // for clarity, access w/in new class methods
+	    var p = this_parser; // for brevity
 	    p..init();		 // call superclass init
 
-	    // XXX pull up into PrattParser?
-	    var add_terminal = function (name, id) {
-		var c = Class.new({
-		    name: name,
-		    supers: [p.Symbol],
-		    methods: {
-			id: function (this) { return(id); }
-		    }
-		});
-		p.add_symbol_class(id, c);
-	    };
-	    add_terminal("Colon",  ":");
-	    add_terminal("Comma",  ",");
-	    add_terminal("Semi",   ";");
-	    add_terminal("RParen", ")");
-	    add_terminal("RBrack", "]");
-	    add_terminal("RBrace", "}");
-	    add_terminal("Else",   "else");
+	    p.add_terminal("Colon",  ":");
+	    p.add_terminal("Comma",  ",");
+	    p.add_terminal("Semi",   ";");
+	    p.add_terminal("RParen", ")");
+	    p.add_terminal("RBrack", "]");
+	    p.add_terminal("RBrace", "}");
+	    p.add_terminal("Else",   "else");
 
 	    p.Assign = Class.new({
 		supers: [p.InfixR],
@@ -634,7 +623,7 @@ var Parser = Class.new({
 		}
 	    });
 
-	    var add_assignop = function (name, id, aop) {
+	    p.add_assignop = function (name, id, aop) {
 		var c = Class.new({
 		    name: "AssignPlus",
 		    supers: [p.AssignOp],
@@ -645,8 +634,8 @@ var Parser = Class.new({
 		});
 		p.add_symbol_class(id, c);
 	    };
-	    add_assignop("AssignPlus",  "+=", "+");
-	    add_assignop("AssignMinus", "-=", "-");
+	    p.add_assignop("AssignPlus",  "+=", "+");
+	    p.add_assignop("AssignMinus", "-=", "-");
 
 	    p.Ternary = Class.new({
 		name: "Ternary",
@@ -714,30 +703,16 @@ var Parser = Class.new({
 	    });
 	    p.add_symbol_class("||", p.OrIf);
 
-	    // XXX move to PrattParser?
-	    var add_infix = function(name, id, right, lbp) {
-		// helper to generate simple infix Symbol classes
-		var c = Class.new({
-		    name: name,
-		    supers: [right ? p.InfixR : p.Infix],
-		    methods: {
-			id: function (this) { return(id); },
-			lbp: function (this) { return(lbp); }
-		    }
-		});
-		p.add_symbol_class(id, c);
-	    };
-
 	    // right associative
-	    add_infix("Eq",  "==", true, 40);
-	    add_infix("NEq", "!=", true, 40);
-	    add_infix("LT",  "<",   true, 40);
-	    add_infix("LEq", "<=",  true, 40);
-	    add_infix("GT",  ">",   true, 40);
-	    add_infix("GEq", ">=",  true, 40);
+	    p.add_infix("Eq",  "==", true, 40);
+	    p.add_infix("NEq", "!=", true, 40);
+	    p.add_infix("LT",  "<",   true, 40);
+	    p.add_infix("LEq", "<=",  true, 40);
+	    p.add_infix("GT",  ">",   true, 40);
+	    p.add_infix("GEq", ">=",  true, 40);
 
 	    // left associative
-	    add_infix("Plus", "+",  false, 50);
+	    p.add_infix("Plus", "+",  false, 50);
 
 	    // minus is infix and prefix operator:
 	    p.Minus = Class.new({
@@ -758,10 +733,9 @@ var Parser = Class.new({
 	    });
 	    p.add_symbol_class("-", p.Minus);
 
-
 	    // right associative
-	    add_infix("Mult", "*",  true, 60);
-	    add_infix("Div", "/",   true, 60);
+	    p.add_infix("Mult", "*",  true, 60);
+	    p.add_infix("Div", "/",   true, 60);
 
 	    p.Dot = Class.new({
 		name: "Dot",
@@ -920,14 +894,7 @@ var Parser = Class.new({
 	    }); // LParen
 	    p.add_symbol_class("(", p.LParen);
 
-	    p.Not = Class.new({
-		name: "Not",
-		supers: [p.Prefix],
-		methods: {
-		    id: function (this) { return("!"); }
-		}
-	    });
-	    p.add_symbol_class("!", p.Not);
+	    p.add_prefix("Not", "!");
 
 	    p.Function = Class.new({
 		name: "Function",
@@ -1277,6 +1244,46 @@ var Parser = Class.new({
 	    }); // p.while
 	    p.add_symbol_class("while", p.While);
 	}, // Parser.init()
+
+	// XXX move to PrattParser?
+	add_terminal: function (this_parser, name, id) {
+	    var c = Class.new({
+		name: name,
+		supers: [this_parser.Symbol],
+		methods: {
+		    id: function (this) { return(id); }
+		}
+	    });
+	    this_parser.add_symbol_class(id, c);
+	}, // add_terminal
+
+	// XXX move to PrattParser?
+	add_infix: function(this_parser, name, id, right, lbp) {
+	    // helper to generate simple infix Symbol classes
+	    var c = Class.new({
+		name: name,
+		supers: [right ? this_parser.InfixR : this_parser.Infix],
+		methods: {
+		    id: function (this) { return(id); },
+		    lbp: function (this) { return(lbp); }
+		}
+	    });
+	    this_parser.add_symbol_class(id, c);
+	},
+
+	// XXX move to PrattParser?
+	add_prefix: function (this_parser, name, id) {
+	    // helper to generate simple prefix Symbol classes
+	    var c = Class.new({
+		name: name,
+		supers: [this_parser.Prefix],
+		methods: {
+		    id: function (this) { return(id); }
+		}
+	    });
+	    this_parser.add_symbol_class(id, c);
+	},
+
 	statements: function (this) {
 	    var a = [];
 	    var s;
