@@ -22,7 +22,7 @@
 CLASS = '__class'               # Class instance
 
 # Class properties
-NAME = '__name'                 # String
+NAME = 'name'                   # String
 METHODS = '__methods'           # Dict
 BINOPS = '__binops'             # Dict
 UNOPS = '__unops'               # Dict

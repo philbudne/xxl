@@ -338,10 +338,13 @@ def parse_and_execute(src, scope, stats, trace, trace_parser):
             sys.stderr.write("VM Error @ {}: {}\n".format(v.ir, e))
             # XXX dump VM registers? option to call breakpoint()??
             # XXX backtrace!! (capture "ir.where" in Frame??)
+            return False
         except Exception as e:
             # NOTE: just displays "where"
             sys.stderr.write("Error @ {}: {}\n".format(v.ir.where, e))
             # XXX backtrace!! (capture "ir.where" in Frame??)
+            return False
+    return True
 
 def sys_import(filename):
     """
@@ -387,7 +390,10 @@ def import_worker(src_file=None, vmx_file=None, trace=False,
         vmx.load_and_run_vmx(vmx_file, scope, stats, trace)
     else:
         # parse source using System.parser.parse() -- loaded above!
-        parse_and_execute(src_file, scope, stats, trace, trace_parser)
+        if not parse_and_execute(src_file, scope, stats, trace, trace_parser):
+            # XXX just an error message??
+            # all callers need to handle properly
+            raise Exception("load failed")
     return scope                # XXX return as Module class Instance?
 
 ################################################################

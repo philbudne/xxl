@@ -580,6 +580,7 @@ def class_init(this_class, props):
     `props` is Dict holding properties (see const.CLASS_PROPS)
     """
     # XXX check props is a Dict!
+    metaclass = this_class.classname()
     for key, val in props.value.items():
         # XXX check val is a Dict!
         if key == 'props':
@@ -589,12 +590,20 @@ def class_init(this_class, props):
             continue
         ikey = const.CLASS_PROPS.get(key)
         if not ikey:
-            raise Exception("Unknown Class property %s" % key)
+            raise Exception("Unknown %s property %s" % (metaclass, key))
         this_class.props[ikey] = val
 
     if const.SUPERS not in this_class.props:
+        # XXX complain??
         this_class.setprop(const.SUPERS, _mklist([Object]))
-    # XXX complain if const.NAME not in props.value???
+    if const.NAME not in this_class.props:
+        # display metaclass name (typ Class)
+        for key, value in const.CLASS_PROPS.items():
+            if value == const.NAME:
+                break
+        else:
+            key = 'name?'
+        raise Exception("%s.new requires '%s'"  % (metaclass, key))
 
 def class_name(this_class):
     return this_class.getprop(const.NAME)
@@ -611,7 +620,6 @@ def class_call(this_class, args):
 Class.setprop(const.METHODS, _mkdict({
     const.NEW: pyfunc(new_inst),
     const.INIT: pyfunc(class_init), # Class.new creates new Classes
-#   'name': pyfunc(class_name)      # NAME might as well be a plain member name?
 }))
 Class.setprop(const.CLASS, Class) # circular!
 
