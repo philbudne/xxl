@@ -603,7 +603,7 @@ def class_call(this_class, args):
     """
     "(" binop for Class
     """
-    # PLB: keep on doing this!
+    # PLB: I keep on doing this (Python fingers)
     raise Exception("call %s.new!" % class_name(this_class).value)
 
 # Class: a meta-class: all Classes are instances of a meta-class
@@ -611,7 +611,7 @@ def class_call(this_class, args):
 Class.setprop(const.METHODS, _mkdict({
     const.NEW: pyfunc(new_inst),
     const.INIT: pyfunc(class_init), # Class.new creates new Classes
-    'name': pyfunc(class_name)      # XXX just make a regular member???
+#   'name': pyfunc(class_name)      # NAME might as well be a plain member name?
 }))
 Class.setprop(const.CLASS, Class) # circular!
 
