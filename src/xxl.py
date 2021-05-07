@@ -38,7 +38,7 @@ args.pop(0)                     # vmx.py
 
 fname_arg = "src_file"         # import_worker argument name for fname
 stats = trace = trace_parser = help = False
-dump = None
+parser = None
 # XXX use real arg parser!
 while args:
     if args[0][0] != '-':
@@ -55,6 +55,9 @@ while args:
     elif args[0] == '-s':
         stats = True
         args.pop(0)
+    elif args[0] == '-P':
+        args.pop(0)
+        parser = args.pop(0)
     elif args[0] == '-x':
         fname_arg = "vmx_file"  # load .vmx (JSON VM code) file
         args.pop(0)
@@ -67,7 +70,7 @@ if not args:
     help = True
 
 if help:
-    sys.stderr.write("Usage: xxl.py [-h][-s][-t][-T][-x] file args ...\n")
+    sys.stderr.write("Usage: xxl.py [-h][-s][-t][-T][-x][-P parser.vmx] file args ...\n")
     sys.exit(1)
 
 fname = args.pop(0)
@@ -77,6 +80,7 @@ import_args = {
     fname_arg: fname,           # vmx_file or src_file
     "args": args,               # remains of the argv
     "main": True,
+    "parser_vmx": parser,
     "stats": stats,
     "trace": trace,
     "trace_parser": trace_parser

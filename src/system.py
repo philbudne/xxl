@@ -250,12 +250,11 @@ def init_module(args, main=False):
 
 # called only from import_worker! XXX inline?
 # requires initial scope with System.types set up.
-def load_parser(scope, trace=False):
+def load_parser(scope, parser_vmx, trace=False):
     """
     load parser from vmx file into scope's System.parser
     """
     sys_obj = scope.lookup('System')
-    parser_vmx = os.environ.get('XXL_PARSER', 'parser.vmx')
     m = import_worker(vmx_file=parser_vmx, main=False, trace=trace, parser=False)
     # point System.parser at parser module
     sys_obj.setprop('parser', __obj_create(m.vars))
@@ -365,7 +364,9 @@ def sys_import(filename):
 #       sys_import (System.import function)
 #       load_parser (called from here!)
 def import_worker(src_file=None, vmx_file=None, trace=False,
-                  parser=True, stats=False, trace_parser=False,
+                  parser=True,
+                  parser_vmx=None,
+                  stats=False, trace_parser=False,
                   main=False, args=[]):
     """
     Takes either `src_file` or `vmx_file`
@@ -377,7 +378,9 @@ def import_worker(src_file=None, vmx_file=None, trace=False,
     scope = init_module(args, main=main) # XXX pass fname(s)?
 
     if parser:
-        load_parser(scope, trace_parser) # load unadulterated parser
+        load_parser(scope,
+                    parser_vmx or os.environ.get('XXL_PARSER', 'parser.vmx'),
+                    trace_parser)
 
     if vmx_file:
         # here (recursively) from load_parser to load parser.vmx!!
