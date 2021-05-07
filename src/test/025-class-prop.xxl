@@ -1,0 +1,11 @@
+var C = Class.new({
+    name: 'C',
+    props: {
+	foo: 1
+    }
+});
+
+var i = C.new();
+System.print(C.foo);
+System.print(i.foo);
+
