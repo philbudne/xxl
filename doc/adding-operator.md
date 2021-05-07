@@ -1,4 +1,4 @@
-## Adding a statement
+## Adding an operator
 
 Example defining an infix operator:
 
