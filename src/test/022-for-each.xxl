@@ -1,0 +1,30 @@
+// -*-JavaScript-*-
+
+// native List for_each and each_for
+
+System.types.List.__methods['fe'] = function (this, func) {
+    var i = 0;
+    var l = this.len();
+    while (i < l) {
+	func(this[i]);
+	i += 1;
+    }
+};
+
+System.types.List.__methods['ef'] = function (this, func) {
+    var i = this.len();
+    while (i > 0) {
+	i -= 1;
+	func(this[i]);
+    }
+};
+
+var ll = [1,2,3];
+
+ll.fe(function (item) {
+    System.print(item);
+});
+
+ll.ef(function (item) {
+    System.print(item);
+});
