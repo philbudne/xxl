@@ -50,16 +50,14 @@ class Scope:
         s.defvar(name, classes.CContinuation(fp))
         return s
 
-    # XXX the compiler could tell us how far up the "static" scope chain
+    # XXX the compiler could tell us how far up the ("static") scope chain
     # the variable lives (and could assign numeric slot ids to avoid dict)
     def defvar(self, var, value):
         """
         `var` is Python string
         `value` is Instance
         """
-        # turn this back on when block scope instituted!!
-        #if name in scope:
-        #    raise Exception("%s already defined" % name) # SNH
+        # duplicate var is fatal in compiler
         self.vars[var] = value
 
     def lookup(self, name):
