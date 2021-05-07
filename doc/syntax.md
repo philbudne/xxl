@@ -142,39 +142,6 @@ New instances of a class are created with MyClass.new(....),
 		with the new instance (typ. named "this" as the first arg)
 	the superclass init method can be called with "this..init(....)"
 
-New classes are created with Class.new:
-    var MyClass =
-        Class.new({
-            name: "MyClass",
-            supers: [ SuperClass, .... ],
-            methods: {
-                name: function (this, ...) { }
-                ...
-            },
-            unops: {
-                "!": function (this) { }
-                ...
-            },
-            binops: {
-                "+": function (l, r) { }
-                ...
-            },
-            lhsops: {
-                ".": function(l, r, value) { }
-                ...
-            }
-        })
-
-lhsops methods are called when the binary operator is on the left hand side
-	of an ASSIGNOP, and are passed the value to store, and should
-	return that value!!!
-
-"." on an Object (on the right hand side of an ASSIGNOP)
-	will return a callable BoundMethod if the NAME is found as a method.
-
-All classes should provide "str" and "repr" methods, and an "init"
-	method *IFF* you want to pass anything to MyClass.new
-
 The Object "System" (which is not a class) contains the following members:
 	types: an object with all predefined classes as properties
 	parser: contains a preloaded copy the (compiled) parser
