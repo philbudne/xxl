@@ -197,7 +197,6 @@ class CBoundMethod(Instance):
         a BoundMethod Instance!!!???
     """
     def __init__(self, obj, method):
-        # XXX method must be callable (CInstance)
         super().__init__(BoundMethod)
         # NOTE: opaque -- need repr!
         self.obj = obj
@@ -366,12 +365,12 @@ for klass, supers in _saved_supers.items():
 # internal object w/ direct invoke methods
 #       (avoids binop lookup)
 # XXX use metaclass that prohibits user call of 'new' method?
-Callable = defclass(Class, 'Callable', [Object]) # virtual XXX FLUSH?
+
 # all backed by Python CXyZzy classes with invoke methods:
-Closure = defclass(Class, 'Closure', [Callable])
-BoundMethod = defclass(Class, 'BoundMethod', [Callable])
-PyFunc = defclass(Class, 'PyFunc', [Callable])
-Continuation = defclass(Class, 'Continuation', [Callable])
+Closure = defclass(Class, 'Closure', [Object])
+BoundMethod = defclass(Class, 'BoundMethod', [Object])
+PyFunc = defclass(Class, 'PyFunc', [Object])
+Continuation = defclass(Class, 'Continuation', [Object])
 
 ################
 
@@ -961,15 +960,6 @@ def mkbool(val):
     else:
         return false_val
 
-################ Callable
-
-def callable_str(o):
-    return mkstr(repr(o))
-
-Callable.setprop(const.METHODS, _mkdict({
-    'str': pyfunc(callable_str) # fallback
-}))
-
 ################ PyObjClass meta-class for PyObject
 #               (creates PInstance for direct invoke)
 
@@ -1007,7 +997,7 @@ PyObjClass.setprop(const.METHODS, _mkdict({
 ################ PyObject -- wrapper around a Python Object (PInstance)
 # PyObjects are created by pyimport("python_module")
 
-PyObj = defclass(PyObjClass, 'PyObj', [Callable])
+PyObj = defclass(PyObjClass, 'PyObj', [Object])
 
 def pyobj_get(l, r):
     v = getattr(l.value, r.value) # get Python object attribute

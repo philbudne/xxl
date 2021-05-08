@@ -9,9 +9,13 @@ FIX
 
 ** -s (stats) broken
 
-** add Dict [keys(), values(), &] items()
+** add Dict keys() & for_each?
 
-flush Callable superclass?
+* hash() and id() methods?
+* "is" method? operator??
+** Dict only handling VInstances for key
+   ** need to pool VInstances (by hash?) in order to allow them as keys?
+	prog
 
 make function name () .... define name in local scope?????
 	close2 patches -- need to make "function foo() {}" a valid expr stmt
