@@ -503,27 +503,9 @@ class Args2Instr(VMInstr2):
         vm.scope.defvar(self.v2, l)  # declare as variable
 
 @reginstr
-class ScopeInstr(VMInstr1):     # TEMP!
+class LScopeInstr(VMInstr1):
     """
-    first op executed in a scope closure
-    self.value is optional Python string for name of leave label
-    (could optimize by having two flavors of Instr)
-
-    first op executed in an unlabled scope closure
-    """
-    name = "scope"
-
-    def step(self, vm):
-        # NOTE: scope.XXX_scope() creates a cactus stack of scopes
-        if self.value:          # have a leave label?
-            vm.scope = vm.scope.labeled_scope(vm.fp, self.value)
-        else:
-            vm.scope = vm.scope.new_scope()
-
-@reginstr
-class LScopeInstr(VMInstr1):     # TEMP!
-    """
-    first op executed in a labeled scope
+    first op executed in a scope closure with a leave label
     """
     name = "lscope"
 

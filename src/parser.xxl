@@ -113,7 +113,13 @@ var VMCode = Class.new({
 	    this._emit([sym.where, "args2", names, rest]);
 	},
 	emit_scope: function (this, leave_name, sym) {
-	    this._emit([sym.where, "scope", leave_name]);
+	    if (leave_name) {
+		this._emit([sym.where, "lscope", leave_name]);
+	    }
+	    else {
+		// avoid null argument; can use pprint to dump code
+		this._emit([sym.where, "uscope"]);
+	    }
 	},
 	emit_load: function (this, name, sym) {
 	    this._emit([sym.where, "load", name]);
