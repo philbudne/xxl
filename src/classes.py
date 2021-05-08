@@ -899,7 +899,12 @@ def str_eq(l, r):
     return mkbool(str(l) == str(r))
 
 
+def str_join(this, arg):
+    # XXX check arg is List (or Dict)?
+    return new_vinst(this.getclass(), this.value.join([x.value for x in arg.value]))
+
 Str.setprop(const.METHODS, _mkdict({
+    'join': pyfunc(str_join),
     'len': pyfunc(val_len),
     'repr': pyfunc(val_repr),
     'slice': pyfunc(str_slice),
