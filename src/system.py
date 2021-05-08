@@ -256,6 +256,8 @@ def load_parser(scope, parser_vmx, trace=False):
     """
     sys_obj = scope.lookup('System')
     m = import_worker(vmx_file=parser_vmx, main=False, trace=trace, parser=False)
+    # XXX check return
+
     # point System.parser at parser module
     sys_obj.setprop('parser', __obj_create(m.vars))
 
@@ -355,6 +357,8 @@ def sys_import(filename):
     # XXX search for .vmx file?
     # XXX propogate trace from caller??
     scope = import_worker(src_file=filename)
+    if scope is None:
+        Exception("import failed")
 
     # XXX run __extensions__ on caller's initial scope? System object?
     # XXX take arg to bypass __extensions__
@@ -372,7 +376,7 @@ def import_worker(src_file=None, vmx_file=None, trace=False,
                   stats=False, trace_parser=False,
                   main=False, args=[]):
     """
-    Takes either `src_file` or `vmx_file`
+    Takes either `src_file` or `vmx_file` [XXX autodetect by filename?]
     bool `trace`
     bool `parser` to create System.parser (False to load parser.vmx)
     bool `main` True when loading from command line
@@ -391,9 +395,8 @@ def import_worker(src_file=None, vmx_file=None, trace=False,
     else:
         # parse source using System.parser.parse() -- loaded above!
         if not parse_and_execute(src_file, scope, stats, trace, trace_parser):
-            # XXX just an error message??
             # all callers need to handle properly
-            raise Exception("load failed")
+            return None
     return scope                # XXX return as Module class Instance?
 
 ################################################################
