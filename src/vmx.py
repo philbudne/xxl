@@ -42,8 +42,10 @@ class VMError(Exception):
 
 # VM frame pointer register "fp" points to a Frame, implementing a
 # "parent pointer" (aka cactus/saguro/spaghetti) stack.
-# (in Python 3.7.9), namedtuple faster than class, and immutable!
+
+# In Python 3.7.9, namedtuple faster than class, and immutable!
 # Regular tuple is even faster, but less scrutable.
+# XXX would saving "ir" and "args" could be helpful for backtrace?
 Frame = collections.namedtuple('Frame', 'cb,pc,scope,fp')
 
 class VM:
@@ -77,7 +79,10 @@ class VM:
     def start(self):
         self.run = True         # cleared by 'exit' instr
         while self.run:
-            # NOTE! self.ir for debug.
+            # XXX might be faster (avoid indexing a list) to
+            #   create a "next" pointer on VM code "read-in"
+            #   (could also eliminate unconditional "jrst")?
+            # NOTE! self.ir saved for debug.
             self.ir = ir = self.cb[self.pc] # instruction register
             self.pc += 1        # jumps will overwrite
             ir.step(self)       # execute instruction
@@ -498,11 +503,13 @@ class Args2Instr(VMInstr2):
         vm.scope.defvar(self.v2, l)  # declare as variable
 
 @reginstr
-class ScopeInstr(VMInstr1):
+class ScopeInstr(VMInstr1):     # TEMP!
     """
     first op executed in a scope closure
     self.value is optional Python string for name of leave label
     (could optimize by having two flavors of Instr)
+
+    first op executed in an unlabled scope closure
     """
     name = "scope"
 
@@ -512,6 +519,28 @@ class ScopeInstr(VMInstr1):
             vm.scope = vm.scope.labeled_scope(vm.fp, self.value)
         else:
             vm.scope = vm.scope.new_scope()
+
+@reginstr
+class LScopeInstr(VMInstr1):     # TEMP!
+    """
+    first op executed in a labeled scope
+    """
+    name = "lscope"
+
+    def step(self, vm):
+        vm.scope = vm.scope.labeled_scope(vm.fp, self.value)
+
+@reginstr
+class UScopeInstr(VMInstr0):
+    """
+    first op executed in an unlabled scope closure
+    (having a separate opcode means never having to have a "null" arg,
+     so pprint can be used to format code)
+    """
+    name = "uscope"
+
+    def step(self, vm):
+        vm.scope = vm.scope.new_scope()
 
 @reginstr
 class StoreInstr(VMInstr1):
@@ -655,16 +684,27 @@ def convert_instrs(l, iscope):
 
 # called only by load_and_run_vmx (called by system.import_worker)
 def load_vm_json(fname, iscope):
-    # XXX handle compressed files?
     with open(fname) as f:
         l = f.readline()
+
+        # would like to handle compressed files, but this probably won't fly:
         if l and l[0] != '#':   # not a possible hashbang line?
             f.seek(0, 0)        # "run away" (rewind)
 
-        # XXX check here (do a tell) and see if next line is an {}:
-        #       (w/ version and a (constant) "pool" list???)
-        #       if so, strip and do json.loads()
-        # if not, seek back to tell result.
+        # currently expects file to contain a single JSON Array (list).
+        # handle leading Object (dict) with version and constant pool?
+        # *BUT* json.load(f) does not handle trailing newline *EXCEPT*
+        # at EOF, so might need to:
+        #       1. put dict on a single line
+        #       2. peek at first characater in file
+        #          if a '{' read rest of line and json.loads
+        #               (doesn't need to be .strip'ed)
+        #          else rewind
+        #       3. json.load the remainder
+        # **BUT** compressed file readers probably don't like to rewind!
+        #       so implement leading meta-data before (or at same time as)
+        #               accepting compressed files!
+        #
         j = json.load(f)
 
     return convert_instrs(j, iscope)
@@ -672,6 +712,8 @@ def load_vm_json(fname, iscope):
 ################
 
 # called only by load_and_run_vmx
+#       (used by import_worker to load/run parser.vmx
+#        and command line "-x")
 def run_code(code, scope, stats, trace):
     vm = VM(code, scope)
 
@@ -689,8 +731,10 @@ def run_code(code, scope, stats, trace):
         raise                   # make a mess
 
 # used by system.import_worker
+#       1. to load parser.vmx
+#       2. from command line "-x" option, to run a .vmx file
 def load_and_run_vmx(vmx_file, scope, stats, trace):
-    # note: both functions only called from here,
+    # note: both functions below only called from here,
     # but it's clearer this way.
     code = load_vm_json(vmx_file, scope)
     run_code(code, scope, stats, trace)
