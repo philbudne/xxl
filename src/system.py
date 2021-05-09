@@ -48,6 +48,9 @@ def __list_create(l):             # for sys.argv[]
     o = classes.new_vinst(classes.sys_types['List'], l)
     return o
 
+def mkstr(s):
+    return classes.new_vinst(classes.sys_types['Str'], s)
+
 ################################################################
 # functions
 
@@ -171,8 +174,37 @@ def sys_exit(value=0):
 # XXX should be a string() method!
 
 def sys_tree(t):
+    """
+    format JSON
+    """
     t2 = obj2python_json(t)
-    return json.dumps(t2, indent=1)
+    return mkstr(json.dumps(t2, indent=1))
+
+def format_instr(instr, indent=''):
+    """
+    format one instruction (Python list)
+    """
+    if instr[1] != "close":
+        return indent + json.dumps(instr)
+    # here to handle "close" (instr[3] is a new code list)
+    closure = format_code(instr[2], indent + " ")
+    return ('%s["%s", "%s",\n%s%s]' % (indent, instr[0], instr[1],
+                                       indent + " ", closure))
+
+def format_code(code, indent=''):
+    """
+    takes Python list of instructions (Python lists)
+    """
+    sep = ",\n" + indent + " "
+    return (indent + "[" + format_instr(code[0]) + sep +
+            sep.join([format_instr(inst, indent) for inst in code[1:]]) + "]")
+
+def sys_vtree(t):
+    """
+    pretty print a VM code tree
+    """
+    t2 = obj2python_json(t)
+    return mkstr(format_code(t2))
 
 # used in System.tree (above), parse, parse_and_execute (below)
 def obj2python_json(x):
@@ -422,6 +454,7 @@ def create_sys_object(iscope, args):
     # for parser:
     sys_obj.setprop('tokenizer', classes.pyfunc(sys_tokenizer))
     sys_obj.setprop('tree', classes.pyfunc(sys_tree)) # TEMP!!!
+    sys_obj.setprop('vtree', classes.pyfunc(sys_vtree)) # TEMP!!!
 
     # import source files, access to Python modules:
     sys_obj.setprop('import', classes.pyfunc(sys_import))
