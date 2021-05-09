@@ -682,25 +682,12 @@ def convert_instrs(l, iscope):
 def load_vm_json(fname, iscope):
     with open(fname) as f:
         l = f.readline()
+        if l and l[0:1] == '#!': # hash bang?
+            l = f.readline()     # discard
 
-        # would like to handle compressed files, but this probably won't fly:
-        if l and l[0] != '#':   # not a possible hashbang line?
-            f.seek(0, 0)        # "run away" (rewind)
+        # parse metadata
+        metadata = json.loads(l.strip())
 
-        # currently expects file to contain a single JSON Array (list).
-        # handle leading Object (dict) with version and constant pool?
-        # *BUT* json.load(f) does not handle trailing newline *EXCEPT*
-        # at EOF, so might need to:
-        #       1. put dict on a single line
-        #       2. peek at first characater in file
-        #          if a '{' read rest of line and json.loads
-        #               (doesn't need to be .strip'ed)
-        #          else rewind
-        #       3. json.load the remainder
-        # **BUT** compressed file readers probably don't like to rewind!
-        #       so implement leading meta-data before (or at same time as)
-        #               accepting compressed files!
-        #
         j = json.load(f)
 
     return convert_instrs(j, iscope)

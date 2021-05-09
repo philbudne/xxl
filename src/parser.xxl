@@ -1374,6 +1374,7 @@ if (__main__) {
 	// XXX maybe option to serialize in a format
 	//	that loads faster than JSON????
 	result = gen(result);
+	System.print("{}");
 	System.print(System.vtree(result));
 	System.exit(0);
     }
