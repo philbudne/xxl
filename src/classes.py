@@ -968,9 +968,12 @@ def mkbool(val):
 
 def unwrap(x):
     if hasattr(x, 'value'):     # faster than isistance(x, VInstance)??
-        return x.value
-    else:
-        return x
+        x = x.value
+        if isinstance(x, list):
+            return [unwrap(y) for y in x]
+        elif isinstance(x, dict):
+            return {key: unwrap(val) for key, val in x.items()}
+    return x
 
 class PInstance(VInstance):
     """
