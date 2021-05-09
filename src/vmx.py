@@ -204,7 +204,8 @@ class VMInstr0(object):
     """
     __slots__ = ['name', 'where']
 
-    def __init__(self, iscope, where):
+    def __init__(self, iscope, fn, where):
+        self.fn = fn
         self.where = where
 
     def __repr__(self):
@@ -222,8 +223,8 @@ class VMInstr1(VMInstr0):
     """
     __slots__ = ['name', 'where', 'value']
 
-    def __init__(self, iscope, where, value):
-        super().__init__(iscope, where)
+    def __init__(self, iscope, fn, where, value):
+        super().__init__(iscope, fn, where)
         self.value = value
 
     def json(self):
@@ -235,8 +236,8 @@ class VMInstr2(VMInstr0):
     """
     __slots__ = ['name', 'where', 'v1', 'v2']
 
-    def __init__(self, iscope, where, v1, v2):
-        super().__init__(iscope, where)
+    def __init__(self, iscope, fn, where, v1, v2):
+        super().__init__(iscope, fn, where)
         self.v1 = v1
         self.v2 = v2
 
@@ -250,9 +251,9 @@ class LitInstr(VMInstr1):
     """
     name = "lit"
 
-    def __init__(self, iscope, where, value):
+    def __init__(self, iscope, fn, where, value):
         # convert to Class when code is loaded
-        super().__init__(iscope, where, classes.wrap(value, iscope))
+        super().__init__(iscope, fn, where, classes.wrap(value, iscope))
 
     def step(self, vm):
         vm.ac = self.value
@@ -264,9 +265,9 @@ class PushLitInstr(VMInstr1):
     """
     name = "push_lit"
 
-    def __init__(self, iscope, where, value):
+    def __init__(self, iscope, fn, where, value):
         # convert to Class when code is loaded
-        super().__init__(iscope, where, classes.wrap(value, iscope))
+        super().__init__(iscope, fn, where, classes.wrap(value, iscope))
 
     def step(self, vm):
         vm.push(self.value)
@@ -376,11 +377,12 @@ class CloseInstr(VMInstr1):
     inst.value contains VM code (as Python list of VMInstrs)
     """
     name = "close"
-    __slots__ = ['where', 'value']
+    __slots__ = ['fn', 'where', 'value']
 
-    def __init__(self, iscope, where, value):
+    def __init__(self, iscope, fn, where, value):
+        self.fn = fn
         self.where = where
-        self.value = convert_instrs(value, iscope)
+        self.value = convert_instrs(value, iscope, fn)
 
     def step(self, vm):
         vm.ac = classes.CClosure(self.value, vm.scope)
@@ -648,8 +650,9 @@ def invoke_function(func, scope, args=[], trace=False):
             ret = func.func(*args)
         return ret
 
+    fn = 'vmx.py'
     where = "invoke %s" % func
-    code = [CallInstr(None, where, len(args)), ExitInstr(None, where)]
+    code = [CallInstr(None, fn, where, len(args)), ExitInstr(None, fn, where)]
     vm = VM(code, scope)        # scope for type lookup
     # XXX could have a version of CallInstr that takes vm.args directly
     for arg in reversed(args):
@@ -667,16 +670,16 @@ def invoke_function(func, scope, args=[], trace=False):
 # convert Python list into XxxInstr(ruction) instances
 # (this is the .vmx file assembler!)
 
-def convert_one_instr(i, iscope):
+def convert_one_instr(i, iscope, fn):
     op = i.pop(1)
     # create new instruction instance
-    return instr_class_by_name[op](iscope, *i)
+    return instr_class_by_name[op](iscope, fn, *i)
 
-def convert_instrs(l, iscope):
+def convert_instrs(l, iscope, fn):
     """
     used by CloseInstr and load_vm_json
     """
-    return [convert_one_instr(x, iscope) for x in l]
+    return [convert_one_instr(x, iscope, fn) for x in l]
 
 # called only by load_and_run_vmx (called by system.import_worker)
 def load_vm_json(fname, iscope):
@@ -690,7 +693,7 @@ def load_vm_json(fname, iscope):
 
         j = json.load(f)
 
-    return convert_instrs(j, iscope)
+    return convert_instrs(j, iscope, metadata.get('fn'))
 
 ################
 
@@ -710,7 +713,7 @@ def run_code(code, scope, stats, trace):
     except SystemExit:
         raise                   # pass up w/o message
     except:
-        sys.stderr.write("VM Error @ {}".format(vm.ir.where))
+        sys.stderr.write("VM Error @ {}:{}".format(vm.ir.fn, vm.ir.where))
         raise                   # make a mess
 
 # used by system.import_worker

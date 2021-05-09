@@ -180,30 +180,35 @@ def sys_tree(t):
     t2 = obj2python_json(t)
     return mkstr(json.dumps(t2, indent=1))
 
-def format_instr(instr, indent=''):
-    """
-    format one instruction (Python list)
-    """
-    if instr[1] != "close":
-        return indent + json.dumps(instr)
-    # here to handle "close" (instr[3] is a new code list)
-    closure = format_code(instr[2], indent + " ")
-    return ('%s["%s", "%s",\n%s%s]' % (indent, instr[0], instr[1],
-                                       indent + " ", closure))
-
-def format_code(code, indent=''):
-    """
-    takes Python list of instructions (Python lists)
-    """
-    sep = ",\n" + indent + " "
-    return (indent + "[" + format_instr(code[0]) + sep +
-            sep.join([format_instr(inst, indent) for inst in code[1:]]) + "]")
-
-def sys_vtree(t):
+def sys_vtree(t, fname=""):
     """
     pretty print a VM code tree
     """
     t2 = obj2python_json(t)
+
+    fnc = fname + ":"
+    fnclen = len(fnc)
+    def format_instr(instr, indent=''):
+        """
+        format one instruction (Python list)
+        """
+        if instr[0].startswith(fnc):
+            instr[0] = instr[0][fnclen:]
+        if instr[1] != "close":
+            return indent + json.dumps(instr)
+        # here to handle "close" (instr[3] is a new code list)
+        closure = format_code(instr[2], indent + " ")
+        return ('%s["%s", "%s",\n%s%s]' % (indent, instr[0], instr[1],
+                                           indent + " ", closure))
+
+    def format_code(code, indent=''):
+        """
+        takes Python list of instructions (Python lists)
+        """
+        sep = ",\n" + indent + " "
+        return (indent + "[" + format_instr(code[0]) + sep +
+                sep.join([format_instr(inst, indent) for inst in code[1:]]) + "]")
+
     return mkstr(format_code(t2))
 
 # used in System.tree (above), parse, parse_and_execute (below)
@@ -325,8 +330,8 @@ def parse(filename, scope, dump): # XXX take trace?
     if dump == "vm":
         return j                # return "vm" json
 
-    # scope for wrapping Lits
-    return vmx.convert_instrs(j, scope) # convert to list of Python Instrs
+    # convert to list of Python Instrs; scope for wrapping Lits
+    return vmx.convert_instrs(j, scope, filename)
 
 # called only from import_worker
 def parse_and_execute(src, scope, stats, trace, trace_parser):
@@ -357,7 +362,7 @@ def parse_and_execute(src, scope, stats, trace, trace_parser):
             break
 
         # convert into Python list of Instrs (scope for type name lookup)
-        code = vmx.convert_instrs(js, scope)
+        code = vmx.convert_instrs(js, scope, src)
         try:
             # UGH: invoke a new VM to execute code
             v = vmx.VM(code, scope)
@@ -375,7 +380,8 @@ def parse_and_execute(src, scope, stats, trace, trace_parser):
             return False
         except Exception as e:
             # NOTE: just displays "where"
-            sys.stderr.write("Error @ {}: {}\n".format(v.ir.where, e))
+            sys.stderr.write("Error @ {}:{}: {}\n".format(
+                v.ir.fn, v.ir.where, e))
             # XXX backtrace!! (capture "ir.where" in Frame??)
             return False
     return True
