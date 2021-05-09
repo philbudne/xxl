@@ -130,6 +130,9 @@ var VMCode = Class.new({
 	emit_lit: function (this, value, sym) {
 	    this._emit([sym.where, "lit", value]);
 	},
+	emit_push_lit: function (this, value, sym) {
+	    this._emit([sym.where, "push_lit", value]);
+	},
 	emit_push: function (this, sym) {
 	    this._emit([sym.where, "push"]);
 	},
@@ -768,15 +771,15 @@ var Parser = Class.new({
 			return(this);
 		    },
 		    gen: function (this, vmcode) {
-			vmcode.emit_lit(this.second.value, this); // member name
-			vmcode.emit_push(this);
+			// XXX member name always constant, could
+			// have special case of binop that takes const (avoid lit)
+			vmcode.emit_push_lit(this.second.value, this); // member
 			this.first.gen(vmcode);
 			vmcode.emit_binop(this.id(), this);
 		    },
 		    gen_lhs: function (this, vmcode) {
-			vmcode.emit_push(this);	// save value to store as arg 2
-			vmcode.emit_lit(this.second.value, this); // member name
-			vmcode.emit_push(this);	// save as arg 1
+			vmcode.emit_push(this);	// save value to store as arg
+			vmcode.emit_push_lit(this.second.value, this); // member
 			this.first.gen(vmcode); // object
 			vmcode.emit_lhsop(this.id(), this);
 		    }
@@ -1063,8 +1066,7 @@ var Parser = Class.new({
 				    item.first.gen(vmcode);
 				    vmcode.emit_push(this);
 				    // key
-				    vmcode.emit_lit(item.value, this);
-				    vmcode.emit_push(this);
+				    vmcode.emit_push_lit(item.value, this);
 				    vmcode.emit_temp(this); // get dict back in AC
 				    vmcode.emit_lhsop("[", this);
 				}

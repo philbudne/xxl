@@ -258,6 +258,20 @@ class LitInstr(VMInstr1):
         vm.ac = self.value
 
 @reginstr
+class PushLitInstr(VMInstr1):
+    """
+    push literal (Number or Str) onto stack
+    """
+    name = "push_lit"
+
+    def __init__(self, iscope, where, value):
+        # convert to Class when code is loaded
+        super().__init__(iscope, where, classes.wrap(value, iscope))
+
+    def step(self, vm):
+        vm.push(self.value)
+
+@reginstr
 class PushInstr(VMInstr0):
     """
     save AC on stack
