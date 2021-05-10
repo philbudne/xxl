@@ -915,8 +915,8 @@ Str.setprop(const.BINOPS, _mkdict({
     '+': pyfunc(str_concat),
     '==': pyfunc(eq),
     '!=': pyfunc(ne),
-    # XXX full relops?
-    '[': pyfunc(str_get),      # XXX needs wrap
+    # XXX full relops? (require str lhs!!)
+    '[': pyfunc(str_get),
 }))
 
 ################ Null
