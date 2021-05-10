@@ -125,7 +125,6 @@ var VMCode = Class.new({
 		this._emit([sym.where, "lscope", leave_name]);
 	    }
 	    else {
-		// avoid null argument; can use pprint to dump code
 		this._emit([sym.where, "uscope"]);
 	    }
 	},
