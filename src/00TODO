@@ -20,8 +20,6 @@ FIX
    ** need to pool VInstances (by hash?) in order to allow them as keys?
 	prog
 
-optimize: gen(Lit) + push => push_lit!!
-
 make function name () .... define name in local scope?????
 	close2 patches -- need to make "function foo() {}" a valid expr stmt
 make a full expression language??

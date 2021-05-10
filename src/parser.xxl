@@ -86,7 +86,15 @@ var VMCode = Class.new({
 	    }
 	    return(this.code);
 	},
-
+	gen_push: function (this, symbol) {
+	    if (symbol.id() == "(literal)") { // instanceof(Lit)
+		this.emit_push_lit(symbol.value, symbol);
+	    }
+	    else {
+		symbol.gen(this);
+		this.emit_push(symbol);
+	    }
+	},
 	gen_stmts: function (this, stmts) { // generate code for list of stmts
 	    stmts.for_each(
 		function (item) {
@@ -255,7 +263,7 @@ var PrattParser = Class.new({
 		return(this.End.new("EOF", "(end)", null));
 	    }
 	    var t_error = function (msg) {
-		System.error(t.where, "token error", msg);
+		System.error(t.where, "ERROR: ", msg);
 		System.exit(1);
 	    };
 	    var v = t.value;
@@ -516,8 +524,7 @@ var PrattParser = Class.new({
 			return(this);
 		    },
 		    gen_infix: function (this, vmcode) {
-			this.second.gen(vmcode);
-			vmcode.emit_push(this);
+			vmcode.gen_push(this.second);
 			this.first.gen(vmcode);
 			vmcode.emit_binop(this.id(), this);
 		    },
@@ -624,8 +631,7 @@ var Parser = Class.new({
 		methods: {
 		    // subclass must define "aop" (want member)
 		    gen: function (this, vmcode) {
-			this.second.gen(vmcode); // rhs
-			vmcode.emit_push(this);  // save as argument
+			vmcode.gen_push(this.second); // save rhs as argument
 
 			// XXX eval children of RHS once???
 
@@ -854,8 +860,7 @@ var Parser = Class.new({
 		    },
 		    gen_lhs: function (this, vmcode) {
 			vmcode.emit_push(this); // value to store
-			this.second.gen(vmcode); // index
-			vmcode.emit_push(this);
+			vmcode.gen_push(this.second); // index
 			this.first.gen(vmcode); // container
 			vmcode.emit_lhsop(this.id(), this);
 		    }
@@ -896,8 +901,7 @@ var Parser = Class.new({
 		    gen: function (this, vmcode) {
 			this.second.each_for(
 			    function (actual) {
-				actual.gen(vmcode);
-				vmcode.emit_push(this);
+				vmcode.gen_push(actual);
 			    }
 			);
 			this.first.gen(vmcode); // function expression
@@ -1063,11 +1067,11 @@ var Parser = Class.new({
 			    this.first.for_each(
 				function (item) {
 				    // value to store
-				    item.first.gen(vmcode);
-				    vmcode.emit_push(this);
+				    vmcode.gen_push(item.first);
 				    // key
 				    vmcode.emit_push_lit(item.value, this);
-				    vmcode.emit_temp(this); // get dict back in AC
+				    // get dict back in AC
+				    vmcode.emit_temp(this);
 				    vmcode.emit_lhsop("[", this);
 				}
 			    ); // for_each
