@@ -356,7 +356,7 @@ def parse_and_execute(src, scope, stats, trace, trace_parser):
     while True:
         # run "parse_and_gen_one_stmt", turn into Python list of lists:
         js = obj2python_json(
-        vmx.invoke_function(p1, scope, [parser_obj], trace_parser))
+            vmx.invoke_function(p1, scope, [parser_obj], trace_parser))
 
         if not js:              # need to confirm EOF?
             break
