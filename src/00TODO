@@ -5,17 +5,20 @@ FIX
 		(all CInstances will need to restore)
 		need VM method to load codebase and pc?!
 
+*** BUG: Only VInstances can be used as Dict keys
+
 ** add .git/pre-commit check?
 
-** -s (stats) broken
+** -s (stats) broken??
 
 ** rename Instance to CObject???
+
 ** wrap VInstances in VObject with VClass metaclass??
   (rename VInstance to CVObject??)
+   have VInstance.__hash__ call .value.__hash__()??
 
-** add Dict keys() & for_each?
-* hash() and id() methods?
-* "is" method? operator??
+** add Dict keys() & for_each? a generator??
+* Object.is method? operator?? Object.ident() method??
 ** Dict only handling VInstances for key
    ** need to pool VInstances (by hash?) in order to allow them as keys?
 	prog
@@ -86,3 +89,7 @@ make obj_get of unknown property an error
 exceptions (using Continuations)
 "in" operator for collections?
 port VM to rpython?!
+
+missing methods (lots!!!)
+    Str binop: full relops (require str lhs)
+    List slice method
