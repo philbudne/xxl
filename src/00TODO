@@ -5,6 +5,8 @@ FIX
 		(all CInstances will need to restore)
 		need VM method to load codebase and pc?!
 
+*** runtime errors have doubled filename
+
 *** BUG: Only VInstances can be used as Dict keys
 
 ** add .git/pre-commit check?
