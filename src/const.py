@@ -29,7 +29,7 @@ UNOPS = '__unops'               # Dict
 LHSOPS = '__lhsops'             # Dict
 SUPERS = '__supers'             # List of Class instances
 
-# map Class.new names to internal names
+# map Class.new argument dict keys to internal property names
 CLASS_PROPS = {
     'name': NAME,
     'methods': METHODS,

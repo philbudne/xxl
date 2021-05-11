@@ -45,11 +45,11 @@ def __obj_create(props):          # TEMP??
     return o
 
 def __list_create(l):             # for sys.argv[]
-    o = classes.new_vinst(classes.sys_types['List'], l)
+    o = classes._new_vinst(classes.sys_types['List'], l)
     return o
 
 def mkstr(s):
-    return classes.new_vinst(classes.sys_types['Str'], s)
+    return classes._new_vinst(classes.sys_types['Str'], s) # XXX XXX
 
 ################################################################
 # functions
@@ -261,7 +261,7 @@ def obj2python_json(x):
 def sys_pyimport(module):
     import importlib
     m = importlib.import_module(module.value)
-    return classes.new_vinst(classes.sys_types['PyObj'], m) # XXX?
+    return classes._new_vinst(classes.sys_types['PyObj'], m) # XXX?
 
 # XXX create an "auto-import" object? python.sys == pyimport("sys")???
 

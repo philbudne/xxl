@@ -5,7 +5,7 @@ FIX
 		(all CInstances will need to restore)
 		need VM method to load codebase and pc?!
 
-*** runtime errors have doubled filename
+*** runtime errors (from command line .xxl files) have doubled filename
 
 *** BUG: Only VInstances can be used as Dict keys
 
@@ -14,10 +14,7 @@ FIX
 ** -s (stats) broken??
 
 ** rename Instance to CObject???
-
-** wrap VInstances in VObject with VClass metaclass??
-  (rename VInstance to CVObject??)
-   have VInstance.__hash__ call .value.__hash__()??
+	(VInstance to VObject -- or PObject?? (and VClass to PClass)???)
 
 ** add Dict keys() & for_each? a generator??
 * Object.is method? operator?? Object.ident() method??

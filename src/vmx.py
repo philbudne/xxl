@@ -71,9 +71,10 @@ class VM:
         self.iscope = scope     # initial scope (for pyscope functions)
 
         # argument list from last call/method/op invocation
-        # User defined functions (CClosure) pick up args with "args" opcode
-        # before ANY other call/op can occur (so never needs to be preserved).
-        # Other CInstance classes may consume directly.
+        # User defined functions (Python CClosure) pick up args with
+        # "args" opcode before ANY other call/op can occur (so never
+        # needs to be preserved).  Other Instance subclasses may
+        # consume directly.
         self.args = []
 
     def start(self):
@@ -138,11 +139,9 @@ class VM:
             t = t[1]
 
     def save_frame(self):
-        # called from CClosure.invoke
-        # XXX create entries for all CInstances (better traceback)?
-        #       (call before "invoke" call??)
-        #       but would need to call restore_frame
-        #       would allow Python callees to use same VM
+        # called from CClosure.invoke (always call before .invoke??)
+        #       would need to call restore_frame inside all .invoke methods??
+        #       would allow Python callees to use same VM???
         # XXX capture self.ir.where for traceback??
         self.fp = Frame(cb=self.cb, pc=self.pc, scope=self.scope, fp=self.fp)
 
@@ -157,6 +156,7 @@ class VM:
         object in self.ac
         """
         m = classes.find_op(self.ac, optype, inst.value)
+        # XXX always create frame?
         m.invoke(self)
 
     def push(self, val):
@@ -390,11 +390,12 @@ class CloseInstr(VMInstr1):
 @reginstr
 class CallInstr(VMInstr1):
     """
-    AC should point to CInstance
-    (one of CClosure, CPyFunc, CBoundMethod, CContinuation)
-    self.value is number of args on stack
+    Calls Instance invoke method
+        (CClosure, CPyFunc, CBoundMethod, CContinuation define this,
+         all others hand off to "(" binop)
+    self.value is Python number of args on stack
     pops args from stack, creating Python list in vm.args
-    calls CInstance.invoke(vm)
+    calls Instance.invoke(vm)
     """
     name = "call"
 
@@ -610,7 +611,7 @@ class NewInstr(VMInstr1):
 
     def step(self, vm):
         vm.push(vm.temp)
-        vm.temp = system.create_sys_type(self.value, vm.scope)
+        vm.temp = system.create_sys_type(self.value, vm.scope, None)
 
 ################
 

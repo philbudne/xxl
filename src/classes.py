@@ -113,8 +113,11 @@ class Instance(object):
     def __repr__(self):
         # XXX call object method??? (could cause debugging pain)
         c = self.getclass()
-        if c == Class:          # XXX handle subclassing of Class?!!!
+        if c is Class:
             name = 'Class: %s' % self.getprop(const.NAME).value
+        elif class_subclass_of(c, Class):
+            name = '%s: %s' % (c.getprop(const.NAME).value,
+                               self.getprop(const.NAME).value)
         else:
             name = self.classname()
         return '<%s at %#x>' % (name, id(self))
@@ -133,7 +136,12 @@ class VInstance(Instance):
     def __str__(self):
         return str(self.value)
 
+    # some day allow Dict to be indexed by any Instance...
+    def __hash__(self):
+        return self.value.__hash__()
+
     def __repr__(self):
+        """show wrapped value"""
         return '<%s: %s at %#x>' % \
             (self.classname(), repr(self.value), id(self))
 
@@ -270,7 +278,7 @@ def pyfuncvm(func):
 
 ################################################################
 
-def new_vinst(this_class, arg):
+def _new_vinst(this_class, arg):
     """
     for internal use only!
     creates an interpreter object wrapped around a Python Value
@@ -282,24 +290,24 @@ def _mkdict(vals):
     """
     ONLY USE TO CONSTRUCT BASE TYPES!
     """
-    return new_vinst(Dict, vals)
+    return _new_vinst(Dict, vals)
 
 def _mklist(vals):
     """
     ONLY USE TO CONSTRUCT BASE TYPES!
     """
-    return new_vinst(List, vals)
+    return _new_vinst(List, vals)
 
 def _mkstr(s):
     """
     ONLY USE TO CONSTRUCT BASE TYPES!
     """
-    return new_vinst(Str, s)
+    return _new_vinst(Str, s)
 
 def mkstr(s):
     # XXX use wrap (lookup types by System.types.NAME)?????
     # XXX need initial scope
-    return new_vinst(Str, s)
+    return _new_vinst(Str, s)
 
 ################################################################
 
@@ -340,16 +348,19 @@ Class.setprop(const.CLASS, Class) # circular!
 
 Object = defclass(Class, 'Object', [])
 
+# metaclass for VInstances
+VClass = defclass(Class, 'VClass', [Class])
+
 # wrappers, with .value
 # make children of VObject (XXX private 'new' using new_vinst?)
-List = defclass(Class, 'List', [Object]) # interhit from "Sequence"? "FrozenList"?
-Str = defclass(Class, 'Str', [Object])
-Dict  = defclass(Class, 'Dict', [Object]) # inherit from "Mapping"? FrozenDict?
-Number = defclass(Class, 'Number', [Object])
+List = defclass(VClass, 'List', [Object]) # subclass of Sequence? FrozenList??
+Str = defclass(VClass, 'Str', [Object])
+Dict  = defclass(VClass, 'Dict', [Object]) # subclass of Mapping? FrozenDict??
+Number = defclass(VClass, 'Number', [Object])
 # XXX own metaclass to return singleton?
-Null = defclass(Class, 'Null', [Object])         # XXX singleton
+Null = defclass(VClass, 'Null', [Object]) # XXX singleton
 # XXX own metaclass to return doubleton values?
-Bool = defclass(Class, 'Bool', [Object])
+Bool = defclass(VClass, 'Bool', [Object])
 
 # JS style Object (TEMP):
 JSObject = defclass(Class, 'JSObject', [Object])
@@ -374,20 +385,30 @@ Continuation = defclass(Class, 'Continuation', [Object])
 
 ################
 
-null_value = new_vinst(Null, None)
+null_value = _new_vinst(Null, None)
 
 # create (only) instances of true/false (a doubleton)!
-true_val = new_vinst(Bool, True)
-false_val = new_vinst(Bool, False)
+true_val = _new_vinst(Bool, True)
+false_val = _new_vinst(Bool, False)
 
-################ helper methods
+################
 
-def mtrue(o):
-    return true_val
-
-def mfalse(o):
-    return false_val
-
+def class_subclass_of(klass, base):
+    visited = set()
+    def check(c):
+        if c in visited:
+            return False
+        visited.add(c)
+        if c is base:
+            return True
+        s = c.getprop(const.SUPERS)
+        if s is None or s is null_value:
+            return False
+        for x in s.value:       # XXX check if List
+            if check(x):
+                return True
+        return False
+    return check(klass)
 
 ################ Object -- the base type for all instances and classes
 
@@ -398,6 +419,9 @@ def new_inst(this_class, *args):
     Creates a Python Instance, calls this_class's 'init' method with args
     """
     n = Instance(this_class)
+
+    if this_class is Number:
+        breakpoint()
 
     m = find_in_class(n, const.INIT) # returns BoundMethod
     if m and m is not null_value:
@@ -549,9 +573,13 @@ def obj_class(this):
 def obj_call(l, r):
     raise Exception("%s not callable" % l.classname())
 
+def obj_instance_of(l, c):
+    return class_subclass_of(obj_class(l), c)
+
 Object.setprop(const.METHODS, _mkdict({
     const.INIT: pyfunc(obj_init),
     'class': pyfunc(obj_class), # clutter!? might as well be a normal property?!
+    'instance_of': pyfunc(obj_instance_of),
     'putprop': pyfunc(obj_put),
     'getprop': pyfunc(obj_get),
     'str': pyfunc(obj_str),
@@ -581,6 +609,7 @@ def class_init(this_class, props):
     # XXX check props is a Dict!
     metaclass = this_class.classname()
     for key, val in props.value.items():
+        # XXX depends on key as Python str
         # XXX check val is a Dict!
         if key == 'props':
             # XXX check for overlap with methods?
@@ -619,11 +648,31 @@ def class_call(this_class, args):
 Class.setprop(const.METHODS, _mkdict({
     const.NEW: pyfunc(new_inst),
     const.INIT: pyfunc(class_init), # Class.new creates new Classes
+    "subclass_of": pyfunc(class_subclass_of)
 }))
 Class.setprop(const.CLASS, Class) # circular!
 
 Class.setprop(const.BINOPS, _mkdict({
     '(': pyfunc(class_call)
+}))
+
+################ VClass -- metaclass for VInstances
+
+def new_vinst(this_class, arg=None):
+    """
+    makes an instance of this_class
+    Creates a Python VInstance, calls this_class's 'init' method with args
+    """
+    n = VInstance(this_class, arg)
+
+    m = find_in_class(n, const.INIT) # returns BoundMethod
+    if m and m is not null_value:
+        vmx.invoke_function(m, None, [arg])
+    return n
+
+VClass.setprop(const.METHODS, _mkdict({
+    const.NEW: pyfunc(new_vinst),
+    const.INIT: pyfunc(class_init), # Class.new creates new Classes
 }))
 
 ################ (JavaScript style) Object
@@ -652,7 +701,7 @@ JSObject.setprop(const.LHSOPS, _mkdict({
 ################ generic methods for classes with wrapped Python values
 
 def val_len(l):
-    return new_vinst(Number, len(l.value)) # XXX look up by name? use l.CLASS?
+    return _new_vinst(Number, len(l.value)) # XXX look up by name? use l.CLASS?
 
 def val_str(l):
     """
@@ -684,13 +733,12 @@ def val_eq(l, r):
 ################ Dict
 
 def dict_put(l, r, value):
-    entry = r.value             # XXX need hash method!
-#    print "dict_put", l, entry, value
+    entry = r.value             # XXX
     l.value[entry] = value
     return value                # lhsop MUST return value
 
 def dict_get(l, r):
-    entry = r.value             # XXX need hash method!
+    entry = r.value             # XXX
     ret = l.value.get(entry, null_value)
     return ret
 
@@ -784,19 +832,19 @@ List.setprop(const.LHSOPS, _mkdict({
 # XXX XXX need to use "to_number" method on LHS (y) values??????!!!!!!
 
 def neg(x):
-    return new_vinst(x.getclass(), -x.value)
+    return _new_vinst(x.getclass(), -x.value)
 
 def add(x, y):
-    return new_vinst(x.getclass(), x.value + y.value)
+    return _new_vinst(x.getclass(), x.value + y.value)
 
 def sub(x, y):
-    return new_vinst(x.getclass(), x.value - y.value)
+    return _new_vinst(x.getclass(), x.value - y.value)
 
 def mul(x, y):
-    return new_vinst(x.getclass(), x.value * y.value)
+    return _new_vinst(x.getclass(), x.value * y.value)
 
 def div(x, y):
-    return new_vinst(x.getclass(), x.value / y.value)
+    return _new_vinst(x.getclass(), x.value / y.value)
 
 def eq(l, r):
     l = l.value
@@ -864,14 +912,14 @@ def str_concat(x, y):
     ys = vmx.invoke_method(y, 'str', None) # XXX scope
 
     # XXX optimization: check if either is empty!!
-    return new_vinst(x.getclass(), x.value + y.value)
+    return _new_vinst(x.getclass(), x.value + y.value)
 
 def str_strip(this):
-    return new_vinst(this.getclass(), this.value.strip())
+    return _new_vinst(this.getclass(), this.value.strip())
 
 def str_get(l, r):
     # XXX check if r is integer
-    return new_vinst(l.getclass(), l.value[r.value])
+    return _new_vinst(l.getclass(), l.value[r.value])
 
 def str_slice(l, a, b=None):
     av = a.value                # XXX check if int
@@ -880,7 +928,7 @@ def str_slice(l, a, b=None):
         ret = l.value[av:bv]
     else:
         ret = l.value[av:]
-    return new_vinst(l.getclass(), ret)
+    return _new_vinst(l.getclass(), ret)
 
 def str_str(this):
     return this
@@ -900,7 +948,7 @@ def str_eq(l, r):
 
 def str_join(this, arg):
     # XXX check arg is List (or Dict)?
-    return new_vinst(this.getclass(), this.value.join([x.value for x in arg.value]))
+    return _new_vinst(this.getclass(), this.value.join([x.value for x in arg.value]))
 
 Str.setprop(const.METHODS, _mkdict({
     'join': pyfunc(str_join),
@@ -1068,3 +1116,4 @@ def copy_types(to, sys_obj):
     sys_types = sys_obj.getprop('types')
     for x in ['true', 'false', 'null', 'Class']:
         to.defvar(x, sys_types.getprop(x))
+
