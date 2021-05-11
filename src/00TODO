@@ -83,7 +83,8 @@ Object: dir() method?? or make props visible as Dict in __props property?
 load compressed vmx (JSON) files and/or use some faster serialization library!!
 make obj_get of unknown property an error
 	(depended on by .std lookup)
-	add "hasattr" method?
+	add "have_prop" method? .? operator?!!!
+	have_method??
 exceptions (using Continuations)
 "in" operator for collections?
 port VM to rpython?!
