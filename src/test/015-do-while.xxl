@@ -19,7 +19,7 @@ var Do = Class.new({
 	},
 	gen: function (this, vmcode) { // gen
 	    var top_label = vmcode.get_off();
-	    this.first.gen(vmcode);
+	    this.first.gen(vmcode);  // block
 	    this.second.gen(vmcode); // condition
 	    vmcode.emit_iftrue(top_label, this);
 	}
