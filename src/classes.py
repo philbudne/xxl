@@ -115,7 +115,7 @@ class Instance(object):
         c = self.getclass()
         if c is Class:
             name = 'Class: %s' % self.getprop(const.NAME).value
-        elif class_subclass_of(c, Class):
+        elif subclass_of(c, Class):
             name = '%s: %s' % (c.getprop(const.NAME).value,
                                self.getprop(const.NAME).value)
         else:
@@ -125,8 +125,7 @@ class Instance(object):
 class VInstance(Instance):
     """
     Instance w/ a value property which is a Python type
-    XXX Need to have special VObjectClass metaclass (w/ custom 'new')
-    to ensure that ALL newly created instances come here?!
+    (rename this PObject (Primative Object)?)
     """
     def __init__(self, klass, value):
         assert klass is not None
@@ -134,9 +133,13 @@ class VInstance(Instance):
         self.value = value      # XXX invoke INIT method????
 
     def __str__(self):
+        if self.value is None:
+            return "null"
+        if isinstance(self.value, bool):
+            return str(self.value).lower()
         return str(self.value)
 
-    # some day allow Dict to be indexed by any Instance...
+    # someday allow Dict to be indexed by any Instance...
     def __hash__(self):
         return self.value.__hash__()
 
@@ -393,7 +396,7 @@ false_val = _new_vinst(Bool, False)
 
 ################
 
-def class_subclass_of(klass, base):
+def subclass_of(klass, base):
     visited = set()
     def check(c):
         if c in visited:
@@ -574,7 +577,7 @@ def obj_call(l, r):
     raise Exception("%s not callable" % l.classname())
 
 def obj_instance_of(l, c):
-    return class_subclass_of(obj_class(l), c)
+    return mkbool(subclass_of(obj_class(l), c))
 
 Object.setprop(const.METHODS, _mkdict({
     const.INIT: pyfunc(obj_init),
@@ -642,6 +645,10 @@ def class_call(this_class, args):
     """
     # PLB: I keep on doing this (Python fingers)
     raise Exception("call %s.new!" % class_name(this_class).value)
+
+def class_subclass_of(l, r):
+    # error if l is not a  Class -- check using subclass_of(l, Class)?!
+    return mkbool(subclass_of(l, r))
 
 # Class: a meta-class: all Classes are instances of a meta-class
 # Class.new creates a new Class
