@@ -45,8 +45,8 @@ class VMError(Exception):
 
 # In Python 3.7.9, namedtuple faster than class, and immutable!
 # Regular tuple is even faster, but less scrutable.
-# XXX would saving "ir" and "args" could be helpful for backtrace?
-Frame = collections.namedtuple('Frame', 'cb,pc,scope,fp')
+# XXX save vm.args for backtrace?
+Frame = collections.namedtuple('Frame', 'cb,pc,scope,fp,where')
 
 class VM:
     """
@@ -142,8 +142,15 @@ class VM:
         # called from CClosure.invoke (always call before .invoke??)
         #       would need to call restore_frame inside all .invoke methods??
         #       would allow Python callees to use same VM???
-        # XXX capture self.ir.where for traceback??
-        self.fp = Frame(cb=self.cb, pc=self.pc, scope=self.scope, fp=self.fp)
+        self.fp = Frame(cb=self.cb, pc=self.pc, scope=self.scope, fp=self.fp,
+                        where=self.ir.where # for backtrace (maybe args too?)
+        )
+
+    def backtrace(self):        # XXX take file to write to?
+        fp = self.fp
+        while fp:
+            sys.stderr.write(" called from {}\n".format(fp.where))
+            fp = fp.fp
 
     # helper (inline once settled?)
     # make method of OpInstr parent class??

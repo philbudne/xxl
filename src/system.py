@@ -375,14 +375,14 @@ def parse_and_execute(src, scope, stats, trace, trace_parser):
         except vmx.VMError as e:
             # NOTE: displays VM Instr
             sys.stderr.write("VM Error @ {}: {}\n".format(v.ir, e))
-            # XXX dump VM registers? option to call breakpoint()??
-            # XXX backtrace!! (capture "ir.where" in Frame??)
+            # XXX dump VM registers?
+            v.backtrace()
             return False
         except Exception as e:
             # NOTE: just displays "where"
             sys.stderr.write("Error @ {}:{}: {}\n".format(
                 v.ir.fn, v.ir.where, e))
-            # XXX backtrace!! (capture "ir.where" in Frame??)
+            v.backtrace()
             return False
     return True
 
