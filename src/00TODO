@@ -1,36 +1,20 @@
 FIX
-====
+===
 *** have invoke_function/method use current VM??
 	have CallInstr save_frame (instead of CClosure.invoke)?
 		(all CInstances will need to restore)
 		need VM method to load codebase and pc?!
 
-*** runtime errors (from command line .xxl files) have doubled filename
-
 *** BUG: Only VInstances can be used as Dict keys
+	(currently Dicts are indexed by Python values)
 
 ** add .git/pre-commit check?
 
 ** -s (stats) broken??
 
-** rename Instance to CObject???
-	(VInstance to VObject -- or PObject?? (and VClass to PClass)???)
-
-** add Dict keys() & for_each? a generator??
-* Object.is method? operator?? Object.ident() method??
-** Dict only handling VInstances for key
-   ** need to pool VInstances (by hash?) in order to allow them as keys?
-	prog
-
-make function name () .... define name in local scope?????
-	close2 patches -- need to make "function foo() {}" a valid expr stmt
-make a full expression language??
-	is "{" ambiguous?? forbid at "top level"??
-invoke_function/method (using new VM) won't work nicely with Continuations?
-	add return_function/return_method that does: return(callable())
 run "__extensions__" (pass importer's initial scope? iscope.System??)
 	(unless requested not to!)
-Get rid of PyObjClass and use '(' binop for calls?
+
 always preload a (bootstrap.vmx) file??
 	load System object
 	including "System.parser = System.import_vmx('parser.vmx');"
@@ -52,11 +36,19 @@ str & repr methods (& Str.join)
 
 CLEANUP
 =======
+** rename Instance to CObject???
+	(VInstance to VObject -- or PObject?? (and VClass to PClass)???)
+
+rename System to xxl? __xxl??
+Get rid of PyObjClass and use '(' binop for calls?
 flush JSObject?
 	used for System/System.types -- use Object?
 	import -- return Module!
 	tokenizer -- return List?
 Do wrapping in CPyFunc/CPyObj?
+
+ add Dict keys() & for_each? a generator??
+Object.is method? operator?? Object.ident() method??
 test if implementing VM as chain of if's (on ints)
 	instead step on Instr objects is faster
 Have pyfunc "invoke" method (un)wrap args/results??
@@ -84,11 +76,18 @@ load compressed vmx (JSON) files and/or use some faster serialization library!!
 make obj_get of unknown property an error
 	(depended on by .std lookup)
 	add "have_prop" method? .? operator?!!!
-	have_method??
+	has_method??
+add "undefined" value (initial/default value for vars/args)??
 exceptions (using Continuations)
 "in" operator for collections?
+	has_item method?
 port VM to rpython?!
-
+JS "spread" operator in function arguments ...array
+	(may be used any number of times!)
 missing methods (lots!!!)
     Str binop: full relops (require str lhs)
     List slice method
+make function name () .... define name in local scope?????
+	close2 patches -- need to make "function foo() {}" a valid expr stmt
+make a full expression language??
+	is "{" ambiguous?? forbid at "top level"??
