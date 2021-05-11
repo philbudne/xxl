@@ -1057,7 +1057,7 @@ var Parser = Class.new({
 			    bcode.emit_scope(this.label, this);
 			    bcode.gen_stmts(this.first);
 			    vmcode.emit_close(bcode.finish(this), this);
-			    vmcode.emit_call(0, this);
+			    vmcode.emit_call(0, this); // block closure
 			}
 			else {	// unary { attr: value }
 			    // first is list of lit/name keys,
@@ -1190,7 +1190,7 @@ var Parser = Class.new({
 			lcode.emit_scope(this.first.value, this);
 			this.second.gen(lcode);
 			vmcode.emit_close(lcode.finish(this), this);
-			vmcode.emit_call(0, this);
+			vmcode.emit_call(0, this); // block closure
 		    } // label.gen
 		}
 	    }); // Label
@@ -1228,7 +1228,7 @@ var Parser = Class.new({
 
 			// create closure around entire while stmt and invoke
 			vmcode.emit_close(wcode.finish(this), this);
-			vmcode.emit_call(0, this);
+			vmcode.emit_call(0, this); // block closure
 		    }
 		}
 	    }); // p.while
