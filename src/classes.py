@@ -46,7 +46,9 @@ Classes may have one or more superclasses (const.SUPERS property)
 Only "Object" class has no supers.
 
 By default language Classes are instances of the "Class" metaclass,
-        (the source of the default "new" method).
+        (the source of the default "new" method); if you need to
+        override the default "new" behavior, subclass "Class"
+        (and end the new (meta)class name in Class)
 
 [some of the above probably DOESN'T belong in the docstring!!]
 """
@@ -65,10 +67,11 @@ NUM = (int, float)              # Python3
 
 sys_types = {}
 
-# all language objects are represented by the interpreter
-# as instances of the Python Instance class:
+# All language objects are represented by the interpreter
+# as instances of the Python Instance class (or subclasses thereof).
+# All such Python classes should start with the letter "C"
 
-class Instance(object):
+class Instance(object):         # XXX CObject??
     def __init__(self, klass):
         # klass may only be None for Object??
         self.props = {const.CLASS: klass}
@@ -122,7 +125,7 @@ class Instance(object):
             name = self.classname()
         return '<%s at %#x>' % (name, id(self))
 
-class VInstance(Instance):
+class VInstance(Instance):      # XXX CVObject??
     """
     Instance w/ a value property which is a Python type
     (rename this PObject (Primative Object)?)
@@ -152,7 +155,7 @@ class VInstance(Instance):
 
 # Calling Python functions (ie; primative class methods) was orignally
 # implemented as Closure with two VM instructions (pycall, return).
-# The invoke method avoids those two instructions when calling
+# The Instance.invoke method avoids those two instructions when calling
 # from VM code, and allows invoke_{function,method} from Python code
 # to call Python code directly, without executing VM instructions.
 
@@ -217,6 +220,7 @@ class CBoundMethod(Instance):
         return "<BoundMethod: %s %s>" % (self.obj, self.method)
         
     def invoke(self, vm):
+        # *THIS* is the place "this" is explicitly passed!!!
         vm.args.insert(0, self.obj) # prepend saved "this" to arguments
         self.method.invoke(vm)      # return value in AC
 
@@ -423,9 +427,6 @@ def new_inst(this_class, *args):
     """
     n = Instance(this_class)
 
-    if this_class is Number:
-        breakpoint()
-
     m = find_in_class(n, const.INIT) # returns BoundMethod
     if m and m is not null_value:
         vmx.invoke_function(m, None, args)
@@ -441,6 +442,7 @@ def obj_str(l):
 def obj_repr(l):
     return mkstr(repr(l))
 
+# called by VM jumpn/jumpe
 def is_true(obj):
     """
     return Python True/False for an object
@@ -449,7 +451,7 @@ def is_true(obj):
     """
     if obj is false_val or obj is null_value:
         return False
-    if hasattr(obj, 'value') and obj.value == 0:
+    if hasattr(obj, 'value') and obj.value == 0: # faster than isinstance?
         return False
     return True
 
@@ -624,17 +626,14 @@ def class_init(this_class, props):
             raise Exception("Unknown %s property %s" % (metaclass, key))
         this_class.props[ikey] = val
 
+    if const.NAME not in this_class.props:
+        raise Exception("Class.new requires '%s'"  % (metaclass, key))
+
+    # XXX complain if NAME doesn't start with a capitol letter??
+
     if const.SUPERS not in this_class.props:
         # XXX complain??
         this_class.setprop(const.SUPERS, _mklist([Object]))
-    if const.NAME not in this_class.props:
-        # display metaclass name (typ Class)
-        for key, value in const.CLASS_PROPS.items():
-            if value == const.NAME:
-                break
-        else:
-            key = 'name?'
-        raise Exception("%s.new requires '%s'"  % (metaclass, key))
 
 def class_name(this_class):
     return this_class.getprop(const.NAME)
@@ -647,7 +646,7 @@ def class_call(this_class, args):
     raise Exception("call %s.new!" % class_name(this_class).value)
 
 def class_subclass_of(l, r):
-    # error if l is not a  Class -- check using subclass_of(l, Class)?!
+    # complain if l is not a Class -- check using subclass_of(l, Class)?!
     return mkbool(subclass_of(l, r))
 
 # Class: a meta-class: all Classes are instances of a meta-class
@@ -655,6 +654,7 @@ def class_subclass_of(l, r):
 Class.setprop(const.METHODS, _mkdict({
     const.NEW: pyfunc(new_inst),
     const.INIT: pyfunc(class_init), # Class.new creates new Classes
+    # NOTE: "name" is a member
     "subclass_of": pyfunc(class_subclass_of)
 }))
 Class.setprop(const.CLASS, Class) # circular!
@@ -1016,7 +1016,7 @@ def mkbool(val):
         return false_val
 
 ################ PyObjClass meta-class for PyObject
-#               (creates PInstance for direct invoke)
+#               (creates PyInstance for direct invoke)
 
 # XXX eliminate by having PyObject provide '(' binop???
 #       (cleaner, but slower)
@@ -1030,7 +1030,7 @@ def unwrap(x):
             return {key: unwrap(val) for key, val in x.items()}
     return x
 
-class PInstance(VInstance):
+class PyInstance(VInstance):     # XXX CPyObject
     """
     Python class for PyObjects (Python objects from pyimport)
     .value is the Python object
@@ -1045,14 +1045,14 @@ class PInstance(VInstance):
         vm.ac = wrap(ret, vm.iscope) # may create another PyObject!
 
 def pyobj_new(x,y):
-    return PInstance(x, y)
+    return PyInstance(x, y)
 
 PyObjClass = defclass(Class, 'PyObjClass', [Class])
 PyObjClass.setprop(const.METHODS, _mkdict({
     const.NEW: pyfunc(pyobj_new),
 }))
 
-################ PyObject -- wrapper around a Python Object (PInstance)
+################ PyObject -- wrapper around a Python Object (PyInstance)
 # PyObjects are created by pyimport("python_module")
 
 PyObj = defclass(PyObjClass, 'PyObj', [Object])

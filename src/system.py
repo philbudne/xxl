@@ -40,6 +40,9 @@ import vmx
 #       tokenizer returns
 def __obj_create(props):          # TEMP??
     #print("__obj_create", props)
+    #o = classes._new_vinst(classes.sys_types['Object'], None) # XXX???
+    #o.props = props                                     # XXX??? copy???
+
     # invokes init method
     o = classes.new_inst(classes.sys_types['JSObject'], props) # XXX???
     return o
@@ -439,6 +442,7 @@ def import_worker(src_file=None, vmx_file=None, trace=False,
 
 ################################################################
 
+# called only from init_module
 def create_sys_object(iscope, args):
     sys_obj = __obj_create({})
     iscope.defvar('System', sys_obj)
