@@ -35,7 +35,6 @@ always preload a (bootstrap.vmx) file??
 	load System object
 	including "System.parser = System.import_vmx('parser.vmx');"
 	native code for_each, each_for, map, map2 (take arg for "ignore" value)
-	Object.instance_of(...) .class()?
 
 Fix all access to System types (get from module top level scope??)
 break import cycles??
