@@ -64,7 +64,7 @@ var VMCode = Class.new({
 	},
 
 	finish: function (this, sym) {
-	    if (sym == null) {
+	    if (sym === null) {
 		// here from end of "gen" function, used by parser.xxl "main"
 		this.emit_exit();
 	    }
@@ -359,7 +359,7 @@ var PrattParser = Class.new({
 		return(std());
 	    }
 	    var v = this.expression(0);
-	    if (v.assignment == null && v.id() != "(") {
+	    if (v.assignment === null && v.id() != "(") {
 		v.error("Bad expression statement.");
 	    }
 	    this.advance(";");
@@ -722,8 +722,10 @@ var Parser = Class.new({
 	    p.add_symbol_class("||", p.OrIf);
 
 	    // right associative
-	    p.add_infix("Eq",  "==", true, 40);
-	    p.add_infix("NEq", "!=", true, 40);
+	    p.add_infix("Is",  "===", true, 40);
+	    p.add_infix("Isnt","!==", true, 40);
+	    p.add_infix("Eq",  "==",  true, 40);
+	    p.add_infix("NEq", "!=",  true, 40);
 	    p.add_infix("LT",  "<",   true, 40);
 	    p.add_infix("LEq", "<=",  true, 40);
 	    p.add_infix("GT",  ">",   true, 40);

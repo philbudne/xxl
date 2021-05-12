@@ -467,11 +467,11 @@ def obj_repr(l):
 
 @pyfunc
 def obj_eq(x, y):
-    return mkbool(x == y)    # XXX use "is" ???
+    return mkbool(x is y)
 
 @pyfunc
 def obj_ne(x, y):
-    return mkbool(x != y)    # XXX use "is not" ???
+    return mkbool(x is not y)
 
 def _not(x):
     """
@@ -592,7 +592,7 @@ def find_op(obj, optype, op):
         c = q.pop(0)
 
     raise Exception("%s %s %s not found" %
-                    (obj.classname(), optype, op))
+                    (obj, optype, op))
 
 @pyfunc
 def obj_get_in_supers(l, r):
@@ -622,8 +622,10 @@ Object.setprop(const.METHODS, _mkdict({
 Object.setprop(const.BINOPS, _mkdict({
     '.': obj_get,               # same as getprop!!
     '..': obj_get_in_supers,
-    '==': obj_eq,
-    '!=': obj_ne,
+    '===': obj_eq,              # "is"
+    '!==': obj_ne,              # "is not"
+    '==': obj_eq,               # allow null where str/num expected?
+    '!=': obj_ne,               # ditto
     '(': obj_call,
 }))
 Object.setprop(const.UNOPS, _mkdict({

@@ -7,6 +7,8 @@ var halt = false;		// continuation
 
 var current_continuation = function () { return(return); };
 
+var RESUME = "resume";		// XXX use null?
+
 var TRACE = System.argv.len() > 0;
 var trace = function (a, b, c) {
     if (TRACE) {
@@ -23,7 +25,7 @@ var quit = function () {
     if (thread_queue.len() > 0) {
 	trace("quit; queue len =", thread_queue.len());
 	var next_thread = thread_queue.pop(0);
-	next_thread("resume");
+	next_thread(RESUME);
     }
     trace("quit, queue empty");
     halt();
@@ -32,7 +34,7 @@ var quit = function () {
 var spawn = function (thunk) {
     var cc = current_continuation();
     trace("spawn", cc);
-    if (cc != "resume") {
+    if (cc !== RESUME) {
 	thread_queue.append(cc);
 	thunk();
 	System.print("thunk returned, calling quit");
@@ -43,10 +45,10 @@ var spawn = function (thunk) {
 var yield = function () {
     var cc = current_continuation();
     trace("yield", cc, thread_queue.len());
-    if (cc != "resume" && thread_queue.len() > 0) {
+    if (cc !== RESUME && thread_queue.len() > 0) {
 	var next_thread = thread_queue.pop(0);
 	thread_queue.append(cc);
-	next_thread("resume");
+	next_thread(RESUME);
     }
 };
 
@@ -60,7 +62,7 @@ var start_threads = function () {
 	};
 	if (thread_queue.len() > 0) {
 	    var next_thread = thread_queue.pop(0);
-	    next_thread("resume");
+	    next_thread(RESUME);
 	}
     }
 };

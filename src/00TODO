@@ -1,5 +1,7 @@
 FIX
 ===
+bootstrap.md -- adding operator similar to adding opcode
+
 *** have the pyfunc default be to check/wrap?? pywfunc?
 	have pynwfunc??
 
@@ -13,11 +15,11 @@ FIX
 *** BUG: Only VInstances can be used as Dict keys
 	(currently Dicts are indexed by Python values)
 
+** clean up relops, write tests!!!!!!
+
 ** add .git/pre-commit check?
 
 ** -s (stats) broken??
-
-** need full (Number) relop test?
 
 run "__extensions__" (pass importer's initial scope? iscope.System??)
 	(unless requested not to!)
