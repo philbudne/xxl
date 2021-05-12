@@ -230,6 +230,8 @@ class CPyFunc(Instance):
     """
     def __init__(self, func):
         super().__init__(PyFunc)
+        if isinstance(func, CPyFunc):
+            raise Exception("double wrapping %s" % func.func)
         self.func = func
 
     def __repr__(self):
@@ -256,8 +258,12 @@ class CPyFunc(Instance):
         else:
             vm.ac = self.func(*args)
 
+    def __call__(self, *args):
+        raise Exception("Attempt to call %s" % self)
+
 def pyfunc(func):
     """
+    (decorator)
     Return an Instance with (Python) invoke method that runs Python code.
     Used for Python methods on base types.
     """
@@ -419,6 +425,20 @@ def subclass_of(klass, base):
 
 ################ Object -- the base type for all instances and classes
 
+# utility called by VM jumpn/jumpe: NOT a method/pyfunc
+def is_true(obj):
+    """
+    return Python True/False for an object
+    non-premature optimization:
+    only "null" and "false" objects, and zero are false
+    """
+    if obj is false_val or obj is null_value:
+        return False
+    if hasattr(obj, 'value') and obj.value == 0: # faster than isinstance?
+        return False
+    return True
+
+@pyfunc
 def new_inst(this_class, *args):
     """
     default "new" method for Object (and therefore Class)
@@ -432,44 +452,42 @@ def new_inst(this_class, *args):
         vmx.invoke_function(m, None, args)
     return n
 
+@pyfunc
 def obj_init(this_obj, *args):
     if len(args) > 0:
         raise Exception("need to override %s to pass arguments" % const.INIT)
 
+@pyfunc
 def obj_str(l):
     return mkstr(str(l))
 
+@pyfunc
 def obj_repr(l):
     return mkstr(repr(l))
 
-# called by VM jumpn/jumpe
-def is_true(obj):
-    """
-    return Python True/False for an object
-    non-premature optimization:
-    only "null" and "false" objects, and zero are false
-    """
-    if obj is false_val or obj is null_value:
-        return False
-    if hasattr(obj, 'value') and obj.value == 0: # faster than isinstance?
-        return False
-    return True
-
+@pyfunc
 def obj_eq(x, y):
     return mkbool(x == y)    # XXX use "is" ???
 
+@pyfunc
 def obj_ne(x, y):
     return mkbool(x != y)    # XXX use "is not" ???
 
-def obj_not(x):
-    """Object unary ! operator"""
+def _not(x):
     return mkbool(not is_true(x))
 
+@pyfunc
+def obj_not(x):
+    """Object unary ! operator"""
+    return _not(x)
+
+@pyfunc
 def obj_put(l, r, value):
     # XXX check for VInstance?
     l.setprop(r.value, value)
     return value                # lhsop MUST return value
 
+# NOTE! utility, not method
 def find_in_supers(l, rv):
     """
     breadth first search of superclass methods/properties
@@ -507,6 +525,7 @@ def find_in_supers(l, rv):
 
     return null_value
 
+# NOTE! utility, not method
 def find_in_class(l, rv):
     """
     `rv` is Python string
@@ -529,12 +548,14 @@ def find_in_class(l, rv):
 
     return find_in_supers(l, rv)
 
+@pyfunc
 def obj_get(l, r):
     rv = r.value              # XXX must be Str
     if l.hasprop(rv):
         return l.getprop(rv)
     return find_in_class(l, rv) # may return BoundMethod
 
+# utility, not method
 def find_op(obj, optype, op):
     """
     `optype` is Python string: UNOPS, BINOPS, or LHSOPS
@@ -569,43 +590,48 @@ def find_op(obj, optype, op):
     raise Exception("%s %s %s not found" %
                     (obj.classname(), optype, op))
 
+@pyfunc
 def obj_get_in_supers(l, r):
     return find_in_supers(l, r.value) # XXX check for VInst
 
+@pyfunc
 def obj_class(this):
     return this.getclass()
 
+@pyfunc
 def obj_call(l, r):
     raise Exception("%s not callable" % l.classname())
 
+@pyfunc
 def obj_instance_of(l, c):
     return mkbool(subclass_of(obj_class(l), c))
 
 Object.setprop(const.METHODS, _mkdict({
-    const.INIT: pyfunc(obj_init),
-    'class': pyfunc(obj_class), # clutter!? might as well be a normal property?!
-    'instance_of': pyfunc(obj_instance_of),
-    'putprop': pyfunc(obj_put),
-    'getprop': pyfunc(obj_get),
-    'str': pyfunc(obj_str),
-    'repr': pyfunc(obj_repr),
+    const.INIT: obj_init,
+    'class': obj_class, # clutter!? might as well be a normal property?!
+    'instance_of': obj_instance_of,
+    'putprop': obj_put,
+    'getprop': obj_get,
+    'str': obj_str,
+    'repr': obj_repr,
 }))
 Object.setprop(const.BINOPS, _mkdict({
-    '.': pyfunc(obj_get),       # same as getprop!!
-    '..': pyfunc(obj_get_in_supers),
-    '==': pyfunc(obj_eq),
-    '!=': pyfunc(obj_ne),
-    '(': pyfunc(obj_call),
+    '.': obj_get,               # same as getprop!!
+    '..': obj_get_in_supers,
+    '==': obj_eq,
+    '!=': obj_ne,
+    '(': obj_call,
 }))
 Object.setprop(const.UNOPS, _mkdict({
-    '!': pyfunc(obj_not),
+    '!': obj_not,
 }))
 Object.setprop(const.LHSOPS, _mkdict({
-    '.': pyfunc(obj_put)        # same as putprop!!
+    '.': obj_put                # same as putprop!!
 }))
 
 ################ Class -- base type for Classes (a MetaClass)
 
+@pyfunc
 def class_init(this_class, props):
     """
     init method for meta-class "Class" -- used to create new Classes
@@ -635,16 +661,15 @@ def class_init(this_class, props):
         # XXX complain??
         this_class.setprop(const.SUPERS, _mklist([Object]))
 
-def class_name(this_class):
-    return this_class.getprop(const.NAME)
-
+@pyfunc
 def class_call(this_class, args):
     """
     "(" binop for Class
     """
     # PLB: I keep on doing this (Python fingers)
-    raise Exception("call %s.new!" % class_name(this_class).value)
+    raise Exception("call %s.new!" % this_class.getprop(const.NAME).value)
 
+@pyfunc
 def class_subclass_of(l, r):
     # complain if l is not a Class -- check using subclass_of(l, Class)?!
     return mkbool(subclass_of(l, r))
@@ -652,19 +677,20 @@ def class_subclass_of(l, r):
 # Class: a meta-class: all Classes are instances of a meta-class
 # Class.new creates a new Class
 Class.setprop(const.METHODS, _mkdict({
-    const.NEW: pyfunc(new_inst),
-    const.INIT: pyfunc(class_init), # Class.new creates new Classes
+    const.NEW: new_inst,
+    const.INIT: class_init,     # Class.new creates new Classes
     # NOTE: "name" is a member
-    "subclass_of": pyfunc(class_subclass_of)
+    "subclass_of": class_subclass_of
 }))
 Class.setprop(const.CLASS, Class) # circular!
 
 Class.setprop(const.BINOPS, _mkdict({
-    '(': pyfunc(class_call)
+    '(': class_call
 }))
 
 ################ VClass -- metaclass for VInstances
 
+@pyfunc
 def new_vinst(this_class, arg=None):
     """
     makes an instance of this_class
@@ -678,50 +704,61 @@ def new_vinst(this_class, arg=None):
     return n
 
 VClass.setprop(const.METHODS, _mkdict({
-    const.NEW: pyfunc(new_vinst),
-    const.INIT: pyfunc(class_init), # Class.new creates new Classes
+    const.NEW: new_vinst,
+    const.INIT: class_init,     # Class.new creates new Classes
 }))
 
 ################ (JavaScript style) Object
 # a class with both "." and "[]" access to properties
 # XXX flush??
 
-def jsobj_init(obj, props=None): # XXX take Object
-    if props is not None:
-        if isinstance(props, dict):
-            # TEMP: here from __obj_create
-            obj.props.update(props)
-        else:
-            obj.props.update(props.props) # XXX direct access
+def _mkjsobj(props):
+    o = Instance(JSObject)
+    o.props.update(props)
+    return o
+
+@pyfunc
+def jsobj_init(obj, proto=None):
+    if proto and proto is not null_value:
+        obj.props.update(proto.props) # XXX direct access
 
 JSObject.setprop(const.METHODS, _mkdict({
-    const.INIT: pyfunc(jsobj_init),
-    'str': pyfunc(obj_str),
+    const.INIT: jsobj_init,
+    'str': obj_str,
 }))
 JSObject.setprop(const.BINOPS, _mkdict({
-    '[': pyfunc(obj_get),
+    '[': obj_get
 }))
 JSObject.setprop(const.LHSOPS, _mkdict({
-    '[': pyfunc(obj_put)
+    '[': obj_put
 }))
 
 ################ generic methods for classes with wrapped Python values
 
-def val_len(l):
-    return _new_vinst(Number, len(l.value)) # XXX look up by name? use l.CLASS?
+# XXX XXX rename val_xxx to vobj_xxx????
 
+@pyfunc
+def val_len(l):
+    return _new_vinst(Number, len(l.value)) # XXX look up by name?
+
+@pyfunc
 def val_str(l):
     """
     use Python str function on value
     """
-    return mkstr(str(l.value))
+    return mkstr(str(l.value))  # XXX
 
+@pyfunc
 def val_repr(l):
-    return mkstr("<%s: %s>" % (l.classname(), repr(l.value)))
+    return mkstr("<%s: %s>" % (l.classname(), repr(l.value))) # XXX
 
+@pyfunc
 def val_init(l, value):
-    l.value = value             # XXX unwrap?
+    # XXX create_sys_type calling w/ Python value!!!
+    l.value = value             # XXX XXX unwrap?
 
+# XXX unused?
+@pyfunc
 def val_ge(l, r):
     lv = l.value
     rv = r.value
@@ -732,6 +769,8 @@ def val_ge(l, r):
         return mkbool(int(lv) >= int(rv))
     return mkbool(str(lv) >= str(rv))
 
+# XXX unused?
+@pyfunc
 def val_eq(l, r):
     lv = l.value
     rv = r.value
@@ -739,50 +778,57 @@ def val_eq(l, r):
 
 ################ Dict
 
+@pyfunc
 def dict_put(l, r, value):
     entry = r.value             # XXX
     l.value[entry] = value
     return value                # lhsop MUST return value
 
+@pyfunc
 def dict_get(l, r):
     entry = r.value             # XXX
     ret = l.value.get(entry, null_value)
     return ret
 
+@pyfunc
 def dict_init(obj, arg=None):
     if arg:
         obj.value = dict(arg.value) # XXX check if Dict!!!
     else:
         obj.value = {}
 
+@pyfunc
 def dict_pop(obj, arg):
     return obj.value.pop(arg.value) # XXX check arg has value!!!
 
 Dict.setprop(const.METHODS, _mkdict({
-    'len': pyfunc(val_len),
-    'str': pyfunc(val_str),
-    'repr': pyfunc(val_repr),
-    'str': pyfunc(val_str),
-    'pop': pyfunc(dict_pop),
-    const.INIT: pyfunc(dict_init),
+    'len': val_len,
+    'str': val_str,
+    'repr': val_repr,
+    'str': val_str,
+    'pop': dict_pop,
+    const.INIT: dict_init,
 }))
 Dict.setprop(const.BINOPS, _mkdict({
-    '[': pyfunc(dict_get)
+    '[': dict_get
 }))
 Dict.setprop(const.LHSOPS, _mkdict({
-    '[': pyfunc(dict_put)
+    '[': dict_put
 }))
 
 ################ List
 
+@pyfunc
 def list_init(l, value=None):   # XXX take List
     if value is None:
         value = []
     l.value = value
 
+@pyfunc
 def list_append(l, item):
     l.value.append(item)
 
+@pyfunc
 def list_pop(l,item=None):
     if item is None:
         return l.value.pop()
@@ -790,47 +836,53 @@ def list_pop(l,item=None):
 
 # XXX supply native version for scope issues
 #       or pass scope to pyfuncs???
+@pyfunc
 def list_for_each(l, func):
     for item in l.value:
         vmx.invoke_function(func, None, [item]) # XXX need scope?
 
 # XXX supply native version for scope issues
 #       or pass scope to pyfuncs???
+@pyfunc
 def list_each_for(l, func): # XXX TEMP until reversed?
     # XXX use backwards counting index (avoid copying list)??
     for item in reversed(l.value):
         vmx.invoke_function(func, None, [item]) # XXX need scope?
 
+@pyfunc
 def list_get(l, r):
     # XXX check if integer
     return l.value[r.value]
 
+@pyfunc
 def list_put(l, r, value):
     l.value[r.value] = value
     return value
 
+# XXX supply native version!?
+@pyfunc
 def list_str(l):
     return mkstr("[%s]" %
                  (", ".join([vmx.invoke_method(x, 'str', None).value # XXX scope
                              for x in l.value])))
 
 List.setprop(const.METHODS, _mkdict({
-    'append': pyfunc(list_append),
-    'len': pyfunc(val_len),
-    'str': pyfunc(list_str),
-    'pop': pyfunc(list_pop),
-    'repr': pyfunc(val_repr),
+    'append': list_append,
+    'len': val_len,
+    'str': list_str,
+    'pop': list_pop,
+    'repr': val_repr,
     # XXX slice(start[,end]) (return range of elements)
-    const.INIT: pyfunc(list_init),
+    const.INIT: list_init,
     # TEMP: replace with native code:
-    'each_for': pyfunc(list_each_for),
-    'for_each': pyfunc(list_for_each)
+    'each_for': list_each_for,
+    'for_each': list_for_each
 }))
 List.setprop(const.BINOPS, _mkdict({
-    '[': pyfunc(list_get)
+    '[': list_get
 }))
 List.setprop(const.LHSOPS, _mkdict({
-    '[': pyfunc(list_put),
+    '[': list_put
 }))
 
 ################ Number
@@ -838,22 +890,27 @@ List.setprop(const.LHSOPS, _mkdict({
 # XXX TEMP? replace with Int and Real?
 # XXX XXX need to use "to_number" method on LHS (y) values??????!!!!!!
 
+@pyfunc
 def neg(x):
     return _new_vinst(x.getclass(), -x.value)
 
+@pyfunc
 def add(x, y):
     return _new_vinst(x.getclass(), x.value + y.value)
 
+@pyfunc
 def sub(x, y):
     return _new_vinst(x.getclass(), x.value - y.value)
 
+@pyfunc
 def mul(x, y):
     return _new_vinst(x.getclass(), x.value * y.value)
 
+@pyfunc
 def div(x, y):
     return _new_vinst(x.getclass(), x.value / y.value)
 
-def eq(l, r):
+def _eq(l, r):
     l = l.value
     r = r.value                 # XXX str()?
 #    print "eq", l, r
@@ -863,10 +920,15 @@ def eq(l, r):
         return mkbool(int(l) == int(r))
     return mkbool(str(l) == str(r))
 
-def ne(l, r):
-    return obj_not(eq(l, r))
+@pyfunc
+def eq(l, r):
+    return _eq(l, r)
 
-def ge(l, r):
+@pyfunc
+def ne(l, r):
+    return _not(_eq(l, r))
+
+def _ge(l, r):
     l = l.value
     r = r.value
 
@@ -876,10 +938,15 @@ def ge(l, r):
         return mkbool(int(l) >= int(r))
     return mkbool(str(l) >= str(r))
 
-def lt(l, r):
-    return obj_not(ge(l, r))
+@pyfunc
+def ge(l, r):
+    return _ge(lr)
 
-def le(l, r):
+@pyfunc
+def lt(l, r):
+    return _not(_ge(l, r))
+
+def _le(l, r):
     l = l.value
     r = r.value
 
@@ -889,45 +956,57 @@ def le(l, r):
         return mkbool(int(l) <= int(r))
     return mkbool(str(l) <= str(r))
 
+@pyfunc
+def le(l, r):
+    return _le(l, r)
+
+@pyfunc
 def gt(l, r):
-    return obj_not(le(l, r))
+    return _not(_le(l, r))
 
 Number.setprop(const.METHODS, _mkdict({
-    'str': pyfunc(val_str),
-    'repr': pyfunc(val_repr),
-    const.INIT: pyfunc(val_init),
+    'str': val_str,
+    'repr': val_repr,
+    const.INIT: val_init,
 }))
 Number.setprop(const.UNOPS, _mkdict({
-    '-': pyfunc(neg),
+    '-': neg,
 }))
 Number.setprop(const.BINOPS, _mkdict({
-    '+': pyfunc(add),
-    '-': pyfunc(sub),
-    '*': pyfunc(mul),
-    '/': pyfunc(div),
-    '==': pyfunc(eq),
-    '!=': pyfunc(ne),
-    '>=': pyfunc(ge),
-    '<=': pyfunc(le),
-    '>': pyfunc(gt),
-    '<': pyfunc(lt),
+    '+': add,
+    '-': sub,
+    '*': mul,
+    '/': div,
+    '==': eq,
+    '!=': ne,
+    '>=': ge,
+    '<=': le,
+    '>': gt,
+    '<': lt,
 }))
 
 ################ Str
 
+@pyfunc
 def str_concat(x, y):
-    ys = vmx.invoke_method(y, 'str', None) # XXX scope
+    xv = x.value
+    yv = y.value
+    if xv == "":
+        return yv
+    if yv == "":
+        return xv
+    return _new_vinst(x.getclass(), xv + yv)
 
-    # XXX optimization: check if either is empty!!
-    return _new_vinst(x.getclass(), x.value + y.value)
-
+@pyfunc
 def str_strip(this):
     return _new_vinst(this.getclass(), this.value.strip())
 
+@pyfunc
 def str_get(l, r):
     # XXX check if r is integer
     return _new_vinst(l.getclass(), l.value[r.value])
 
+@pyfunc
 def str_slice(l, a, b=None):
     av = a.value                # XXX check if int
     if b is not None:
@@ -937,61 +1016,67 @@ def str_slice(l, a, b=None):
         ret = l.value[av:]
     return _new_vinst(l.getclass(), ret)
 
+@pyfunc
 def str_str(this):
     return this
 
+@pyfunc
 def str_repr(this):
     # XXX check if contains '"'
     # no way to handle both kinds of quotes
     # without backslashing or triple quote
     return mkstr('"%s"' % this.value)
 
+@pyfunc
 def str_eq(l, r):
     l = l.value
     r = r.value                 # XXX str()?
 
     return mkbool(str(l) == str(r))
 
-
+@pyfunc
 def str_join(this, arg):
     # XXX check arg is List (or Dict)?
     return _new_vinst(this.getclass(), this.value.join([x.value for x in arg.value]))
 
 Str.setprop(const.METHODS, _mkdict({
-    'join': pyfunc(str_join),
-    'len': pyfunc(val_len),
-    'repr': pyfunc(val_repr),
-    'slice': pyfunc(str_slice),
-    'str': pyfunc(str_str),
-    'strip': pyfunc(str_strip),
-    const.INIT: pyfunc(val_init),
+    'join': str_join,
+    'len': val_len,
+    'repr': val_repr,
+    'slice': str_slice,
+    'str': str_str,
+    'strip': str_strip,
+    const.INIT: val_init,
 }))
 Str.setprop(const.BINOPS, _mkdict({
-    '+': pyfunc(str_concat),
-    '==': pyfunc(eq),
-    '!=': pyfunc(ne),
+    '+': str_concat,
+    '==': eq,
+    '!=': ne,
     # XXX full relops? (require str lhs!!)
-    '[': pyfunc(str_get),
+    '[': str_get,
 }))
 
 ################ Null
 
+@pyfunc
 def null_str(this):
     return mkstr("null")
 
+@pyfunc
 def null_call(*args):
     raise Exception("'null' called; bad method name?")
 
 Null.setprop(const.METHODS, _mkdict({
-    'str': pyfunc(null_str)
+    'str': null_str
 }))
 
 Null.setprop(const.BINOPS, _mkdict({
-    '(': pyfunc(null_call)
+    '(': null_call
 }))
 
 ################ Bool
 
+@pyfunc
 def bool_str(this):
     if this.value:
         return mkstr("true")
@@ -1001,7 +1086,7 @@ def bool_str(this):
 # XXX have own MetaClass "new" to return one of the doubleton values?
 # XXX subclass into True and False singleton classes????
 Bool.setprop(const.METHODS, _mkdict({
-    'str': pyfunc(bool_str)
+    'str': bool_str
 }))
 
 def mkbool(val):
@@ -1044,12 +1129,13 @@ class PyInstance(VInstance):     # XXX CPyObject
             return ret
         vm.ac = wrap(ret, vm.iscope) # may create another PyObject!
 
+@pyfunc
 def pyobj_new(x,y):
     return PyInstance(x, y)
 
 PyObjClass = defclass(Class, 'PyObjClass', [Class])
 PyObjClass.setprop(const.METHODS, _mkdict({
-    const.NEW: pyfunc(pyobj_new),
+    const.NEW: pyobj_new,
 }))
 
 ################ PyObject -- wrapper around a Python Object (PyInstance)
@@ -1057,19 +1143,20 @@ PyObjClass.setprop(const.METHODS, _mkdict({
 
 PyObj = defclass(PyObjClass, 'PyObj', [Object])
 
+@pyfunc
 def pyobj_get(l, r):
     v = getattr(l.value, r.value) # get Python object attribute
     return wrap(v, system.get_initial_scope()) # XXX needs scope / CPyObject???
 
 PyObj.setprop(const.METHODS, _mkdict({
-    const.INIT: pyfunc(val_init)
+    const.INIT: val_init
     # getprop gets language Instance property
     #   XXX have a getattr method to get Python attr?!
 }))
 
 # XXX TODO binary '['
 PyObj.setprop(const.BINOPS, _mkdict({
-    '.': pyfunc(pyobj_get),     # gets Python object attr!
+    '.': pyobj_get,             # gets Python object attr!
 }))
 
 # XXX TODO LHSOPS for '.' and '[' ?!!! need to unwrap values!

@@ -43,8 +43,7 @@ def __obj_create(props):          # TEMP??
     #o = classes._new_vinst(classes.sys_types['Object'], None) # XXX???
     #o.props = props                                     # XXX??? copy???
 
-    # invokes init method
-    o = classes.new_inst(classes.sys_types['JSObject'], props) # XXX???
+    o = classes._mkjsobj(props)
     return o
 
 def __list_create(l):             # for sys.argv[]
@@ -70,12 +69,13 @@ def isstr(x):                   # XXX TEMP
 
 ################ debug:
 
+@classes.pyfunc
 def sys_break(x=None):
     """
     break to python debugger to debug VM
     argument (if any) available as `x`
     """
-    import pdb; pdb.set_trace() # or breakpoint()?
+    breakpoint()
 
 def getstr(x):                  # XXX move elsewhere?
     """
@@ -96,9 +96,11 @@ def getstr(x):                  # XXX move elsewhere?
     # this shouldn't happen either!!!
     return str(x)
 
+@classes.pyfunc
 def sys_print(*args):
     print(" ".join([getstr(arg) for arg in args]))
 
+@classes.pyfunc
 def sys_error(*args):
     sys.stderr.write("{}\n".format(" ".join([getstr(arg) for arg in args])))
 
@@ -118,6 +120,7 @@ def getrepr(x):                 # XXX move elsewhere
     # this shouldn't happen either!!!
     return str(x)               # XXX repr?
 
+@classes.pyfunc
 def sys_print_repr(*args):
     print(" ".join([getrepr(arg) for arg in args]))
 
@@ -126,6 +129,7 @@ def sys_print_repr(*args):
 # XXX replace with native code
 # (need file I/O; use pyimport??)
 
+@classes.pyfunc
 def sys_tokenizer(filename, prefix, suffix):
     """
     read tokens for parser
@@ -141,11 +145,12 @@ def sys_tokenizer(filename, prefix, suffix):
     null = classes.sys_types['null']    # XXX
     str = classes.sys_types['Str']      # XXX
     
-    # XXX use create_sys_type???
+    # XXX use create_sys_type??? XXX XXX global solution!!!
     def makestr(s):
         # XXX need scope
         return vmx.invoke_method(str, const.NEW, None, [s])
 
+    @classes.pyfunc
     def gen_wrapper(*args):
         """
         generator function, wrapper around jslex.tokenize
@@ -165,10 +170,11 @@ def sys_tokenizer(filename, prefix, suffix):
         except StopIteration:
             return null
 
-    return classes.pyfunc(gen_wrapper)
+    return gen_wrapper
 
 ################
 
+@classes.pyfunc
 def sys_exit(value=0):
     # XXX check if VInstance?!
     sys.exit(value.value)       # XXX to_int??
@@ -176,6 +182,7 @@ def sys_exit(value=0):
 ################
 # XXX should be a string() method!
 
+@classes.pyfunc
 def sys_tree(t):
     """
     format JSON
@@ -183,19 +190,30 @@ def sys_tree(t):
     t2 = obj2python_json(t)
     return mkstr(json.dumps(t2, indent=1))
 
-def sys_vtree(t, fname=""):
+@classes.pyfunc
+def sys_vtree(t, fname=classes.null_value):
     """
     pretty print a VM code tree
     """
     t2 = obj2python_json(t)
 
-    fnc = fname + ":"
-    fnclen = len(fnc)
+    if not fname or fname is classes.null_value:
+        fnc = ""
+        fnclen = 0
+    else:
+        if isinstance(fname, str):
+            # XXX SHOULD NOT HAPPEN!
+            fnc = fname + ":"
+        else:
+            fnc = fname.value + ":" # XXX check Str
+
+        fnclen = len(fnc)
+
     def format_instr(instr, indent=''):
         """
         format one instruction (Python list)
         """
-        if instr[0].startswith(fnc):
+        if fnclen and instr[0].startswith(fnc):
             instr[0] = instr[0][fnclen:]
         if instr[1] != "close":
             return indent + json.dumps(instr)
@@ -261,6 +279,7 @@ def obj2python_json(x):
 
 ################ "pyimport" returns a PyObject
 
+@classes.pyfunc
 def sys_pyimport(module):
     import importlib
     m = importlib.import_module(module.value)
@@ -389,6 +408,7 @@ def parse_and_execute(src, scope, stats, trace, trace_parser):
             return False
     return True
 
+@classes.pyfunc
 def sys_import(filename):
     """
     user called System.import function
@@ -452,23 +472,23 @@ def create_sys_object(iscope, args):
     sys_obj.setprop('types', tt)
 
     # debug functions (TEMP?!)
-    sys_obj.setprop('break', classes.pyfunc(sys_break)) # break to PDB
-    sys_obj.setprop('print', classes.pyfunc(sys_print)) # print to stdout
-    sys_obj.setprop('error', classes.pyfunc(sys_error)) # print to stderr
-    sys_obj.setprop('print_repr', classes.pyfunc(sys_print_repr))
+    sys_obj.setprop('break', sys_break) # break to PDB
+    sys_obj.setprop('print', sys_print) # print to stdout
+    sys_obj.setprop('error', sys_error) # print to stderr
+    sys_obj.setprop('print_repr', sys_print_repr)
 
     # command line args, and exit:
     sys_obj.setprop('argv',  __list_create(args))
-    sys_obj.setprop('exit', classes.pyfunc(sys_exit))
+    sys_obj.setprop('exit', sys_exit)
 
     # for parser:
-    sys_obj.setprop('tokenizer', classes.pyfunc(sys_tokenizer))
-    sys_obj.setprop('tree', classes.pyfunc(sys_tree)) # TEMP!!!
-    sys_obj.setprop('vtree', classes.pyfunc(sys_vtree)) # TEMP!!!
+    sys_obj.setprop('tokenizer', sys_tokenizer)
+    sys_obj.setprop('tree', sys_tree) # TEMP!!!
+    sys_obj.setprop('vtree', sys_vtree) # TEMP!!!
 
     # import source files, access to Python modules:
-    sys_obj.setprop('import', classes.pyfunc(sys_import))
-    sys_obj.setprop('pyimport', classes.pyfunc(sys_pyimport))
+    sys_obj.setprop('import', sys_import)
+    sys_obj.setprop('pyimport', sys_pyimport)
 
     return sys_obj
 
@@ -477,6 +497,7 @@ def create_sys_object(iscope, args):
 # create an instance of a type using System.types.NAME
 # XXX just lookup bare 'NAME' ???????? (rename to type_new?)
 
+# XXX XXX XXX WRONG!!! val_init being passed Python value
 def create_sys_type(name, scope, *args):
     """
     Create an Instance using Class "new" method
