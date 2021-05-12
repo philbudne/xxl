@@ -474,6 +474,10 @@ def obj_ne(x, y):
     return mkbool(x != y)    # XXX use "is not" ???
 
 def _not(x):
+    """
+    not a pyfunc (may call at any time)
+    takes Instance, returns Instance
+    """
     return mkbool(not is_true(x))
 
 @pyfunc
@@ -910,7 +914,12 @@ def mul(x, y):
 def div(x, y):
     return _new_vinst(x.getclass(), x.value / y.value)
 
+# XXX XXX XXX too liberal!!!
 def _eq(l, r):
+    """
+    call any time (not a pyfunc)
+    takes Instance, returns Instance
+    """
     l = l.value
     r = r.value                 # XXX str()?
 #    print "eq", l, r
@@ -1018,25 +1027,31 @@ def str_slice(l, a, b=None):
 
 @pyfunc
 def str_str(this):
-    return this
+    return this                 # identity
 
 @pyfunc
 def str_repr(this):
-    # XXX check if contains '"'
-    # no way to handle both kinds of quotes
-    # without backslashing or triple quote
+    # XXX check if contains '"' and \u escape!!!
     return mkstr('"%s"' % this.value)
+
+def _str_eq(l, r):
+    l = l.value
+    if hasattr(r, 'value'):     # faster than isinstance?
+        r = r.value
+    return l == r
 
 @pyfunc
 def str_eq(l, r):
-    l = l.value
-    r = r.value                 # XXX str()?
+    return mkbool(_str_eq(l, r))
 
-    return mkbool(str(l) == str(r))
+@pyfunc
+def str_ne(l, r):
+    return mkbool(not _str_eq(l, r))
 
 @pyfunc
 def str_join(this, arg):
     # XXX check arg is List (or Dict)?
+    # XXX each List/key element must be a Str!
     return _new_vinst(this.getclass(), this.value.join([x.value for x in arg.value]))
 
 Str.setprop(const.METHODS, _mkdict({
@@ -1050,8 +1065,8 @@ Str.setprop(const.METHODS, _mkdict({
 }))
 Str.setprop(const.BINOPS, _mkdict({
     '+': str_concat,
-    '==': eq,
-    '!=': ne,
+    '==': str_eq,
+    '!=': str_ne,
     # XXX full relops? (require str lhs!!)
     '[': str_get,
 }))
