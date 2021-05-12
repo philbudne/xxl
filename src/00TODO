@@ -1,5 +1,9 @@
 FIX
 ===
+*** have the pyfunc default be to check/wrap?? pywfunc?
+	have pynwfunc??
+
+*** create_sys_type passes Python value
 *** have invoke_function/method use current VM??
 	have CallInstr save_frame (instead of CClosure.invoke)?
 		(all CInstances will need to restore)
@@ -12,6 +16,8 @@ FIX
 ** add .git/pre-commit check?
 
 ** -s (stats) broken??
+
+** need full (Number) relop test?
 
 run "__extensions__" (pass importer's initial scope? iscope.System??)
 	(unless requested not to!)
@@ -26,8 +32,12 @@ break import cycles??
 tokenizer: take \u{XX...} instead of \uXXXX!!!
 revive "reserved" attribute in parser?!!
 true/null/false are writable!!!??? (bug or feature?)
-fix print -- write natively?
-	Str.join would be helpful!
+use native print
+
+xxl.py: w/o filename run read/eval/print loop
+	need to change statement() and std() methods
+		to "check" @ end (w/o advance)
+		and re-prime (at top of statement()?)
 
 TEST
 ====
@@ -39,7 +49,8 @@ CLEANUP
 =======
 ** rename Instance to CObject???
 	(VInstance to VObject -- or PObject?? (and VClass to PClass)???)
-
+Number.init -- take string?
+replace [this.]token.id() == X w/ this.check(X)???
 rename System to xxl? __xxl??
 Get rid of PyObjClass and use '(' binop for calls?
 flush JSObject?
