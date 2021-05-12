@@ -368,24 +368,24 @@ def parse_and_execute(src, scope, stats, trace, trace_parser):
         code = vmx.convert_instrs(js, scope, src)
         try:
             # UGH: invoke a new VM to execute code
-            v = vmx.VM(code, scope)
+            vm = vmx.VM(code, scope)
             if trace:
-                v.start_trace()
+                vm.start_trace()
             else:
-                v.start()
+                vm.start()
         except SystemExit:
             pass
         except vmx.VMError as e:
             # NOTE: displays VM Instr
             sys.stderr.write("VM Error @ {}: {}\n".format(v.ir, e))
             # XXX dump VM registers?
-            v.backtrace()
+            vm.backtrace()
             return False
         except Exception as e:
             # NOTE: just displays "where"
             sys.stderr.write("Error @ {}:{}: {}\n".format(
-                v.ir.fn, v.ir.where, e))
-            v.backtrace()
+                vm.ir.fn, vm.ir.where, e))
+            vm.backtrace()
             return False
     return True
 
