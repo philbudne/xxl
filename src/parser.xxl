@@ -1002,7 +1002,7 @@ var Parser = Class.new({
 		name: "Stmt",
 		supers: [p.Symbol],
 		methods: {
-		    std: function (this) { this.error("No std method."); }
+		    std: function (this) { this.error("Not a statement."); }
 		}
 	    });
 
