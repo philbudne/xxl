@@ -4,6 +4,7 @@ FIX
 	have CallInstr save_frame (instead of CClosure.invoke)?
 		(all CInstances will need to restore)
 		need VM method to load codebase and pc?!
+	System.assemble
 
 *** BUG: Only VInstances can be used as Dict keys
 	(currently Dicts are indexed by Python values)
