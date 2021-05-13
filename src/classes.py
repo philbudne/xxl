@@ -845,7 +845,7 @@ def list_pop(l,item=None):
 @pyfunc
 def list_for_each(l, func):
     for item in l.value:
-        vmx.invoke_function(func, None, [item]) # XXX need scope?
+        vmx.invoke_function(func, None, [item])
 
 # XXX supply native version for scope issues
 #       or pass scope to pyfuncs???
@@ -853,7 +853,7 @@ def list_for_each(l, func):
 def list_each_for(l, func): # XXX TEMP until reversed?
     # XXX use backwards counting index (avoid copying list)??
     for item in reversed(l.value):
-        vmx.invoke_function(func, None, [item]) # XXX need scope?
+        vmx.invoke_function(func, None, [item])
 
 @pyfunc
 def list_get(l, r):
