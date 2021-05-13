@@ -2,6 +2,9 @@ FIX
 ===
 bootstrap.md -- adding operator similar to adding opcode
 
+var a = System.types.List.new([1,2,3]);
+	.value is a List!?
+
 *** have invoke_function/method use current VM??
 	have CallInstr save_frame (instead of CClosure.invoke)?
 		(all CInstances will need to restore)

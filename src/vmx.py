@@ -599,26 +599,26 @@ class JumpEInstr(VMInstr1):
             vm.pc = self.value
 
 @reginstr
-class BreakInstr(JrstInstr):
-    """
-    functionally identical to JrstInstr, but clarifies code.
-    """
-    name = "break"
-
-@reginstr
 class NewInstr(VMInstr1):
     """
     for [ ... ] and { .... } sugar *ONLY*
-    push TEMP onto stack
-    "arg" contains name of container to create
-    create container object
-    leave in TEMP
+    push VM TEMP register onto stack (so nestable)
+    "arg" contains Python string of name of container class to create
+    leave new, empty container in VM TEMP register
     """
     name = "new"
 
     def step(self, vm):
         vm.push(vm.temp)
-        vm.temp = system.create_sys_type(self.value, vm.scope, None)
+        # XXX CROCK!!! each Class needs own 'init' method
+        #       and supply default when no value passed
+        if self.value == 'Dict':
+            v = {}
+        elif self.value == 'List':
+            v = []
+        else:
+            VMError("new Instr unknown type %s" % self.value)
+        vm.temp = system.create_sys_type(self.value, vm.iscope, v)
 
 ################
 

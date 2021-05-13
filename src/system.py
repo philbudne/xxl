@@ -282,7 +282,7 @@ def sys_pyimport(module):
 
 # used only by import_worker XXX inline?
 # XXX take filename, save (as __file__, or __module__.file??) w/ last modify time??
-def init_module(args, main=False):
+def init_module(argv, main=False):
     """
     create namespace and System object (w/o parser)
     main: bool -- used to set __main__
@@ -290,8 +290,8 @@ def init_module(args, main=False):
     scope = scopes.Scope(None)    # create scope for module
     if main:
         save_initial_scope(scope)
-    sys = create_sys_object(scope, args)
-    classes.copy_types(scope, sys)
+    sys = create_sys_object(scope, argv)
+    classes.copy_types(scope, sys) # populate scope
 
     # put in System.main?? __module__.main???
     scope.defvar('__main__', classes.mkbool(main))
@@ -396,6 +396,7 @@ def parse_and_execute(src, scope, stats, trace, trace_parser):
             sys.stderr.write("Error @ {}:{}: {}\n".format(
                 vm.ir.fn, vm.ir.where, e))
             vm.backtrace()
+            raise
             return False
     return True
 
@@ -488,24 +489,30 @@ def create_sys_object(iscope, args):
 ################################################################
 
 # create an instance of a type using System.types.NAME
-# XXX just lookup bare 'NAME' ???????? (rename to type_new?)
 
-# XXX XXX XXX WRONG!!! val_init being passed Python value
-def create_sys_type(name, scope, *args):
-    """
-    Create an Instance using Class "new" method
-    `name` is Python string for a system type (System.types.name)
-    `scope` is used to find System object
-    """
-    #print("create_sys_type", name)
+def find_sys_type(name, scope):
     sys = scope.lookup('System')
     if sys:
         types = sys.getprop('types')
-        if types:               # check for null_value!
+        if types and types is not classes.null_value:
             ty = types.getprop(name)
-            if ty:              # check for null_value
-                return vmx.invoke_method(ty, const.NEW, scope, args)
-    raise Exception("create_sys_type %s" % name)
+            if ty and ty is not classes.null_value:
+                return ty
+    raise Exception("cannot find %s class" % name)
+
+# XXX XXX XXX WRONG!!! val_init being passed Python value
+def create_sys_type(name, scope, value):
+    """
+    Create an Object by type name
+    `name` is Python string for a system type (System.types.name)
+    `scope` is used to find System object
+    `value` is Python type to wrap
+    """
+    #import sys
+    #print("create_sys_type", name, type(value), value, file=sys.stderr)
+    ty = find_sys_type(name, scope)
+    # does not call Class 'init' method!
+    return classes._new_vinst(ty, value)
 
 ################################################################
 # TEMP! CROCK!

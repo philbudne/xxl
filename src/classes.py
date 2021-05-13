@@ -65,6 +65,8 @@ import vmx
 
 NUM = (int, float)              # Python3
 
+# used to initialize new System.types objects
+# for _current_ definitions, need to lookup in iscope
 sys_types = {}
 
 # All language objects are represented by the interpreter
@@ -295,7 +297,6 @@ def _new_vinst(this_class, arg):
     """
     for internal use only!
     creates an interpreter object wrapped around a Python Value
-    XXX use INIT method???
     """
     return VInstance(this_class, arg)
 
@@ -318,6 +319,7 @@ def _mkstr(s):
     return _new_vinst(Str, s)
 
 def mkstr(s):
+    # XXX use create_sys_type('Str', ***iscope***)!!
     return _new_vinst(sys_types['Str'], s)
 
 ################################################################
@@ -438,18 +440,19 @@ def is_true(obj):
         return False
     return True
 
-@pyfunc
-def new_inst(this_class, *args):
+@pyvmfunc
+def new_inst(vm, this_class, *args):
     """
     default "new" method for Object (and therefore Class)
     makes an instance of this_class
     Creates a Python Instance, calls this_class's 'init' method with args
     """
+    # XXX stash Python class to use in a Python attr??????
     n = Instance(this_class)
 
     m = find_in_class(n, const.INIT) # returns BoundMethod
     if m and m is not null_value:
-        vmx.invoke_function(m, None, args)
+        vmx.invoke_function(m, vm.iscope, args)
     return n
 
 @pyfunc
@@ -697,23 +700,30 @@ Class.setprop(const.BINOPS, _mkdict({
 }))
 
 ################ VClass -- metaclass for VInstances
+# XXX PClass // PObject
 
-@pyfunc
-def new_vinst(this_class, arg=None):
+@pyvmfunc
+def new_vinst(vm, this_class, arg=None):
     """
+    'new' method for VClass metaclass (ie; Number.new, Dict.new)
     makes an instance of this_class
-    Creates a Python VInstance, calls this_class's 'init' method with args
     """
-    n = VInstance(this_class, arg)
+    # XXX need different init method for each class to handle arg/set .value!!!
+    raise Exception("new_vinst {} {}".format(this_class, arg))
 
+    # XXX stash Python class to use in this_class.pyclass Python attr
+    # XXX stash Python default arg in this_class.defval Python attr???
+    n = VInstance(this_class, arg) # XXX unwrap??!!!
+
+    # XXX what to do with arg??
     m = find_in_class(n, const.INIT) # returns BoundMethod
     if m and m is not null_value:
-        vmx.invoke_function(m, None, [arg])
+        vmx.invoke_function(m, vm.iscope, [arg])
     return n
 
 VClass.setprop(const.METHODS, _mkdict({
-    const.NEW: new_vinst,
-    const.INIT: class_init,     # Class.new creates new Classes
+   const.NEW: new_vinst,
+#  const.INIT: class_init,     # Class.new creates new Classes
 }))
 
 ################ (JavaScript style) Object
@@ -842,20 +852,20 @@ def list_pop(l,item=None):
         return l.value.pop()
     return l.value.pop(item.value) # XXX check if Number
 
-# XXX supply native version for scope issues
-#       or pass scope to pyfuncs???
-@pyfunc
-def list_for_each(l, func):
+# XXX supply native version?
+@pyvmfunc
+def list_for_each(vm, l, func):
+    # XXX Continuations generated inside 'func' will be fubar
     for item in l.value:
-        vmx.invoke_function(func, None, [item])
+        vmx.invoke_function(func, vm.iscope, [item])
 
-# XXX supply native version for scope issues
-#       or pass scope to pyfuncs???
-@pyfunc
-def list_each_for(l, func): # XXX TEMP until reversed?
-    # XXX use backwards counting index (avoid copying list)??
+# XXX supply native version?
+@pyvmfunc
+def list_each_for(vm, l, func): # XXX TEMP until reversed?
+    # XXX XXX use backwards counting index (avoid copying list)??
+    # XXX Continuations generated inside 'func' will be fubar
     for item in reversed(l.value):
-        vmx.invoke_function(func, None, [item])
+        vmx.invoke_function(func, vm.iscope, [item])
 
 @pyfunc
 def list_get(l, r):
@@ -868,10 +878,11 @@ def list_put(l, r, value):
     return value
 
 # XXX supply native version!?
-@pyfunc
-def list_str(l):
+@pyvmfunc
+def list_str(vm, l):
+    # XXX Continuations generated inside 'str' will be fubar
     return mkstr("[%s]" %
-                 (", ".join([vmx.invoke_method(x, 'str', None).value # XXX scope
+                 (", ".join([vmx.invoke_method(x, 'str', vm.iscope).value
                              for x in l.value])))
 
 List.setprop(const.METHODS, _mkdict({
@@ -1111,8 +1122,8 @@ Bool.setprop(const.METHODS, _mkdict({
 def mkbool(val):
     """
     convert Python truthiness
-    to language true or false Instance
-    XXX lookup by name??
+    to language true or false Object
+    XXX use find_sys_type(NAME)?
     """
     if val:
         return true_val
