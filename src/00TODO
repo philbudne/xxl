@@ -2,18 +2,15 @@ FIX
 ===
 bootstrap.md -- adding operator similar to adding opcode
 
-*** have the pyfunc default be to check/wrap?? pywfunc?
-	have pynwfunc??
-
-*** create_sys_type passes Python value
 *** have invoke_function/method use current VM??
 	have CallInstr save_frame (instead of CClosure.invoke)?
 		(all CInstances will need to restore)
 		need VM method to load codebase and pc?!
+	allow tail calls only? Take Python "continuation"?
 	System.assemble
 
 *** BUG: Only VInstances can be used as Dict keys
-	(currently Dicts are indexed by Python values)
+	(Dicts currently indexed by Python values)
 
 ** clean up relops, write tests!!!!!!
 
@@ -29,10 +26,18 @@ always preload a (bootstrap.vmx) file??
 	including "System.parser = System.import_vmx('parser.vmx');"
 	native code for_each, each_for, map, map2 (take arg for "ignore" value)
 
-Fix all access to System types (get from module top level scope??)
+type wrapping:
+	clean up!!!
+	create_sys_type passes Python value
+	Fix all access to System types (get from module top level scope??)
+
 break import cycles??
+	keep dict of filename => module??
 tokenizer: take \u{XX...} instead of \uXXXX!!!
-revive "reserved" attribute in parser?!!
+	take \n \r \t ..... >>>
+
+fix/revive "reserved" attribute in parser?!!
+
 true/null/false are writable!!!??? (bug or feature?)
 use native print
 
@@ -85,6 +90,14 @@ make native Tokenizer (gonna be slow!)
 
 FEATURES (or extensions)
 ========================
+Add iterators?  object w/ next method
+	(return via (break) continuation when exhausted):
+    break:
+	while (true) {
+	    var item = iter.next(break);
+	    ....
+	}
+
 Object: dir() method?? or make props visible as Dict in __props property?
 load compressed vmx (JSON) files and/or use some faster serialization library!!
 make obj_get of unknown property an error
