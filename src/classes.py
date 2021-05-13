@@ -951,7 +951,7 @@ def _ge(l, r):
 
 @pyfunc
 def ge(l, r):
-    return _ge(lr)
+    return _ge(l, r)
 
 @pyfunc
 def lt(l, r):
