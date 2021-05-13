@@ -50,9 +50,6 @@ def __list_create(l):             # for sys.argv[]
     o = classes._new_vinst(classes.sys_types['List'], l)
     return o
 
-def mkstr(s):
-    return classes._new_vinst(classes.sys_types['Str'], s) # XXX XXX
-
 ################################################################
 # functions
 
@@ -138,18 +135,13 @@ def sys_tokenizer(filename, prefix, suffix):
     if isstr(filename): # XXXX TEMP for pp.js
         fnstr = filename
     else:
-        fnstr = filename.value # XXX str()?
-    pstr = prefix.value    # XXX str()?
-    sstr = suffix.value    # XXX str()?
+        fnstr = filename.value # XXX getstr()?
+    pstr = prefix.value    # XXX getstr()?
+    sstr = suffix.value    # XXX getstr()?
     generator = jslex.tokenize(open(fnstr), pstr, sstr)
-    null = classes.sys_types['null']    # XXX
-    str = classes.sys_types['Str']      # XXX
+    null = classes.sys_types['null']    # XXX get from iscope
     
-    # XXX use create_sys_type??? XXX XXX global solution!!!
-    def makestr(s):
-        # XXX need scope
-        return vmx.invoke_method(str, const.NEW, None, [s])
-
+    # XXX create general purpose PyIterator wrapper class??
     @classes.pyfunc
     def gen_wrapper(*args):
         """
@@ -160,12 +152,11 @@ def sys_tokenizer(filename, prefix, suffix):
             if not t:
                 return null
             where = "%s:%s:%s" % (fnstr, t.lineno, t.from_)
-            # XXX new_sys_object!!!
             # XXX create a Token class???
             return __obj_create({
-                'type': makestr(t.type_),
-                'value': makestr(t.value),
-                'where': makestr(where)
+                'type': classes.mkstr(t.type_),
+                'value': classes.mkstr(t.value),
+                'where': classes.mkstr(where)
             })
         except StopIteration:
             return null
@@ -188,7 +179,7 @@ def sys_tree(t):
     format JSON
     """
     t2 = obj2python_json(t)
-    return mkstr(json.dumps(t2, indent=1))
+    return classes.mkstr(json.dumps(t2, indent=1))
 
 @classes.pyfunc
 def sys_vtree(t, fname=classes.null_value):
@@ -230,7 +221,7 @@ def sys_vtree(t, fname=classes.null_value):
         return (indent + "[" + format_instr(code[0]) + sep +
                 sep.join([format_instr(inst, indent) for inst in code[1:]]) + "]")
 
-    return mkstr(format_code(t2))
+    return classes.mkstr(format_code(t2))
 
 # used in System.tree (above), parse, parse_and_execute (below)
 def obj2python_json(x):
@@ -305,7 +296,7 @@ def init_module(args, main=False):
     # put in System.main?? __module__.main???
     scope.defvar('__main__', classes.mkbool(main))
 
-    return scope
+    return scope                # XXX return Module object??
 
 # called only from import_worker! XXX inline?
 # requires initial scope with System.types set up.
@@ -318,7 +309,7 @@ def load_parser(scope, parser_vmx, trace=False):
     # XXX check return
 
     # point System.parser at parser module
-    sys_obj.setprop('parser', __obj_create(m.vars))
+    sys_obj.setprop('parser', m)
 
 # not currently used.
 # expects System.parser.parse to be a function that takes a file name
@@ -413,24 +404,25 @@ def sys_import(filename):
     """
     user called System.import function
     `filename` is Str of name of source file to parse
-    returns Scope object for new module
     """
+    # XXX check if already imported (or import in progress)
+    #   lookup in System.modules[filename]????
+    # XXX take filename w/o extension?????
     # XXX search for .vmx file?
     # XXX propogate trace from caller??
-    scope = import_worker(src_file=filename)
-    if scope is None:
+    mod = import_worker(src_file=filename)
+    if mod is None:
         Exception("import failed")
 
     # XXX run __extensions__ on caller's initial scope? System object?
     # XXX take arg to bypass __extensions__
-
-    # wrap in JSObject (XXX change to instance of Module class!!!?)
-    return __obj_create(scope.get_vars()) # UGH!
+    return mod
 
 # Worker function to implement "import" (where modules come from)
 # used by: vmx.py (running src & vmx files)
 #       sys_import (System.import function)
 #       load_parser (called from here!)
+# XXX returns JSObject (want Module)
 def import_worker(src_file=None, vmx_file=None, trace=False,
                   parser=True,
                   parser_vmx=None,
@@ -458,19 +450,20 @@ def import_worker(src_file=None, vmx_file=None, trace=False,
         if not parse_and_execute(src_file, scope, stats, trace, trace_parser):
             # all callers need to handle properly
             return None
-    return scope                # XXX return as Module class Instance?
+
+    return __obj_create(scope.get_vars()) # XXX want Module
 
 ################################################################
 
-# called only from init_module
+# called only from init_module: create 'System' Object
 def create_sys_object(iscope, args):
     sys_obj = __obj_create({})
     iscope.defvar('System', sys_obj)
 
     # create System.types object from sys_types (copies values)
-    tt = __obj_create(classes.sys_types)
-    sys_obj.setprop('types', tt)
-
+    tt = __obj_create(classes.sys_types) # XXX XXX XXX
+    sys_obj.setprop('types', tt)         # XXX XXX top level __classes?
+    
     # debug functions (TEMP?!)
     sys_obj.setprop('break', sys_break) # break to PDB
     sys_obj.setprop('print', sys_print) # print to stdout

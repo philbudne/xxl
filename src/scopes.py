@@ -82,5 +82,5 @@ class Scope:
             s = s.parent
         raise Exception("Unknown variable %s" % name)
 
-    def get_vars(self):         # UGH! used by sys_import
+    def get_vars(self):         # UGH! used by sys_import, load_parser
         return self.vars

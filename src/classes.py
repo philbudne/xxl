@@ -88,7 +88,7 @@ class Instance(object):         # XXX CObject??
         """
         c = self.getclass()
         if not c or c == null_value:
-            return "untitled"
+            return "Unknown!"
         return c.getprop(const.NAME).value # XXX guard?
 
     def invoke(self, vm):
@@ -272,7 +272,7 @@ def pyfunc(func):
 ################
 # EXP: NOT YET USED... may replace PyFunc!
 
-class CPyFuncVM(CPyFunc):
+class CPyVMFunc(CPyFunc):
     """
     A Callable instance backed by a Python function, passed VM
     as first argument
@@ -282,12 +282,12 @@ class CPyFuncVM(CPyFunc):
         vm.args.insert(0, vm)
         super().invoke(vm)
 
-def pyfuncvm(func):
+def pyvmfunc(func):
     """
+    decorator for Python functions that need pointer to VM
     Return an Instance with (Python) invoke method that runs Python code.
-    Used for Python methods on base types.
     """
-    return CPyFuncVM(func)
+    return CPyVMFunc(func)
 
 ################################################################
 
@@ -318,9 +318,7 @@ def _mkstr(s):
     return _new_vinst(Str, s)
 
 def mkstr(s):
-    # XXX use wrap (lookup types by System.types.NAME)?????
-    # XXX need initial scope
-    return _new_vinst(Str, s)
+    return _new_vinst(sys_types['Str'], s)
 
 ################################################################
 
@@ -359,7 +357,7 @@ Class = defclass(None, 'Class')   # metaclass of all Classes
 Class.setprop(const.CLASS, Class) # circular!
 # supers set to [Object] below
 
-Object = defclass(Class, 'Object', [])
+Object = defclass(Class, 'Object', []) # root Class
 
 # metaclass for VInstances
 VClass = defclass(Class, 'VClass', [Class])
@@ -455,7 +453,8 @@ def new_inst(this_class, *args):
 @pyfunc
 def obj_init(this_obj, *args):
     if len(args) > 0:
-        raise Exception("need to override %s to pass arguments" % const.INIT)
+        raise Exception("%s.%s takes no arguments" %
+                        (this_obj.classname(), const.INIT))
 
 @pyfunc
 def obj_str(l):
@@ -486,8 +485,9 @@ def obj_not(x):
     return _not(x)
 
 @pyfunc
-def obj_put(l, r, value):
-    # XXX check for VInstance?
+def obj_putprop(l, r, value):
+    # XXX check r is VInstance? Str??
+    # implement access via descriptors??
     l.setprop(r.value, value)
     return value                # lhsop MUST return value
 
@@ -553,7 +553,7 @@ def find_in_class(l, rv):
     return find_in_supers(l, rv)
 
 @pyfunc
-def obj_get(l, r):
+def obj_getprop(l, r):
     rv = r.value              # XXX must be Str
     if l.hasprop(rv):
         return l.getprop(rv)
@@ -614,13 +614,13 @@ Object.setprop(const.METHODS, _mkdict({
     const.INIT: obj_init,
     'class': obj_class, # clutter!? might as well be a normal property?!
     'instance_of': obj_instance_of,
-    'putprop': obj_put,
-    'getprop': obj_get,
+    'putprop': obj_putprop,
+    'getprop': obj_getprop,
     'str': obj_str,
     'repr': obj_repr,
 }))
 Object.setprop(const.BINOPS, _mkdict({
-    '.': obj_get,               # same as getprop!!
+    '.': obj_getprop,               # same as getprop!!
     '..': obj_get_in_supers,
     '===': obj_eq,              # "is"
     '!==': obj_ne,              # "is not"
@@ -632,7 +632,7 @@ Object.setprop(const.UNOPS, _mkdict({
     '!': obj_not,
 }))
 Object.setprop(const.LHSOPS, _mkdict({
-    '.': obj_put                # same as putprop!!
+    '.': obj_putprop                # same as putprop!!
 }))
 
 ################ Class -- base type for Classes (a MetaClass)
@@ -733,10 +733,10 @@ JSObject.setprop(const.METHODS, _mkdict({
     'str': obj_str,
 }))
 JSObject.setprop(const.BINOPS, _mkdict({
-    '[': obj_get
+    '[': obj_getprop
 }))
 JSObject.setprop(const.LHSOPS, _mkdict({
-    '[': obj_put
+    '[': obj_putprop
 }))
 
 ################ generic methods for classes with wrapped Python values
@@ -1117,11 +1117,10 @@ def mkbool(val):
     else:
         return false_val
 
-################ PyObjClass meta-class for PyObject
-#               (creates PyInstance for direct invoke)
+################ PyObject -- wrapper around a Python Object (PyInstance)
+# PyObjects are created by pyimport("python_module")
 
-# XXX eliminate by having PyObject provide '(' binop???
-#       (cleaner, but slower)
+PyObj = defclass(VClass, 'PyObj', [Object]) # was PyObjClass
 
 def unwrap(x):
     if hasattr(x, 'value'):     # faster than isistance(x, VInstance)??
@@ -1132,55 +1131,39 @@ def unwrap(x):
             return {key: unwrap(val) for key, val in x.items()}
     return x
 
-class PyInstance(VInstance):     # XXX CPyObject
-    """
-    Python class for PyObjects (Python objects from pyimport)
-    .value is the Python object
-    .invoke method attempts to call the object directly
-    """
-
-    def invoke(self, vm):
-        ret = self.value(*[unwrap(x) for x in vm.args])
-
-        if isinstance(ret, Instance):
-            return ret
-        vm.ac = wrap(ret, vm.iscope) # may create another PyObject!
-
-@pyfunc
-def pyobj_new(x,y):
-    return PyInstance(x, y)
-
-PyObjClass = defclass(Class, 'PyObjClass', [Class])
-PyObjClass.setprop(const.METHODS, _mkdict({
-    const.NEW: pyobj_new,
-}))
-
-################ PyObject -- wrapper around a Python Object (PyInstance)
-# PyObjects are created by pyimport("python_module")
-
-PyObj = defclass(PyObjClass, 'PyObj', [Object])
-
-@pyfunc
-def pyobj_get(l, r):
+@pyvmfunc
+def pyobj_getprop(vm, l, r):
+    # XXX r must be Str
     v = getattr(l.value, r.value) # get Python object attribute
-    return wrap(v, system.get_initial_scope()) # XXX needs scope / CPyObject???
+    return wrap(v, vm.iscope)
 
+@pyvmfunc
+def pyobj_getitem(vm, l, r):
+    v = l.value[r.value]        # XXX unwrap(r)??
+    return wrap(v, vm.iscope)
+
+@pyvmfunc
+def pyobj_call(vm, l, r):
+    ret = l.value(*[unwrap(x) for x in r.value]) # XXX getlist
+    return wrap(ret, vm.iscope) # may create another PyObject!
+    
 PyObj.setprop(const.METHODS, _mkdict({
     const.INIT: val_init
     # getprop gets language Instance property
     #   XXX have a getattr method to get Python attr?!
 }))
 
-# XXX TODO binary '['
 PyObj.setprop(const.BINOPS, _mkdict({
-    '.': pyobj_get,             # gets Python object attr!
+    '.': pyobj_getprop,         # gets Python object attr!
+    '[': pyobj_getitem,
+    '(': pyobj_call,
 }))
 
 # XXX TODO LHSOPS for '.' and '[' ?!!! need to unwrap values!
 
 ################################################################
 
-def wrap(value, scope):
+def wrap(value, iscope):
     """
     wrap a Python `value` in a language Instance
     `scope` used to find System types by name
@@ -1191,10 +1174,10 @@ def wrap(value, scope):
         return mkbool(value) # XXX lookup local true/false??
 
     if isinstance(value, NUM):
-        return system.create_sys_type('Number', scope, value)
+        return system.create_sys_type('Number', iscope, value)
 
     if isinstance(value, str):
-        return system.create_sys_type('Str', scope, value)
+        return system.create_sys_type('Str', iscope, value)
 
     # XXX handle bytes??
 
@@ -1202,16 +1185,17 @@ def wrap(value, scope):
         return null_value
 
     # XXX complain??
-    return system.create_sys_type('PyObj', scope, value)
+    return system.create_sys_type('PyObj', iscope, value)
 
 ################################################################
 # TEMP:
 
+@pyvmfunc
 def sys_foo(vm, *args):
     print(vm, args)
     return null_value
 
-sys_types['foo'] = CPyFuncVM(sys_foo)
+sys_types['foo'] = sys_foo
 
 ################################################################
 sys_types['true'] =  true_val

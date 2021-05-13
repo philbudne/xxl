@@ -608,11 +608,11 @@ class BreakInstr(JrstInstr):
 @reginstr
 class NewInstr(VMInstr1):
     """
+    for [ ... ] and { .... } sugar *ONLY*
     push TEMP onto stack
-    "arg" contains name of Container class to create
-    looks up container class in *current scope*?!
+    "arg" contains name of container to create
+    create container object
     leave in TEMP
-    used for [ ... ] and { .... } sugar.
     """
     name = "new"
 

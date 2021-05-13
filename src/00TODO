@@ -27,12 +27,14 @@ always preload a (bootstrap.vmx) file??
 	native code for_each, each_for, map, map2 (take arg for "ignore" value)
 
 type wrapping:
+	*** have __classes instead of System.types??
 	clean up!!!
-	create_sys_type passes Python value
+	create_sys_type passes Python value!!!!!!!!!!!
 	Fix all access to System types (get from module top level scope??)
 
 break import cycles??
 	keep dict of filename => module??
+
 tokenizer: take \u{XX...} instead of \uXXXX!!!
 	take \n \r \t ..... >>>
 
@@ -56,6 +58,7 @@ CLEANUP
 =======
 ** rename Instance to CObject???
 	(VInstance to VObject -- or PObject?? (and VClass to PClass)???)
+Have PObject have a public value property (method?)???
 Number.init -- take string?
 replace [this.]token.id() == X w/ this.check(X)???
 rename System to xxl? __xxl??
