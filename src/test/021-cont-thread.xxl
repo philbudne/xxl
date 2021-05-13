@@ -5,18 +5,22 @@
 var thread_queue = [];		// list of continuation
 var halt = false;		// continuation
 
+// like a setjmp: on initial invocation returns a Continuation
+// when the Continuation is invoked, the value is the argument passed
+//	to the Continuation (always null in this case).
 var current_continuation = function () { return(return); };
 
-var RESUME = "resume";		// XXX use null?
-
 var TRACE = System.argv.len() > 0;
-var trace = function (a, b, c) {
+var trace = function (a, b, c) { // XXX use ...args
     if (TRACE) {
 	if (c) {
 	    System.print(a, b, c);
 	}
-	else {
+	else if (b) {
 	    System.print(a, b);
+	}
+	else {
+	    System.print(a);
 	}
     }
 };
@@ -25,7 +29,8 @@ var quit = function () {
     if (thread_queue.len() > 0) {
 	trace("quit; queue len =", thread_queue.len());
 	var next_thread = thread_queue.pop(0);
-	next_thread(RESUME);
+	trace("quit calling", next_thread, "w/ null");
+	next_thread(null);	// resume
     }
     trace("quit, queue empty");
     halt();
@@ -33,9 +38,12 @@ var quit = function () {
 
 var spawn = function (thunk) {
     var cc = current_continuation();
+    // cc is null (resume) or Continuation
     trace("spawn", cc);
-    if (cc !== RESUME) {
+    if (cc) {			// null or Continuation
 	thread_queue.append(cc);
+    }
+    else {
 	thunk();
 	System.print("thunk returned, calling quit");
 	quit();
@@ -44,26 +52,34 @@ var spawn = function (thunk) {
 
 var yield = function () {
     var cc = current_continuation();
-    trace("yield", cc, thread_queue.len());
-    if (cc !== RESUME && thread_queue.len() > 0) {
+    // cc is null or Continuation
+    trace("yield cc", cc, thread_queue.len());
+    if (cc && thread_queue.len() > 0) {
 	var next_thread = thread_queue.pop(0);
 	thread_queue.append(cc);
-	next_thread(RESUME);
+	trace("yield calling", next_thread, "w/ null");
+	next_thread(null);	// resume
     }
 };
 
-var start_threads = function () {
+var run_threads = function () {
     var cc = current_continuation();
-    trace("start_threads", cc);
-    if (cc) {
+    // Continuation first time
+    // false when "halt" called.
+    trace("run_threads", cc);
+    if (cc) {			// first time
 	halt = function () {
-	    trace("halting");
+	    trace("halt called");
 	    cc(false);
 	};
 	if (thread_queue.len() > 0) {
 	    var next_thread = thread_queue.pop(0);
-	    next_thread(RESUME);
+	    trace("calling", next_thread, "w/ null");
+	    next_thread(null);	// resume
 	}
+    }
+    else {
+	trace("halted");
     }
 };
 
@@ -71,7 +87,8 @@ var start_threads = function () {
 
 var counter = 10;
 
-var make_thread_thunk = function (name) {
+// return a closure for a worker thread
+var make_worker = function (name) {
     var loop = function () {
 	while (true) {
 	    if (counter < 0) {
@@ -88,7 +105,7 @@ var make_thread_thunk = function (name) {
     return(loop);
 };
 
-spawn(make_thread_thunk("a"));
-spawn(make_thread_thunk("b"));
-spawn(make_thread_thunk("c"));
-start_threads();
+spawn(make_worker("a"));
+spawn(make_worker("b"));
+spawn(make_worker("c"));
+run_threads();
