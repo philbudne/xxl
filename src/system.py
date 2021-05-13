@@ -268,13 +268,13 @@ def obj2python_json(x):
 
     return clean1(x)
 
-################ "pyimport" returns a PyObject
+################ "pyimport" returns a PyObject wrapper around a Python module
 
 @classes.pyfunc
 def sys_pyimport(module):
     import importlib
-    m = importlib.import_module(module.value)
-    return classes._new_vinst(classes.sys_types['PyObj'], m) # XXX?
+    m = importlib.import_module(module.value) # XXX getstr?
+    return classes._new_vinst(classes.sys_types[const.PYOBJECT], m) # XXX wrap!!!?
 
 # XXX create an "auto-import" object? python.sys == pyimport("sys")???
 

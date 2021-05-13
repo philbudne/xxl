@@ -45,4 +45,6 @@ INIT = 'init'
 
 # XXX Object methods (str/len/repr)?
 
-
+# Class names
+# XXX more here??
+PYOBJECT = 'PyObject'

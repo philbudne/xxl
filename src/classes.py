@@ -270,7 +270,7 @@ def pyfunc(func):
     return CPyFunc(func)
 
 ################
-# EXP: NOT YET USED... may replace PyFunc!
+# A PyFunc that needs access to internals: passed vm as first arg
 
 class CPyVMFunc(CPyFunc):
     """
@@ -393,6 +393,8 @@ Closure = defclass(Class, 'Closure', [Object])
 BoundMethod = defclass(Class, 'BoundMethod', [Object])
 PyFunc = defclass(Class, 'PyFunc', [Object])
 Continuation = defclass(Class, 'Continuation', [Object])
+
+PyVMFunc = defclass(Class, 'PyVMFunc', [Object])
 
 ################
 
@@ -1117,23 +1119,34 @@ def mkbool(val):
     else:
         return false_val
 
-################ PyObject -- wrapper around a Python Object (PyInstance)
-# PyObjects are created by pyimport("python_module")
+################ PyObject
 
-PyObj = defclass(VClass, 'PyObj', [Object]) # was PyObjClass
+# PyObjects are created by System.pyimport("python_module")
+# and are proxy wrappers around generic/naive Python objects
+
+PyObject = defclass(VClass, const.PYOBJECT, [Object])
 
 def unwrap(x):
+    """
+    recursively unwrap an Object, to pass to PyObject on call
+    """
     if hasattr(x, 'value'):     # faster than isistance(x, VInstance)??
         x = x.value
         if isinstance(x, list):
             return [unwrap(y) for y in x]
         elif isinstance(x, dict):
             return {key: unwrap(val) for key, val in x.items()}
+    # XXX complain??
     return x
 
 @pyvmfunc
 def pyobj_getprop(vm, l, r):
+    """
+    installed as "." binop
+    """
     # XXX r must be Str
+    # XXX check if exists first? obscures all Class members/methods!!
+    # XXX '..' should allow access to parent class methods (getprop/setprop)?
     v = getattr(l.value, r.value) # get Python object attribute
     return wrap(v, vm.iscope)
 
@@ -1147,13 +1160,13 @@ def pyobj_call(vm, l, r):
     ret = l.value(*[unwrap(x) for x in r.value]) # XXX getlist
     return wrap(ret, vm.iscope) # may create another PyObject!
     
-PyObj.setprop(const.METHODS, _mkdict({
-    const.INIT: val_init
-    # getprop gets language Instance property
-    #   XXX have a getattr method to get Python attr?!
+PyObject.setprop(const.METHODS, _mkdict({
+    const.INIT: val_init,
+    # NOTE!! pyobj_getprop doesn't search here!!!
+    #   XXX see if pyobj..getprop() works!!
 }))
 
-PyObj.setprop(const.BINOPS, _mkdict({
+PyObject.setprop(const.BINOPS, _mkdict({
     '.': pyobj_getprop,         # gets Python object attr!
     '[': pyobj_getitem,
     '(': pyobj_call,
@@ -1185,7 +1198,7 @@ def wrap(value, iscope):
         return null_value
 
     # XXX complain??
-    return system.create_sys_type('PyObj', iscope, value)
+    return system.create_sys_type(const.PYOBJECT, iscope, value)
 
 ################################################################
 # TEMP:
