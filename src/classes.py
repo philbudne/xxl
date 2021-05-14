@@ -457,7 +457,7 @@ def new_inst(vm, this_class, *args):
 
     m = find_in_class(n, const.INIT) # returns BoundMethod
     if m and m is not null_value:
-        vmx.invoke_function(m, vm.iscope, args)
+        vmx.invoke_function(m, vm.iscope, args) # XXX reuse VM
     return n
 
 @pyfunc
@@ -723,7 +723,7 @@ def new_vinst(vm, this_class, arg=None):
     # XXX what to do with arg??
     m = find_in_class(n, const.INIT) # returns BoundMethod
     if m and m is not null_value:
-        vmx.invoke_function(m, vm.iscope, [arg])
+        vmx.invoke_function(m, vm.iscope, [arg]) # XXX reuse VM
     return n
 
 VClass.setprop(const.METHODS, _mkdict({
@@ -858,7 +858,7 @@ def list_pop(l,item=None):
 def list_for_each(vm, l, func):
     # XXX Continuations generated inside 'func' will be fubar
     for item in l.value:
-        vmx.invoke_function(func, vm.iscope, [item])
+        vmx.invoke_function(func, vm.iscope, [item]) # XXX reuse VM
 
 # XXX supply native version?
 @pyvmfunc
@@ -866,7 +866,7 @@ def list_each_for(vm, l, func): # XXX TEMP until reversed?
     # XXX XXX use backwards counting index (avoid copying list)??
     # XXX Continuations generated inside 'func' will be fubar
     for item in reversed(l.value):
-        vmx.invoke_function(func, vm.iscope, [item])
+        vmx.invoke_function(func, vm.iscope, [item]) # XXX reuse VM
 
 @pyfunc
 def list_get(l, r):
@@ -882,6 +882,7 @@ def list_put(l, r, value):
 @pyvmfunc
 def list_str(vm, l):
     # XXX Continuations generated inside 'str' will be fubar
+    # XXX reuse VM
     return mkstr("[%s]" %
                  (", ".join([vmx.invoke_method(x, 'str', vm.iscope).value
                              for x in l.value])),

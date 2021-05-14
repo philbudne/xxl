@@ -70,7 +70,7 @@ def sys_break(x=None):
     """
     breakpoint()
 
-def getstr(x, scope):           # XXX only used for sys_print
+def getstr(x, vm):              # XXX only used for sys_print
     """
     return Python string for an interpreter Instance for sys_print
     """
@@ -78,7 +78,7 @@ def getstr(x, scope):           # XXX only used for sys_print
         return x
 
     if isinstance(x, classes.Instance):
-        s = vmx.invoke_method(x, 'str', scope)
+        s = vmx.invoke_method(x, 'str', vm.iscope) # XXX reuse VM
 
         if isstr(s):            # XXX is Python string???
             return "pstr:" + s  # XXX COMPLAIN?? WRAP???
@@ -91,23 +91,21 @@ def getstr(x, scope):           # XXX only used for sys_print
 
 @classes.pyvmfunc
 def sys_print(vm, *args):
-    print(" ".join([getstr(arg, vm.iscope)
-                    for arg in args]))
+    print(" ".join([getstr(arg, vm) for arg in args]))
 
 @classes.pyvmfunc
 def sys_error(vm, *args):
     sys.stderr.write(
-        "{}\n".format(" ".join([getstr(arg, vm.iscope)
-                                for arg in args])))
+        "{}\n".format(" ".join([getstr(arg, vm) for arg in args])))
 
 ####
 
-def getrepr(x):                 # XXX move elsewhere
+def getrepr(x, vm):             # XXX move elsewhere
     """
     return Python string for an interpreter Instance "repr"
     """
     if isinstance(x, classes.Instance):
-        s = vmx.invoke_method(x, 'repr', get_initial_scope())
+        s = vmx.invoke_method(x, 'repr', vm.iscope) # XXX reuse VM!
         if isstr(s):            # XXX TEMP: COMPLAIN
             return "<XXX %s repr returned str: %s>" % (x.classname(), s)
 
@@ -116,9 +114,9 @@ def getrepr(x):                 # XXX move elsewhere
     # this shouldn't happen either!!!
     return str(x)               # XXX repr?
 
-@classes.pyfunc
-def sys_print_repr(*args):
-    print(" ".join([getrepr(arg) for arg in args]))
+@classes.pyvmfunc
+def sys_print_repr(vm, *args):
+    print(" ".join([getrepr(arg, vm) for arg in args]))
 
 ################
 
@@ -276,22 +274,20 @@ def obj2python_json(x):
 def sys_pyimport(vm, module):
     import importlib
     m = importlib.import_module(module.value) # XXX getstr?
-    return classes._new_vinst(classes.sys_types[const.PYOBJECT], m) # XXX wrap!!!?
+    return classes.wrap(m, vm.iscope)         # make PyObject
 
 # XXX create an "auto-import" object? python.sys == pyimport("sys")???
 
 ################
 
 # used only by import_worker XXX inline?
-# XXX take filename, save (as __file__, or __module__.file??) w/ last modify time??
+# XXX take filename, save (as __file__, or __module__.file??)
 def init_module(argv, main=False):
     """
     create namespace and System object (w/o parser)
     main: bool -- used to set __main__
     """
     scope = scopes.Scope(None)    # create scope for module
-    if main:
-        save_initial_scope(scope)
     sys = create_sys_object(scope, argv)
     classes.copy_types(scope, sys) # populate scope
 
@@ -357,7 +353,12 @@ def parse_and_execute(src, scope, stats, trace, trace_parser):
     # get instance of Parser object visible as System.parser.parser
     sys_obj = scope.lookup('System')
     sys_parser = sys_obj.getprop('parser') # System.parser
-    parser_obj = sys_parser.getprop('parser');
+    parser_obj = sys_parser.getprop('parser'); # Parser instance
+
+    # XXX create a VM and reuse it for both parsing and running!
+    #   have a System function to take "VM code" (as List of Lists)
+    #   and return a Closure that can be called
+    #   so all of the below runs "natively"
 
     vmx.invoke_method(parser_obj, 'start_parse', scope, [src], trace)
 
@@ -365,9 +366,6 @@ def parse_and_execute(src, scope, stats, trace, trace_parser):
     # XXX call gen inside loop, appending to same code block!?
     p1 = sys_parser.getprop('parse_and_gen_one_stmt')
 
-    # XXX create a VM and reuse it for both parsing and running!
-    #   have a System function to take "VM code" (as List of Lists)
-    #   and return a Closure that can be called?
     while True:
         # run "parse_and_gen_one_stmt", turn into Python list of lists:
         js = obj2python_json(
@@ -516,16 +514,3 @@ def create_sys_type(name, scope, value):
     ty = find_sys_type(name, scope)
     # does not call Class 'init' method!
     return classes._new_vinst(ty, value)
-
-################################################################
-# TEMP! CROCK!
-
-# called only from vm "main"
-def save_initial_scope(scope):
-    global _initial_scope
-    _initial_scope = scope
-    return _initial_scope
-
-# used by getstr (above), LitInstr.__init__ wrap call
-def get_initial_scope():
-    return _initial_scope
