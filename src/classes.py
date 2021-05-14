@@ -38,12 +38,10 @@ And avoiding the word "type"!
 
 The root language Class is Object.
 
+Only "Object" class has no super classes; all others have one or more.
+
 All objects _should_ have a const.CLASS property
-        which points to an Instance of the Class Class (or subclass)
-
-Classes may have one or more superclasses (const.SUPERS property)
-
-Only "Object" class has no supers.
+        which points to an Instance of the Class (meta)Class (or a subclass off)
 
 By default language Classes are instances of the "Class" metaclass,
         (the source of the default "new" method); if you need to
@@ -65,8 +63,8 @@ import vmx
 
 NUM = (int, float)              # Python3
 
-# used to initialize new System.types objects
-# for _current_ definitions, need to lookup in iscope
+# used to initialize new System.types objects in new top level (module) scopes.
+# for _current_ definitions, need to lookup in iscope (use find_sys_type)
 sys_types = {}
 
 # All language objects are represented by the interpreter
@@ -317,6 +315,14 @@ def _mkstr(s):
     ONLY USE TO CONSTRUCT BASE TYPES!
     """
     return _new_vinst(Str, s)
+
+def _mkobj(props):
+    """
+    used to create System, System.types, tokens
+    """
+    o = Instance(Object)        # XXX was JSObject
+    o.props.update(props)
+    return o
 
 def mkstr(s):
     # XXX use create_sys_type('Str', ***iscope***)!!
@@ -729,11 +735,6 @@ VClass.setprop(const.METHODS, _mkdict({
 ################ (JavaScript style) Object
 # a class with both "." and "[]" access to properties
 # XXX flush??
-
-def _mkjsobj(props):
-    o = Instance(JSObject)
-    o.props.update(props)
-    return o
 
 @pyfunc
 def jsobj_init(obj, proto=None):
@@ -1195,7 +1196,7 @@ def wrap(value, iscope):
     used by vm `lit` and `pyfunc`; type `PyObject`
     """
     if isinstance(value, bool):
-        return mkbool(value) # XXX lookup local true/false??
+        return mkbool(value) # XXX lookup local true/false???
 
     if isinstance(value, NUM):
         return system.create_sys_type('Number', iscope, value)
@@ -1212,16 +1213,8 @@ def wrap(value, iscope):
     return system.create_sys_type(const.PYOBJECT, iscope, value)
 
 ################################################################
-# TEMP:
 
-@pyvmfunc
-def sys_foo(vm, *args):
-    print(vm, args)
-    return null_value
-
-sys_types['foo'] = sys_foo
-
-################################################################
+# NOT types!
 sys_types['true'] =  true_val
 sys_types['false'] = false_val
 sys_types['null'] = null_value

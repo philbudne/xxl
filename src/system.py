@@ -31,20 +31,16 @@ import scopes
 import const
 import vmx
 
-# used ONLY to create items to set up "System" object
+SYSTEM = 'System'
+TYPES = 'types'
+
+# should be used ONLY to create items to set up "System" & System.types objects!
 # can't use create_sys_type: which needs the System object!!!
-# XXX switch from JSObject to Object
-# used for: sys_import (returned module)
-#       System object,
-#       System.types object,
+# ALSO used for:
+#       sys_import (returned module)
 #       tokenizer returns
 def __obj_create(props):          # TEMP??
-    #print("__obj_create", props)
-    #o = classes._new_vinst(classes.sys_types['Object'], None) # XXX???
-    #o.props = props                                     # XXX??? copy???
-
-    o = classes._mkjsobj(props)
-    return o
+    return classes._mkobj(props)
 
 def __list_create(l):             # for sys.argv[]
     o = classes._new_vinst(classes.sys_types['List'], l)
@@ -126,21 +122,24 @@ def sys_print_repr(*args):
 # XXX replace with native code
 # (need file I/O; use pyimport??)
 
-@classes.pyfunc
-def sys_tokenizer(filename, prefix, suffix):
+@classes.pyvmfunc
+def sys_tokenizer(vm, filename, prefix, suffix):
     """
-    read tokens for parser
+    returns a token generator:
+    returns JSObjects, and then null
     """
     import jslex
-    if isstr(filename): # XXXX TEMP for pp.js
+    if isstr(filename): # XXX XXX here from parser.xxl?
         fnstr = filename
     else:
         fnstr = filename.value # XXX getstr()?
     pstr = prefix.value    # XXX getstr()?
     sstr = suffix.value    # XXX getstr()?
     generator = jslex.tokenize(open(fnstr), pstr, sstr)
-    null = classes.sys_types['null']    # XXX get from iscope
-    
+
+    # find_sys_types doesn't like "null_value"
+    null = vm.scope.lookup(SYSTEM).getprop(TYPES).getprop('null')
+
     # XXX create general purpose PyIterator wrapper class??
     @classes.pyfunc
     def gen_wrapper(*args):
@@ -161,7 +160,7 @@ def sys_tokenizer(filename, prefix, suffix):
         except StopIteration:
             return null
 
-    return gen_wrapper
+    return gen_wrapper          # returns PyFunc
 
 ################
 
@@ -270,8 +269,8 @@ def obj2python_json(x):
 
 ################ "pyimport" returns a PyObject wrapper around a Python module
 
-@classes.pyfunc
-def sys_pyimport(module):
+@classes.pyvmfunc
+def sys_pyimport(vm, module):
     import importlib
     m = importlib.import_module(module.value) # XXX getstr?
     return classes._new_vinst(classes.sys_types[const.PYOBJECT], m) # XXX wrap!!!?
@@ -428,15 +427,16 @@ def import_worker(src_file=None, vmx_file=None, trace=False,
                   parser=True,
                   parser_vmx=None,
                   stats=False, trace_parser=False,
-                  main=False, args=[]):
+                  main=False, argv=[]):
     """
     Takes either `src_file` or `vmx_file` [XXX autodetect by filename?]
     bool `trace`
     bool `parser` to create System.parser (False to load parser.vmx)
     bool `main` True when loading from command line
-    list of str `args` from command line
+    Python list of `argv` strs from command line
     """
-    scope = init_module(args, main=main) # XXX pass fname(s)?
+    # XXX wrap argv here??
+    scope = init_module(argv, main=main) # XXX pass fname(s)?
 
     if parser:
         load_parser(scope,
@@ -457,7 +457,7 @@ def import_worker(src_file=None, vmx_file=None, trace=False,
 ################################################################
 
 # called only from init_module: create 'System' Object
-def create_sys_object(iscope, args):
+def create_sys_object(iscope, argv):
     sys_obj = __obj_create({})
     iscope.defvar('System', sys_obj)
 
@@ -472,35 +472,36 @@ def create_sys_object(iscope, args):
     sys_obj.setprop('print_repr', sys_print_repr)
 
     # command line args, and exit:
-    sys_obj.setprop('argv',  __list_create(args))
+    sys_obj.setprop('argv',  __list_create(argv)) # XXX pass in as List?
     sys_obj.setprop('exit', sys_exit)
 
     # for parser:
-    sys_obj.setprop('tokenizer', sys_tokenizer)
+    sys_obj.setprop('tokenizer', sys_tokenizer) # TEMP creates token generator
     sys_obj.setprop('tree', sys_tree) # TEMP!!!
     sys_obj.setprop('vtree', sys_vtree) # TEMP!!!
 
-    # import source files, access to Python modules:
-    sys_obj.setprop('import', sys_import)
-    sys_obj.setprop('pyimport', sys_pyimport)
+    # external modules:
+    sys_obj.setprop('import', sys_import) # import source module
+    sys_obj.setprop('pyimport', sys_pyimport) # import Python module
 
     return sys_obj
 
 ################################################################
 
-# create an instance of a type using System.types.NAME
-
 def find_sys_type(name, scope):
-    sys = scope.lookup('System')
+    """
+    Lookup System.types.`name` in `scope`
+    """
+    sys = scope.lookup(SYSTEM)
     if sys:
-        types = sys.getprop('types')
+        types = sys.getprop(TYPES)
         if types and types is not classes.null_value:
             ty = types.getprop(name)
             if ty and ty is not classes.null_value:
                 return ty
-    raise Exception("cannot find %s class" % name)
+    raise Exception("cannot find %s.%s.%s" % (SYSTEM, TYPES, name))
 
-# XXX XXX XXX WRONG!!! val_init being passed Python value
+# create an instance of a type using System.types.NAME
 def create_sys_type(name, scope, value):
     """
     Create an Object by type name

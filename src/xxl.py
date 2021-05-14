@@ -33,39 +33,39 @@ import sys
 # VM:
 import system                   # import_worker
 
-args = list(sys.argv)           # copy
-args.pop(0)                     # vmx.py
+argv = list(sys.argv)           # copy
+argv.pop(0)                     # vmx.py
 
 fname_arg = "src_file"         # import_worker argument name for fname
 stats = trace = trace_parser = help = False
 parser = None
 # XXX use real arg parser!
-while args:
-    if args[0][0] != '-':
+while argv:
+    if argv[0][0] != '-':
         break
-    if args[0] == '-h':
+    if argv[0] == '-h':
         help = True
-        args.pop(0)
-    elif args[0] == '-T':
+        argv.pop(0)
+    elif argv[0] == '-T':
         trace_parser = True
-        args.pop(0)
-    elif args[0] == '-t':
+        argv.pop(0)
+    elif argv[0] == '-t':
         trace = True
-        args.pop(0)
-    elif args[0] == '-s':
+        argv.pop(0)
+    elif argv[0] == '-s':
         stats = True
-        args.pop(0)
-    elif args[0] == '-P':
-        args.pop(0)
-        parser = args.pop(0)
-    elif args[0] == '-x':
+        argv.pop(0)
+    elif argv[0] == '-P':
+        argv.pop(0)
+        parser = argv.pop(0)
+    elif argv[0] == '-x':
         fname_arg = "vmx_file"  # load .vmx (JSON VM code) file
-        args.pop(0)
+        argv.pop(0)
     else:
-        sys.stderr.write("unknown option {}\n".format(args[0]))
+        sys.stderr.write("unknown option {}\n".format(argv[0]))
         sys.exit(1)
 
-if not args:
+if not argv:
     # XXX XXX XXX want Read/Eval/Print Loop!!!
     help = True
 
@@ -73,12 +73,12 @@ if help:
     sys.stderr.write("Usage: xxl.py [-h][-s][-t][-T][-x][-P parser.vmx] file args ...\n")
     sys.exit(1)
 
-fname = args.pop(0)
+fname = argv.pop(0)
 
 # common arguments:
 import_args = {
     fname_arg: fname,           # vmx_file or src_file
-    "args": args,               # remains of the argv
+    "argv": argv,               # remains of the argv
     "main": True,
     "parser_vmx": parser,
     "stats": stats,
