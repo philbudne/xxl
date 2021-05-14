@@ -64,8 +64,7 @@ Number.init -- take string?
 replace [this.]token.id() == X w/ this.check(X)???
 rename System to xxl? __xxl??
 Get rid of PyObjClass and use '(' binop for calls?
-flush JSObject?
-	used for System/System.types -- use Object?
+flush __mkobject for:
 	import -- return Module!
 	tokenizer -- return List?
 Do wrapping in CPyFunc/CPyObj?

@@ -70,7 +70,7 @@ def sys_break(x=None):
     """
     breakpoint()
 
-def getstr(x):                  # XXX move elsewhere?
+def getstr(x, scope):           # XXX only used for sys_print
     """
     return Python string for an interpreter Instance for sys_print
     """
@@ -78,7 +78,7 @@ def getstr(x):                  # XXX move elsewhere?
         return x
 
     if isinstance(x, classes.Instance):
-        s = vmx.invoke_method(x, 'str', get_initial_scope())
+        s = vmx.invoke_method(x, 'str', scope)
 
         if isstr(s):            # XXX is Python string???
             return "pstr:" + s  # XXX COMPLAIN?? WRAP???
@@ -89,13 +89,16 @@ def getstr(x):                  # XXX move elsewhere?
     # this shouldn't happen either!!!
     return str(x)
 
-@classes.pyfunc
-def sys_print(*args):
-    print(" ".join([getstr(arg) for arg in args]))
+@classes.pyvmfunc
+def sys_print(vm, *args):
+    print(" ".join([getstr(arg, vm.iscope)
+                    for arg in args]))
 
-@classes.pyfunc
-def sys_error(*args):
-    sys.stderr.write("{}\n".format(" ".join([getstr(arg) for arg in args])))
+@classes.pyvmfunc
+def sys_error(vm, *args):
+    sys.stderr.write(
+        "{}\n".format(" ".join([getstr(arg, vm.iscope)
+                                for arg in args])))
 
 ####
 
@@ -138,7 +141,7 @@ def sys_tokenizer(vm, filename, prefix, suffix):
     generator = jslex.tokenize(open(fnstr), pstr, sstr)
 
     # find_sys_types doesn't like "null_value"
-    null = vm.scope.lookup(SYSTEM).getprop(TYPES).getprop('null')
+    null = vm.iscope.lookup(SYSTEM).getprop(TYPES).getprop('null')
 
     # XXX create general purpose PyIterator wrapper class??
     @classes.pyfunc
@@ -153,9 +156,9 @@ def sys_tokenizer(vm, filename, prefix, suffix):
             where = "%s:%s:%s" % (fnstr, t.lineno, t.from_)
             # XXX create a Token class???
             return __obj_create({
-                'type': classes.mkstr(t.type_),
-                'value': classes.mkstr(t.value),
-                'where': classes.mkstr(where)
+                'type': classes.mkstr(t.type_, vm.iscope),
+                'value': classes.mkstr(t.value, vm.iscope),
+                'where': classes.mkstr(where, vm.iscope)
             })
         except StopIteration:
             return null
@@ -172,16 +175,16 @@ def sys_exit(value=0):
 ################
 # XXX should be a string() method!
 
-@classes.pyfunc
-def sys_tree(t):
+@classes.pyvmfunc
+def sys_tree(vm, t):
     """
     format JSON
     """
     t2 = obj2python_json(t)
-    return classes.mkstr(json.dumps(t2, indent=1))
+    return classes.mkstr(json.dumps(t2, indent=1), vm.iscope)
 
-@classes.pyfunc
-def sys_vtree(t, fname=classes.null_value):
+@classes.pyvmfunc
+def sys_vtree(vm, t, fname=classes.null_value):
     """
     pretty print a VM code tree
     """
@@ -220,7 +223,7 @@ def sys_vtree(t, fname=classes.null_value):
         return (indent + "[" + format_instr(code[0]) + sep +
                 sep.join([format_instr(inst, indent) for inst in code[1:]]) + "]")
 
-    return classes.mkstr(format_code(t2))
+    return classes.mkstr(format_code(t2), vm.iscope)
 
 # used in System.tree (above), parse, parse_and_execute (below)
 def obj2python_json(x):

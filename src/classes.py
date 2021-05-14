@@ -324,9 +324,8 @@ def _mkobj(props):
     o.props.update(props)
     return o
 
-def mkstr(s):
-    # XXX use create_sys_type('Str', ***iscope***)!!
-    return _new_vinst(sys_types['Str'], s)
+def mkstr(s, scope):
+    return system.create_sys_type('Str', scope, s)
 
 ################################################################
 
@@ -467,13 +466,13 @@ def obj_init(this_obj, *args):
         raise Exception("%s.%s takes no arguments" %
                         (this_obj.classname(), const.INIT))
 
-@pyfunc
-def obj_str(l):
-    return mkstr(str(l))
+@pyvmfunc
+def obj_str(vm, l):
+    return mkstr(str(l), vm.iscope)
 
-@pyfunc
-def obj_repr(l):
-    return mkstr(repr(l))
+@pyvmfunc
+def obj_repr(vm, l):
+    return mkstr(repr(l), vm.iscope)
 
 @pyfunc
 def obj_eq(x, y):
@@ -760,16 +759,17 @@ JSObject.setprop(const.LHSOPS, _mkdict({
 def val_len(l):
     return _new_vinst(Number, len(l.value)) # XXX look up by name?
 
-@pyfunc
-def val_str(l):
+@pyvmfunc
+def val_str(vm, l):
     """
     use Python str function on value
     """
-    return mkstr(str(l.value))  # XXX
+    return mkstr(str(l.value), vm.iscope)
 
-@pyfunc
-def val_repr(l):
-    return mkstr("<%s: %s>" % (l.classname(), repr(l.value))) # XXX
+@pyvmfunc
+def val_repr(vm, l):
+    return mkstr("<%s: %s>" % (l.classname(), repr(l.value)),
+                 vm.iscope)
 
 @pyfunc
 def val_init(l, value):
@@ -884,7 +884,8 @@ def list_str(vm, l):
     # XXX Continuations generated inside 'str' will be fubar
     return mkstr("[%s]" %
                  (", ".join([vmx.invoke_method(x, 'str', vm.iscope).value
-                             for x in l.value])))
+                             for x in l.value])),
+                 vm.iscope)
 
 List.setprop(const.METHODS, _mkdict({
     'append': list_append,
@@ -1045,10 +1046,10 @@ def str_slice(l, a, b=None):
 def str_str(this):
     return this                 # identity
 
-@pyfunc
-def str_repr(this):
+@pyvmfunc
+def str_repr(vm, this):
     # XXX check if contains '"' and \u escape!!!
-    return mkstr('"%s"' % this.value)
+    return mkstr('"%s"' % this.value, vm.iscope)
 
 def _str_eq(l, r):
     l = l.value
@@ -1089,9 +1090,9 @@ Str.setprop(const.BINOPS, _mkdict({
 
 ################ Null
 
-@pyfunc
-def null_str(this):
-    return mkstr("null")
+@pyvmfunc
+def null_str(vm, this):
+    return mkstr("null", vm.iscope)
 
 @pyfunc
 def null_call(*args):
@@ -1107,12 +1108,12 @@ Null.setprop(const.BINOPS, _mkdict({
 
 ################ Bool
 
-@pyfunc
-def bool_str(this):
+@pyvmfunc
+def bool_str(vm, this):
     if this.value:
-        return mkstr("true")
+        return mkstr("true", vm.iscope)
     else:
-        return mkstr("false")
+        return mkstr("false", vm.iscope)
 
 # XXX have own MetaClass "new" to return one of the doubleton values?
 # XXX subclass into True and False singleton classes????
