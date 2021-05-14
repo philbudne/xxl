@@ -196,7 +196,8 @@ class CClosure(Instance):
         
     def invoke(self, vm):
         vm.save_frame()
-        # contin = CContinuation(vm.fp)
+        # return or leave label Continuation will be generated from FP
+        #       by "args" or "lscope" Instr (first Instr in code)
         vm.pc = 0
         vm.cb = self.code
         vm.scope = self.scope
