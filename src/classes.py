@@ -1095,7 +1095,7 @@ def null_str(vm, this):
     return mkstr("null", vm.iscope)
 
 @pyfunc
-def null_call(*args):
+def null_call(l, r):
     raise Exception("'null' called; bad method name?")
 
 Null.setprop(const.METHODS, _mkdict({

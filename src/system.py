@@ -398,7 +398,6 @@ def parse_and_execute(src, scope, stats, trace, trace_parser):
             sys.stderr.write("Error @ {}:{}: {}\n".format(
                 vm.ir.fn, vm.ir.where, e))
             vm.backtrace()
-            raise
             return False
     return True
 
