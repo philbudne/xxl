@@ -18,9 +18,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# object properties
-CLASS = '__class'               # Class instance
-
 # Class properties
 NAME = 'name'                   # String
 METHODS = '__methods'           # Dict

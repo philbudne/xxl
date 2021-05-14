@@ -40,8 +40,9 @@ The root language Class is Object.
 
 Only "Object" class has no super classes; all others have one or more.
 
-All objects _should_ have a const.CLASS property
-        which points to an Instance of the Class (meta)Class (or a subclass off)
+All objects have a class (Python klass attribute)
+        which points to an Instance of the Class (meta)Class
+                (or a subclass thereof)
 
 By default language Classes are instances of the "Class" metaclass,
         (the source of the default "new" method); if you need to
@@ -74,13 +75,17 @@ sys_types = {}
 class Instance(object):         # XXX CObject??
     def __init__(self, klass):
         # klass may only be None for Object??
-        self.props = {const.CLASS: klass}
+        self.setclass(klass)
+        self.props = {}
+
+    def setclass(self, klass):
+        self.klass = klass
 
     def getclass(self):
         """
         return Instance for object Class
         """
-        return self.getprop(const.CLASS)
+        return self.klass
 
     def classname(self):
         """
@@ -362,7 +367,7 @@ def defclass(metaclass, name, supers=None, publish=True):
     return class_obj
 
 Class = defclass(None, 'Class')   # metaclass of all Classes
-Class.setprop(const.CLASS, Class) # circular!
+Class.setclass(Class)             # circular! Class.new creates a new Class!
 # supers set to [Object] below
 
 Object = defclass(Class, 'Object', []) # root Class
@@ -610,8 +615,12 @@ def obj_get_in_supers(l, r):
     return find_in_supers(l, r.value) # XXX check for VInst
 
 @pyfunc
-def obj_class(this):
+def obj_getclass(this):
     return this.getclass()
+
+@pyfunc
+def obj_setclass(this, klass):
+    return this.setclass(klass)
 
 @pyfunc
 def obj_call(l, r):
@@ -623,7 +632,9 @@ def obj_instance_of(l, c):
 
 Object.setprop(const.METHODS, _mkdict({
     const.INIT: obj_init,
-    'class': obj_class, # clutter!? might as well be a normal property?!
+    'class': obj_getclass,      # TEMP!
+    'getclass': obj_getclass,
+    'setclass': obj_setclass,
     'instance_of': obj_instance_of,
     'putprop': obj_putprop,
     'getprop': obj_getprop,
@@ -692,14 +703,13 @@ def class_subclass_of(l, r):
     return mkbool(subclass_of(l, r))
 
 # Class: a meta-class: all Classes are instances of a meta-class
-# Class.new creates a new Class
+# (Class.new creates a new Class)
 Class.setprop(const.METHODS, _mkdict({
     const.NEW: new_inst,
     const.INIT: class_init,     # Class.new creates new Classes
     # NOTE: "name" is a member
     "subclass_of": class_subclass_of
 }))
-Class.setprop(const.CLASS, Class) # circular!
 
 Class.setprop(const.BINOPS, _mkdict({
     '(': class_call

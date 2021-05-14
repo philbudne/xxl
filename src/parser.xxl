@@ -395,7 +395,7 @@ var PrattParser = Class.new({
 			// returns Symbol class to use
 			var sym = this.find_definition(n);
 			if (sym) {
-			    return(sym.class());
+			    return(sym.getclass());
 			}
 			return(null);
 		    },
