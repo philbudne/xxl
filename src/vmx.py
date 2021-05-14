@@ -58,17 +58,17 @@ class VM:
                  'scope', 'fp', 'temp', 'args', 'iscope',
                  'op_count', 'op_time']
 
-    def __init__(self, code, scope):
+    def __init__(self, iscope):
         self.run = False
         self.ac = 0
         self.sp = None          # Stack Pointer (value, next) tuples
-        self.cb = code          # Code Base (Python list of VMInst)
+        self.cb = None          # Code Base (Python list of VMInst)
+        self.scope = None       # Current scope
         self.pc = 0             # offset into code base
         self.ir = None          # Instruction Register
-        self.scope = scope      # current scope
         self.fp = None          # Frame pointer (for return)
         self.temp = None        # holds new dict/array
-        self.iscope = scope     # initial scope (for pyscope functions)
+        self.iscope = iscope    # initial scope (for pyscope functions)
 
         # argument list from last call/method/op invocation
         # User defined functions (Python CClosure) pick up args with
@@ -77,8 +77,11 @@ class VM:
         # consume directly.
         self.args = []
 
-    def start(self):
+    def start(self, code, scope):
         self.run = True         # cleared by 'exit' instr
+        self.pc = 0
+        self.cb = code
+        self.scope = scope
         while self.run:
             # XXX might be faster (avoid indexing a list) to
             #   create a "next" pointer on VM code "read-in"
@@ -88,7 +91,10 @@ class VM:
             self.pc += 1        # jumps will overwrite
             ir.step(self)       # execute instruction
 
-    def start_trace(self):
+    def start_trace(self, code, scope):
+        self.pc = 0
+        self.cb = code
+        self.scope = scope
         self.run = True         # cleared by 'exit' instr
         while self.run:
             # NOTE! self.ir for debug.
@@ -97,12 +103,15 @@ class VM:
             ir.step(self)       # execute instruction
             print(ir, self.ac)
 
-    def start_stats(self, trace):
+    def start_stats(self, code, scope, trace):
         # stats
         op_count = {}
         op_time = {}
         for op in instr_class_by_name.keys():
             op_count[op] = op_time[op] = 0
+        self.pc = 0
+        self.cb = code
+        self.scope = scope
         self.run = True         # cleared by 'exit' instr
         while self.run:
             self.ir = ir = self.cb[self.pc] # instruction register
@@ -489,6 +498,7 @@ class ArgsInstr(VMInstr1):
             raise Exception("%s: too many arguments. got %d, expected %d" % \
                             (self.where, len(vm.args), len(self.value)))
         # NOTE: scope.func_scope() creates a cactus stack of scopes
+        #       func_scope defines 'return' as a Continuation to prev frame
         vm.scope = vm.scope.func_scope(vm.fp)
         for formal in self.value:  # loop for formals
             if vm.args:            # actuals left?
@@ -534,14 +544,13 @@ class LScopeInstr(VMInstr1):
     name = "lscope"
 
     def step(self, vm):
+        # creates new scope, w/ named Continuation to leave it
         vm.scope = vm.scope.labeled_scope(vm.fp, self.value)
 
 @reginstr
 class UScopeInstr(VMInstr0):
     """
     first op executed in an unlabled scope closure
-    (having a separate opcode means never having to have a "null" arg,
-     so pprint can be used to format code)
     """
     name = "uscope"
 
@@ -623,7 +632,7 @@ class NewInstr(VMInstr1):
 ################
 
 # used for init, str, repr
-def invoke_method(obj, method, scope, args=[], trace=False):
+def invoke_method(obj, method, vm, args=[], trace=False):
     """
     call an `obj` method from Python
     `method` is Python string
@@ -634,12 +643,11 @@ def invoke_method(obj, method, scope, args=[], trace=False):
     m = classes.find_in_class(obj, method)
     if not m or m is classes.null_value:
         raise Exception("method %s not found" % method)
-    return invoke_function(m, scope, args, trace)
+    return invoke_function(m, vm, args, trace)
 
-def invoke_function(func, scope, args=[], trace=False):
+def invoke_function(func, vm, args=[], trace=False):
     """
     `func` is CInstance to be called
-    `scope` is used to find System object
     `args` is Python list of Instances
     """
     #print("invoke_function", closure)
@@ -661,18 +669,18 @@ def invoke_function(func, scope, args=[], trace=False):
     fn = 'vmx.py'
     where = "invoke %s" % func
     code = [CallInstr(None, fn, where, len(args)), ExitInstr(None, fn, where)]
-    vm = VM(code, scope)        # scope for type lookup
+    vm2 = VM(vm.iscope)         # scope for type lookup XXX use vm!!!
     # XXX could have a version of CallInstr that takes vm.args directly
     for arg in reversed(args):
-        vm.push(arg)
-    vm.ac = func
+        vm2.push(arg)
+    vm2.ac = func
     # XXX wrap in try to display errors in closures invoked from Python!!!
     # XXX execute in caller VM for traceback?!
     if trace:
-        vm.start_trace()
+        vm2.start_trace(code, vm.scope)
     else:
-        vm.start()
-    return vm.ac
+        vm2.start(code, vm.scope)
+    return vm2.ac
 
 ################
 # convert Python list into XxxInstr(ruction) instances
@@ -709,15 +717,15 @@ def load_vm_json(fname, iscope):
 #       (used by import_worker to load/run parser.vmx
 #        and command line "-x")
 def run_code(code, scope, stats, trace):
-    vm = VM(code, scope)
+    vm = VM(scope)
 
     try:
         if stats:
-            vm.start_stats(trace)
+            vm.start_stats(code, scope, trace)
         elif trace:
-            vm.start_trace()
+            vm.start_trace(code, scope)
         else:
-            vm.start()
+            vm.start(code, scope)
     except SystemExit:
         raise                   # pass up w/o message
     except:

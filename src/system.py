@@ -78,7 +78,7 @@ def getstr(x, vm):              # XXX only used for sys_print
         return x
 
     if isinstance(x, classes.Instance):
-        s = vmx.invoke_method(x, 'str', vm.iscope) # XXX reuse VM
+        s = vmx.invoke_method(x, 'str', vm)
 
         if isstr(s):            # XXX is Python string???
             return "pstr:" + s  # XXX COMPLAIN?? WRAP???
@@ -105,7 +105,7 @@ def getrepr(x, vm):             # XXX move elsewhere
     return Python string for an interpreter Instance "repr"
     """
     if isinstance(x, classes.Instance):
-        s = vmx.invoke_method(x, 'repr', vm.iscope) # XXX reuse VM!
+        s = vmx.invoke_method(x, 'repr', vm)
         if isstr(s):            # XXX TEMP: COMPLAIN
             return "<XXX %s repr returned str: %s>" % (x.classname(), s)
 
@@ -309,41 +309,6 @@ def load_parser(scope, parser_vmx, trace=False):
     # point System.parser at parser module
     sys_obj.setprop('parser', m)
 
-# not currently used.
-# expects System.parser.parse to be a function that takes a file name
-# and returns an AST of Symbol instances, and System.parser.gen to
-# take an AST and return a List of Lists of VM instructions.
-def parse(filename, scope, dump): # XXX take trace?
-    """
-    `filename` is Python string for file to parse
-    `scope` is scope to find System object
-    `dump` is null to return list of Python VMInstr instances
-        "ast" to return Python list of lists for AST
-        "vm" to return Python list of lists for VM code
-    """
-    sys_parser = scope.lookup('System').getprop('parser') # XXX guard
-    if not sys_parser or sys_parser is classes.null_value:
-        raise Exception("Could not find System.parser")
-
-    parse_function = sys_parser.getprop('parse') # bound method!
-    if not parse_function or parse_function is classes.null_value:
-        raise Exception("Could not find System.parser.parse")
-    ast = vmx.invoke_function(parse_function, scope, [filename]) # XXX trace?
-    if dump == "ast":
-        return obj2python_json(ast)
-
-    gen_function = sys_parser.getprop('gen')
-    if not gen_function or gen_function is classes.null_value:
-        raise Exception("Could not find System.parser.gen")
-    code = vmx.invoke_function(gen_function, scope, [ast]) # XXX trace?
-
-    j = obj2python_json(code)   # TEMP: get as list of Python lists
-    if dump == "vm":
-        return j                # return "vm" json
-
-    # convert to list of Python Instrs; scope for wrapping Lits
-    return vmx.convert_instrs(j, scope, filename)
-
 # called only from import_worker
 def parse_and_execute(src, scope, stats, trace, trace_parser):
     """
@@ -360,7 +325,9 @@ def parse_and_execute(src, scope, stats, trace, trace_parser):
     #   and return a Closure that can be called
     #   so all of the below runs "natively"
 
-    vmx.invoke_method(parser_obj, 'start_parse', scope, [src], trace)
+    vm = vmx.VM(scope)
+
+    vmx.invoke_method(parser_obj, 'start_parse', vm, [src], trace)
 
     # top level function, takes parser object, returns List or null
     # XXX call gen inside loop, appending to same code block!?
@@ -369,7 +336,7 @@ def parse_and_execute(src, scope, stats, trace, trace_parser):
     while True:
         # run "parse_and_gen_one_stmt", turn into Python list of lists:
         js = obj2python_json(
-            vmx.invoke_function(p1, scope, [parser_obj], trace_parser))
+            vmx.invoke_function(p1, vm, [parser_obj], trace_parser))
 
         if not js:              # need to confirm EOF?
             break
@@ -377,17 +344,15 @@ def parse_and_execute(src, scope, stats, trace, trace_parser):
         # convert into Python list of Instrs (scope for type name lookup)
         code = vmx.convert_instrs(js, scope, src)
         try:
-            # UGH: invoke a new VM to execute code
-            vm = vmx.VM(code, scope)
             if trace:
-                vm.start_trace()
+                vm.start_trace(code, scope)
             else:
-                vm.start()
+                vm.start(code, scope)
         except SystemExit:
             pass
         except vmx.VMError as e:
             # NOTE: displays VM Instr
-            sys.stderr.write("VM Error @ {}: {}\n".format(v.ir, e))
+            sys.stderr.write("VM Error @ {}: {}\n".format(vm.ir, e))
             # XXX dump VM registers?
             vm.backtrace()
             return False

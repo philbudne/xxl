@@ -51,7 +51,8 @@ class Scope:
         return s
 
     # XXX the compiler could tell us how far up the ("static") scope chain
-    # the variable lives (and could assign numeric slot ids to avoid dict)
+    # the variable lives (and could assign numeric slot ids for variable
+    # lookup to avoid dict)
     def defvar(self, var, value):
         """
         `var` is Python string
