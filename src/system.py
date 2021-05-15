@@ -31,20 +31,16 @@ import scopes
 import const
 import vmx
 
-SYSTEM = 'System'
-TYPES = 'types'
+SYSTEM = 'System'               # maybe __xxl??
+TYPES = 'types'                 # maybe top level __classes?
 
 # should be used ONLY to create items to set up "System" & System.types objects!
 # can't use create_sys_type: which needs the System object!!!
 # ALSO used for:
-#       sys_import (returned module)
-#       tokenizer returns
-def __obj_create(props):          # TEMP??
+#       sys_import (returned module) -- should return Module??
+#       tokenizer returns -- should return Token??
+def __obj_create(props):        # TEMP??
     return classes._mkobj(props)
-
-def __list_create(l):             # for sys.argv[]
-    o = classes._new_vinst(classes.sys_types['List'], l)
-    return o
 
 ################################################################
 # functions
@@ -138,9 +134,6 @@ def sys_tokenizer(vm, filename, prefix, suffix):
     sstr = suffix.value    # XXX getstr()?
     generator = jslex.tokenize(open(fnstr), pstr, sstr)
 
-    # find_sys_types doesn't like "null_value"
-    null = vm.iscope.lookup(SYSTEM).getprop(TYPES).getprop('null')
-
     # XXX create general purpose PyIterator wrapper class??
     @classes.pyfunc
     def gen_wrapper(*args):
@@ -150,10 +143,10 @@ def sys_tokenizer(vm, filename, prefix, suffix):
         try:
             t = next(generator)
             if not t:
-                return null
+                # find_sys_types doesn't like to return "null_value"
+                return vm.iscope.lookup(SYSTEM).getprop(TYPES).getprop('null')
             where = "%s:%s:%s" % (fnstr, t.lineno, t.from_)
-            # XXX create a Token class???
-            return __obj_create({
+            return __obj_create({ # XXX create a Token
                 'type': classes.mkstr(t.type_, vm.iscope),
                 'value': classes.mkstr(t.value, vm.iscope),
                 'where': classes.mkstr(where, vm.iscope)
@@ -178,48 +171,49 @@ def sys_tree(vm, t):
     """
     format JSON
     """
-    t2 = obj2python_json(t)
+    t2 = obj2python_json(t)     # strip down to Python data structures
     return classes.mkstr(json.dumps(t2, indent=1), vm.iscope)
 
 @classes.pyvmfunc
 def sys_vtree(vm, t, fname=classes.null_value):
     """
     pretty print a VM code tree (returns Str)
+    `t`: List of List
     """
-    t2 = obj2python_json(t)
+    t2 = obj2python_json(t)     # convert to list of list of str
 
     if not fname or fname is classes.null_value:
         fnc = ""
         fnclen = 0
     else:
-        if isinstance(fname, str):
-            # XXX SHOULD NOT HAPPEN!
-            fnc = fname + ":"
-        else:
-            fnc = fname.value + ":" # XXX check Str
-
+        fnc = fname.value + ":" # XXX check Str
         fnclen = len(fnc)
 
     def format_instr(instr, indent=''):
         """
         format one instruction (Python list)
         """
+        # strip filename (if supplied) off of "where"
         if fnclen and instr[0].startswith(fnc):
             instr[0] = instr[0][fnclen:]
+
         if instr[1] != "close":
             return indent + json.dumps(instr)
-        # here to handle "close" (instr[3] is a new code list)
-        closure = format_code(instr[2], indent + " ")
-        return ('%s["%s", "%s",\n%s%s]' % (indent, instr[0], instr[1],
-                                           indent + " ", closure))
+
+        # here to handle "close" (instr[2] is a new code list)
+        nindent = indent + " "
+        return ('%s["%s", "%s",\n%s%s]' % \
+                (indent, instr[0], instr[1],
+                 nindent, format_code(instr[2], nindent)))
 
     def format_code(code, indent=''):
         """
         takes Python list of instructions (Python lists)
         """
         sep = ",\n" + indent + " "
-        return (indent + "[" + format_instr(code[0]) + sep +
-                sep.join([format_instr(inst, indent) for inst in code[1:]]) + "]")
+        return (indent + "[" + format_instr(code[0]) + sep + # first line
+                sep.join([format_instr(inst, indent) for inst in code[1:]]) +
+                "]")
 
     return classes.mkstr(format_code(t2), vm.iscope)
 
@@ -426,7 +420,6 @@ def import_worker(src_file=None, vmx_file=None, trace=False,
     bool `main` True when loading from command line
     Python list of `argv` strs from command line
     """
-    # XXX wrap argv here??
     scope = init_module(argv, main=main) # XXX pass fname(s)?
 
     if parser:
@@ -455,7 +448,9 @@ def create_sys_object(iscope, argv):
     # create System.types object from sys_types (copies values)
     tt = __obj_create(classes.sys_types) # XXX XXX XXX
     sys_obj.setprop('types', tt)         # XXX XXX top level __classes?
-    
+
+    # "create_sys_type" is now safe!
+
     # debug functions (TEMP?!)
     sys_obj.setprop('break', sys_break) # break to PDB
     sys_obj.setprop('print', sys_print) # print to stdout
@@ -463,7 +458,7 @@ def create_sys_object(iscope, argv):
     sys_obj.setprop('print_repr', sys_print_repr)
 
     # command line args, and exit:
-    sys_obj.setprop('argv',  __list_create(argv)) # XXX pass in as List?
+    sys_obj.setprop('argv',  classes.wrap(argv, iscope))
     sys_obj.setprop('exit', sys_exit)
 
     # for parser:
@@ -499,7 +494,7 @@ def create_sys_type(name, scope, value):
     Create an Object by type name
     `name` is Python string for a system type (System.types.name)
     `scope` is used to find System object
-    `value` is Python type to wrap
+    `value` is Python value to wrap
     """
     #import sys
     #print("create_sys_type", name, type(value), value, file=sys.stderr)
