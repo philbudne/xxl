@@ -184,7 +184,7 @@ def sys_tree(vm, t):
 @classes.pyvmfunc
 def sys_vtree(vm, t, fname=classes.null_value):
     """
-    pretty print a VM code tree
+    pretty print a VM code tree (returns Str)
     """
     t2 = obj2python_json(t)
 
@@ -268,6 +268,26 @@ def obj2python_json(x):
 
     return clean1(x)
 
+################
+
+@classes.pyvmfunc
+def sys_assemble(vm, tree, srcfile):
+    """
+    `tree`: List of Lists of VM code
+    `srcfile`: source of code
+    returns Closure using caller's initial scope
+        (XXX make this a Module method????)
+    """
+    # convert List of Lists to Python list of lists
+    js = obj2python_json(tree)
+
+    # convert into Python list of Instrs (scope for type name lookup):
+    code = vmx.convert_instrs(js, vm.iscope, srcfile)
+
+    # turn into Closure in module initial scope
+    #   (any variables created are globals):
+    return classes.CClosure(code, vm.iscope)
+
 ################ "pyimport" returns a PyObject wrapper around a Python module
 
 @classes.pyvmfunc
@@ -308,6 +328,10 @@ def load_parser(scope, parser_vmx, trace=False):
 
     # point System.parser at parser module
     sys_obj.setprop('parser', m)
+
+def breakpoint_if_debugging():
+    #breakpoint()
+    pass
 
 # called only from import_worker
 def parse_and_execute(src, scope, stats, trace, trace_parser):
@@ -355,12 +379,14 @@ def parse_and_execute(src, scope, stats, trace, trace_parser):
             sys.stderr.write("VM Error @ {}: {}\n".format(vm.ir, e))
             # XXX dump VM registers?
             vm.backtrace()
+            breakpoint_if_debugging()
             return False
         except Exception as e:
             # NOTE: just displays "where"
             sys.stderr.write("Error @ {}:{}: {}\n".format(
                 vm.ir.fn, vm.ir.where, e))
             vm.backtrace()
+            breakpoint_if_debugging()
             return False
     return True
 
@@ -444,6 +470,7 @@ def create_sys_object(iscope, argv):
     sys_obj.setprop('tokenizer', sys_tokenizer) # TEMP creates token generator
     sys_obj.setprop('tree', sys_tree) # TEMP!!!
     sys_obj.setprop('vtree', sys_vtree) # TEMP!!!
+    sys_obj.setprop('assemble', sys_assemble)
 
     # external modules:
     sys_obj.setprop('import', sys_import) # import source module
