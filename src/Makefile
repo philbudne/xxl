@@ -20,12 +20,38 @@ VM=	$(XXL) vmx.py classes.py const.py jslex.py system.py scopes.py
 
 # NOTE: when changing generated code, "a" and "b" will differ
 #	otherwise they should be identical.
-tested:	$(B) $(C)
+
+TESTED=tested
+IDENTICAL=.identical.ab
+IDENTICAL2=.identical.parser-c
+
+all:	$(TESTED) $(IDENTICAL) $(IDENTICAL2)
+
+$(TESTED):	$(B) $(C)
 	cmp $(B) $(C)
 	XXL_PARSER=$(C) ./test.sh
-	date > tested
+	date > $(TESTED)
 
-install: tested
+$(IDENTICAL): $(A) $(B)
+	@if cmp -s $(A) $(B); then \
+		echo "no change in generated code"; \
+		date > $(IDENTICAL); \
+	else \
+		echo "NOTE: generated code changed"; \
+	fi
+
+# XXX skip first line in each file (skip metadata)?
+$(IDENTICAL2): $(PARSER_VMX) $(C)
+	@tail -n+2 $(C) > .tmp.c
+	@tail -n+2 $(PARSER_VMX) > .tmp.p
+	@if cmp -s .tmp.c .tmp.p; then \
+		echo "$(PARSER_VMX) up to date"; \
+	else \
+		echo "NOTE: generated code changed: update $(PARSER_VMX) from $(C)?"; \
+	fi
+	@rm -f .tmp.c .tmp.p
+
+install: $(TESTED)
 	cp $(C) $(PARSER_VMX)	
 
 #TIME=time -p
@@ -51,5 +77,5 @@ $(C):	$(VM) $(B) $(PARSER_SRC)
 	$(RUNVMX) $(B) $(PARSER_SRC) > $(C).tmp && mv $(C).tmp $(C)
 
 clean:
-	rm -f *.tmp $(A) $(B) $(C)
+	rm -f *.tmp $(A) $(B) $(C) $(TESTED) $(IDENTICAL) $(IDENTICAL2) .tmp*
 	rm -rf __pycache__
