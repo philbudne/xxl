@@ -223,7 +223,7 @@ def sys_vtree(vm, t, fname=classes.null_value):
 
     return classes.mkstr(format_code(t2), vm.iscope)
 
-# used in System.tree (above), parse, parse_and_execute (below)
+# used in System.tree (above), parse, parse_and_execute, System.assemble (below)
 def obj2python_json(x):
     """
     take AST (tree of Objects) or List of VMCode (Lists)
