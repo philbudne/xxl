@@ -158,12 +158,6 @@ class VInstance(Instance):      # XXX CVObject??
 
 ################
 
-# Calling Python functions (ie; primative class methods) was orignally
-# implemented as Closure with two VM instructions (pycall, return).
-# The Instance.invoke method avoids those two instructions when calling
-# from VM code, and allows invoke_{function,method} from Python code
-# to call Python code directly, without executing VM instructions.
-
 class CContinuation(Instance):
     """
     A Callable instance backed by a native (VM) Continuation
@@ -230,6 +224,12 @@ class CBoundMethod(Instance):
         vm.args.insert(0, self.obj) # prepend saved "this" to arguments
         self.method.invoke(vm)      # return value in AC
 
+# Calling Python functions (ie; primative class methods) was orignally
+# implemented as Closure with two VM instructions (pycall, return).
+# The Instance.invoke method avoids those two instructions when calling
+# from VM code, and allows invoke_{function,method} from Python code
+# to call Python code directly, without executing VM instructions.
+
 class CPyFunc(Instance):
     """
     A Callable instance backed by a Python function
@@ -244,34 +244,38 @@ class CPyFunc(Instance):
         return "<PyFunc: %s>" % self.func.__name__
         
     def invoke(self, vm):
-        # XXX wrap result here, so function doesn't need to know about
-        # initial scope??
-
         # XXX have helper method for this & invoke_function??!!
         # (helper could be defined in CInstance to create VM?!)
         args = vm.args
         n = len(args)
         if n == 0:
-            vm.ac = self.func()
+            ret = self.func()
         elif n == 1:
-            vm.ac = self.func(args[0])
+            ret = self.func(args[0])
         elif n == 2:
-            vm.ac = self.func(args[0], args[1])
+            ret = self.func(args[0], args[1])
         elif n == 3:
-            vm.ac = self.func(args[0], args[1], args[2])
+            ret = self.func(args[0], args[1], args[2])
         elif n == 4:
-            vm.ac = self.func(args[0], args[1], args[2], args[3])
+            ret = self.func(args[0], args[1], args[2], args[3])
         else:
-            vm.ac = self.func(*args)
+            ret = self.func(*args)
+
+        # XXX wrap result here, so function doesn't need to know about
+        # initial scope??  Would need to check if ret is not an instance
+        # of Instance, so maybe have different PyFunc flavors
+        # that do or do not do wrapping??
+        vm.ac = ret
 
     def __call__(self, *args):
+        # to catch mistakenly calling a CPyFunc (eg; from another method)
         raise Exception("Attempt to call %s" % self)
 
 def pyfunc(func):
     """
     (decorator)
     Return an Instance with (Python) invoke method that runs Python code.
-    Used for Python methods on base types.
+    Used for Python methods on base types, system utilities.
     """
     return CPyFunc(func)
 
@@ -280,18 +284,27 @@ def pyfunc(func):
 
 class CPyVMFunc(CPyFunc):
     """
-    A Callable instance backed by a Python function, passed VM
-    as first argument
+    A Callable instance backed by a Python function, passed VM as
+    first argument.  MOSTLY used for access to "initial scope" for
+    lookup of Classes by name.  But could be used for all kinds of
+    reflection fun (inspection of current scope, code, traceback,
+    etc).
+
+    PLB NOTE!  To avoid bloat and inefficiency, VM internals (Frame,
+    Scope, VMInstrs) are NOT backed (fronted?) by language Objects.
+    and my current (may 2021) thoughts are to expose particulars with
+    Objects created on demand, either with copies of the backing data,
+    or, in the case of Scopes, an Object which references the backing
+    (Python) dict.
     """
     # XXX NOTE no __init__ method: looks just like PyFunc
     def invoke(self, vm):
-        vm.args.insert(0, vm)
+        vm.args.insert(0, vm)   # prepend vm to arguments
         super().invoke(vm)
 
 def pyvmfunc(func):
     """
     decorator for Python functions that need pointer to VM
-    Return an Instance with (Python) invoke method that runs Python code.
     """
     return CPyVMFunc(func)
 
@@ -1218,6 +1231,12 @@ def wrap(value, iscope):
         return system.create_sys_type('Str', iscope, value)
 
     # XXX handle bytes??
+
+    if isinstance(value, list): # for System.argv creation!
+        return system.create_sys_type('List', iscope,
+                                      [wrap(x, iscope) for x in value])
+
+    # XXX handle dict???
 
     if value is None:
         return null_value
