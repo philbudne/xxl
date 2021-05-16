@@ -76,7 +76,9 @@ sys_types = {}
 # All such Python classes should start with the letter "C"
 #       (the variable ClassName should point to the Class object of that name)
 
-class CObject(object):
+class CObject:
+    __slots__ = ['props', 'klass']
+
     def __init__(self, klass):
         # klass may only be None when creating initial Class (Object)
         self.setclass(klass)
@@ -136,8 +138,11 @@ class CObject(object):
 
 class CPObject(CObject):
     """
-    Primative CObject (has a value property which is a Python type)
+    Python backing class for Primative Object Classes
+    (has a value property which is a Python type)
     """
+    __slots__ = ['props', 'klass', 'value']
+
     def __init__(self, klass, value):
         assert klass is not None
         super().__init__(klass)
@@ -468,7 +473,7 @@ def is_true(obj):
     return True
 
 @pyvmfunc
-def new_inst(vm, this_class, *args):
+def new_obj(vm, this_class, *args):
     """
     default "new" method for Object (and therefore Class)
     makes an instance of this_class
@@ -721,7 +726,7 @@ def class_subclass_of(l, r):
 # Class: a meta-class: all Classes are instances of a meta-class
 # (Class.new creates a new Class)
 Class.setprop(const.METHODS, _mkdict({
-    const.NEW: new_inst,
+    const.NEW: new_obj,
     const.INIT: class_init,     # Class.new creates new Classes
     # NOTE: "name" is a member
     "subclass_of": class_subclass_of
