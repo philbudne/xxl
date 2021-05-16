@@ -47,7 +47,7 @@ $(IDENTICAL2): $(PARSER_VMX) $(C)
 	@if cmp -s .tmp.c .tmp.p; then \
 		echo "$(PARSER_VMX) up to date"; \
 	else \
-		echo "NOTE: generated code changed: update $(PARSER_VMX) from $(C)?"; \
+		echo "NOTE: $(PARSER_VMX) out of date (update from $(C))"; \
 	fi
 	@rm -f .tmp.c .tmp.p
 
