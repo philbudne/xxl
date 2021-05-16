@@ -188,6 +188,11 @@ var VMCode = Class.new({
 	    // include function name (if any) in Closure object?!!
 	    this._emit([sym.where, "close", code]);
 	},
+	emit_close_call: function (this, vmcode, sym) {
+	    // XXX have combo opcode?
+	    this.emit_close(vmcode.finish(sym), sym);
+	    this.emit_call(0, sym);
+	},
 	emit_append: function (this, sym) {
 	    // XXX could emit: push, temp, lit "append", binop ".", call
 	    this._emit([sym.where, "append"]);
@@ -1058,8 +1063,8 @@ var Parser = Class.new({
 			    var bcode = VMCode.new(); // block closure code
 			    bcode.emit_scope(this.label, this);
 			    bcode.gen_stmts(this.first);
-			    vmcode.emit_close(bcode.finish(this), this);
-			    vmcode.emit_call(0, this); // block closure
+			    // create block closure & invoke
+			    vmcode.emit_close_call(bcode, this);
 			}
 			else {	// unary { attr: value }
 			    // first is list of lit/name keys,
@@ -1191,8 +1196,8 @@ var Parser = Class.new({
 			var lcode = VMCode.new();
 			lcode.emit_scope(this.first.value, this);
 			this.second.gen(lcode);
-			vmcode.emit_close(lcode.finish(this), this);
-			vmcode.emit_call(0, this); // block closure
+			// create block closure and invoke
+			vmcode.emit_close_call(lcode, this);
 		    } // label.gen
 		}
 	    }); // Label
@@ -1212,10 +1217,7 @@ var Parser = Class.new({
 			return(this);
 		    },
 		    gen: function (this, vmcode) { // gen
-			// XXX optimize: check if this.first is "true"?????
-			// XXX XXX require explicit labels for break/continue!!
-
-			// wrap entire while statement
+			// generate closure for body, w/ leave label, if any
 			var label = (this.second.label ?
 				     this.second.label.value : null);
 			var wcode = VMCode.new();
@@ -1229,8 +1231,7 @@ var Parser = Class.new({
 			wcode.drop_fwd_label(done_label);
 
 			// create closure around entire while stmt and invoke
-			vmcode.emit_close(wcode.finish(this), this);
-			vmcode.emit_call(0, this); // block closure
+			vmcode.emit_close_call(wcode, this);
 		    }
 		}
 	    }); // p.while
