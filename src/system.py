@@ -123,7 +123,7 @@ def sys_print_repr(vm, *args):
 def sys_tokenizer(vm, filename, prefix, suffix):
     """
     returns a token generator:
-    returns JSObjects, and then null
+    returns Objects, and then null
     """
     import jslex
     if isstr(filename): # XXX XXX here from parser.xxl?
@@ -409,7 +409,7 @@ def sys_import(filename):
 # used by: vmx.py (running src & vmx files)
 #       sys_import (System.import function)
 #       load_parser (called from here!)
-# XXX returns JSObject (want Module)
+# XXX returns Object (want Module)
 def import_worker(src_file=None,
                   vmx_file=None,
                   main=False,
