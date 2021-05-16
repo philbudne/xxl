@@ -32,7 +32,8 @@ import const
 import vmx
 
 SYSTEM = 'System'               # maybe __xxl??
-TYPES = 'types'                 # maybe top level __classes?
+SYS_TYPES = 'types'             # maybe top level __classes?
+SYS_PARSER = 'parser'
 
 # should be used ONLY to create items to set up "System" & System.types objects!
 # can't use create_sys_type: which needs the System object!!!
@@ -144,7 +145,7 @@ def sys_tokenizer(vm, filename, prefix, suffix):
             t = next(generator)
             if not t:
                 # find_sys_types doesn't like to return "null_value"
-                return vm.iscope.lookup(SYSTEM).getprop(TYPES).getprop('null')
+                return vm.iscope.lookup(SYSTEM).getprop(SYS_TYPES).getprop('null')
             where = "%s:%s:%s" % (fnstr, t.lineno, t.from_)
             return __obj_create({ # XXX create a Token
                 'type': classes.mkstr(t.type_, vm.iscope),
@@ -317,13 +318,13 @@ def load_parser(scope, parser_vmx, trace=False):
     """
     load parser from vmx file into scope's System.parser
     """
-    sys_obj = scope.lookup('System')
+    sys_obj = scope.lookup(SYSTEM)
     m = import_worker(vmx_file=parser_vmx, main=False,
                       trace=trace, parser=False)
     # XXX check return
 
     # point System.parser at parser module
-    sys_obj.setprop('parser', m)
+    sys_obj.setprop(SYS_PARSER, m)
 
 def breakpoint_if_debugging():
     #breakpoint()
@@ -336,8 +337,8 @@ def parse_and_execute(src, scope, stats, trace, trace_parser):
     (allows parser extensions to take effect immediately)
     """
     # get instance of Parser object visible as System.parser.parser
-    sys_obj = scope.lookup('System')
-    sys_parser = sys_obj.getprop('parser') # System.parser
+    sys_obj = scope.lookup(SYSTEM)
+    sys_parser = sys_obj.getprop(SYS_PARSER) # System.parser
     parser_obj = sys_parser.getprop('parser'); # Parser instance
 
     # XXX create a VM and reuse it for both parsing and running!
@@ -455,17 +456,17 @@ def import_worker(src_file=None,
 
 ################################################################
 
-# called only from init_module: create 'System' Object
+# called only from init_module: create SYSTEM Object
 def create_sys_object(iscope, argv):
     sys_obj = __obj_create({})
-    iscope.defvar('System', sys_obj)
+    iscope.defvar(SYSTEM, sys_obj)
 
     # create System.types object from sys_types
     # NOTE!!! copies sys_types dict entries
     #   so that each module has a private namespace!!!
     #   **BUT** the referenced Class Objects are all shared(?)!!!
     tt = __obj_create(classes.sys_types)
-    sys_obj.setprop('types', tt)         # XXX XXX top level __classes?
+    sys_obj.setprop(SYS_TYPES, tt)         # XXX XXX top level __classes?
 
     # *** now safe to call "create_sys_type" and "wrap" ***
 
@@ -499,12 +500,12 @@ def find_sys_type(name, scope):
     """
     sys = scope.lookup(SYSTEM)
     if sys:
-        types = sys.getprop(TYPES)
+        types = sys.getprop(SYS_TYPES)
         if types and types is not classes.null_value:
             ty = types.getprop(name)
             if ty and ty is not classes.null_value:
                 return ty
-    raise Exception("cannot find %s.%s.%s" % (SYSTEM, TYPES, name))
+    raise Exception("cannot find %s.%s.%s" % (SYSTEM, SYS_TYPES, name))
 
 # create an instance of a type using System.types.NAME
 def create_sys_type(name, scope, value):
