@@ -5,6 +5,8 @@
 # 2021-05-04
 # Public Domain
 
+import readline                 # enable editing in input()
+
 # Produce an array of simple token objects from a string.
 # A simple token object contains these members:
 #      type: 'name', 'string', 'number', 'operator'
@@ -46,6 +48,7 @@ class Stream(object):
     def __init__(self, f):
         self.f = f
         self.i = 0
+        self.buf = None
         self.nextc = None
         self.line_ = 1
         self.advance()
@@ -56,14 +59,39 @@ class Stream(object):
     def line(self):
         return self.line_
 
+    def getc(self):
+        """
+        lowest level: return next character from file
+        """
+        while True:
+            if self.buf:
+                c = self.buf[0]
+                self.buf = self.buf[1:]
+                return c
+            if self.f.isatty():
+                # XXX change prompt to "... " if not at top (in statement()?)
+                try:
+                    self.buf = input('}}} ') # no curly braces in Python!
+                except EOFError:
+                    return ''
+                if self.buf:
+                    self.buf += '\n'
+            else:
+                self.buf = self.f.readline()
+            if not self.buf:
+                return ''
+
     def advance(self):
+        """
+        consume current character (self.ch) and reload
+        """
         self.i += 1
         if self.nextc is not None:
             self.ch = self.nextc
             self.nextc = None
         else:
-            self.ch = self.f.read(1)
-        if self.curr() == '\n':
+            self.ch = self.getc()
+        if self.ch == '\n':
             self.line_ += 1
             self.i = 0
 
@@ -76,7 +104,7 @@ class Stream(object):
 
     def peek(self):
         if self.nextc is None:
-            self.nextc = self.f.read(1)
+            self.nextc = self.getc()
         if self.nextc: 
             return self.nextc
         else:
