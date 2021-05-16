@@ -2,11 +2,6 @@ FIX
 ===
 bootstrap.md -- adding operator similar to adding opcode
 
-test/030-binop-exp.xxl -- subclass Number (and set System.types.Number)
-	rather than patching!!!!
-	when multiple modules/namespaces do this they will need
-		to do obj.subclass_of(original_Number)!!
-
 *** have invoke_function/method use current VM??
 	have CallInstr save_frame (instead of CClosure.invoke)?
 		(all CInstances will need to restore)
