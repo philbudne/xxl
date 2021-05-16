@@ -23,13 +23,13 @@ type system.
 
 Trying to be consistent, and in comments/docstrings use:
 
-`Instance` to mean a language object instance
-        (implemented as an instance of the Python Instance class
+`Object` to mean a **language** object instance
+        (implemented as an instance of the Python CObject class
         or subclass thereof).
 
 and
 
-`Class` to mean an Instance of language class "Class" --
+`Class` to mean a CObject of language class "Class" --
         the base metaclass, or a subclass thereof.
 
 `class` can mean a Python class/type.
@@ -41,13 +41,16 @@ The root language Class is Object.
 Only "Object" class has no super classes; all others have one or more.
 
 All objects have a class (Python klass attribute)
-        which points to an Instance of the Class (meta)Class
+        which points to an Object of the Class (meta)Class
                 (or a subclass thereof)
 
 By default language Classes are instances of the "Class" metaclass,
         (the source of the default "new" method); if you need to
         override the default "new" behavior, subclass "Class"
         (and end the new (meta)class name in Class)
+
+If a language Class "ClassName" needs a Python class of it's own,
+        the python class should be named CClassName
 
 [some of the above probably DOESN'T belong in the docstring!!]
 """
@@ -69,12 +72,13 @@ NUM = (int, float)              # Python3
 sys_types = {}
 
 # All language objects are represented by the interpreter
-# as instances of the Python Instance class (or subclasses thereof).
+# as instances of the Python CObject class (or subclasses thereof).
 # All such Python classes should start with the letter "C"
+#       (the variable ClassName should point to the Class object of that name)
 
-class Instance(object):         # XXX CObject??
+class CObject(object):
     def __init__(self, klass):
-        # klass may only be None for Object??
+        # klass may only be None when creating initial Class (Object)
         self.setclass(klass)
         self.props = {}
 
@@ -83,7 +87,7 @@ class Instance(object):         # XXX CObject??
 
     def getclass(self):
         """
-        return Instance for object Class
+        return CObject for object Class
         """
         return self.klass
 
@@ -130,15 +134,14 @@ class Instance(object):         # XXX CObject??
             name = self.classname()
         return '<%s at %#x>' % (name, id(self))
 
-class VInstance(Instance):      # XXX CVObject??
+class CPObject(CObject):
     """
-    Instance w/ a value property which is a Python type
-    (rename this PObject (Primative Object)?)
+    Primative CObject (has a value property which is a Python type)
     """
     def __init__(self, klass, value):
         assert klass is not None
         super().__init__(klass)
-        self.value = value      # XXX invoke INIT method????
+        self.value = value
 
     def __str__(self):
         if self.value is None:
@@ -147,7 +150,7 @@ class VInstance(Instance):      # XXX CVObject??
             return str(self.value).lower()
         return str(self.value)
 
-    # someday allow Dict to be indexed by any Instance...
+    # someday allow Dict to be indexed by any CObject...
     def __hash__(self):
         return self.value.__hash__()
 
@@ -158,7 +161,7 @@ class VInstance(Instance):      # XXX CVObject??
 
 ################
 
-class CContinuation(Instance):
+class CContinuation(CObject):
     """
     A Callable instance backed by a native (VM) Continuation
     """
@@ -180,7 +183,7 @@ class CContinuation(Instance):
         else:
             raise Exception("Too many Continuation args %s" % len(vm.args))
 
-class CClosure(Instance):
+class CClosure(CObject):
     """
     A Callable instance backed by a Closure (VM code + scope)
     """
@@ -202,13 +205,13 @@ class CClosure(Instance):
         vm.scope = self.scope
         # NOTE! vm.args picked up by "args" opcode!
 
-class CBoundMethod(Instance):
+class CBoundMethod(CObject):
     """
     A method bound to an object
     created when Object.methodname dereferenced
     XXX bring back use of "method" opcode as optimization
         which fetches method and calls invoke without creating
-        a BoundMethod Instance!!!???
+        a BoundMethod Object!!!???
     """
     def __init__(self, obj, method):
         super().__init__(BoundMethod)
@@ -225,12 +228,12 @@ class CBoundMethod(Instance):
         self.method.invoke(vm)      # return value in AC
 
 # Calling Python functions (ie; primative class methods) was orignally
-# implemented as Closure with two VM instructions (pycall, return).
-# The Instance.invoke method avoids those two instructions when calling
+# implemented as a Closure with two VM instructions (pycall, return).
+# The CObject.invoke method avoids those two instructions when calling
 # from VM code, and allows invoke_{function,method} from Python code
 # to call Python code directly, without executing VM instructions.
 
-class CPyFunc(Instance):
+class CPyFunc(CObject):
     """
     A Callable instance backed by a Python function
     """
@@ -245,7 +248,6 @@ class CPyFunc(Instance):
         
     def invoke(self, vm):
         # XXX have helper method for this & invoke_function??!!
-        # (helper could be defined in CInstance to create VM?!)
         args = vm.args
         n = len(args)
         if n == 0:
@@ -263,7 +265,7 @@ class CPyFunc(Instance):
 
         # XXX wrap result here, so function doesn't need to know about
         # initial scope??  Would need to check if ret is not an instance
-        # of Instance, so maybe have different PyFunc flavors
+        # of CObject, so maybe have different PyFunc flavors
         # that do or do not do wrapping??
         vm.ac = ret
 
@@ -274,7 +276,7 @@ class CPyFunc(Instance):
 def pyfunc(func):
     """
     (decorator)
-    Return an Instance with (Python) invoke method that runs Python code.
+    Return a CObject with (Python) invoke method that runs Python code.
     Used for Python methods on base types, system utilities.
     """
     return CPyFunc(func)
@@ -310,37 +312,38 @@ def pyvmfunc(func):
 
 ################################################################
 
-def _new_vinst(this_class, arg):
+def _new_pobj(this_class, arg):
     """
     for internal use only!
     creates an interpreter object wrapped around a Python Value
     """
-    return VInstance(this_class, arg)
+    return CPObject(this_class, arg)
 
 def _mkdict(vals):
     """
     ONLY USE TO CONSTRUCT BASE TYPES!
     """
-    return _new_vinst(Dict, vals)
+    return _new_pobj(Dict, vals)
 
 def _mklist(vals):
     """
     ONLY USE TO CONSTRUCT BASE TYPES!
     """
-    return _new_vinst(List, vals)
+    return _new_pobj(List, vals)
 
 def _mkstr(s):
     """
     ONLY USE TO CONSTRUCT BASE TYPES!
+    DO NOT USE OUTSIDE classes.py!!!
     """
-    return _new_vinst(Str, s)
+    return _new_pobj(Str, s)
 
 def _mkobj(props):
     """
     used to create System, System.types, tokens
     """
-    o = Instance(Object)        # XXX was JSObject
-    o.props.update(props)
+    o = CObject(Object)
+    o.props.update(props)       # copy, so System.types is module local
     return o
 
 def mkstr(s, scope):
@@ -363,7 +366,7 @@ def defclass(metaclass, name, supers=None, publish=True):
        ie; supplies "new" method)
     `supers` is Python list of superclass Class objects
     """
-    class_obj = Instance(metaclass)
+    class_obj = CObject(metaclass)
     if Str:                     # Str class available?
         class_obj.setprop(const.NAME, _mkstr(name))
     else:
@@ -385,19 +388,19 @@ Class.setclass(Class)             # circular! Class.new creates a new Class!
 
 Object = defclass(Class, 'Object', []) # root Class
 
-# metaclass for VInstances
-VClass = defclass(Class, 'VClass', [Class])
+# metaclass for PObjects
+PClass = defclass(Class, 'PClass', [Class])
 
 # wrappers, with .value
-# make children of VObject (XXX private 'new' using new_vinst?)
-List = defclass(VClass, 'List', [Object]) # subclass of Sequence? FrozenList??
-Str = defclass(VClass, 'Str', [Object])
-Dict  = defclass(VClass, 'Dict', [Object]) # subclass of Mapping? FrozenDict??
-Number = defclass(VClass, 'Number', [Object])
+# make children of VObject (XXX private 'new' using new_pobj?)
+List = defclass(PClass, 'List', [Object]) # subclass of Sequence? FrozenList??
+Str = defclass(PClass, 'Str', [Object])
+Dict  = defclass(PClass, 'Dict', [Object]) # subclass of Mapping? FrozenDict??
+Number = defclass(PClass, 'Number', [Object])
 # XXX own metaclass to return singleton?
-Null = defclass(VClass, 'Null', [Object]) # XXX singleton
+Null = defclass(PClass, 'Null', [Object]) # XXX singleton
 # XXX own metaclass to return doubleton values?
-Bool = defclass(VClass, 'Bool', [Object])
+Bool = defclass(PClass, 'Bool', [Object])
 
 # JS style Object (TEMP):
 JSObject = defclass(Class, 'JSObject', [Object])
@@ -424,11 +427,11 @@ PyVMFunc = defclass(Class, 'PyVMFunc', [Object])
 
 ################
 
-null_value = _new_vinst(Null, None)
+null_value = _new_pobj(Null, None)
 
 # create (only) instances of true/false (a doubleton)!
-true_val = _new_vinst(Bool, True)
-false_val = _new_vinst(Bool, False)
+true_val = _new_pobj(Bool, True)
+false_val = _new_pobj(Bool, False)
 
 ################
 
@@ -469,10 +472,10 @@ def new_inst(vm, this_class, *args):
     """
     default "new" method for Object (and therefore Class)
     makes an instance of this_class
-    Creates a Python Instance, calls this_class's 'init' method with args
+    Creates a Python CObject, calls this_class's 'init' method with args
     """
     # XXX stash Python class to use in a Python attr??????
-    n = Instance(this_class)
+    n = CObject(this_class)
 
     m = find_in_class(n, const.INIT) # returns BoundMethod
     if m and m is not null_value:
@@ -504,7 +507,7 @@ def obj_ne(x, y):
 def _not(x):
     """
     not a pyfunc (may call at any time)
-    takes Instance, returns Instance
+    takes CObject, returns CObject
     """
     return mkbool(not is_true(x))
 
@@ -515,7 +518,7 @@ def obj_not(x):
 
 @pyfunc
 def obj_putprop(l, r, value):
-    # XXX check r is VInstance? Str??
+    # XXX check r is PObject? Str??
     # implement access via descriptors??
     l.setprop(r.value, value)
     return value                # lhsop MUST return value
@@ -595,7 +598,7 @@ def find_op(obj, optype, op):
     `op` is Python string for operator
     NOTE!! Does *NOT* return BoundMethod!!
         called from XxxOpInstrs 99.999% of time
-        (only exception is Instance.invoke)
+        (only exception is CObject.invoke)
     """
     #print("find_op", obj, optype, op)
     c = c0 = obj.getclass()
@@ -728,21 +731,21 @@ Class.setprop(const.BINOPS, _mkdict({
     '(': class_call
 }))
 
-################ VClass -- metaclass for VInstances
-# XXX PClass // PObject
+################ PClass -- metaclass for PObjects
 
 @pyvmfunc
-def new_vinst(vm, this_class, arg=None):
+def new_pobj(vm, this_class, arg=None):
     """
-    'new' method for VClass metaclass (ie; Number.new, Dict.new)
+    'new' method for PClass metaclass (ie; Number.new, Dict.new)
     makes an instance of this_class
     """
     # XXX need different init method for each class to handle arg/set .value!!!
-    raise Exception("new_vinst {} {}".format(this_class, arg))
+    # XXX assert arg (if not None) is instanceof CObject??
+    raise Exception("new_pobj {} {}".format(this_class, arg))
 
     # XXX stash Python class to use in this_class.pyclass Python attr
     # XXX stash Python default arg in this_class.defval Python attr???
-    n = VInstance(this_class, arg) # XXX unwrap??!!!
+    n = CPObject(this_class, arg) # XXX unwrap??!!!
 
     # XXX what to do with arg??
     m = find_in_class(n, const.INIT) # returns BoundMethod
@@ -750,8 +753,8 @@ def new_vinst(vm, this_class, arg=None):
         vmx.invoke_function(m, vm, [arg]) # XXX reuse VM
     return n
 
-VClass.setprop(const.METHODS, _mkdict({
-   const.NEW: new_vinst,
+PClass.setprop(const.METHODS, _mkdict({
+   const.NEW: new_pobj,
 #  const.INIT: class_init,     # Class.new creates new Classes
 }))
 
@@ -781,7 +784,7 @@ JSObject.setprop(const.LHSOPS, _mkdict({
 
 @pyfunc
 def val_len(l):
-    return _new_vinst(Number, len(l.value)) # XXX look up by name?
+    return _new_pobj(Number, len(l.value)) # XXX look up by name?
 
 @pyvmfunc
 def val_str(vm, l):
@@ -938,29 +941,29 @@ List.setprop(const.LHSOPS, _mkdict({
 
 @pyfunc
 def neg(x):
-    return _new_vinst(x.getclass(), -x.value)
+    return _new_pobj(x.getclass(), -x.value)
 
 @pyfunc
 def add(x, y):
-    return _new_vinst(x.getclass(), x.value + y.value)
+    return _new_pobj(x.getclass(), x.value + y.value)
 
 @pyfunc
 def sub(x, y):
-    return _new_vinst(x.getclass(), x.value - y.value)
+    return _new_pobj(x.getclass(), x.value - y.value)
 
 @pyfunc
 def mul(x, y):
-    return _new_vinst(x.getclass(), x.value * y.value)
+    return _new_pobj(x.getclass(), x.value * y.value)
 
 @pyfunc
 def div(x, y):
-    return _new_vinst(x.getclass(), x.value / y.value)
+    return _new_pobj(x.getclass(), x.value / y.value)
 
 # XXX XXX XXX too liberal!!!
 def _eq(l, r):
     """
     call any time (not a pyfunc)
-    takes Instance, returns Instance
+    takes CObject, returns CObject
     """
     l = l.value
     r = r.value                 # XXX str()?
@@ -1046,16 +1049,16 @@ def str_concat(x, y):
         return yv
     if yv == "":
         return xv
-    return _new_vinst(x.getclass(), xv + yv)
+    return _new_pobj(x.getclass(), xv + yv)
 
 @pyfunc
 def str_strip(this):
-    return _new_vinst(this.getclass(), this.value.strip())
+    return _new_pobj(this.getclass(), this.value.strip())
 
 @pyfunc
 def str_get(l, r):
     # XXX check if r is integer
-    return _new_vinst(l.getclass(), l.value[r.value])
+    return _new_pobj(l.getclass(), l.value[r.value])
 
 @pyfunc
 def str_slice(l, a, b=None):
@@ -1065,7 +1068,7 @@ def str_slice(l, a, b=None):
         ret = l.value[av:bv]
     else:
         ret = l.value[av:]
-    return _new_vinst(l.getclass(), ret)
+    return _new_pobj(l.getclass(), ret)
 
 @pyfunc
 def str_str(this):
@@ -1094,7 +1097,7 @@ def str_ne(l, r):
 def str_join(this, arg):
     # XXX check arg is List (or Dict)?
     # XXX each List/key element must be a Str!
-    return _new_vinst(this.getclass(), this.value.join([x.value for x in arg.value]))
+    return _new_pobj(this.getclass(), this.value.join([x.value for x in arg.value]))
 
 Str.setprop(const.METHODS, _mkdict({
     'join': str_join,
@@ -1162,13 +1165,13 @@ def mkbool(val):
 # PyObjects are created by System.pyimport("python_module")
 # and are proxy wrappers around generic/naive Python objects
 
-PyObject = defclass(VClass, const.PYOBJECT, [Object])
+PyObject = defclass(PClass, const.PYOBJECT, [Object])
 
 def unwrap(x):
     """
     recursively unwrap an Object, to pass to PyObject on call
     """
-    if hasattr(x, 'value'):     # faster than isistance(x, VInstance)??
+    if hasattr(x, 'value'):     # faster than isinstance(x, PObject)??
         x = x.value
         if isinstance(x, list):
             return [unwrap(y) for y in x]
@@ -1216,7 +1219,7 @@ PyObject.setprop(const.BINOPS, _mkdict({
 
 def wrap(value, iscope):
     """
-    wrap a Python `value` in a language Instance
+    wrap a Python `value` in a language CObject
     `scope` used to find System types by name
 
     used by vm `lit` and `pyfunc`; type `PyObject`

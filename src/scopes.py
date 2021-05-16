@@ -56,7 +56,7 @@ class Scope:
     def defvar(self, var, value):
         """
         `var` is Python string
-        `value` is Instance
+        `value` is CObject
         """
         # duplicate var is fatal in compiler
         self.vars[var] = value
@@ -73,7 +73,7 @@ class Scope:
     def store(self, name, val):
         """
         name: Python string
-        val: Instance
+        val: CObject
         """
         s = self
         while s:

@@ -68,12 +68,12 @@ def sys_break(x=None):
 
 def getstr(x, vm):              # XXX only used for sys_print
     """
-    return Python string for an interpreter Instance for sys_print
+    return Python string for an interpreter CObject for sys_print
     """
     if isstr(x):                # XXX odd (tree function?)
         return x
 
-    if isinstance(x, classes.Instance):
+    if isinstance(x, classes.CObject):
         s = vmx.invoke_method(x, 'str', vm)
 
         if isstr(s):            # XXX is Python string???
@@ -98,9 +98,9 @@ def sys_error(vm, *args):
 
 def getrepr(x, vm):             # XXX move elsewhere
     """
-    return Python string for an interpreter Instance "repr"
+    return Python string for an interpreter CObject "repr"
     """
-    if isinstance(x, classes.Instance):
+    if isinstance(x, classes.CObject):
         s = vmx.invoke_method(x, 'repr', vm)
         if isstr(s):            # XXX TEMP: COMPLAIN
             return "<XXX %s repr returned str: %s>" % (x.classname(), s)
@@ -160,7 +160,7 @@ def sys_tokenizer(vm, filename, prefix, suffix):
 
 @classes.pyfunc
 def sys_exit(value=0):
-    # XXX check if VInstance?!
+    # XXX check if VCObject?!
     sys.exit(value.value)       # XXX to_int??
 
 ################
@@ -234,7 +234,7 @@ def obj2python_json(x):
         worker function
         """
         # XXX paranoia:
-        if not isinstance(x, classes.Instance):
+        if not isinstance(x, classes.CObject):
             return x
 
         ix = id(x)
@@ -270,7 +270,7 @@ def sys_assemble(vm, tree, srcfile):
     `tree`: List of Lists of VM code
     `srcfile`: source of code
     returns Closure using caller's initial scope
-        (XXX make this a Module method????)
+        (XXX XXX XXX make this a Module method????)
     """
     # convert List of Lists to Python list of lists
     js = obj2python_json(tree)
@@ -290,12 +290,13 @@ def sys_pyimport(vm, module):
     m = importlib.import_module(module.value) # XXX getstr?
     return classes.wrap(m, vm.iscope)         # make PyObject
 
-# XXX create an "auto-import" object? python.sys == pyimport("sys")???
+# XXX create an "auto-import" object? __python.sys == pyimport("sys")???
 
 ################
 
 # used only by import_worker XXX inline?
-# XXX take filename, save (as __file__, or __module__.file??)
+# XXX take filename, save (as __file, or __module.file??)
+# XXX keep Dict of modules by (file)name??  in System.modules???
 def init_module(argv, main=False):
     """
     create namespace and System object (w/o parser)
@@ -305,7 +306,7 @@ def init_module(argv, main=False):
     sys = create_sys_object(scope, argv)
     classes.copy_types(scope, sys) # populate scope
 
-    # put in System.main?? __module__.main???
+    # put in System.main?? __module.main???
     scope.defvar('__main__', classes.mkbool(main))
 
     return scope                # XXX return Module object??
@@ -317,7 +318,8 @@ def load_parser(scope, parser_vmx, trace=False):
     load parser from vmx file into scope's System.parser
     """
     sys_obj = scope.lookup('System')
-    m = import_worker(vmx_file=parser_vmx, main=False, trace=trace, parser=False)
+    m = import_worker(vmx_file=parser_vmx, main=False,
+                      trace=trace, parser=False)
     # XXX check return
 
     # point System.parser at parser module
@@ -408,17 +410,26 @@ def sys_import(filename):
 #       sys_import (System.import function)
 #       load_parser (called from here!)
 # XXX returns JSObject (want Module)
-def import_worker(src_file=None, vmx_file=None, trace=False,
+def import_worker(src_file=None,
+                  vmx_file=None,
+                  main=False,
+                  argv=[],
                   parser=True,
                   parser_vmx=None,
-                  stats=False, trace_parser=False,
-                  main=False, argv=[]):
+                  stats=False,
+                  trace=False,
+                  trace_parser=False):
     """
+    NOTE!!!! ALWAYS PASS ARGS BY NAME!!!
     Takes either `src_file` or `vmx_file` [XXX autodetect by filename?]
-    bool `trace`
-    bool `parser` to create System.parser (False to load parser.vmx)
+        XXX take bare name and try both .xxl and .vmx??
+    `argv`: list of str for command line args
     bool `main` True when loading from command line
-    Python list of `argv` strs from command line
+    bool `parser` to create System.parser (False to load parser.vmx)
+    str `parser_vmx` name of file with parser VM code
+    bool `stats` enable VM stats
+    bool `trace` enable VM trace of user code
+    bool `trace_parser` enable VM trace of parser (obsolete??)
     """
     scope = init_module(argv, main=main) # XXX pass fname(s)?
 
@@ -426,6 +437,8 @@ def import_worker(src_file=None, vmx_file=None, trace=False,
         load_parser(scope,
                     parser_vmx or os.environ.get('XXL_PARSER', 'parser.vmx'),
                     trace_parser)
+
+    # XXX create VM here???
 
     if vmx_file:
         # here (recursively) from load_parser to load parser.vmx!!
@@ -436,6 +449,8 @@ def import_worker(src_file=None, vmx_file=None, trace=False,
             # all callers need to handle properly
             return None
 
+    # NOTE!! copies vars dict; not a live view!
+    #   (System.types needs to be a copy)
     return __obj_create(scope.get_vars()) # XXX want Module
 
 ################################################################
@@ -445,11 +460,14 @@ def create_sys_object(iscope, argv):
     sys_obj = __obj_create({})
     iscope.defvar('System', sys_obj)
 
-    # create System.types object from sys_types (copies values)
-    tt = __obj_create(classes.sys_types) # XXX XXX XXX
+    # create System.types object from sys_types
+    # NOTE!!! copies sys_types dict entries
+    #   so that each module has a private namespace!!!
+    #   **BUT** the referenced Class Objects are all shared(?)!!!
+    tt = __obj_create(classes.sys_types)
     sys_obj.setprop('types', tt)         # XXX XXX top level __classes?
 
-    # "create_sys_type" is now safe!
+    # *** now safe to call "create_sys_type" and "wrap" ***
 
     # debug functions (TEMP?!)
     sys_obj.setprop('break', sys_break) # break to PDB
@@ -465,7 +483,7 @@ def create_sys_object(iscope, argv):
     sys_obj.setprop('tokenizer', sys_tokenizer) # TEMP creates token generator
     sys_obj.setprop('tree', sys_tree) # TEMP!!!
     sys_obj.setprop('vtree', sys_vtree) # TEMP!!!
-    sys_obj.setprop('assemble', sys_assemble)
+    sys_obj.setprop('assemble', sys_assemble) # move to Module?  __module??
 
     # external modules:
     sys_obj.setprop('import', sys_import) # import source module
@@ -500,4 +518,4 @@ def create_sys_type(name, scope, value):
     #print("create_sys_type", name, type(value), value, file=sys.stderr)
     ty = find_sys_type(name, scope)
     # does not call Class 'init' method!
-    return classes._new_vinst(ty, value)
+    return classes._new_pobj(ty, value)

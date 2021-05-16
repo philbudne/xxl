@@ -2,6 +2,11 @@ FIX
 ===
 bootstrap.md -- adding operator similar to adding opcode
 
+test/030-binop-exp.xxl -- subclass Number (and set System.types.Number)
+	rather than patching!!!!
+	when multiple modules/namespaces do this they will need
+		to do obj.subclass_of(original_Number)!!
+
 *** have invoke_function/method use current VM??
 	have CallInstr save_frame (instead of CClosure.invoke)?
 		(all CInstances will need to restore)
@@ -9,8 +14,9 @@ bootstrap.md -- adding operator similar to adding opcode
 	allow tail calls only? Take Python "continuation"?
 	System.assemble
 
-*** BUG: Only VInstances can be used as Dict keys
-	(Dicts currently indexed by Python values)
+*** BUG: Only CPObjects can be used as Dict keys
+	(Dicts currently indexed by Python values,
+	 tho CPObject has proxy __hash__)
 
 ** clean up relops, write tests!!!!!!
 
@@ -57,29 +63,25 @@ str & repr methods (& Str.join)
 CLEANUP
 =======
 handle System.types.Foo.new() -- need 'init' method for each Class?!
-** rename Instance to CObject???
-	(VInstance to VObject -- or PObject?? (and VClass to PClass)???)
-Have PObject have a public value property (method?)???
-Number.init -- take string?
+	Number.init -- take string (and radix?)
 replace [this.]token.id() == X w/ this.check(X)???
 rename System to xxl? __xxl??
-Get rid of PyObjClass and use '(' binop for calls?
 flush __mkobject for:
 	import -- return Module!
 	tokenizer -- return List?
 Do wrapping in CPyFunc/CPyObj?
 
- add Dict keys() & for_each? a generator??
-Object.is method? operator?? Object.ident() method??
+add Dict keys() & for_each? a generator??
 test if implementing VM as chain of if's (on ints)
 	instead step on Instr objects is faster
 Have pyfunc "invoke" method (un)wrap args/results??
 	wrap as tail call
 split up parser.xxl (into pratt,xlparser,vmcode??)
-Make CInstances (more) transparent??
-	CClosure.get_code method??
 Make Scopes transparent??
-	System.scope()?? (need PyScopeFunc)
+	System.scope()??
+	Scope.parent()??
+Make callable objects (more) transparent??
+	CClosure.get{code,scope}??
 implement methods, class members, class methods via descriptors???
 reenable MethodInstr (replace lit/push/./call), avoid BoundMethod
 make native Tokenizer (gonna be slow!)
@@ -94,6 +96,8 @@ make native Tokenizer (gonna be slow!)
 FEATURES (or extensions)
 ========================
 Add iterators?  object w/ next method
+	implement for (var VAR in ITER) extension??
+
 	(return via (break) continuation when exhausted):
     break:
 	while (true) {
@@ -101,23 +105,38 @@ Add iterators?  object w/ next method
 	    ....
 	}
 
-Object: dir() method?? or make props visible as Dict in __props property?
+
+Object: dir() method??
+	props() method return Dict?
 load compressed vmx (JSON) files and/or use some faster serialization library!!
 make obj_get of unknown property an error
 	(depended on by .std lookup)
-	add "have_prop" method? .? operator?!!!
-	has_method??
+	add "has_prop" method? .? operator?!!!
+	Object.has_method method?
 add "undefined" value (initial/default value for vars/args)??
+
 exceptions (using Continuations)
+	Have "try" create scope with "raise" variable.
+	silently pass "raise" variable?
+
 "in" operator for collections?
-	has_item method?
+
 port VM to rpython?!
+
 JS "spread" operator in function arguments ...array
 	(may be used any number of times!)
+
 missing methods (lots!!!)
     Str binop: full relops (require str lhs)
     List slice method
+
 make function name () .... define name in local scope?????
 	close2 patches -- need to make "function foo() {}" a valid expr stmt
+	ALWAYS put name into CClosure for debug/trace???
+
 make a full expression language??
 	is "{" ambiguous?? forbid at "top level"??
+
+add multi-line strings
+
+add docstrings?
