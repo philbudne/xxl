@@ -1,0 +1,33 @@
+// -*-js-*-
+
+// test defining a binary operator
+
+var math = System.pyimport("math");
+
+var p = System.parser.parser;	// active Parser object
+
+// add operator, at precedence higher than * and /
+p.add_infix("Exp", "^", true, 65);
+
+// Subclass Number, adding operator, and use from here on out:
+System.types.Number = Class.new({
+    name: "MyNumber",
+    supers: [System.types.Number],
+    binops: {
+	"^": math.pow
+    }
+});
+
+// first test:
+System.print(2^3);
+
+// higher precedence than division:
+System.print(2^3/2);
+System.print((2^3)/2);		// right
+System.print(2^(3/2));		// wrong
+
+// right associative:
+System.print(2^2^3);
+System.print(2^(2^3));		// right
+System.print((2^2)^3);		// wrong
+
