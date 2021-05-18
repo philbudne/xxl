@@ -892,7 +892,7 @@ def list_pop(l,item=None):
 def list_for_each(vm, l, func):
     # XXX Continuations generated inside 'func' will be fubar
     for item in l.value:
-        vmx.invoke_function(func, vm, [item]) # XXX reuse VM
+        vmx.invoke_function(func, vm, [item])
 
 # XXX supply native version?
 @pyvmfunc
@@ -900,7 +900,7 @@ def list_each_for(vm, l, func): # XXX TEMP until reversed?
     # XXX XXX use backwards counting index (avoid copying list)??
     # XXX Continuations generated inside 'func' will be fubar
     for item in reversed(l.value):
-        vmx.invoke_function(func, vm, [item]) # XXX reuse VM
+        vmx.invoke_function(func, vm, [item])
 
 @pyfunc
 def list_get(l, r):
