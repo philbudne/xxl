@@ -653,7 +653,7 @@ def obj_instance_of(l, c):
 
 Object.setprop(const.METHODS, _mkdict({
     const.INIT: obj_init,
-    'class': obj_getclass,      # TEMP!
+    'class': obj_getclass,
     'getclass': obj_getclass,
     'setclass': obj_setclass,
     'instance_of': obj_instance_of,
@@ -663,7 +663,7 @@ Object.setprop(const.METHODS, _mkdict({
     'repr': obj_repr,
 }))
 Object.setprop(const.BINOPS, _mkdict({
-    '.': obj_getprop,               # same as getprop!!
+    '.': obj_getprop,           # same as getprop method!!
     '..': obj_get_in_supers,
     '===': obj_eq,              # "is"
     '!==': obj_ne,              # "is not"
@@ -702,7 +702,7 @@ def class_init(this_class, props):
         this_class.props[ikey] = val
 
     if const.NAME not in this_class.props:
-        raise Exception("Class.new requires '%s'"  % (metaclass, key))
+        raise Exception("Class.new requires '%s'"  % (metaclass, const.NAME))
 
     # XXX complain if NAME doesn't start with a capitol letter??
 
@@ -750,6 +750,7 @@ def new_pobj(vm, this_class, arg=None):
 
     # XXX stash Python class to use in this_class.pyclass Python attr
     # XXX stash Python default arg in this_class.defval Python attr???
+    #	clever, but doesn't work for subclassing
     n = CPObject(this_class, arg) # XXX unwrap??!!!
 
     # XXX what to do with arg??
@@ -806,6 +807,7 @@ def val_repr(vm, l):
 @pyfunc
 def val_init(l, value):
     # XXX create_sys_type calling w/ Python value!!!
+    assert(isinstance(l, Object))
     l.value = value             # XXX XXX unwrap?
 
 # XXX unused?
