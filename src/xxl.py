@@ -37,7 +37,7 @@ argv = list(sys.argv)           # copy
 argv.pop(0)                     # vmx.py
 
 fname_arg = "src_file"         # import_worker argument name for fname
-stats = trace = trace_parser = help = False
+stats = trace = help = False
 parser = None
 # XXX use real arg parser!
 while argv:
@@ -45,9 +45,6 @@ while argv:
         break
     if argv[0] == '-h':
         help = True
-        argv.pop(0)
-    elif argv[0] == '-T':
-        trace_parser = True
         argv.pop(0)
     elif argv[0] == '-t':
         trace = True
@@ -82,7 +79,6 @@ import_args = {
     "main": True,
     "parser_vmx": parser,
     "stats": stats,
-    "trace": trace,
-    "trace_parser": trace_parser
+    "trace": trace
 }
 system.import_worker(**import_args)

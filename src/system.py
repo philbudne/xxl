@@ -335,39 +335,24 @@ def breakpoint_if_debugging():
     pass
 
 # called only from import_worker
-def parse_and_execute(src, scope, stats, trace, trace_parser):
+#       (which is called both from xxl.py main, and sys_import)
+# could be eliminated by loading a bootstrap.vmx file
+#       and passing in source filename in some systemy place (__module.source)
+def parse_and_execute(src, scope, vm):
     """
     parse `src` file (Python str) and execute one statement at a time
     (allows parser extensions to take effect immediately)
     """
-    assert(isinstance(src, str)) # TEMP -- avoid double wrapping!!!
-
-    vm = vmx.VM(scope)
-
     sys_obj = scope.lookup(SYSTEM)
     sys_parser = sys_obj.getprop(SYS_PARSER) # System.parser
     pe = sys_parser.getprop('parse_and_execute')
 
+    assert(isinstance(src, str)) # TEMP -- avoid double wrapping!!!
     src_str = classes.mkstr(src, scope)
-    try:
-        vmx.invoke_function(pe, vm, [sys_obj, src_str], trace)
-    except SystemExit:
-        pass
-    except vmx.VMError as e:
-        # NOTE: displays VM Instr
-        sys.stderr.write("VM Error @ {}: {}\n".format(vm.ir, e))
-        # XXX dump VM registers?
-        vm.backtrace()
-        breakpoint_if_debugging()
-        return False
-    except Exception as e:
-        # NOTE: just displays "where"
-        sys.stderr.write("Error @ {}:{}: {}\n".format(
-            vm.ir.fn, vm.ir.where, e))
-        vm.backtrace()
-        breakpoint_if_debugging()
-        return False
-    return True
+
+    vmx.invoke_function(pe, vm, [sys_obj, src_str])
+
+################
 
 @classes.pyfunc
 def sys_import(filename):
@@ -400,8 +385,7 @@ def import_worker(src_file=None,
                   parser=True,
                   parser_vmx=None,
                   stats=False,
-                  trace=False,
-                  trace_parser=False):
+                  trace=False):
     """
     NOTE!!!! ALWAYS PASS ARGS BY NAME!!!
     Takes either `src_file` or `vmx_file` [XXX autodetect by filename?]
@@ -412,26 +396,45 @@ def import_worker(src_file=None,
     str `parser_vmx` name of file with parser VM code
     bool `stats` enable VM stats
     bool `trace` enable VM trace of user code
-    bool `trace_parser` enable VM trace of parser (obsolete??)
     """
     scope = init_module(argv, main=main) # XXX pass fname(s)?
 
     if parser:
+        # NOTE!!! Calls this routine recursively, w/ parser=False & vmx_file
         load_parser(scope,
-                    parser_vmx or os.environ.get('XXL_PARSER', 'parser.vmx'),
-                    trace_parser)
+                    parser_vmx or os.environ.get('XXL_PARSER', 'parser.vmx'))
 
-    # XXX create VM here???
+    vm = vmx.VM(scope, stats=stats, trace=trace)
+    try:
+        if vmx_file:
+            # here (recursively) from load_parser to load parser.vmx!!
+            # and from command line w/ -x
 
-    if vmx_file:
-        # here (recursively) from load_parser to load parser.vmx!!
-        vmx.load_and_run_vmx(vmx_file, scope, stats, trace)
-    else:
-        # parse source using System.parser.parse() -- loaded above!
-        if not parse_and_execute(src_file, scope, stats, trace, trace_parser):
-            # all callers need to handle properly
-            return None
-
+            # XXX handle Exception from load_vm_json for clarity??
+            code = vmx.load_vm_json(vmx_file, scope)
+            vm.start(code, scope)
+        else:
+            # parse source using System.parser -- loaded above!
+            # XXX could load bootstrap.vmx?!
+            parse_and_execute(src_file, scope, vm)
+    except SystemExit:          # from os.exit
+        raise
+    except vmx.VMError as e:
+        # NOTE: displays VM Instr
+        sys.stderr.write("VM Error @ {}: {}\n".format(vm.ir, e))
+        # XXX dump VM registers?
+        vm.backtrace()
+        breakpoint_if_debugging()
+        return classes.null_value
+    except Exception as e:
+        # NOTE: just displays "where"
+        if vm.ir:
+            sys.stderr.write("Error @ {}:{}: {}\n".format(
+                vm.ir.fn, vm.ir.where, e))
+        else:
+            raise
+        vm.backtrace()
+        breakpoint_if_debugging()
     # NOTE!! copies vars dict; not a live view!
     #   (System.types needs to be a copy)
     return __obj_create(scope.get_vars()) # XXX want Module

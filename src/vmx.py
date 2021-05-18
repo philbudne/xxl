@@ -56,9 +56,9 @@ class VM:
     """
     __slots__ = ['run', 'ac', 'sp', 'cb', 'pc', 'ir',
                  'scope', 'fp', 'temp', 'args', 'iscope',
-                 'op_count', 'op_time']
+                 'op_count', 'op_time', 'stats', 'trace']
 
-    def __init__(self, iscope):
+    def __init__(self, iscope, stats, trace):
         self.run = False
         self.ac = 0
         self.sp = None          # Stack Pointer (value, next) tuples
@@ -69,6 +69,8 @@ class VM:
         self.fp = None          # Frame pointer (for return)
         self.temp = None        # holds new dict/array
         self.iscope = iscope    # initial scope (for pyscope functions)
+        self.stats = stats      # bool
+        self.trace = trace      # bool
 
         # argument list from last call/method/op invocation
         # User defined functions (Python CClosure) pick up args with
@@ -82,20 +84,23 @@ class VM:
         self.pc = 0
         self.cb = code
         self.scope = scope
+
+        if self.stats:
+            return self._start_stats()
+        elif self.trace:
+            return self._start_trace()
+
         while self.run:
             # XXX might be faster (avoid indexing a list) to
             #   create a "next" pointer on VM code "read-in"
-            #   (could also eliminate unconditional "jrst")?
+            #   (run list in reverse;
+            #    could also eliminate unconditional "jrst"?!)
             # NOTE! self.ir saved for debug.
             self.ir = ir = self.cb[self.pc] # instruction register
             self.pc += 1        # jumps will overwrite
             ir.step(self)       # execute instruction
 
-    def start_trace(self, code, scope):
-        self.pc = 0
-        self.cb = code
-        self.scope = scope
-        self.run = True         # cleared by 'exit' instr
+    def _start_trace(self):
         while self.run:
             # NOTE! self.ir for debug.
             self.ir = ir = self.cb[self.pc] # instruction register
@@ -103,25 +108,21 @@ class VM:
             ir.step(self)       # execute instruction
             print(ir, self.ac)
 
-    def start_stats(self, code, scope, trace):
+    def _start_stats(self):
         # stats
         op_count = {}
         op_time = {}
         for op in instr_class_by_name.keys():
             op_count[op] = op_time[op] = 0
-        self.pc = 0
-        self.cb = code
-        self.scope = scope
-        self.run = True         # cleared by 'exit' instr
+        trace = self.trace
         while self.run:
             self.ir = ir = self.cb[self.pc] # instruction register
             self.pc += 1        # jumps will overwrite
             t0 = time.time()
             ir.step(self)       # execute instruction
-            # XXX save in history buf
+            # XXX save in history buf??
             if trace:
                 print(ir, self.ac)
-                #self.dump_stack()
             op_count[ir.name] += 1
             op_time[ir.name] += time.time() - t0
 
@@ -630,7 +631,7 @@ class NewInstr(VMInstr1):
 ################
 
 # used for init, str, repr
-def invoke_method(obj, method, vm, args=[], trace=False):
+def invoke_method(obj, method, vm, args=[]):
     """
     call an `obj` method from Python
     `method` is Python string
@@ -641,9 +642,9 @@ def invoke_method(obj, method, vm, args=[], trace=False):
     m = classes.find_in_class(obj, method)
     if not m or m is classes.null_value:
         raise Exception("method %s not found" % method)
-    return invoke_function(m, vm, args, trace)
+    return invoke_function(m, vm, args)
 
-def invoke_function(func, vm, args=[], trace=False):
+def invoke_function(func, vm, args=[]):
     """
     `func` is CObject to be called
     `args` is Python list of CObjects
@@ -663,23 +664,20 @@ def invoke_function(func, vm, args=[], trace=False):
             ret = func.func(*args)
         return ret
 
+    # XXX XXX XXX XXX execute in caller VM for traceback?!
+    # XXX push_frame, and ?????
+    vm2 = VM(vm.iscope, stats=vm.stats, trace=vm.trace)
+
+    # XXX could have a version of CallInstr that takes vm.args directly
+    for arg in reversed(args):
+        vm2.push(arg)
+    vm2.ac = func               # CClosure, etc....
+
     fn = 'vmx.py'
     where = "invoke %s" % func
     code = [CallInstr(None, fn, where, len(args)), ExitInstr(None, fn, where)]
 
-    # XXX execute in caller VM for traceback?!
-    # XXX push_frame, and ?????
-
-    vm2 = VM(vm.iscope)         # scope for type lookup XXX use vm!!!
-    # XXX could have a version of CallInstr that takes vm.args directly
-    for arg in reversed(args):
-        vm2.push(arg)
-    vm2.ac = func
-    # XXX wrap in try to display errors in closures invoked from Python!!!
-    if trace:
-        vm2.start_trace(code, vm.iscope)
-    else:
-        vm2.start(code, vm.iscope)
+    vm2.start(code, vm.iscope)
     return vm2.ac
 
 ################
@@ -705,7 +703,7 @@ def convert_instrs(il, iscope, fn):
     """
     return [convert_one_instr(x, iscope, fn) for x in il]
 
-# called only by load_and_run_vmx (called by system.import_worker)
+# called only by system.import_worker
 def load_vm_json(fname, iscope):
     with open(fname) as f:
         l = f.readline()
@@ -719,33 +717,3 @@ def load_vm_json(fname, iscope):
         j = json.load(f)
 
     return convert_instrs(j, iscope, metadata.get('fn'))
-
-################
-
-# called only by load_and_run_vmx
-#       (used by import_worker to load/run parser.vmx
-#        and command line "-x")
-def run_code(code, scope, stats, trace):
-    vm = VM(scope)
-
-    try:
-        if stats:
-            vm.start_stats(code, scope, trace)
-        elif trace:
-            vm.start_trace(code, scope)
-        else:
-            vm.start(code, scope)
-    except SystemExit:
-        raise                   # pass up w/o message
-    except:
-        sys.stderr.write("VM Error @ {}:{}".format(vm.ir.fn, vm.ir.where))
-        raise                   # make a mess
-
-# used by system.import_worker
-#       1. to load parser.vmx
-#       2. from command line "-x" option, to run a .vmx file
-def load_and_run_vmx(vmx_file, scope, stats, trace):
-    # note: both functions below only called from here,
-    # but it's clearer this way.
-    code = load_vm_json(vmx_file, scope)
-    run_code(code, scope, stats, trace)
