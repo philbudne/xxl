@@ -1311,9 +1311,11 @@ var Parser = Class.new({
 	    t.label = label;	// attach label (if any) to LBrace
 	    return(t.std());
 	},
-	start_parse: function (this, fname) {
+	start_parse: function (this, fname) { // get ready to parse
 	    this.scope = this.Scope.new(null);
-	    this.get_token = System.tokenizer(fname, '=<>!+-*&|/%^.', '=<>&|.'); // returns generator
+
+	    // returns generator of Objects, and then null
+	    this.get_token = System.tokenizer(fname, '=<>!+-*&|/%^.', '=<>&|.');
 	    this.token = null;	// current Symbol object
 
 	    var predef = function (name) { // XXX make a base class method?
@@ -1330,20 +1332,63 @@ var Parser = Class.new({
 	    predef("true");
 	    predef("__main__");
 				   
-	    this.advance();	// prime the pump
+	    this.advance();	// prime the pump (load this.token)
 	},
 	parse: function (this, fname) {	// parse whole file
 	    this.start_parse(fname);
 	    var s = this.statements();
 	    this.advance("(end)"); // p.END?
 	    this.scope = this.scope.pop();
-	    return(s);
+	    return(s);		// return list of statement ASTs
 	}
     } // Parser methods
 });
 
 ////////////////
-// all of the following are "well known" symbols for system.py:
+// THE parse/generate/execute loop!!!
+// parses a single statement, generates code, and runs it in the initial scope
+//
+// called by system.py parse_and_execute (from import_worker) to run a source file
+// passed System object from module being parsed/executed
+// doesn't need to be in this file! move to "bootstrap"??
+
+var parse_and_execute = function (sys, fname) {
+    var p = sys.parser.parser = sys.parser.Parser.new();
+    p.start_parse(fname);
+    while (!p.end()) {
+	// parse single statement into abstact syntax tree of Symbols
+	var ast = p.statement();
+
+	// generate VM code
+	var vmcode = sys.parser.VMCode.new();
+	ast.gen(vmcode);
+	vmcode.emit_return(ast); // XXX force return, not exit
+	var insts = vmcode.finish(); // List of instruction Lists
+
+	// generate Closure (w/ initial scope)
+	var f = sys.assemble(insts, fname);
+
+	// run statement
+	f();
+    }
+}; // parse_and_execute
+
+////////////////
+// XXX XXX remove this and put in compile.xxl
+//	(regression test will need to do "-P x.vmx")
+// compile an XXL file, return VMX (VM metadata and code) JSON
+// for regression testing, creating .vmx files (esp. parser.vmx!)
+
+// NOTE!
+//	compiling test programs to a .vmx file w/
+//	"./xxl.py parser.xxl foo.xxl > foo.vmx"
+//	and running it w/ "xxl.py -t -x foo.vmx args ...."
+//	traces JUST the execution of your program,
+//	since the parser (parse_and_execute) is not run.
+//
+//	And makes it easier to set breakpoints in the VM
+//	(again, since the compiler isn't being invoked)
+//	although you can always call System.break in your program.
 
 var gen = function (stmts) {	// tree is list of top level stmts/exprs
     var vmcode = VMCode.new();
@@ -1351,57 +1396,37 @@ var gen = function (stmts) {	// tree is list of top level stmts/exprs
     return(vmcode.finish(null));
 }; // gen()
 
-//var parser = Parser.new();
-//var parse = parser.parse;
-
-////////////////
-
-var parse_and_execute = function (sys, fname) {
-    var p = sys.parser.parser = sys.parser.Parser.new();
-    p.start_parse(fname);
-    while (!p.end()) {
-	var ast = p.statement();
-
-	var vmcode = sys.parser.VMCode.new();
-	vmcode.gen_stmts([ast]);
-	vmcode.emit_return(ast); // XXX force return, not exit
-	var insts = vmcode.finish();
-
-	var f = sys.assemble(insts, fname); // returns Closure
-	f();
-    }
-}; // parse_and_execute
-
 var compile = function (fname) {
     var p = Parser.new();
-    var result = p.parse(fname);
-    // XXX take option to not call gen (dump AST)
-    // XXX maybe option to serialize in a format
-    //	that loads faster than JSON????
-    result = gen(result);
+
+    // get list of abstract syntax trees (of Symbols)
+    // (one per statement)
+    // XXX take option to just dump ASTs?
+    var asts = p.parse(fname);
+
+    // generate VM code (as List of instruction Lists)
+    var code = gen(asts);
 
     // create metadata line:
     var py_os = System.pyimport("os");
     var py_json = System.pyimport("json");
     var stat = py_os.stat(fname);
     // wanted "at" & compilation time, but breaks regression test!
+    //	XXX maybe they should ignore first line?
+    //		depends on Python 3.6 dict ordering!!!!
     var d = {v: 1.0,
 	     fn: fname,
 	     mt: stat.st_mtime,
 	     sz: stat.st_size};
-    return(py_json.dumps(d) + "\n" +
-	   System.vtree(result, fname));
+    var meta_json = py_json.dumps(d) + "\n";
+
+    // get code as JSON string
+    // XXX maybe option to serialize in a format
+    //	that loads faster than JSON????
+    var code_json = System.vtree(code, fname);
+
+    return(meta_json + code_json); // return as List??
 }; // compile
-
-////////////////
-// for regression testing, creating .vmx files (esp. parser.vmx!)
-
-// NOTE!
-//	compiling test programs to a .vmx file
-//	running it w/ "xxl.py -t -x foo.vmx args ...."
-//	makes it easier to set pdb breakpoints in VM
-//	since parser is not run on source file!
-//	(tho you can always call System.break in your program)
 
 if (__main__) {			
     if (System.argv.len() < 1) {
