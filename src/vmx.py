@@ -224,11 +224,14 @@ class VMInstr0(object):
         self.fn = fn
         self.where = where
 
+    def fn_where(self):         # for trace
+        return "%s:%s" % (self.fn, self.where)
+
     def __repr__(self):
         return str(self.json())
 
     def json(self):
-        return [self.where, self.name]
+        return [self.fn_where(), self.name]
 
     def step(self, vm):
         raise VMError("'%s' has no step method" % type(self).__name__)
@@ -244,7 +247,7 @@ class VMInstr1(VMInstr0):
         self.value = value
 
     def json(self):
-        return [self.where, self.name, self.value]
+        return [self.fn_where(), self.name, self.value]
 
 class VMInstr2(VMInstr0):
     """
@@ -258,7 +261,7 @@ class VMInstr2(VMInstr0):
         self.v2 = v2
 
     def json(self):
-        return [self.where, self.name, self.v1, self.v2]
+        return [self.fn_where(), self.name, self.v1, self.v2]
 
 @reginstr
 class LitInstr(VMInstr1):
@@ -393,12 +396,9 @@ class CloseInstr(VMInstr1):
     inst.value contains VM code (as Python list of VMInstrs)
     """
     name = "close"
-    __slots__ = ['fn', 'where', 'value']
 
     def __init__(self, iscope, fn, where, value):
-        self.fn = fn
-        self.where = where
-        self.value = convert_instrs(value, iscope, fn)
+        super().__init__(iscope, fn, where, convert_instrs(value, iscope, fn))
 
     def step(self, vm):
         vm.ac = classes.CClosure(self.value, vm.scope)
@@ -492,13 +492,11 @@ class ArgsInstr(VMInstr1):
 
     def step(self, vm):
         if len(vm.args) > len(self.value):
-            # XXX pass remaining args to optional *arg in function decl!!
-            # (pass name as second arg to instr); need to wrap in List.
             # NOTE: Exception: a user error!
             raise Exception("%s: too many arguments. got %d, expected %d" % \
                             (self.where, len(vm.args), len(self.value)))
-        # NOTE: scope.func_scope() creates a cactus stack of scopes
-        #       func_scope defines 'return' as a Continuation to prev frame
+        # NOTE: scope.func_scope() creates a cactus stack of scopes;
+        #       defines 'return' as a Continuation to prev frame
         vm.scope = vm.scope.func_scope(vm.fp)
         for formal in self.value:  # loop for formals
             if vm.args:            # actuals left?
@@ -650,8 +648,6 @@ def invoke_function(func, vm, args=[], trace=False):
     `func` is CObject to be called
     `args` is Python list of CObjects
     """
-    #print("invoke_function", closure)
-
     if isinstance(func, classes.CPyFunc): # shortcut for Python, no VM needed
         # similar mess inside CPyFunc.invoke
         n = len(args)
@@ -681,9 +677,9 @@ def invoke_function(func, vm, args=[], trace=False):
     vm2.ac = func
     # XXX wrap in try to display errors in closures invoked from Python!!!
     if trace:
-        vm2.start_trace(code, vm.scope)
+        vm2.start_trace(code, vm.iscope)
     else:
-        vm2.start(code, vm.scope)
+        vm2.start(code, vm.iscope)
     return vm2.ac
 
 ################
@@ -691,15 +687,23 @@ def invoke_function(func, vm, args=[], trace=False):
 # (this is the .vmx file assembler!)
 
 def convert_one_instr(i, iscope, fn):
+    """
+    take single instruction in JSON form and assemble.
+    i[0] is "line:char"
+    i[1] is opcode
+    fn is filename
+    """
     op = i.pop(1)
     # create new instruction instance
     return instr_class_by_name[op](iscope, fn, *i)
 
-def convert_instrs(l, iscope, fn):
+def convert_instrs(il, iscope, fn):
     """
+    assemble a list of instructions in JSON form
+    fn is filename
     used by CloseInstr and load_vm_json
     """
-    return [convert_one_instr(x, iscope, fn) for x in l]
+    return [convert_one_instr(x, iscope, fn) for x in il]
 
 # called only by load_and_run_vmx (called by system.import_worker)
 def load_vm_json(fname, iscope):
@@ -711,6 +715,7 @@ def load_vm_json(fname, iscope):
         # parse metadata
         metadata = json.loads(l.strip())
 
+        # load list of instructions
         j = json.load(f)
 
     return convert_instrs(j, iscope, metadata.get('fn'))

@@ -568,7 +568,13 @@ var PrattParser = Class.new({
 		    }
 		}
 	    }); // Prefix
-	} // init method
+	}, // init method
+
+	end: function (this) {
+	    return(this.token
+		   && (this.token.id() == "}"
+		       || this.token.id() == "(end)")); // this.END?
+	}
     } // methods
 }); // PrattParser
 
@@ -1282,8 +1288,7 @@ var Parser = Class.new({
 	    var s;
 	  leave_while:
 	    while (true) {
-		if (this.token.id() == "}"
-		    || this.token.id() == "(end)") { // this.END?
+		if (this.end()) {
 		    leave_while();
 		}
 		s = this.statement();
@@ -1346,17 +1351,47 @@ var gen = function (stmts) {	// tree is list of top level stmts/exprs
     return(vmcode.finish(null));
 }; // gen()
 
-var parser = Parser.new();
-var parse = parser.parse;
+//var parser = Parser.new();
+//var parse = parser.parse;
 
-var parse_and_gen_one_stmt = function (p) { // p is parser instance
-    if (p.token
-	&& (p.token.id() == "}"
-	    || p.token.id() == "(end)")) { // parser.END?
-	return(null);
+////////////////
+
+var parse_and_execute = function (sys, fname) {
+    var p = sys.parser.parser = sys.parser.Parser.new();
+    p.start_parse(fname);
+    while (!p.end()) {
+	var ast = p.statement();
+
+	var vmcode = sys.parser.VMCode.new();
+	vmcode.gen_stmts([ast]);
+	vmcode.emit_return(ast); // XXX force return, not exit
+	var insts = vmcode.finish();
+
+	var f = sys.assemble(insts, fname); // returns Closure
+	f();
     }
-    return(gen([p.statement()]));
-};
+}; // parse_and_execute
+
+var compile = function (fname) {
+    var p = Parser.new();
+    var result = p.parse(fname);
+    // XXX take option to not call gen (dump AST)
+    // XXX maybe option to serialize in a format
+    //	that loads faster than JSON????
+    result = gen(result);
+
+    // create metadata line:
+    var py_os = System.pyimport("os");
+    var py_json = System.pyimport("json");
+    var stat = py_os.stat(fname);
+    // wanted "at" & compilation time, but breaks regression test!
+    var d = {v: 1.0,
+	     fn: fname,
+	     mt: stat.st_mtime,
+	     sz: stat.st_size};
+    return(py_json.dumps(d) + "\n" +
+	   System.vtree(result, fname));
+}; // compile
 
 ////////////////
 // for regression testing, creating .vmx files (esp. parser.vmx!)
@@ -1374,25 +1409,7 @@ if (__main__) {
 	System.exit(1);
     }
     else {
-	var p = Parser.new();
-	var fname = System.argv[0];
-	var result = p.parse(fname);
-	// XXX take option to not call gen (dump AST)
-	// XXX maybe option to serialize in a format
-	//	that loads faster than JSON????
-	result = gen(result);
-
-	// create metadata line:
-	var py_os = System.pyimport("os");
-	var py_json = System.pyimport("json");
-	var stat = py_os.stat(fname);
-	// wanted "at" & compilation time, but breaks regression test!
-	var d = {v: 1.0,
-		 fn: fname,
-		 mt: stat.st_mtime,
-		 sz: stat.st_size};
-	System.print(py_json.dumps(d));
-	System.print(System.vtree(result, fname));
+	System.print(compile(System.argv[0]));
 	System.exit(0);
     }
 }

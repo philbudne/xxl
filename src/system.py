@@ -127,7 +127,9 @@ def sys_tokenizer(vm, filename, prefix, suffix):
     returns Objects, and then null
     """
     import jslex
+    # XXX assert(isinstance(filename, classes.CPObject))??
     if isstr(filename): # XXX XXX here from parser.xxl?
+        print("XXX TEMP sys_tokenizer got str", filename)
         fnstr = filename
     else:
         fnstr = filename.value # XXX getstr()?
@@ -333,58 +335,36 @@ def breakpoint_if_debugging():
 # called only from import_worker
 def parse_and_execute(src, scope, stats, trace, trace_parser):
     """
-    parse `src` file and execute one statement at a time
+    parse `src` file (Python str) and execute one statement at a time
     (allows parser extensions to take effect immediately)
     """
-    # get instance of Parser object visible as System.parser.parser
-    sys_obj = scope.lookup(SYSTEM)
-    sys_parser = sys_obj.getprop(SYS_PARSER) # System.parser
-    parser_obj = sys_parser.getprop('parser'); # Parser instance
-
-    # XXX create a VM and reuse it for both parsing and running!
-    #   have a System function to take "VM code" (as List of Lists)
-    #   and return a Closure that can be called
-    #   so all of the below runs "natively"
+    assert(isinstance(src, str)) # TEMP -- avoid double wrapping!!!
 
     vm = vmx.VM(scope)
 
-    vmx.invoke_method(parser_obj, 'start_parse', vm, [src], trace)
+    sys_obj = scope.lookup(SYSTEM)
+    sys_parser = sys_obj.getprop(SYS_PARSER) # System.parser
+    pe = sys_parser.getprop('parse_and_execute')
 
-    # top level function, takes parser object, returns List or null
-    # XXX call gen inside loop, appending to same code block!?
-    p1 = sys_parser.getprop('parse_and_gen_one_stmt')
-
-    while True:
-        # run "parse_and_gen_one_stmt", turn into Python list of lists:
-        js = obj2python_json(
-            vmx.invoke_function(p1, vm, [parser_obj], trace_parser))
-
-        if not js:              # need to confirm EOF?
-            break
-
-        # convert into Python list of Instrs (scope for type name lookup)
-        code = vmx.convert_instrs(js, scope, src)
-        try:
-            if trace:
-                vm.start_trace(code, scope)
-            else:
-                vm.start(code, scope)
-        except SystemExit:
-            pass
-        except vmx.VMError as e:
-            # NOTE: displays VM Instr
-            sys.stderr.write("VM Error @ {}: {}\n".format(vm.ir, e))
-            # XXX dump VM registers?
-            vm.backtrace()
-            breakpoint_if_debugging()
-            return False
-        except Exception as e:
-            # NOTE: just displays "where"
-            sys.stderr.write("Error @ {}:{}: {}\n".format(
-                vm.ir.fn, vm.ir.where, e))
-            vm.backtrace()
-            breakpoint_if_debugging()
-            return False
+    src_str = classes.mkstr(src, scope)
+    try:
+        vmx.invoke_function(pe, vm, [sys_obj, src_str], trace)
+    except SystemExit:
+        pass
+    except vmx.VMError as e:
+        # NOTE: displays VM Instr
+        sys.stderr.write("VM Error @ {}: {}\n".format(vm.ir, e))
+        # XXX dump VM registers?
+        vm.backtrace()
+        breakpoint_if_debugging()
+        return False
+    except Exception as e:
+        # NOTE: just displays "where"
+        sys.stderr.write("Error @ {}:{}: {}\n".format(
+            vm.ir.fn, vm.ir.where, e))
+        vm.backtrace()
+        breakpoint_if_debugging()
+        return False
     return True
 
 @classes.pyfunc
@@ -398,7 +378,7 @@ def sys_import(filename):
     # XXX take filename w/o extension?????
     # XXX search for .vmx file?
     # XXX propogate trace from caller??
-    mod = import_worker(src_file=filename)
+    mod = import_worker(src_file=filename.value) # XXX getstr???
     if mod is None:
         Exception("import failed")
 
@@ -507,10 +487,9 @@ def find_sys_type(name, scope):
                 return ty
     raise Exception("cannot find %s.%s.%s" % (SYSTEM, SYS_TYPES, name))
 
-# create an instance of a type using System.types.NAME
 def create_sys_type(name, scope, value):
     """
-    Create an Object by type name
+    Create an Object of Class `name`
     `name` is Python string for a system type (System.types.name)
     `scope` is used to find System object
     `value` is Python value to wrap
@@ -518,5 +497,5 @@ def create_sys_type(name, scope, value):
     #import sys
     #print("create_sys_type", name, type(value), value, file=sys.stderr)
     ty = find_sys_type(name, scope)
-    # does not call Class 'init' method!
+    # does not call Class 'init' method -- would need an Object as argument!!
     return classes._new_pobj(ty, value)
