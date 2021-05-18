@@ -7,6 +7,8 @@ double file names in exceptions:
 
 bootstrap.md -- adding operator similar to adding opcode
 
+move end() to Parser()?
+
 *** Only ever create one VM, have one try/start/except!!!
 
 *** have invoke_function/method use current VM??
