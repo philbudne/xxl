@@ -1314,7 +1314,8 @@ var Parser = Class.new({
 	start_parse: function (this, fname) { // get ready to parse
 	    this.scope = this.Scope.new(null);
 
-	    // returns generator of Objects, and then null
+	    // returns generator which returns:
+	    // Objects  w/ type, value & where properties, and then null
 	    this.get_token = System.tokenizer(fname, '=<>!+-*&|/%^.', '=<>&|.');
 	    this.token = null;	// current Symbol object
 
