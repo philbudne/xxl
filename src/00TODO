@@ -1,6 +1,13 @@
 FIX
 ===
+double file names in exceptions:
+	parse_and_gen_one output has filename
+
+<Closure: WHERE> just shows line:char
+
 bootstrap.md -- adding operator similar to adding opcode
+
+*** Only ever create one VM, have one try/start/except!!!
 
 *** have invoke_function/method use current VM??
 	have CallInstr save_frame (instead of CClosure.invoke)?
@@ -18,6 +25,9 @@ bootstrap.md -- adding operator similar to adding opcode
 ** add .git/pre-commit check?
 
 ** -s (stats) broken??
+
+* regression test depends on order dicts (Python 3.6)
+	remove first line (and add back compile time?!)
 
 run "__extensions__" (pass importer's initial scope? iscope.System??)
 	(unless requested not to!)
@@ -57,6 +67,8 @@ str & repr methods (& Str.join)
 
 CLEANUP
 =======
+"make update_parser"?  Have parser out of data message tell you to run it????
+Object "getstr()" method for PyFuncs, or utility function????
 handle System.types.Foo.new() -- need 'init' method for each Class?!
 	Number.init -- take string (and radix?)
 replace [this.]token.id() == X w/ this.check(X)???
