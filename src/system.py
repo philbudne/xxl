@@ -143,11 +143,13 @@ def sys_tokenizer(vm, filename, prefix, suffix):
         """
         generator function, wrapper around jslex.tokenize
         """
+        # find_sys_types doesn't like to return "null_value"
+        # XXX just uses classes.null_value???
+        null = vm.iscope.lookup(SYSTEM).getprop(SYS_TYPES).getprop('null')
         try:
             t = next(generator)
             if not t:
-                # find_sys_types doesn't like to return "null_value"
-                return vm.iscope.lookup(SYSTEM).getprop(SYS_TYPES).getprop('null')
+                return null
             where = "%s:%s:%s" % (fnstr, t.lineno, t.from_)
             return __obj_create({ # XXX create a Token
                 'type': classes.mkstr(t.type_, vm.iscope),
