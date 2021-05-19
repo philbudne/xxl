@@ -432,7 +432,7 @@ def import_worker(src_file=None,
             sys.stderr.write("Error @ {}:{}: {}\n".format(
                 vm.ir.fn, vm.ir.where, e))
         else:
-            raise
+            sys.stderr.write("Error @ ???: {}\n".format(e))
         vm.backtrace()
         breakpoint_if_debugging()
     # NOTE!! copies vars dict; not a live view!
