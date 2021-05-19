@@ -140,9 +140,12 @@ class VM:
                 ratio = ptime/pcount
             else:
                 ratio = 0
-            print(op, pcount, ptime, ratio) # XXX send to stderr
+            print(op, pcount, ptime, ratio) # XXX send to stderr? file??
 
     def dump_stack(self):
+        """
+        dump (call argument) stack for debugging
+        """
         t = self.sp
         while t:
             print("  ", t[0])
@@ -153,7 +156,7 @@ class VM:
         #       would need to call restore_frame inside all .invoke methods??
         #       would allow Python callees to use same VM???
         self.fp = Frame(cb=self.cb, pc=self.pc, scope=self.scope, fp=self.fp,
-                        where=self.ir.where # for backtrace (maybe args too?)
+                        where=self.ir.where # for backtrace (save fn too?)
         )
 
     def backtrace(self):        # XXX take file to write to?
