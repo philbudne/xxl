@@ -176,7 +176,8 @@ class CContinuation(CObject):
         self.fp = fp
 
     def __repr__(self):
-        return "<Continuation: %s>" % self.fp.cb[self.fp.pc].where
+        i = self.fp.cb[self.fp.pc]
+        return "<Continuation: %s:%s>" % (i.fn, i.where)
         
     def invoke(self, vm):
         vm.restore_frame(self.fp) # just like ReturnInstr
@@ -199,7 +200,8 @@ class CClosure(CObject):
         self.scope = scope
 
     def __repr__(self):
-        return "<Closure: %s>" % self.code[0].where
+        i = self.code[0]
+        return "<Closure: %s:%s>" % (i.fn, i.where)
         
     def invoke(self, vm):
         vm.save_frame()
