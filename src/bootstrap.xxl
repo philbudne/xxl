@@ -1,0 +1,29 @@
+// -*-js-*-
+
+// The pre-compiled version of this file (bootstrap.vmx) is loaded
+// into a new module namespace to compile and execute the source file
+// being loaded.
+
+if (System.parser.filename) {
+    var fname = System.parser.filename; // set by system.py:load_parser
+    var p = System.parser.Parser.new();
+    System.parser.parser = p;	// make visible to extensions
+
+    p.start_parse(fname);
+    while (!p.end()) {
+	// parse single statement into abstact syntax tree of Symbols
+	var ast = p.statement();
+
+	// generate VM code
+	var vmcode = System.parser.VMCode.new();
+	ast.gen(vmcode);
+	vmcode.emit_return(ast); // XXX force return, not exit
+	var insts = vmcode.finish(); // List of instruction Lists
+
+	// generate Closure (w/ initial scope)
+	var f = System.assemble(insts, fname); // take module for scope???
+
+	// run statement
+	f();
+    }
+} // if (System.parser.filename)

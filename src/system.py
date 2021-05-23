@@ -318,7 +318,7 @@ def init_module(argv, main=False):
 
 # called only from import_worker! XXX inline?
 # requires initial scope with System.types set up.
-def load_parser(scope, parser_vmx, trace=False):
+def load_parser(scope, parser_vmx, filename=None, trace=False):
     """
     load parser from vmx file into scope's System.parser
     """
@@ -329,6 +329,9 @@ def load_parser(scope, parser_vmx, trace=False):
 
     # point System.parser at parser module
     sys_obj.setprop(SYS_PARSER, m)
+
+    if filename:                # source file name, for bootstrap.vmx
+        m.setprop('filename', classes.mkstr(filename, scope))
 
 def breakpoint_if_debugging():
     #breakpoint()
@@ -401,22 +404,25 @@ def import_worker(src_file=None,
 
     if parser:
         # NOTE!!! Calls this routine recursively, w/ parser=False & vmx_file
+        # passes source file name in to set System.parser.filename
         load_parser(scope,
-                    parser_vmx or os.environ.get('XXL_PARSER', 'parser.vmx'))
+                    parser_vmx or os.environ.get('XXL_PARSER', 'parser.vmx'),
+                    filename=src_file
+        )
 
     vm = vmx.VM(scope, stats=stats, trace=trace)
-    try:
-        if vmx_file:
-            # here (recursively) from load_parser to load parser.vmx!!
-            # and from command line w/ -x
+    if src_file:
+        vmx_file = 'bootstrap.vmx'
 
-            # XXX handle Exception from load_vm_json for clarity??
-            code = vmx.load_vm_json(vmx_file, scope)
-            vm.start(code, scope)
-        else:
-            # parse source using System.parser -- loaded above!
-            # XXX could load bootstrap.vmx?!
-            parse_and_execute(src_file, scope, vm)
+    try:
+        # here (recursively) from load_parser to load parser.vmx!!
+        # from command line w/ -x
+        # or with bootstrap.vmx to parse and execute src_file
+        #       using parser (loaded above)
+
+        # XXX handle Exception from load_vm_json for clarity??
+        code = vmx.load_vm_json(vmx_file, scope)
+        vm.start(code, scope)
     except SystemExit:          # from os.exit
         raise
     except vmx.VMError as e:
