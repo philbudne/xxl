@@ -7,6 +7,12 @@
 // Parses and executes source file one line at a time so that
 // parser extensions are available as soon as they are added!!
 
+// NOTE!  Currently only loaded when source file is present,
+//     but putting the code inside of a block hides the variables.
+
+// COULD always load this file, and put "native code" items
+// (List.{for_each,each_for,str,iter}, System.print[_repr]) here.
+
 if (System.parser.filename) {
     var fname = System.parser.filename; // set by system.py:load_parser
     var p = System.parser.Parser.new();
