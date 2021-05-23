@@ -4,6 +4,9 @@
 // into a new module namespace to compile and execute the source file
 // being loaded.
 
+// Parses and executes source file one line at a time so that
+// parser extensions are available as soon as they are added!!
+
 if (System.parser.filename) {
     var fname = System.parser.filename; // set by system.py:load_parser
     var p = System.parser.Parser.new();
@@ -11,7 +14,7 @@ if (System.parser.filename) {
 
     p.start_parse(fname);
     while (!p.end()) {
-	// parse single statement into abstact syntax tree of Symbols
+	// parse one statement into abstact syntax tree of Symbols
 	var ast = p.statement();
 
 	// generate VM code
