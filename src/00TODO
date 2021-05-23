@@ -1,13 +1,14 @@
 FIX
 ===
-double file names in exceptions:
-	parse_and_gen_one output has filename
+Check Token objects have Class set!
 
-<Closure: WHERE> just shows line:char
+Add bootstrap.vmx build to Makefile!!!
 
-bootstrap.md -- adding operator similar to adding opcode
+filename issues:
+	double file names in exceptions??
+	<Closure: WHERE> just shows line:char>?
 
-move end() to Parser()?
+bootstrap.md -- adding operator
 
 *** Only ever create one VM, have one try/start/except!!!
 
@@ -34,13 +35,13 @@ move end() to Parser()?
 run "__extensions__" (pass importer's initial scope? iscope.System??)
 	(unless requested not to!)
 
-always preload a (bootstrap.vmx) file??
-	load System object
-	including "System.parser = System.import_vmx('parser.vmx');"
-	native code for_each, each_for, map, map2 (take arg for "ignore" value)
+bootstrap.vmx:
+	load System object(??)
+	"System.parser = System.import_vmx('parser.vmx');"
+	native code for_each, each_for, map, map2, print????
 
 type wrapping:
-	*** have __classes instead of System.types??
+	*** have __classes instead of System.types?? __xxl.classes?
 	clean up!!!
 	create_sys_type passes Python value!!!!!!!!!!!
 	Fix all access to System types (get from module top level scope??)

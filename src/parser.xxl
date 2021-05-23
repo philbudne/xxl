@@ -568,13 +568,7 @@ var PrattParser = Class.new({
 		    }
 		}
 	    }); // Prefix
-	}, // init method
-
-	end: function (this) {
-	    return(this.token
-		   && (this.token.id() == "}"
-		       || this.token.id() == "(end)")); // this.END?
-	}
+	} // init method
     } // methods
 }); // PrattParser
 
@@ -1062,7 +1056,7 @@ var Parser = Class.new({
 			p.scope = p.scope.pop();
 			p.advance("}");
 			this.arity = "statement";
-			return(this); // no longer discards this!
+			return(this); // no longer discards this node!
 		    },
 		    gen: function (this, vmcode) {
 			if (this.arity == "statement") { // { block }
@@ -1288,7 +1282,7 @@ var Parser = Class.new({
 	    var s;
 	  leave_while:
 	    while (true) {
-		if (this.end()) {
+		if (this.end()) { // end of block or file?
 		    leave_while();
 		}
 		s = this.statement();
@@ -1326,7 +1320,6 @@ var Parser = Class.new({
 
 	    predef("Class");
 	    predef("System");
-
 	    // declare these as unwritable??
 	    predef("false");
 	    predef("null");
@@ -1341,38 +1334,16 @@ var Parser = Class.new({
 	    this.advance("(end)"); // p.END?
 	    this.scope = this.scope.pop();
 	    return(s);		// return list of statement ASTs
+	},
+
+	end: function (this) {	// test if at end of block or file
+	    // called from Parser.statements and in bootstrap.xxl
+	    return(this.token
+		   && (this.token.id() == "}"
+		       || this.token.id() == "(end)")); // this.END?
 	}
     } // Parser methods
 });
-
-////////////////
-// THE parse/generate/execute loop!!!
-// parses a single statement, generates code, and runs it in the initial scope
-//
-// called by system.py parse_and_execute (from import_worker) to run a source file
-// passed System object from module being parsed/executed
-// doesn't need to be in this file! move to "bootstrap"??
-
-var parse_and_execute = function (sys, fname) {
-    var p = sys.parser.parser = sys.parser.Parser.new();
-    p.start_parse(fname);
-    while (!p.end()) {
-	// parse single statement into abstact syntax tree of Symbols
-	var ast = p.statement();
-
-	// generate VM code
-	var vmcode = sys.parser.VMCode.new();
-	ast.gen(vmcode);
-	vmcode.emit_return(ast); // XXX force return, not exit
-	var insts = vmcode.finish(); // List of instruction Lists
-
-	// generate Closure (w/ initial scope)
-	var f = sys.assemble(insts, fname);
-
-	// run statement
-	f();
-    }
-}; // parse_and_execute
 
 ////////////////
 // XXX XXX remove this and put in compile.xxl
