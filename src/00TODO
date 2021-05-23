@@ -59,7 +59,7 @@ use native print
 
 xxl.py: w/o filename run read/eval/print loop
 	need to change statement() and std() methods
-		to "check" @ end (w/o advance)
+		to "check" @ end (w/o advance) -- ie; check("}")
 		and re-prime (at top of statement()?)
 
 TEST
