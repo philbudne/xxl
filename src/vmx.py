@@ -46,7 +46,7 @@ class VMError(Exception):
 # In Python 3.7.9, namedtuple faster than class, and immutable!
 # Regular tuple is even faster, but less scrutable.
 # XXX save vm.args for backtrace?
-Frame = collections.namedtuple('Frame', 'cb,pc,scope,fp,fn,where')
+Frame = collections.namedtuple('Frame', 'cb,pc,scope,fp,fn,where,show')
 
 class VM:
     """
@@ -151,18 +151,22 @@ class VM:
             print("  ", t[0])
             t = t[1]
 
-    def save_frame(self):
+    def save_frame(self, show=True):
         # called from CClosure.invoke (always call before .invoke??)
         #       would need to call restore_frame inside all .invoke methods??
         #       would allow Python callees to use same VM???
+        # called from CBClosure.invoke w/ show=False
         self.fp = Frame(cb=self.cb, pc=self.pc, scope=self.scope, fp=self.fp,
-                        where=self.ir.where, fn=self.ir.fn # for backtrace
+                        where=self.ir.where, fn=self.ir.fn, # for backtrace
+                        show=show
         )
 
     def backtrace(self):        # XXX take file to write to?
         fp = self.fp
         while fp:
-            sys.stderr.write(" called from {}:{}\n".format(fp.fn, fp.where))
+            if fp.show:
+                sys.stderr.write(" called from {}:{}\n".format(
+                    fp.fn, fp.where))
             fp = fp.fp
 
     # helper (inline once settled?)
@@ -406,6 +410,18 @@ class CloseInstr(VMInstr1):
 
     def step(self, vm):
         vm.ac = classes.CClosure(self.value, vm.scope)
+
+@reginstr
+class BCCallInstr(CloseInstr):
+    """
+    create a {} block closure and call it
+    (hidden in backtraces)
+    """
+    name = "bccall"
+
+    def step(self, vm):
+        c = classes.CBClosure(self.value, vm.scope)
+        c.invoke(vm)
 
 @reginstr
 class CallInstr(VMInstr1):

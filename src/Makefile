@@ -76,6 +76,10 @@ $(B):	$(VM) $(A) $(PARSER_SRC)
 $(C):	$(VM) $(B) $(PARSER_SRC)
 	$(RUNVMX) $(B) $(PARSER_SRC) > $(C).tmp && mv $(C).tmp $(C)
 
+bootstrap.vmx: bootstrap.xxl $(PARSER_VMX)
+	$(RUNVMX) $(PARSER_VMX) bootstrap.xxl > bootstrap.vmx.tmp && \
+		mv bootstrap.vmx.tmp bootstrap.vmx
+
 clean:
 	rm -f *.tmp $(A) $(B) $(C) $(TESTED) $(IDENTICAL) $(IDENTICAL2) .tmp*
 	rm -rf __pycache__

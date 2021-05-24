@@ -202,13 +202,16 @@ def sys_vtree(vm, t, fname=classes.null_value):
         if fnclen and instr[0].startswith(fnc):
             instr[0] = instr[0][fnclen:]
 
-        if instr[1] != "close":
+        op = instr[1]
+        if op not in ('close', 'bccall'):
             return indent + json.dumps(instr)
 
-        # here to handle "close" (instr[2] is a new code list)
+        if op == 'bccall' and instr[2][0] is None:
+            breakpoint()
+        # here to handle "close" and "bccall" (instr[2] is a new code list)
         nindent = indent + " "
         return ('%s["%s", "%s",\n%s%s]' % \
-                (indent, instr[0], instr[1],
+                (indent, instr[0], op,
                  nindent, format_code(instr[2], nindent)))
 
     def format_code(code, indent=''):
@@ -431,8 +434,8 @@ def import_worker(src_file=None,
         # XXX dump VM registers?
         vm.backtrace()
         breakpoint_if_debugging()
-        return classes.null_value
-    except Exception as e:
+        sys.exit(1)
+    except classes.UError as e:
         # NOTE: just displays "where"
         if vm.ir:
             sys.stderr.write("Error @ {}:{}: {}\n".format(
@@ -441,6 +444,7 @@ def import_worker(src_file=None,
             sys.stderr.write("Error @ ???: {}\n".format(e))
         vm.backtrace()
         breakpoint_if_debugging()
+        sys.exit(1)
     # NOTE!! copies vars dict; not a live view!
     #   (System.types needs to be a copy)
     return __obj_create(scope.get_vars()) # XXX want Module

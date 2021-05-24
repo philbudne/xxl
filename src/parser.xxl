@@ -188,10 +188,9 @@ var VMCode = Class.new({
 	    // include function name (if any) in Closure object?!!
 	    this._emit([sym.where, "close", code]);
 	},
-	emit_close_call: function (this, vmcode, sym) {
-	    // XXX have combo opcode?
-	    this.emit_close(vmcode.finish(sym), sym);
-	    this.emit_call(0, sym);
+	emit_bclose_call: function (this, vmcode, sym) {
+	    // create {} block closure and call
+	    this._emit([sym.where, "bccall", vmcode.finish(sym)]);
 	},
 	emit_append: function (this, sym) {
 	    // XXX could emit: push, temp, lit "append", binop ".", call
@@ -1064,7 +1063,7 @@ var Parser = Class.new({
 			    bcode.emit_scope(this.label, this);
 			    bcode.gen_stmts(this.first);
 			    // create block closure & invoke
-			    vmcode.emit_close_call(bcode, this);
+			    vmcode.emit_bclose_call(bcode, this);
 			}
 			else {	// unary { attr: value }
 			    // first is list of lit/name keys,
@@ -1197,7 +1196,7 @@ var Parser = Class.new({
 			lcode.emit_scope(this.first.value, this);
 			this.second.gen(lcode);
 			// create block closure and invoke
-			vmcode.emit_close_call(lcode, this);
+			vmcode.emit_bclose_call(lcode, this);
 		    } // label.gen
 		}
 	    }); // Label
@@ -1231,7 +1230,7 @@ var Parser = Class.new({
 			wcode.drop_fwd_label(done_label);
 
 			// create closure around entire while stmt and invoke
-			vmcode.emit_close_call(wcode, this);
+			vmcode.emit_bclose_call(wcode, this);
 		    }
 		}
 	    }); // p.while
@@ -1385,7 +1384,7 @@ var compile = function (fname) {
     var stat = py_os.stat(fname);
     // wanted "at" & compilation time, but breaks regression test!
     //	XXX maybe they should ignore first line?
-    //		depends on Python 3.6 dict ordering!!!!
+    //		depends on Python 3.6 dict ordering!!!! hand format?!
     var d = {v: 1.0,
 	     fn: fname,
 	     mt: stat.st_mtime,

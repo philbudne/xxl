@@ -2,9 +2,6 @@ FIX
 ===
 Check Token objects have Class set!
 
-Hide block closure frames?
-	BClosure -- passes False to save_frame for backtrace to see
-
 Add bootstrap.vmx build to Makefile!!!
 
 filename issues:
@@ -107,7 +104,6 @@ make native Tokenizer (gonna be slow!)
 		else "operator" (may not contain alphanumeric)
 	/* */ comments?
 	"""string""" (or use some unicode chars for quoting?)
-optimization: "callb" op for block closures? no arg fiddling
 
 FEATURES (or extensions)
 ========================

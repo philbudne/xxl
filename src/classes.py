@@ -71,6 +71,11 @@ NUM = (int, float)              # Python3
 # for _current_ definitions, need to lookup in iscope (use find_sys_type)
 sys_types = {}
 
+class UError(Exception):
+    """
+    Exception class for user errors; show vm backtrace
+    """
+
 # All language objects are represented by the interpreter
 # as instances of the Python CObject class (or subclasses thereof).
 # All such Python classes should start with the letter "C"
@@ -187,7 +192,7 @@ class CContinuation(CObject):
         elif l == 0:
             vm.ac = null_value
         else:
-            raise Exception("Too many Continuation args %s" % len(vm.args))
+            raise UError("Too many Continuation args %s" % len(vm.args))
 
 class CClosure(CObject):
     """
@@ -204,13 +209,30 @@ class CClosure(CObject):
         return "<Closure: %s:%s>" % (i.fn, i.where)
         
     def invoke(self, vm):
-        vm.save_frame()
+        vm.save_frame(True)     # show=True
         # return or leave label Continuation will be generated from FP
         #       by "args" or "lscope" Instr (first Instr in code)
         vm.pc = 0
         vm.cb = self.code
         vm.scope = self.scope
         # NOTE! vm.args picked up by "args" opcode!
+
+class CBClosure(CClosure):
+    """
+    create closure for a {} block
+    (hidden in backtraces)
+    not currently visible to user
+    (unless flow control implemented by passing block closure pointers)
+    """
+    def __repr__(self):
+        i = self.code[0]
+        return "<CBClosure: %s:%s>" % (i.fn, i.where)
+        
+    def invoke(self, vm):
+        vm.save_frame(False)    # show=False
+        vm.pc = 0
+        vm.cb = self.code
+        vm.scope = self.scope
 
 class CBoundMethod(CObject):
     """
@@ -492,7 +514,7 @@ def new_obj(vm, this_class, *args):
 @pyfunc
 def obj_init(this_obj, *args):
     if len(args) > 0:
-        raise Exception("%s.%s takes no arguments" %
+        raise UError("%s.%s takes no arguments" %
                         (this_obj.classname(), const.INIT))
 
 @pyvmfunc
@@ -647,7 +669,7 @@ def obj_setclass(this, klass):
 
 @pyfunc
 def obj_call(l, r):
-    raise Exception("%s not callable" % l.classname())
+    raise UError("%s not callable" % l.classname())
 
 @pyfunc
 def obj_instance_of(l, c):
@@ -700,11 +722,11 @@ def class_init(this_class, props):
             continue
         ikey = const.CLASS_PROPS.get(key)
         if not ikey:
-            raise Exception("Unknown %s property %s" % (metaclass, key))
+            raise UError("Unknown %s property %s" % (metaclass, key))
         this_class.props[ikey] = val
 
     if const.NAME not in this_class.props:
-        raise Exception("Class.new requires '%s'"  % (metaclass, const.NAME))
+        raise UError("Class.new requires '%s'"  % (metaclass, const.NAME))
 
     # XXX complain if NAME doesn't start with a capitol letter??
 
@@ -718,7 +740,7 @@ def class_call(this_class, args):
     "(" binop for Class
     """
     # PLB: I keep on doing this (Python fingers)
-    raise Exception("call %s.new!" % this_class.getprop(const.NAME).value)
+    raise UError("call %s.new!" % this_class.getprop(const.NAME).value)
 
 @pyfunc
 def class_subclass_of(l, r):
@@ -1133,7 +1155,7 @@ def null_str(vm, this):
 
 @pyfunc
 def null_call(l, r):
-    raise Exception("'null' called; bad method name?")
+    raise UError("'null' called; bad method name?")
 
 Null.setprop(const.METHODS, _mkdict({
     'str': null_str
