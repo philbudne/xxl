@@ -2,15 +2,11 @@ FIX
 ===
 Check Token objects have Class set!
 
-Add bootstrap.vmx build to Makefile!!!
-
-filename issues:
-	double file names: "null();" gives:
-		Error @ n.xxl:n.xxl:1:5: 'null' called; bad method name?
-
-	<Closure: WHERE> just shows line:char>?
+hook in bootstrap.vmx build in Makefile
 
 bootstrap.md -- adding operator
+
+**** flush invoke_function/method?!
 
 *** Only ever create one VM, have one try/start/except!!!
 

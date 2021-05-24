@@ -179,6 +179,45 @@ def sys_tree(vm, t):
     t2 = obj2python_json(t)     # strip down to Python data structures
     return classes.mkstr(json.dumps(t2, indent=1), vm.iscope)
 
+def format_instr(instr, indent=''):
+    """
+    format one instruction (Python list)
+    """
+    op = instr[1]
+    if op not in ('close', 'bccall'):
+        return indent + json.dumps(instr)
+
+    # here to handle "close" and "bccall" (instr[2] is a new code list)
+    nindent = indent + " "
+    return ('%s["%s", "%s",\n%s%s]' % \
+            (indent, instr[0], op,
+             nindent, format_code(instr[2], nindent)))
+
+def format_code(code, indent=''):
+    """
+    takes Python list of instructions (Python lists)
+    """
+    sep = ",\n" + indent + " "
+    return (indent + "[" + format_instr(code[0]) + sep + # first line
+            sep.join([format_instr(inst, indent) for inst in code[1:]]) +
+            "]")
+
+def trim_where(code, fname):
+    """
+    trim `fname` from all instruction list where fields
+    `code` is Python list of lists: MODIFIED IN PLACE!!!
+    """
+    if not fname:
+        return
+    fnamelen = len(fname) + 1   # remove fname:
+    def helper(c):
+        for instr in c:
+            if instr[0].startswith(fname):
+                instr[0] = instr[0][fnamelen:]
+            if instr[1] in ('close', 'bccall'):
+                helper(code[2])
+    helper(code)
+
 @classes.pyvmfunc
 def sys_vtree(vm, t, fname=classes.null_value):
     """
@@ -187,39 +226,9 @@ def sys_vtree(vm, t, fname=classes.null_value):
     """
     t2 = obj2python_json(t)     # convert to list of list of str
 
-    if not fname or fname is classes.null_value:
-        fnc = ""
-        fnclen = 0
-    else:
-        fnc = fname.value + ":" # XXX check Str
-        fnclen = len(fnc)
-
-    def format_instr(instr, indent=''):
-        """
-        format one instruction (Python list)
-        """
-        # strip filename (if supplied) off of "where"
-        if fnclen and instr[0].startswith(fnc):
-            instr[0] = instr[0][fnclen:]
-
-        op = instr[1]
-        if op not in ('close', 'bccall'):
-            return indent + json.dumps(instr)
-
-        # here to handle "close" and "bccall" (instr[2] is a new code list)
-        nindent = indent + " "
-        return ('%s["%s", "%s",\n%s%s]' % \
-                (indent, instr[0], op,
-                 nindent, format_code(instr[2], nindent)))
-
-    def format_code(code, indent=''):
-        """
-        takes Python list of instructions (Python lists)
-        """
-        sep = ",\n" + indent + " "
-        return (indent + "[" + format_instr(code[0]) + sep + # first line
-                sep.join([format_instr(inst, indent) for inst in code[1:]]) +
-                "]")
+    if fname and fname is not classes.null_value:
+        fn = fname.value        # getstr?
+        trim_where(t2, fn)
 
     return classes.mkstr(format_code(t2), vm.iscope)
 
@@ -280,6 +289,7 @@ def sys_assemble(vm, tree, srcfile):
     """
     # convert List of Lists to Python list of lists
     js = obj2python_json(tree)
+    trim_where(js, srcfile.value) # XXX getstr?
 
     # convert into Python list of Instrs (scope for type name lookup):
     code = vmx.convert_instrs(js, vm.iscope, srcfile)
