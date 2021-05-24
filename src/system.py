@@ -206,8 +206,6 @@ def sys_vtree(vm, t, fname=classes.null_value):
         if op not in ('close', 'bccall'):
             return indent + json.dumps(instr)
 
-        if op == 'bccall' and instr[2][0] is None:
-            breakpoint()
         # here to handle "close" and "bccall" (instr[2] is a new code list)
         nindent = indent + " "
         return ('%s["%s", "%s",\n%s%s]' % \
