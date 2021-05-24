@@ -215,7 +215,7 @@ def trim_where(code, fname):
             if instr[0].startswith(fname):
                 instr[0] = instr[0][fnamelen:]
             if instr[1] in ('close', 'bccall'):
-                helper(code[2])
+                helper(instr[2])
     helper(code)
 
 @classes.pyvmfunc
