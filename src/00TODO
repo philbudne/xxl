@@ -2,10 +2,15 @@ FIX
 ===
 Check Token objects have Class set!
 
+Hide block closure frames?
+	BClosure -- passes False to save_frame for backtrace to see
+
 Add bootstrap.vmx build to Makefile!!!
 
 filename issues:
-	double file names in exceptions??
+	double file names: "null();" gives:
+		Error @ n.xxl:n.xxl:1:5: 'null' called; bad method name?
+
 	<Closure: WHERE> just shows line:char>?
 
 bootstrap.md -- adding operator
@@ -102,6 +107,7 @@ make native Tokenizer (gonna be slow!)
 		else "operator" (may not contain alphanumeric)
 	/* */ comments?
 	"""string""" (or use some unicode chars for quoting?)
+optimization: "callb" op for block closures? no arg fiddling
 
 FEATURES (or extensions)
 ========================
