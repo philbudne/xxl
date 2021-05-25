@@ -160,9 +160,16 @@ class CPObject(CObject):
             return str(self.value).lower()
         return str(self.value)
 
-    # someday allow Dict to be indexed by any CObject...
+    # someday allow Dict to be indexed by any CObject?
+    #   (except List!)
     def __hash__(self):
         return self.value.__hash__()
+
+    def __eq__(self, other):
+        # XXX is type check needed?
+        #       can you get here if __hash__ fails or differs??
+        return (type(self) == type(other) and
+                self.value == other.value)
 
     def __repr__(self):
         """show wrapped value"""
