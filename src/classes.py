@@ -144,9 +144,9 @@ class CObject:
 class CPObject(CObject):
     """
     Python backing class for Primative Object Classes
-    (has a value property which is a Python type)
+    (has a value property which contains a Python type)
     """
-    __slots__ = ['props', 'klass', 'value']
+    __slots__ = ['value']
 
     def __init__(self, klass, value):
         assert klass is not None
