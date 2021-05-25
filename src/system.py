@@ -426,17 +426,17 @@ def import_worker(src_file=None,
         vmx_file = 'bootstrap.vmx'
 
     try:
-        # here (recursively) from load_parser to load parser.vmx!!
-        # from command line w/ -x
+        # here (recursively) from load_parser to load parser.vmx,
+        # from command line w/ -x to run a pre-compiled file,
         # or with bootstrap.vmx to parse and execute src_file
         #       using parser (loaded above)
 
-        # XXX handle Exception from load_vm_json for clarity??
+        # XXX handle Exception from load_vm_json (or move up) for clarity??
         code = vmx.load_vm_json(vmx_file, scope)
         vm.start(code, scope)
     except SystemExit:          # from os.exit
         raise
-    except vmx.VMError as e:
+    except vmx.VMError as e:    # an internal error
         # NOTE: displays VM Instr
         sys.stderr.write("VM Error @ {}: {}\n".format(vm.ir, e))
         # XXX dump VM registers?
@@ -444,7 +444,7 @@ def import_worker(src_file=None,
         breakpoint_if_debugging()
         sys.exit(1)
     except classes.UError as e:
-        # NOTE: just displays "where"
+        # NOTE: user error: just displays "where" and VM backtrace
         if vm.ir:
             sys.stderr.write("Error @ {}:{}: {}\n".format(
                 vm.ir.fn, vm.ir.where, e))
