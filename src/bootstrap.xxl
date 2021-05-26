@@ -26,8 +26,7 @@ if (System.parser.filename) {
 	// generate VM code
 	var vmcode = System.parser.VMCode.new();
 	ast.gen(vmcode);
-	vmcode.emit_return(ast); // XXX force return, not exit
-	var insts = vmcode.finish(); // List of instruction Lists
+	var insts = vmcode.finish(ast); // List of instruction Lists
 
 	// generate Closure (w/ initial scope)
 	var f = System.assemble(insts, fname); // take module for scope???
