@@ -166,10 +166,7 @@ class CPObject(CObject):
         return self.value.__hash__()
 
     def __eq__(self, other):
-        # XXX is type check needed?
-        #       can you get here if __hash__ fails or differs??
-        return (type(self) == type(other) and
-                self.value == other.value)
+        return (isinstance(other, CPObject) and self.value == other.value)
 
     def __repr__(self):
         """show wrapped value"""
@@ -776,13 +773,9 @@ def new_pobj(vm, this_class, arg=None):
     makes an instance of this_class
     """
     # XXX need different init method for each class to handle arg/set .value!!!
-    # XXX assert arg (if not None) is instanceof CObject??
     raise Exception("new_pobj {} {}".format(this_class, arg))
 
-    # XXX stash Python class to use in this_class.pyclass Python attr
-    # XXX stash Python default arg in this_class.defval Python attr???
-    #	clever, but doesn't work for subclassing
-    n = CPObject(this_class, arg) # XXX unwrap??!!!
+    n = CPObject(this_class, arg) # XXX pass None, value goes to init
 
     # XXX what to do with arg??
     m = find_in_class(n, const.INIT) # returns BoundMethod
@@ -791,8 +784,7 @@ def new_pobj(vm, this_class, arg=None):
     return n
 
 PClass.setprop(const.METHODS, _mkdict({
-   const.NEW: new_pobj,
-#  const.INIT: class_init,     # Class.new creates new Classes
+   const.NEW: new_pobj
 }))
 
 ################ (JavaScript style) Object
