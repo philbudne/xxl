@@ -1,17 +1,73 @@
 // -*-js-*-
 
 // The pre-compiled version of this file (bootstrap.vmx) is loaded
-// into a new module namespace to compile and execute the source file
-// being loaded.
+// into every new module namespace.
 
-// Parses and executes source file one line at a time so that
+// Parses and executes source file (if any) one line at a time so that
 // parser extensions are available as soon as they are added!!
 
-// NOTE!  Currently only loaded when source file is present,
-//     but putting the code inside of a block hides the variables.
+if (true) {			// hide temp variables
+    System.types.List.__methods['for_each'] = function (this, func) {
+	var i = 0;
+	var l = this.len();
+	while (i < l) {
+	    func(this[i]);
+	    i += 1;
+	}
+    };
 
-// COULD always load this file, and put "native code" items
-// (List.{for_each,each_for,str,iter}, System.print[_repr]) here.
+    System.types.List.__methods['each_for'] = function (this, func) {
+	var i = this.len();
+	while (i > 0) {
+	    i -= 1;
+	    func(this[i]);
+	}
+    };
+
+    System.types.List.__methods['map'] = function (this, func) {
+	var l = this.len();
+	var i = 0;
+	var ret = [];
+	while (i < l) {
+	    ret.append(func(this[i]));
+	    i += 1;
+	}
+	return(ret);
+    };
+
+    // ignore entries where func returns `ignore` value
+    System.types.List.__methods['map2'] = function (this, func, ignore) {
+	var l = this.len();
+	var i = 0;
+	var ret = [];
+	while (i < l) {
+	    var x = func(this[i]);
+	    if (x != ignore) {
+		ret.append(x);
+	    }
+	    i += 1;
+	}
+	return(ret);
+    };
+
+    var str = function (x) { return(x.str()); };
+    var __print = function (file, l) {
+	l = l.map(str);
+	file.write(" ".join(l) + "\n");
+    };
+
+    var py_sys = System.pyimport("sys");
+
+    var pr = function (...args) {
+	__print(py_sys.stdout, args);
+    };
+    System.print = pr;
+
+    var er = function (...args) {
+	__print(py_sys.stderr, args);
+    };
+    System.error = er;
+}
 
 if (System.parser.filename) {
     var fname = System.parser.filename; // set by system.py:load_parser

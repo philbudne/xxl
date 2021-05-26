@@ -67,54 +67,6 @@ def sys_break(x=None):
     """
     breakpoint()
 
-def getstr(x, vm):              # XXX only used for sys_print
-    """
-    return Python string for an interpreter CObject for sys_print
-    """
-    if isstr(x):                # XXX odd (tree function?)
-        return x
-
-    if isinstance(x, classes.CObject):
-        s = vmx.invoke_method(x, 'str', vm)
-
-        if isstr(s):            # XXX is Python string???
-            return "pstr:" + s  # XXX COMPLAIN?? WRAP???
-
-        # XXX check if is String!!
-        return str(s.value)
-
-    # this shouldn't happen either!!!
-    return str(x)
-
-@classes.pyvmfunc
-def sys_print(vm, *args):
-    print(" ".join([getstr(arg, vm) for arg in args]))
-
-@classes.pyvmfunc
-def sys_error(vm, *args):
-    sys.stderr.write(
-        "{}\n".format(" ".join([getstr(arg, vm) for arg in args])))
-
-####
-
-def getrepr(x, vm):             # XXX move elsewhere
-    """
-    return Python string for an interpreter CObject "repr"
-    """
-    if isinstance(x, classes.CObject):
-        s = vmx.invoke_method(x, 'repr', vm)
-        if isstr(s):            # XXX TEMP: COMPLAIN
-            return "<XXX %s repr returned str: %s>" % (x.classname(), s)
-
-        return str(s.value)
-
-    # this shouldn't happen either!!!
-    return str(x)               # XXX repr?
-
-@classes.pyvmfunc
-def sys_print_repr(vm, *args):
-    print(" ".join([getrepr(arg, vm) for arg in args]))
-
 ################
 
 # XXX replace with native code
@@ -348,24 +300,6 @@ def breakpoint_if_debugging():
     #breakpoint()
     pass
 
-# called only from import_worker
-#       (which is called both from xxl.py main, and sys_import)
-# could be eliminated by loading a bootstrap.vmx file
-#       and passing in source filename in some systemy place (__module.source)
-def parse_and_execute(src, scope, vm):
-    """
-    parse `src` file (Python str) and execute one statement at a time
-    (allows parser extensions to take effect immediately)
-    """
-    sys_obj = scope.lookup(SYSTEM)
-    sys_parser = sys_obj.getprop(SYS_PARSER) # System.parser
-    pe = sys_parser.getprop('parse_and_execute')
-
-    assert(isinstance(src, str)) # TEMP -- avoid double wrapping!!!
-    src_str = classes.mkstr(src, scope)
-
-    vmx.invoke_function(pe, vm, [sys_obj, src_str])
-
 ################
 
 @classes.pyfunc
@@ -421,19 +355,16 @@ def import_worker(src_file=None,
                     filename=src_file
         )
 
+    vmx_files = ['bootstrap.vmx']
+    if vmx_file:
+        vmx_files.append(vmx_file)
+
     vm = vmx.VM(scope, stats=stats, trace=trace)
-    if src_file:
-        vmx_file = 'bootstrap.vmx'
-
     try:
-        # here (recursively) from load_parser to load parser.vmx,
-        # from command line w/ -x to run a pre-compiled file,
-        # or with bootstrap.vmx to parse and execute src_file
-        #       using parser (loaded above)
-
-        # XXX handle Exception from load_vm_json (or move up) for clarity??
-        code = vmx.load_vm_json(vmx_file, scope)
-        vm.start(code, scope)
+        for vf in vmx_files:
+            # XXX handle Exception from load_vm_json?
+            code = vmx.load_vm_json(vf, scope)
+            vm.start(code, scope)
     except SystemExit:          # from os.exit
         raise
     except vmx.VMError as e:    # an internal error
@@ -475,9 +406,6 @@ def create_sys_object(iscope, argv):
 
     # debug functions (TEMP?!)
     sys_obj.setprop('break', sys_break) # break to PDB
-    sys_obj.setprop('print', sys_print) # print to stdout
-    sys_obj.setprop('error', sys_error) # print to stderr
-    sys_obj.setprop('print_repr', sys_print_repr)
 
     # command line args, and exit:
     sys_obj.setprop('argv',  classes.wrap(argv, iscope))
@@ -508,6 +436,7 @@ def find_sys_type(name, scope):
             ty = types.getprop(name)
             if ty and ty is not classes.null_value:
                 return ty
+    # internal error:
     raise Exception("cannot find %s.%s.%s" % (SYSTEM, SYS_TYPES, name))
 
 def create_sys_type(name, scope, value):

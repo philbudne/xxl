@@ -918,21 +918,6 @@ def list_pop(l,item=None):
         return l.value.pop()
     return l.value.pop(item.value) # XXX check if Number
 
-# XXX supply native version?
-@pyvmfunc
-def list_for_each(vm, l, func):
-    # XXX Continuations generated inside 'func' will be fubar
-    for item in l.value:
-        vmx.invoke_function(func, vm, [item])
-
-# XXX supply native version?
-@pyvmfunc
-def list_each_for(vm, l, func): # XXX TEMP until reversed?
-    # XXX XXX use backwards counting index (avoid copying list)??
-    # XXX Continuations generated inside 'func' will be fubar
-    for item in reversed(l.value):
-        vmx.invoke_function(func, vm, [item])
-
 @pyfunc
 def list_get(l, r):
     # XXX check if integer
@@ -961,9 +946,6 @@ List.setprop(const.METHODS, _mkdict({
     'repr': val_repr,
     # XXX slice(start[,end]) (return range of elements)
     const.INIT: list_init,
-    # TEMP: replace with native code:
-    'each_for': list_each_for,
-    'for_each': list_for_each
 }))
 List.setprop(const.BINOPS, _mkdict({
     '[': list_get

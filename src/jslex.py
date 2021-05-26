@@ -71,8 +71,10 @@ class Stream(object):
             if self.f.isatty():
                 # XXX change prompt to "... " if not at top (in statement()?)
                 try:
-                    self.buf = input('}}} ') # no curly braces in Python!
-                except EOFError:
+                    # "There are no curly braces in Python!"
+                    self.buf = input('}}} ')
+                except (EOFError, KeyboardInterrupt):
+                    print('')
                     return ''
                 if self.buf:
                     self.buf += '\n'
