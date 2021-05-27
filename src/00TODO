@@ -1,5 +1,7 @@
 FIX
 ===
+native version of List.str
+
 Check Token objects have Class set!
 
 hook in bootstrap.vmx build in Makefile
