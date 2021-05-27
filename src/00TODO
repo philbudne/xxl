@@ -2,6 +2,8 @@ FIX
 ===
 native version of List.str
 
+split Number into Float and Int
+
 Check Token objects have Class set!
 
 hook in bootstrap.vmx build in Makefile
@@ -9,15 +11,7 @@ hook in bootstrap.vmx build in Makefile
 bootstrap.md -- adding operator
 
 **** flush invoke_function/method?!
-
-*** Only ever create one VM, have one try/start/except!!!
-
-*** have invoke_function/method use current VM??
-	have CallInstr save_frame (instead of CClosure.invoke)?
-		(all CInstances will need to restore)
-		need VM method to load codebase and pc?!
-	allow tail calls only? Take Python "continuation"?
-	System.assemble
+	or use existing VM!!
 
 *** BUG: Only CPObjects can be used as Dict keys
 	(Dicts currently indexed by Python values,
