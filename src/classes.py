@@ -148,10 +148,9 @@ class CPObject(CObject):
     """
     __slots__ = ['value']
 
-    def __init__(self, klass, value):
-        assert klass is not None
-        super().__init__(klass)
-        self.value = value
+    def __init__(self, this_class):
+        super().__init__(this_class)
+        self.value = None       # set by init method
 
     def __str__(self):
         if self.value is None:
@@ -347,10 +346,14 @@ def pyvmfunc(func):
 
 def _new_pobj(this_class, arg):
     """
-    for internal use only!
-    creates an interpreter object wrapped around a Python Value
+    FOR INTERNAL USE ONLY!!
+    creates an interpreter Primative Object of Class `this_class`
+    wrapped around Python value `arg`
+    does not run this_class 'init' method (which would want an Object)
     """
-    return CPObject(this_class, arg)
+    o = CPObject(this_class)
+    o.value = arg
+    return o
 
 def _mkdict(vals):
     """
@@ -367,7 +370,7 @@ def _mklist(vals):
 def _mkstr(s):
     """
     ONLY USE TO CONSTRUCT BASE TYPES!
-    DO NOT USE OUTSIDE classes.py!!!
+    see mkstr
     """
     return _new_pobj(Str, s)
 
@@ -381,6 +384,25 @@ def _mkobj(props):
 
 def mkstr(s, scope):
     return system.create_sys_type('Str', scope, s)
+
+################
+null_value = None               # forward
+
+def subclass_of(klass, base):
+    visited = set()
+    def check(c):
+        visited.add(c)
+        if c is base:
+            return True
+        s = c.getprop(const.SUPERS)
+        if s is None or s is null_value:
+            return False
+        for x in s.value:       # XXX check if List
+            if c not in visited:
+                if check(x):
+                    return True
+        return False
+    return check(klass)
 
 ################################################################
 
@@ -415,47 +437,51 @@ def defclass(metaclass, name, supers=None, publish=True):
         sys_types[name] = class_obj
     return class_obj
 
-Class = defclass(None, 'Class')   # metaclass of all Classes
+# base metaclass
+Class = defclass(None, 'Class')
 Class.setclass(Class)             # circular! Class.new creates a new Class!
 # supers set to [Object] below
 
+# root Class; circular with "Class" metaclass, so defined second.
 Object = defclass(Class, 'Object', []) # root Class
 
 # metaclass for PObjects
 PClass = defclass(Class, 'PClass', [Class])
 
+# Primative Object Base Class
+# superclass (with .value) of Classes that are wrappers around Python classes
+PObject = defclass(PClass, 'PObject', [Object])
+
 # wrappers, with .value
-# make children of VObject (XXX private 'new' using new_pobj?)
-List = defclass(PClass, 'List', [Object]) # subclass of Sequence? FrozenList??
-Str = defclass(PClass, 'Str', [Object])
-Dict  = defclass(PClass, 'Dict', [Object]) # subclass of Mapping? FrozenDict??
-Number = defclass(PClass, 'Number', [Object])
+List = defclass(PClass, 'List', [PObject]) # subclass of Sequence? FrozenList??
+Str = defclass(PClass, 'Str', [PObject])   # subclass of Sequence?
+Dict  = defclass(PClass, 'Dict', [PObject]) # subclass of Mapping? FrozenDict??
+Number = defclass(PClass, 'Number', [PObject])
 # XXX own metaclass to return singleton?
-Null = defclass(PClass, 'Null', [Object]) # XXX singleton
-# XXX own metaclass to return doubleton values?
-Bool = defclass(PClass, 'Bool', [Object])
+Null = defclass(PClass, 'Null', [PObject]) # XXX singleton
+# XXX own metaclass to return doubleton values? subclass into two singletons??
+Bool = defclass(PClass, 'Bool', [PObject])
 
-# JS style Object (TEMP):
-JSObject = defclass(Class, 'JSObject', [Object])
+# Str, List now exist:
 
-# Str, List types now available:
+# set Class metaclass super list
 Class.setprop(const.SUPERS, _mklist([Object]))
 
+# do fixups for Strs and Lists in primative Classes
 for klass, name in _saved_names.items():
     klass.setprop(const.NAME, _mkstr(name))
 for klass, supers in _saved_supers.items():
     klass.setprop(const.SUPERS, _mklist(supers))
 
 # internal object w/ direct invoke methods
-#       (avoids binop lookup)
-# XXX use metaclass that prohibits user call of 'new' method?
-
+#       (avoids binop lookup and List construction on each call)
 # all backed by Python CXyZzy classes with invoke methods:
-Closure = defclass(Class, 'Closure', [Object])
-BoundMethod = defclass(Class, 'BoundMethod', [Object])
-PyFunc = defclass(Class, 'PyFunc', [Object])
-Continuation = defclass(Class, 'Continuation', [Object])
+# XXX use metaclass (CClass?) that prohibits user call of 'new' method?
 
+BoundMethod = defclass(Class, 'BoundMethod', [Object])
+Closure = defclass(Class, 'Closure', [Object])
+Continuation = defclass(Class, 'Continuation', [Object])
+PyFunc = defclass(Class, 'PyFunc', [Object])
 PyVMFunc = defclass(Class, 'PyVMFunc', [Object])
 
 ################
@@ -463,31 +489,14 @@ PyVMFunc = defclass(Class, 'PyVMFunc', [Object])
 null_value = _new_pobj(Null, None)
 
 # create (only) instances of true/false (a doubleton)!
+# subclass Bool into True and False singleton Classes??
 true_val = _new_pobj(Bool, True)
 false_val = _new_pobj(Bool, False)
 
 ################
 
-def subclass_of(klass, base):
-    visited = set()
-    def check(c):
-        if c in visited:
-            return False
-        visited.add(c)
-        if c is base:
-            return True
-        s = c.getprop(const.SUPERS)
-        if s is None or s is null_value:
-            return False
-        for x in s.value:       # XXX check if List
-            if check(x):
-                return True
-        return False
-    return check(klass)
-
-################ Object -- the base type for all instances and classes
-
 # utility called by VM jumpn/jumpe: NOT a method/pyfunc
+# (had originally planned to have all Classes have an is_true method)
 def is_true(obj):
     """
     return Python True/False for an object
@@ -499,6 +508,8 @@ def is_true(obj):
     if hasattr(obj, 'value') and obj.value == 0: # faster than isinstance?
         return False
     return True
+
+################ Object -- the base type for all instances and classes
 
 @pyvmfunc
 def new_obj(vm, this_class, *args):
@@ -523,18 +534,25 @@ def obj_init(this_obj, *args):
 
 @pyvmfunc
 def obj_str(vm, l):
-    return mkstr(str(l), vm.iscope)
+    return mkstr(str(l), vm.iscope) # native method that calls this.repr()?
 
 @pyvmfunc
 def obj_repr(vm, l):
     return mkstr(repr(l), vm.iscope)
 
+@pyvmfunc
+def obj_reprx(vm, l):
+    """
+    for debug: show Class, and Python value (which may include id?)
+    """
+    return mkstr("<%s: %s>" % (l.classname(), repr(l)), vm.iscope)
+
 @pyfunc
-def obj_eq(x, y):
+def obj_ident(x, y):            # SNOBOL4 IDENT
     return mkbool(x is y)
 
 @pyfunc
-def obj_ne(x, y):
+def obj_differ(x, y):           # SNOBOL4 DIFFER
     return mkbool(x is not y)
 
 def _not(x):
@@ -544,6 +562,7 @@ def _not(x):
     """
     return mkbool(not is_true(x))
 
+# XXX do this in pobj_not? all other objects always true????
 @pyfunc
 def obj_not(x):
     """Object unary ! operator"""
@@ -551,7 +570,7 @@ def obj_not(x):
 
 @pyfunc
 def obj_putprop(l, r, value):
-    # XXX check r is PObject? Str??
+    # XXX check r is Str!!!
     # implement access via descriptors??
     l.setprop(r.value, value)
     return value                # lhsop MUST return value
@@ -689,14 +708,15 @@ Object.setprop(const.METHODS, _mkdict({
     'getprop': obj_getprop,
     'str': obj_str,
     'repr': obj_repr,
+    'reprx': obj_reprx,
 }))
 Object.setprop(const.BINOPS, _mkdict({
     '.': obj_getprop,           # same as getprop method!!
     '..': obj_get_in_supers,
-    '===': obj_eq,              # "is"
-    '!==': obj_ne,              # "is not"
-    '==': obj_eq,               # allow null where str/num expected?
-    '!=': obj_ne,               # ditto
+    '===': obj_ident,           # "is"
+    '!==': obj_differ,          # "is not"
+    '==': obj_ident,            # allow null where str/num expected?
+    '!=': obj_differ,           # ditto
     '(': obj_call,
 }))
 Object.setprop(const.UNOPS, _mkdict({
@@ -767,75 +787,61 @@ Class.setprop(const.BINOPS, _mkdict({
 ################ PClass -- metaclass for PObjects
 
 @pyvmfunc
-def new_pobj(vm, this_class, arg=None):
+def pclass_new(vm, this_class, arg):
     """
     'new' method for PClass metaclass (ie; Number.new, Dict.new)
-    makes an instance of this_class
+    makes an instance of this_class backed by a CPObject
     """
-    # XXX need different init method for each class to handle arg/set .value!!!
-    raise Exception("new_pobj {} {}".format(this_class, arg))
+    o = CPObject(this_class)
 
-    n = CPObject(this_class, arg) # XXX pass None, value goes to init
-
-    # XXX what to do with arg??
-    m = find_in_class(n, const.INIT) # returns BoundMethod
-    if m and m is not null_value:
-        vmx.invoke_function(m, vm, [arg]) # XXX reuse VM
-    return n
+    m = find_in_class(o, const.INIT) # returns BoundMethod
+    if not m or m is null_value:
+        # should not happen: should call back to pobj_init
+        raise Exception("SNH: {} has no init method".format(this_class))
+    vmx.invoke_function(m, vm, [arg])
+    return o
 
 PClass.setprop(const.METHODS, _mkdict({
-   const.NEW: new_pobj
+   const.NEW: pclass_new
 }))
 
-################ (JavaScript style) Object
-# a class with both "." and "[]" access to properties
-# XXX flush??
+################ generic methods for PObject
 
 @pyfunc
-def jsobj_init(obj, proto=None):
-    if proto and proto is not null_value:
-        obj.props.update(proto.props) # XXX direct access
-
-JSObject.setprop(const.METHODS, _mkdict({
-    const.INIT: jsobj_init,
-    'str': obj_str,
-}))
-JSObject.setprop(const.BINOPS, _mkdict({
-    '[': obj_getprop
-}))
-JSObject.setprop(const.LHSOPS, _mkdict({
-    '[': obj_putprop
-}))
-
-################ generic methods for classes with wrapped Python values
-
-# XXX XXX rename val_xxx to vobj_xxx????
-
-@pyfunc
-def val_len(l):
+def pobj_len(l):
     return _new_pobj(Number, len(l.value)) # XXX look up by name?
 
 @pyvmfunc
-def val_str(vm, l):
+def pobj_str(vm, l):
     """
     use Python str function on value
     """
+    #print("pobj_str")
     return mkstr(str(l.value), vm.iscope)
 
 @pyvmfunc
-def val_repr(vm, l):
+def pobj_repr(vm, l):
+    """
+    use Python repr function on value
+    """
+    return mkstr(l.value, vm.iscope)
+
+@pyvmfunc
+def pobj_reprx(vm, l):
+    """
+    for debug: show Class, and Python value
+    XXX show id()? of value???
+    """
     return mkstr("<%s: %s>" % (l.classname(), repr(l.value)),
                  vm.iscope)
 
 @pyfunc
-def val_init(l, value):
-    # XXX create_sys_type calling w/ Python value!!!
-    assert(isinstance(l, Object))
-    l.value = value             # XXX XXX unwrap?
+def pobj_init(l, value):
+    raise Exception("{} missing init method".format(l.getclass()))
 
 # XXX unused?
 @pyfunc
-def val_ge(l, r):
+def pobj_ge(l, r):
     lv = l.value
     rv = r.value
     # XXX not right!!
@@ -847,10 +853,17 @@ def val_ge(l, r):
 
 # XXX unused?
 @pyfunc
-def val_eq(l, r):
+def pobj_eq(l, r):
     lv = l.value
     rv = r.value
     return mkbool(lv == rv)
+
+PObject.setprop(const.METHODS, _mkdict({
+    'str': pobj_str,
+    'repr': pobj_repr,
+    'reprx': pobj_reprx,
+    const.INIT: pobj_init
+}))
 
 ################ Dict
 
@@ -878,10 +891,7 @@ def dict_pop(obj, arg):
     return obj.value.pop(arg.value) # XXX check arg has value!!!
 
 Dict.setprop(const.METHODS, _mkdict({
-    'len': val_len,
-    'str': val_str,
-    'repr': val_repr,
-    'str': val_str,
+    'len': pobj_len,
     'pop': dict_pop,
     const.INIT: dict_init,
 }))
@@ -932,10 +942,9 @@ def list_str(vm, l):
 
 List.setprop(const.METHODS, _mkdict({
     'append': list_append,
-    'len': val_len,
+    'len': pobj_len,
     'str': list_str,
     'pop': list_pop,
-    'repr': val_repr,
     # XXX slice(start[,end]) (return range of elements)
     const.INIT: list_init,
 }))
@@ -957,34 +966,30 @@ def neg(x):
 
 @pyfunc
 def add(x, y):
+    # XXX check if one zero?
     return _new_pobj(x.getclass(), x.value + y.value)
 
 @pyfunc
 def sub(x, y):
+    # XXX check if y zero?
     return _new_pobj(x.getclass(), x.value - y.value)
 
 @pyfunc
 def mul(x, y):
+    # XXX check if one is one?
     return _new_pobj(x.getclass(), x.value * y.value)
 
 @pyfunc
 def div(x, y):
+    # XXX check if y is one? zero??!!
     return _new_pobj(x.getclass(), x.value / y.value)
 
-# XXX XXX XXX too liberal!!!
 def _eq(l, r):
     """
     call any time (not a pyfunc)
-    takes CObject, returns CObject
+    takes CPObject, returns CPObject
     """
-    l = l.value
-    r = r.value                 # XXX str()?
-#    print "eq", l, r
-    if isinstance(l, float) or isinstance(r, float):
-        return mkbool(float(l) == float(r))
-    if isinstance(l, int) or isinstance(r, int):
-        return mkbool(int(l) == int(r))
-    return mkbool(str(l) == str(r))
+    return mkbool(l.value == r.value)
 
 @pyfunc
 def eq(l, r):
@@ -995,14 +1000,7 @@ def ne(l, r):
     return _not(_eq(l, r))
 
 def _ge(l, r):
-    l = l.value
-    r = r.value
-
-    if isinstance(l, float) or isinstance(r, float):
-        return mkbool(float(l) >= float(r))
-    if isinstance(l, int) or isinstance(r, int):
-        return mkbool(int(l) >= int(r))
-    return mkbool(str(l) >= str(r))
+    return mkbool(l.value >= r.value)
 
 @pyfunc
 def ge(l, r):
@@ -1013,14 +1011,7 @@ def lt(l, r):
     return _not(_ge(l, r))
 
 def _le(l, r):
-    l = l.value
-    r = r.value
-
-    if isinstance(l, float) or isinstance(r, float):
-        return mkbool(float(l) <= float(r))
-    if isinstance(l, int) or isinstance(r, int):
-        return mkbool(int(l) <= int(r))
-    return mkbool(str(l) <= str(r))
+    return mkbool(l.value <= r.value)
 
 @pyfunc
 def le(l, r):
@@ -1031,9 +1022,7 @@ def gt(l, r):
     return _not(_le(l, r))
 
 Number.setprop(const.METHODS, _mkdict({
-    'str': val_str,
-    'repr': val_repr,
-    const.INIT: val_init,
+#    const.INIT: num_init       # XXX invoke arg.number()?
 }))
 Number.setprop(const.UNOPS, _mkdict({
     '-': neg,
@@ -1113,18 +1102,21 @@ def str_join(this, arg):
 
 Str.setprop(const.METHODS, _mkdict({
     'join': str_join,
-    'len': val_len,
-    'repr': val_repr,
+    'len': pobj_len,
     'slice': str_slice,
     'str': str_str,
     'strip': str_strip,
-    const.INIT: val_init,
+    const.INIT: pobj_init,
 }))
 Str.setprop(const.BINOPS, _mkdict({
     '+': str_concat,
     '==': str_eq,
     '!=': str_ne,
-    # XXX full relops? (require str lhs!!)
+    '!=': ne,
+    '>=': ge,
+    '<=': le,
+    '>': gt,
+    '<': lt,
     '[': str_get,
 }))
 
@@ -1214,7 +1206,7 @@ def pyobj_call(vm, l, r):
     return wrap(ret, vm.iscope) # may create another PyObject!
     
 PyObject.setprop(const.METHODS, _mkdict({
-    const.INIT: val_init,
+    const.INIT: pobj_init,
     # NOTE!! pyobj_getprop doesn't search here!!!
     #   XXX see if pyobj..getprop() works!!
 }))
@@ -1243,7 +1235,7 @@ def wrap(value, iscope):
         return system.create_sys_type('Number', iscope, value)
 
     if isinstance(value, str):
-        return system.create_sys_type('Str', iscope, value)
+        return mkstr(value, iscope)
 
     # XXX handle bytes??
 
