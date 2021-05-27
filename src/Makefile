@@ -76,7 +76,8 @@ $(B):	$(VM) $(A) $(PARSER_SRC)
 $(C):	$(VM) $(B) $(PARSER_SRC)
 	$(RUNVMX) $(B) $(PARSER_SRC) > $(C).tmp && mv $(C).tmp $(C)
 
-bootstrap.vmx: bootstrap.xxl $(PARSER_VMX)
+# XXX save old (working) file??
+bootstrap.vmx: bootstrap.xxl $(PARSER_VMX) $(VM)
 	$(RUNVMX) $(PARSER_VMX) bootstrap.xxl > bootstrap.vmx.tmp && \
 		mv bootstrap.vmx.tmp bootstrap.vmx
 
