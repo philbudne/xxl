@@ -1098,6 +1098,9 @@ def str_ne(l, r):
 def str_join(this, arg):
     # XXX check arg is List (or Dict)?
     # XXX each List/key element must be a Str!
+#    print("str_join")
+#    for x in arg.value:
+#        print(x.getclass(), type(x.value), x.value)
     return _new_pobj(this.getclass(), this.value.join([x.value for x in arg.value]))
 
 Str.setprop(const.METHODS, _mkdict({
