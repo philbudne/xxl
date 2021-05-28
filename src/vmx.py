@@ -693,7 +693,7 @@ def invoke_function(func, vm, args=[]):
     vm2.ac = func               # CClosure, etc....
 
     fn = 'vmx.py'
-    where = "invoke %s" % func
+    where = "invoke"
     code = [CallInstr(None, fn, where, len(args)), ExitInstr(None, fn, where)]
 
     vm2.start(code, vm.iscope)
