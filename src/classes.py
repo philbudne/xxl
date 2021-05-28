@@ -837,7 +837,7 @@ def pobj_reprx(vm, l):
 
 @pyfunc
 def pobj_init(l, value):
-    raise Exception("{} missing init method".format(l.getclass()))
+    raise Exception("{} missing init method".format(l.classname()))
 
 # XXX unused?
 @pyfunc
