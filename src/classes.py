@@ -114,12 +114,8 @@ class CObject:
         # will raise exception if op not found:
         # NOTE!! find_op does not return BoundMethod
         #       (called 99.999% of time from XxxOpInstrs)
-        m = find_op(self, const.BINOPS, "(")
-
-        # XXX _mklist meant to be used only at startup
-        vm.args = [self, _mklist(vm.args)]
-# XXX just prepend self to vm.args?
-# pyobj_call needs to take *args
+        m = find_op(self, const.BINOPS, '(')
+        vm.args.insert(0, self)
         m.invoke(vm)
 
     def hasprop(self, prop):
@@ -699,7 +695,7 @@ def obj_setclass(this, klass):
     return this.setclass(klass)
 
 @pyfunc
-def obj_call(l, r):
+def obj_call(l, *args):
     raise UError("%s not callable" % l.classname())
 
 @pyfunc
@@ -775,7 +771,7 @@ def class_init(this_class, props):
         this_class.setprop(const.SUPERS, _mklist([Object]))
 
 @pyfunc
-def class_call(this_class, args):
+def class_call(this_class, *args):
     """
     "(" binop for Class
     """
@@ -1134,7 +1130,7 @@ def null_str(vm, this):
     return mkstr("null", vm.iscope)
 
 @pyfunc
-def null_call(l, r):
+def null_call(this, *args):
     raise UError("'null' called; bad method name?")
 
 Null.setprop(const.METHODS, _mkdict({
@@ -1208,8 +1204,9 @@ def pyobj_getitem(vm, l, r):
     return wrap(v, vm.iscope)
 
 @pyvmfunc
-def pyobj_call(vm, l, r):
-    ret = l.value(*[unwrap(x) for x in r.value]) # XXX getlist
+def pyobj_call(vm, this, *args):
+    a2 = [unwrap(x) for x in args]
+    ret = this.value(*a2)
     return wrap(ret, vm.iscope) # may create another PyObject!
     
 PyObject.setprop(const.METHODS, _mkdict({
@@ -1233,7 +1230,7 @@ def wrap(value, iscope):
     wrap a Python `value` in a language CObject
     `scope` used to find System types by name
 
-    used by vm `lit` and `pyfunc`; type `PyObject`
+    used by vm `lit`, `push_list`; `pyfunc`; type `PyObject`
     """
     if isinstance(value, bool):
         return mkbool(value) # XXX lookup local true/false???
