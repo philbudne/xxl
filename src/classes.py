@@ -105,11 +105,6 @@ class CObject:
             return "Unknown!"
 
         n = c.getprop(const.NAME).value # XXX guard!!
-
-        # XXX needed????
-        if c is Class:
-            return 'Class: %s' % n
-
         if subclass_of(c, Class):
             return '%s: %s' % (n, self.getprop(const.NAME).value)
 
@@ -123,9 +118,11 @@ class CObject:
 
         # XXX _mklist meant to be used only at startup
         vm.args = [self, _mklist(vm.args)]
+# XXX just prepend self to vm.args?
+# pyobj_call needs to take *args
         m.invoke(vm)
 
-    def hasprop(self, prop):    # internal use only?
+    def hasprop(self, prop):
         return prop in self.props
 
     def getprop(self, prop):
@@ -398,9 +395,8 @@ def subclass_of(klass, base):
         if s is None or s is null_value:
             return False
         for x in s.value:       # XXX check if List
-            if c not in visited:
-                if check(x):
-                    return True
+            if x not in visited and check(x):
+                return True
         return False
     return check(klass)
 
@@ -1252,4 +1248,3 @@ def copy_types(to, sys_obj):
     sys_types = sys_obj.getprop('types')
     for x in ['true', 'false', 'null', 'Class']:
         to.defvar(x, sys_types.getprop(x))
-
