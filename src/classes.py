@@ -707,7 +707,7 @@ Object.setprop(const.METHODS, _mkdict({
     'instance_of': obj_instance_of,
     'putprop': obj_putprop,
     'getprop': obj_getprop,
-    'str': obj_str,
+    # 'str' in bootstrap.xxl -- invokes repr.
     'repr': obj_repr,
     'reprx': obj_reprx,
 }))
@@ -859,7 +859,6 @@ def pobj_eq(l, r):
     return mkbool(lv == rv)
 
 PObject.setprop(const.METHODS, _mkdict({
-    'str': pobj_str,
     'repr': pobj_repr,
     'reprx': pobj_reprx,
     const.INIT: pobj_init
@@ -1117,8 +1116,7 @@ def null_call(l, r):
     raise UError("'null' called; bad method name?")
 
 Null.setprop(const.METHODS, _mkdict({
-    'repr': null_str,
-    'str': null_str
+    'repr': null_str
 }))
 
 Null.setprop(const.BINOPS, _mkdict({
@@ -1137,8 +1135,7 @@ def bool_str(vm, this):
 # XXX have own MetaClass "new" to return one of the doubleton values?
 # XXX subclass into True and False singleton classes????
 Bool.setprop(const.METHODS, _mkdict({
-    'repr': bool_str,
-    'str': bool_str
+    'repr': bool_str
 }))
 
 def mkbool(val):

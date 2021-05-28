@@ -7,6 +7,10 @@
 // parser extensions are available as soon as they are added!!
 
 if (true) {			// hide temp variables
+    System.types.Object.__methods['str'] = function (this) {
+	return(this.repr());
+    };
+
     var List = System.types.List;
 
     List.__methods['for_each'] = function (this, func) {
