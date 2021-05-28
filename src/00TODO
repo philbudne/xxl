@@ -3,6 +3,9 @@ FIX
 Dict str/repr, for_each
 	need iterator!!
 
+handle import of .vmx files!!
+	Have bootstrap.vmx explicitly import parser!?
+
 split Number into Float and Int
 
 Check Token objects have Class set!
