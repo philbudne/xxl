@@ -126,7 +126,7 @@ def sys_exit(value=0):
 @classes.pyvmfunc
 def sys_tree(vm, t):
     """
-    format JSON
+    format JSON (returns Str)
     """
     t2 = obj2python_json(t)     # strip down to Python data structures
     return classes.mkstr(json.dumps(t2, indent=1), vm.iscope)
@@ -173,8 +173,7 @@ def trim_where(code, fname):
 @classes.pyvmfunc
 def sys_vtree(vm, t, fname=classes.null_value):
     """
-    pretty print a VM code tree (returns Str)
-    `t`: List of List
+    pretty print a VM code tree (List of List) `t`; returns Str
     """
     t2 = obj2python_json(t)     # convert to list of list of str
 
@@ -195,27 +194,24 @@ def obj2python_json(x):
     # can't remember why;
     # parser ASTs may once have had cycles?
     memo = {}
-
+    value_classes = [classes.Number, classes.Str, classes.Bool, classes.Null]
+    iterable_classes = [classes.List]
     def clean1(x):
         """
         worker function
         """
-        # XXX paranoia:
-        if not isinstance(x, classes.CObject):
-            return x
+        if not isinstance(x, classes.CPObject): # paranoia
+            raise classes.UError("obj2python only handles primatives")
 
         ix = id(x)
         if ix in memo:
             return memo[ix]
-        n = x.classname()       # OOF!
-        if n == 'Null':
-            return None
-        if n in ('Str', 'Number', 'Bool'):
+        if classes.instance_of(x, value_classes):
             return x.value
-        if n == 'List':
+        if classes.instance_of(x, iterable_classes):
             return [clean1(z) for z in x.value]
 
-        # here to handle AST nodes:
+        # here with Dict; handle AST nodes:
         r = []
         for attr in ['where', 'arity', 'value']:
             r.append(clean1(x.getprop(attr)))

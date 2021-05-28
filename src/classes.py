@@ -105,7 +105,7 @@ class CObject:
             return "Unknown!"
 
         n = c.getprop(const.NAME).value # XXX guard!!
-        if subclass_of(c, Class):
+        if subclass_of(c, [Class]):
             return '%s: %s' % (n, self.getprop(const.NAME).value)
 
         return n
@@ -385,11 +385,15 @@ def mkstr(s, scope):
 ################
 null_value = None               # forward
 
-def subclass_of(klass, base):
+def subclass_of(klass, bases):
+    """
+    `klass` is CObject for a Class
+    `bases` is Python list of CObjects
+    """
     visited = set()
     def check(c):
         visited.add(c)
-        if c is base:
+        if c in bases:
             return True
         s = c.getprop(const.SUPERS)
         if s is None or s is null_value:
@@ -399,6 +403,13 @@ def subclass_of(klass, base):
                 return True
         return False
     return check(klass)
+
+def instance_of(obj, classes):
+    """
+    `obj` is CObject
+    `classes` is Class or Python list of Classes
+    """
+    return subclass_of(obj.getclass(), classes)
 
 ################################################################
 
@@ -693,7 +704,15 @@ def obj_call(l, r):
 
 @pyfunc
 def obj_instance_of(l, c):
-    return mkbool(subclass_of(obj_class(l), c))
+    """
+    `l` is Object
+    `c` is Class or List of Classes
+    """
+    if subclass_of(c.getclass(), [List]):
+        c = c.value             # get Python list
+    else:
+        c = [c]                 # make Python list
+    return mkbool(instance_of(l, c))
 
 Object.setprop(const.METHODS, _mkdict({
     const.INIT: obj_init,
@@ -764,9 +783,16 @@ def class_call(this_class, args):
     raise UError("call %s.new!" % this_class.getprop(const.NAME).value)
 
 @pyfunc
-def class_subclass_of(l, r):
-    # complain if l is not a Class -- check using subclass_of(l, Class)?!
-    return mkbool(subclass_of(l, r))
+def class_subclass_of(l, c):
+    """
+    `l` is Class
+    `c` is Class or List of Classes
+    """
+    if subclass_of(c.getclass(), List):
+        c = c.value             # get Python list
+    else:
+        c = [c]                 # make Python list
+    return mkbool(subclass_of(l, c))
 
 # Class: a meta-class: all Classes are instances of a meta-class
 # (Class.new creates a new Class)
