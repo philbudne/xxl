@@ -1,5 +1,8 @@
 FIX
 ===
+Dict str/repr, for_each
+	need iterator!!
+
 split Number into Float and Int
 
 Check Token objects have Class set!
