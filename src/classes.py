@@ -927,23 +927,14 @@ def list_get(l, r):
 
 @pyfunc
 def list_put(l, r, value):
+    # XXX check if integer
     l.value[r.value] = value
     return value
 
-# XXX supply native version!?
-@pyvmfunc
-def list_str(vm, l):
-    # XXX Continuations generated inside 'str' will be fubar
-    # XXX reuse VM
-    return mkstr("[%s]" %
-                 (", ".join([vmx.invoke_method(x, 'str', vm).value
-                             for x in l.value])),
-                 vm.iscope)
-
+# str, repr, for_each, each_for, map, map2 in bootstrap.xxl
 List.setprop(const.METHODS, _mkdict({
     'append': list_append,
     'len': pobj_len,
-    'str': list_str,
     'pop': list_pop,
     # XXX slice(start[,end]) (return range of elements)
     const.INIT: list_init,
@@ -1126,6 +1117,7 @@ def null_call(l, r):
     raise UError("'null' called; bad method name?")
 
 Null.setprop(const.METHODS, _mkdict({
+    'repr': null_str,
     'str': null_str
 }))
 
