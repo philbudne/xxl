@@ -1,7 +1,5 @@
 FIX
 ===
-native version of List.str
-
 split Number into Float and Int
 
 Check Token objects have Class set!

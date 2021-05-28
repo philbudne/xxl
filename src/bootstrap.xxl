@@ -7,7 +7,9 @@
 // parser extensions are available as soon as they are added!!
 
 if (true) {			// hide temp variables
-    System.types.List.__methods['for_each'] = function (this, func) {
+    var List = System.types.List;
+
+    List.__methods['for_each'] = function (this, func) {
 	var i = 0;
 	var l = this.len();
 	while (i < l) {
@@ -16,7 +18,7 @@ if (true) {			// hide temp variables
 	}
     };
 
-    System.types.List.__methods['each_for'] = function (this, func) {
+    List.__methods['each_for'] = function (this, func) {
 	var i = this.len();
 	while (i > 0) {
 	    i -= 1;
@@ -24,7 +26,7 @@ if (true) {			// hide temp variables
 	}
     };
 
-    System.types.List.__methods['map'] = function (this, func) {
+    List.__methods['map'] = function (this, func) {
 	var l = this.len();
 	var i = 0;
 	var ret = [];
@@ -36,7 +38,7 @@ if (true) {			// hide temp variables
     };
 
     // ignore entries where func returns `ignore` value
-    System.types.List.__methods['map2'] = function (this, func, ignore) {
+    List.__methods['map2'] = function (this, func, ignore) {
 	var l = this.len();
 	var i = 0;
 	var ret = [];
@@ -51,7 +53,7 @@ if (true) {			// hide temp variables
     };
 
     var repr = function (x) { return(x.repr()); };
-    System.types.List.__methods['str'] = function (this) {
+    List.__methods['str'] = List.__methods['repr'] = function (this) {
 	return("[" + ", ".join(this.map(repr)) + "]");
     };
 
