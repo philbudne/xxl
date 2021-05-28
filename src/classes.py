@@ -36,13 +36,11 @@ and
 
 And avoiding the word "type"!
 
+All Objects have a Class.
+
 The root language Class is Object.
 
 Only "Object" class has no super classes; all others have one or more.
-
-All objects have a class (Python klass attribute)
-        which points to an Object of the Class (meta)Class
-                (or a subclass thereof)
 
 By default language Classes are instances of the "Class" metaclass,
         (the source of the default "new" method); if you need to
@@ -100,12 +98,22 @@ class CObject:
 
     def classname(self):
         """
-        return Python string for object class
+        return Python string for object class name
         """
         c = self.getclass()
         if not c or c == null_value:
             return "Unknown!"
-        return c.getprop(const.NAME).value # XXX guard?
+
+        n = c.getprop(const.NAME).value # XXX guard!!
+
+        # XXX needed????
+        if c is Class:
+            return 'Class: %s' % n
+
+        if subclass_of(c, Class):
+            return '%s: %s' % (n, self.getprop(const.NAME).value)
+
+        return n
 
     def invoke(self, vm):
         # will raise exception if op not found:
@@ -130,16 +138,7 @@ class CObject:
         return repr(self)       # XXX ???
 
     def __repr__(self):
-        # XXX call object method??? (could cause debugging pain)
-        c = self.getclass()
-        if c is Class:
-            name = 'Class: %s' % self.getprop(const.NAME).value
-        elif subclass_of(c, Class):
-            name = '%s: %s' % (c.getprop(const.NAME).value,
-                               self.getprop(const.NAME).value)
-        else:
-            name = self.classname()
-        return '<%s at %#x>' % (name, id(self))
+        return '<%s at %#x>' % (self.classname(), id(self))
 
 class CPObject(CObject):
     """
@@ -149,6 +148,7 @@ class CPObject(CObject):
     __slots__ = ['value']
 
     def __init__(self, this_class):
+        ### XXX TEMP
         super().__init__(this_class)
         self.value = None       # set by init method
 
@@ -445,7 +445,7 @@ Class.setclass(Class)             # circular! Class.new creates a new Class!
 # root Class; circular with "Class" metaclass, so defined second.
 Object = defclass(Class, 'Object', []) # root Class
 
-# metaclass for PObjects
+# metaclass for PObjects (creates Python CPObject)
 PClass = defclass(Class, 'PClass', [Class])
 
 # Primative Object Base Class
@@ -457,6 +457,7 @@ List = defclass(PClass, 'List', [PObject]) # subclass of Sequence? FrozenList??
 Str = defclass(PClass, 'Str', [PObject])   # subclass of Sequence?
 Dict  = defclass(PClass, 'Dict', [PObject]) # subclass of Mapping? FrozenDict??
 Number = defclass(PClass, 'Number', [PObject])
+
 # XXX own metaclass to return singleton?
 Null = defclass(PClass, 'Null', [PObject]) # XXX singleton
 # XXX own metaclass to return doubleton values? subclass into two singletons??
@@ -735,7 +736,6 @@ def class_init(this_class, props):
     `props` is Dict holding properties (see const.CLASS_PROPS)
     """
     # XXX check props is a Dict!
-    metaclass = this_class.classname()
     for key, val in props.value.items():
         # XXX depends on key as Python str
         # XXX check val is a Dict!
@@ -746,6 +746,7 @@ def class_init(this_class, props):
             continue
         ikey = const.CLASS_PROPS.get(key)
         if not ikey:
+            metaclass = this_class.classname()
             raise UError("Unknown %s property %s" % (metaclass, key))
         this_class.props[ikey] = val
 
@@ -816,7 +817,6 @@ def pobj_str(vm, l):
     """
     use Python str function on value
     """
-    #print("pobj_str")
     return mkstr(str(l.value), vm.iscope)
 
 @pyvmfunc
@@ -824,7 +824,7 @@ def pobj_repr(vm, l):
     """
     use Python repr function on value
     """
-    return mkstr(l.value, vm.iscope)
+    return mkstr(repr(l.value), vm.iscope)
 
 @pyvmfunc
 def pobj_reprx(vm, l):
@@ -1075,11 +1075,6 @@ def str_slice(l, a, b=None):
 def str_str(this):
     return this                 # identity
 
-@pyvmfunc
-def str_repr(vm, this):
-    # XXX check if contains '"' and \u escape!!!
-    return mkstr('"%s"' % this.value, vm.iscope)
-
 def _str_eq(l, r):
     l = l.value
     if hasattr(r, 'value'):     # faster than isinstance?
@@ -1096,12 +1091,9 @@ def str_ne(l, r):
 
 @pyfunc
 def str_join(this, arg):
-    # XXX check arg is List (or Dict)?
-    # XXX each List/key element must be a Str!
-#    print("str_join")
-#    for x in arg.value:
-#        print(x.getclass(), type(x.value), x.value)
-    return _new_pobj(this.getclass(), this.value.join([x.value for x in arg.value]))
+    # XXX check arg is List (or Dict) of Str!
+    return _new_pobj(this.getclass(),
+                     this.value.join([x.value for x in arg.value]))
 
 Str.setprop(const.METHODS, _mkdict({
     'join': str_join,
@@ -1153,6 +1145,7 @@ def bool_str(vm, this):
 # XXX have own MetaClass "new" to return one of the doubleton values?
 # XXX subclass into True and False singleton classes????
 Bool.setprop(const.METHODS, _mkdict({
+    'repr': bool_str,
     'str': bool_str
 }))
 
