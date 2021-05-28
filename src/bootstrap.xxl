@@ -50,6 +50,11 @@ if (true) {			// hide temp variables
 	return(ret);
     };
 
+    var repr = function (x) { return(x.repr()); };
+    System.types.List.__methods['str'] = function (this) {
+	return("[" + ", ".join(this.map(repr)) + "]");
+    };
+
     var str = function (x) { return(x.str()); };
     var __print = function (file, l) {
 	l = l.map(str);
