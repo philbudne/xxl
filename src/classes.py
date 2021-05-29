@@ -252,7 +252,7 @@ class CBoundMethod(CObject):
         self.method = method
 
     def __repr__(self):
-        return "<BoundMethod: %s %s>" % (self.obj, self.method)
+        return "<BoundMethod: %s %s>" % (repr(self.obj), self.method)
         
     def invoke(self, vm):
         # *THIS* is the place "this" is explicitly passed!!!
@@ -1106,9 +1106,9 @@ def str_concat(x, y):
     xv = x.value
     yv = y.value
     if xv == "":
-        return yv
+        return y
     if yv == "":
-        return xv
+        return x
     return _new_pobj(x.getclass(), xv + yv)
 
 @pyfunc
