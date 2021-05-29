@@ -7,12 +7,44 @@
 // parser extensions are available as soon as they are added!!
 
 if (true) {			// hide temp variables
+    // default str to this.repr:
     System.types.Object.__methods['str'] = function (this) {
 	return(this.repr());
     };
 
+    ////////////////
+    // Dict
+
+    var Dict = System.types.Dict;
+
+    // _should_ work for List too -- put in var interable_for_each??
+    Dict.__methods['for_each'] = function (this, func) {
+	var iter = this.iter();
+	var ret = [];
+      break_while:
+	while (true) {
+	    ret.append(func(iter.next(break_while)));
+	}
+	return(ret);
+    };
+
+    Dict.__methods['str'] = function (this) {
+	var items = [];
+	this.for_each(
+	    function (key) {
+		// NOTE! JavaScript style {} literals: takes const, not expr
+		items.append(key.str() + ": " + this[key].repr());
+	    }
+	);
+	return("{" + ", ".join(items) + "}");
+    };
+
+    ////////////////
+    // List
+
     var List = System.types.List;
 
+    // XXX use Dict version??
     List.__methods['for_each'] = function (this, func) {
 	var i = 0;
 	var l = this.len();
@@ -30,6 +62,7 @@ if (true) {			// hide temp variables
 	}
     };
 
+    // XXX define using this.iter(), make avail for Dict too???
     List.__methods['map'] = function (this, func) {
 	var l = this.len();
 	var i = 0;
@@ -60,6 +93,9 @@ if (true) {			// hide temp variables
     List.__methods['str'] = List.__methods['repr'] = function (this) {
 	return("[" + ", ".join(this.map(repr)) + "]");
     };
+
+    ////////////////
+    // print
 
     var str = function (x) { return(x.str()); };
     var __print = function (file, l) {

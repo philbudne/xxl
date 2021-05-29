@@ -1,8 +1,5 @@
 FIX
 ===
-Dict str/repr, for_each
-	need iterator!!
-
 handle import of .vmx files!!
 	Have bootstrap.vmx explicitly import parser!?
 
@@ -79,7 +76,6 @@ flush __mkobject for:
 	tokenizer -- return List?
 Do wrapping in CPyFunc/CPyObj?
 
-add Dict keys() & for_each? a generator??
 test if implementing VM as chain of if's (on ints)
 	instead step on Instr objects is faster
 Have pyfunc "invoke" method (un)wrap args/results??
@@ -103,17 +99,6 @@ make native Tokenizer (gonna be slow!)
 
 FEATURES (or extensions)
 ========================
-Add iterators?  object w/ next method
-	implement for (var VAR in ITER) extension??
-
-	(return via (break) continuation when exhausted):
-    break:
-	while (true) {
-	    var item = iter.next(break);
-	    ....
-	}
-
-
 Object: dir() method??
 	props() method return Dict?
 load compressed vmx (JSON) files and/or use some faster serialization library!!
