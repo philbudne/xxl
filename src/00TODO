@@ -10,6 +10,9 @@ bootstrap.md -- adding operator
 **** flush invoke_function/method?!
 	or use existing VM!!
 
+*** pass VM into import_worker
+	compiled code needs to end w/ return
+
 *** BUG: Only CPObjects can be used as Dict keys
 	(Dicts currently indexed by Python values,
 	 tho CPObject has proxy __hash__)
