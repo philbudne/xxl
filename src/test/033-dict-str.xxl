@@ -1,0 +1,4 @@
+// -*-js-*-
+
+var d = {1: 2, hello: "world"};
+System.print(d);
