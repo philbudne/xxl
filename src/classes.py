@@ -165,6 +165,13 @@ class CPObject(CObject):
         return '<%s: %s at %#x>' % \
             (self.classname(), repr(self.value), id(self))
 
+    def str(self):              # XXX EXP for PyObject
+        return str(self)
+
+    def repr(self):             # XXX EXP for PyObject
+        return repr(self)
+
+
 ################
 
 class CContinuation(CObject):
@@ -335,6 +342,38 @@ def pyvmfunc(func):
     """
     return CPyVMFunc(func)
 
+################
+
+class CPyIterator(CObject):
+    """
+    wrapper around a Python iterator
+    MAYBE should be a CPObject????
+    (obj2python_json would need to be updated)
+    """
+    __slots__ = ['iterator']
+
+    def __init__(self, iterator):
+        super().__init__(PyIterator)
+        self.iterator = iterator
+
+    def __repr__(self):
+        return '<%s: %s>' % (self.classname(), self.iterator)
+
+def pyiterator(iterator):
+    """
+    Make a PyIterator from a Python iterator (has a __next__ method)
+    """
+    assert hasattr(iterator, '__next__')
+    return CPyIterator(iterator)
+
+def make_pyiterator(iterable):
+    """
+    return a PyIterator for a Python iterable (has an __iter__ method)
+    ie; list, dict, dict.items(), range()
+    """
+    assert hasattr(iterable, '__iter__')
+    return pyiterator(iter(iterable))
+
 ################################################################
 
 def _new_pobj(this_class, arg):
@@ -487,6 +526,8 @@ Closure = defclass(Class, 'Closure', [Object])
 Continuation = defclass(Class, 'Continuation', [Object])
 PyFunc = defclass(Class, 'PyFunc', [Object])
 PyVMFunc = defclass(Class, 'PyVMFunc', [Object])
+
+PyIterator = defclass(Class, 'PyIterator', [Object])
 
 ################
 
@@ -907,7 +948,12 @@ def dict_init(obj, arg=None):
 def dict_pop(obj, arg):
     return obj.value.pop(arg.value) # XXX check arg has value!!!
 
+@pyfunc
+def dict_iter(this):
+    return make_pyiterator(this.value)
+
 Dict.setprop(const.METHODS, _mkdict({
+    'iter': dict_iter,
     'len': pobj_len,
     'pop': dict_pop,
     const.INIT: dict_init,
@@ -948,9 +994,14 @@ def list_put(l, r, value):
     l.value[r.value] = value
     return value
 
+@pyfunc
+def list_iter(this):
+    return make_pyiterator(this.value)
+
 # str, repr, for_each, each_for, map, map2 in bootstrap.xxl
 List.setprop(const.METHODS, _mkdict({
     'append': list_append,
+    'iter': list_iter,
     'len': pobj_len,
     'pop': list_pop,
     # XXX slice(start[,end]) (return range of elements)
@@ -1208,11 +1259,10 @@ def pyobj_call(vm, this, *args):
     a2 = [unwrap(x) for x in args]
     ret = this.value(*a2)
     return wrap(ret, vm.iscope) # may create another PyObject!
-    
+
 PyObject.setprop(const.METHODS, _mkdict({
-    const.INIT: pobj_init,
+    const.INIT: pobj_init
     # NOTE!! pyobj_getprop doesn't search here!!!
-    #   XXX see if pyobj..getprop() works!!
 }))
 
 PyObject.setprop(const.BINOPS, _mkdict({
@@ -1223,6 +1273,25 @@ PyObject.setprop(const.BINOPS, _mkdict({
 
 # XXX TODO LHSOPS for '.' and '[' ?!!! need to unwrap values!
 
+################ PyIterator
+
+@pyvmfunc
+def pyiterator_next(vm, this, finished):
+    """
+    `finished` should be a Closure to call when iterator exhausted
+    """
+    try:
+        return wrap(next(this.iterator), vm.iscope)
+    except StopIteration:
+        # XXX check up front?
+        if not isinstance(finished, CContinuation):
+            raise UError("need finished Continuation")
+        vm.args = []            # default to null
+        finished.invoke(vm)
+
+PyIterator.setprop(const.METHODS, _mkdict({
+    'next': pyiterator_next
+}))
 ################################################################
 
 def wrap(value, iscope):
@@ -1247,10 +1316,12 @@ def wrap(value, iscope):
         return system.create_sys_type('List', iscope,
                                       [wrap(x, iscope) for x in value])
 
-    # XXX handle dict???
-
     if value is None:
         return null_value
+
+    # XXX handle dict???
+
+    #if hasattr(value, '__next__'): return pyiterator(value)
 
     # XXX complain??
     return system.create_sys_type(const.PYOBJECT, iscope, value)
