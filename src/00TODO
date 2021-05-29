@@ -3,10 +3,6 @@ FIX
 handle import of .vmx files!!
 	Have bootstrap.vmx explicitly import parser!?
 
-split Number into Float and Int
-
-Check Token objects have Class set!
-
 hook in bootstrap.vmx build in Makefile
 
 bootstrap.md -- adding operator
@@ -33,7 +29,6 @@ run "__extensions__" (pass importer's initial scope? iscope.System??)
 bootstrap.vmx:
 	load System object(??)
 	"System.parser = System.import_vmx('parser.vmx');"
-	native code for_each, each_for, map, map2, print????
 
 type wrapping:
 	*** have __classes instead of System.types?? __xxl.classes?
@@ -71,6 +66,7 @@ handle System.types.Foo.new() -- need 'init' method for each Class?!
 	Number.init -- take string (and radix?)
 replace [this.]token.id() == X w/ this.check(X)???
 rename System to xxl? __xxl??
+split Number into Float and Int
 flush __mkobject for:
 	import -- return Module!
 	tokenizer -- return List?
