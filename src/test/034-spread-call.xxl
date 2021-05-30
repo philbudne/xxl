@@ -1,0 +1,9 @@
+var f = function (...args) {
+    System.print(args);
+    System.print("hello", ...args, "world");
+};
+
+f();
+f(1);
+f(1,2);
+f(1,2,3);

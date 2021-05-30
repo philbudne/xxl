@@ -426,7 +426,7 @@ class CallInstr(VMInstr1):
     """
     Calls CObject invoke method
         (CClosure, CPyFunc, CBoundMethod, CContinuation define this,
-         all others hand off to "(" binop)
+         CObject hands off to "(" binop)
     self.value is Python number of args on stack
     pops args from stack, creating Python list in vm.args
     calls CObject.invoke(vm)
@@ -445,6 +445,53 @@ class CallInstr(VMInstr1):
         # save_frame here, so same VM can be used for any invokes from 
         # Python code (and better tracebacks)?
         # CPyFunc (et al) would need to restore_frame at end of invoke method.
+        vm.ac.invoke(vm)
+
+@reginstr
+class ClearArgsInstr(VMInstr0):
+    """
+    clear vm.args
+    used for calls with spread arguments (...array)
+    """
+    name = "clargs"
+
+    def step(self, vm):
+        vm.args = []
+
+@reginstr
+class PopArgInstr(VMInstr0):
+    """
+    pop one arg from stack, append to vm.args
+    used for calls with spread arguments (...array)
+    """
+    name = "poparg"
+
+    def step(self, vm):
+        arg = vm.pop()          # pop argument
+        #print("poparg", arg)
+        vm.args.append(arg)
+
+@reginstr
+class SpreadArgInstr(VMInstr0):
+    """
+    pop List from stack, append (as List) to args
+    used for calls with spread arguments (...array)
+    """
+    name = "sprarg"
+    def step(self, vm):
+        arg = vm.pop()            # pop argument
+        #print("sparg", arg)
+        vm.args.extend(arg.value) # XXX getlist XXX need to reverse???
+
+@reginstr
+class Call0Instr(VMInstr0):
+    """
+    actual function call for calls with span arguments
+    """
+    name = "call0"
+
+    def step(self, vm):
+        #print("call0", vm.args)
         vm.ac.invoke(vm)
 
 @reginstr

@@ -197,6 +197,20 @@ var VMCode = Class.new({
 	    this._emit([sym.where, "append"]);
 	},
 
+	// for calls w/ ...arg 
+	emit_clargs: function (this, sym) {
+	    this._emit([sym.where, "clargs"]);
+	},
+	emit_poparg: function (this, sym) {
+	    this._emit([sym.where, "poparg"]);
+	},
+	emit_sprarg: function (this, sym) {
+	    this._emit([sym.where, "sprarg"]);
+	},
+	emit_call0: function (this, sym) {
+	    this._emit([sym.where, "call0"]);
+	},
+
 	// on PDP-10:
 	// JUMPN ac,x jumps if ac is non-zero
 	// JUMPE ac,x jumps if ac is equal to zero
@@ -891,11 +905,20 @@ var Parser = Class.new({
 		    },
 		    led: function (this, left) {
 			var a = [];
+			var spread = false;
 			if (!p.check(")")) {
 			  leave_while:
 			    while (true) {
-				// XXX handle ...expr
-				a.append(p.expression(0));
+				if (p.check("...")) {
+				    var arg = p.token;
+				    p.advance();
+				    arg.first = p.expression(0);
+				    a.append(arg);
+				    spread = true;
+				}
+				else {
+				    a.append(p.expression(0));
+				}
 				if (!p.check(",")) {
 				    leave_while();
 				}
@@ -906,17 +929,52 @@ var Parser = Class.new({
 			this.arity = "binary";
 			this.first = left;
 			this.second = a; // actuals
+			this.third = spread;
 			// XXX removed variable check
 			return(this);
 		    }, // led
 		    gen: function (this, vmcode) {
-			this.second.each_for(
-			    function (actual) {
-				vmcode.gen_push(actual);
-			    }
-			);
-			this.first.gen(vmcode); // function expression
-			vmcode.emit_call(this.second.len(), this);
+
+			if (this.third) { // ...args present
+			    // generate code for actuals, placing them on stack
+			    this.second.each_for(
+				function (actual) {
+				    if (actual.instance_of(p.DotDotDot)) {
+					vmcode.gen_push(actual.first);
+				    }
+				    else {
+					vmcode.gen_push(actual);
+				    }
+				}
+			    );
+
+			    this.first.gen(vmcode); // function expression
+
+			    // create vm.args list bit at a time...
+			    vmcode.emit_clargs(this);
+			    this.second.each_for(
+				function (actual) {
+				    if (actual.instance_of(p.DotDotDot)) {
+					vmcode.emit_sprarg(this);
+				    }
+				    else {
+					vmcode.emit_poparg(this);
+				    }
+				}
+			    );
+			    vmcode.emit_call0(this);
+			}
+			else {
+			    // generate code for actuals, placing them on stack
+			    this.second.each_for(
+				function (actual) {
+				    vmcode.gen_push(actual);
+				}
+			    );
+
+			    this.first.gen(vmcode); // function expression
+			    vmcode.emit_call(this.second.len(), this);
+			}
 		    } // gen
 		} // methods
 	    }); // LParen
