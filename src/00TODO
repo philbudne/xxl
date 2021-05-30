@@ -10,9 +10,6 @@ bootstrap.md -- adding operator
 **** flush invoke_function/method?!
 	or use existing VM!!
 
-*** pass VM into import_worker
-	compiled code needs to end w/ return
-
 *** BUG: Only CPObjects can be used as Dict keys
 	(Dicts currently indexed by Python values,
 	 tho CPObject has proxy __hash__)
@@ -39,10 +36,13 @@ type wrapping:
 	create_sys_type passes Python value!!!!!!!!!!!
 	Fix all access to System types (get from module top level scope??)
 
+pass VM into import_worker
+	compiled code needs to end w/ return
+
 break import cycles??
 	keep dict of filename => module??
 
-tokenizer: take \u{XX...} instead of \uXXXX!!!
+tokenizer: accept \xXX \UXXXXXXXX
 	take \n \r \t ..... >>>
 
 fix/revive "reserved" attribute in parser?!!
