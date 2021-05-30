@@ -261,9 +261,7 @@ class CBoundMethod(CObject):
 
 # Calling Python functions (ie; primative class methods) was orignally
 # implemented as a Closure with two VM instructions (pycall, return).
-# The CObject.invoke method avoids those two instructions when calling
-# from VM code, and allows invoke_{function,method} from Python code
-# to call Python code directly, without executing VM instructions.
+# The CObject.invoke method avoids those two instructions.
 
 class CPyFunc(CObject):
     """
@@ -1230,10 +1228,11 @@ def unwrap(x):
     """
     if hasattr(x, 'value'):     # faster than isinstance(x, PObject)??
         x = x.value
-        if isinstance(x, list):
+        if isinstance(x, list): # XXX handle any iterable?
             return [unwrap(y) for y in x]
-        elif isinstance(x, dict):
+        elif isinstance(x, dict): # XXX handle any mapping?
             return {key: unwrap(val) for key, val in x.items()}
+        # return x?
     # XXX complain??!!!
     return x
 
@@ -1245,7 +1244,7 @@ def pyobj_getprop(vm, l, r):
     # XXX r must be Str
     # XXX check if exists first? obscures all Class members/methods!!
     # XXX '..' should allow access to parent class methods (getprop/setprop)?
-    v = getattr(l.value, r.value) # get Python object attribute
+    v = getattr(l.value, r.value, None) # get Python object attribute
     return wrap(v, vm.iscope)
 
 @pyvmfunc
