@@ -106,7 +106,8 @@ class VM:
             self.ir = ir = self.cb[self.pc] # instruction register
             self.pc += 1        # jumps will overwrite
             ir.step(self)       # execute instruction
-            print(ir, self.ac)
+            irstr = str(ir)[1:-1] # remove []'s -- XXX remove quotes too???
+            print("%-40.40s | %-37.37s" % (irstr, repr(self.ac)))
 
     def _start_stats(self):
         # stats
