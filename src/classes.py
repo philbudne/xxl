@@ -177,10 +177,10 @@ class CPObject(CObject):
 class CContinuation(CObject):
     """
     A Callable instance backed by a native (VM) Continuation
+    NOTE: opaque (no Class methods to expose innerds) for now
     """
     def __init__(self, fp):
         super().__init__(Continuation)
-        # NOTE: opaque for now
         self.fp = fp
 
     def __repr__(self):
@@ -200,10 +200,10 @@ class CContinuation(CObject):
 class CClosure(CObject):
     """
     A Callable instance backed by a Closure (VM code + scope)
+    NOTE: opaque (no Class methods to expose innerds) for now
     """
     def __init__(self, code, scope):
         super().__init__(Closure)
-        # NOTE: opaque for now
         self.code = code
         self.scope = scope
 
@@ -214,7 +214,7 @@ class CClosure(CObject):
     def invoke(self, vm):
         vm.save_frame(True)     # show=True
         # return or leave label Continuation will be generated from FP
-        #       by "args" or "lscope" Instr (first Instr in code)
+        #       by "args" or "[lu]scope" Instr (first Instr in code)
         vm.pc = 0
         vm.cb = self.code
         vm.scope = self.scope
@@ -244,10 +244,10 @@ class CBoundMethod(CObject):
     XXX bring back use of "method" opcode as optimization
         which fetches method and calls invoke without creating
         a BoundMethod Object!!!???
+    NOTE: opaque (no Class methods to expose innerds) for now
     """
     def __init__(self, obj, method):
         super().__init__(BoundMethod)
-        # NOTE: opaque -- need repr!
         self.obj = obj
         self.method = method
 
@@ -307,7 +307,7 @@ class CPyFunc(CObject):
 def pyfunc(func):
     """
     (decorator)
-    Return a CObject with (Python) invoke method that runs Python code.
+    Return a Python CObject with (Python) invoke method that runs Python code.
     Used for Python methods on base types, system utilities.
     """
     return CPyFunc(func)
@@ -414,6 +414,9 @@ def _mkobj(props):
     return o
 
 def mkstr(s, scope):
+    """
+    used to create Str from Python str, once up and running
+    """
     return system.create_sys_type('Str', scope, s)
 
 ################
@@ -681,9 +684,10 @@ def obj_getprop(l, r):
         return l.getprop(rv)
     return find_in_class(l, rv) # may return BoundMethod
 
-# utility, not method
 def find_op(obj, optype, op):
     """
+    Utility (not method)
+    `obj` is CObject
     `optype` is Python string: UNOPS, BINOPS, or LHSOPS
     `op` is Python string for operator
     NOTE!! Does *NOT* return BoundMethod!!
@@ -718,8 +722,13 @@ def find_op(obj, optype, op):
 
 @pyfunc
 def obj_get_in_supers(l, r):
-    return find_in_supers(l, r.value) # XXX check for VInst
+    """
+    Object ".." operator; for calling superclass methods
+    """
+    return find_in_supers(l, r.value) # XXX check for CPObject
 
+# once upon a time class was stored as '__class' property,
+# but it was messy when cloning.
 @pyfunc
 def obj_getclass(this):
     return this.getclass()
@@ -730,6 +739,9 @@ def obj_setclass(this, klass):
 
 @pyfunc
 def obj_call(l, *args):
+    """
+    default '(' binop
+    """
     raise UError("%s not callable" % l.classname())
 
 @pyfunc
@@ -883,7 +895,7 @@ def pobj_reprx(vm, l):
 
 @pyfunc
 def pobj_init(l, value):
-    raise Exception("{} missing init method".format(l.classname()))
+    raise UError("{} missing init method".format(l.classname()))
 
 # XXX unused?
 @pyfunc
