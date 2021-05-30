@@ -123,3 +123,6 @@ make a full expression language??
 add multi-line strings
 
 add docstrings?
+
+XXXop opcodes do not consume vm.args
+	("clargs" needed for spread args; clear needed in "call")
