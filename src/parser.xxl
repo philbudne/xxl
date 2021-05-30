@@ -292,8 +292,13 @@ var PrattParser = Class.new({
 	    }
 	    return(c.new(t.where, v, a)); // Symbol!!!
 	}, // _gtok
+	check: function (this, id) {
+	    // would like to have member, not function!
+	    // this is the one place that calls id method
+	    return(this.token.id() == id);
+	},
 	advance: function (this, id) {
-	    if (id && this.token.id() != id) {
+	    if (id && !this.check(id)) {
 		this.token.error("Expected '" + id + "'");
 	    }
 	    if (this._next_token) { // saved from peek?
@@ -833,11 +838,11 @@ var Parser = Class.new({
 		    },
 		    nud: function (this) {
 			var a = [];
-			if (p.token.id() != "]") {
+			if (!p.check("]")) {
 			  leave_while:
 			    while (true) {
 				a.append(p.expression(0));
-				if (p.token.id() != ",") {
+				if (!p.check(",")) {
 				    leave_while();
 				}
 				p.advance(",");
@@ -886,11 +891,12 @@ var Parser = Class.new({
 		    },
 		    led: function (this, left) {
 			var a = [];
-			if (p.token.id() != ")") {
+			if (!p.check(")")) {
 			  leave_while:
 			    while (true) {
+				// XXX handle ...expr
 				a.append(p.expression(0));
-				if (p.token.id() != ",") {
+				if (!p.check(",")) {
 				    leave_while();
 				}
 				p.advance(",");
@@ -940,11 +946,11 @@ var Parser = Class.new({
 			    p.advance();
 			}
 			p.advance("(");
-			if (p.token.id() != ")") {
+			if (!p.check(")")) {
 			    var last = false;
 			  leave_while:
 			    while (true) {
-				if (p.token.id() == "...") {
+				if (p.check("...")) {
 				    p.advance("...");
 				    last = true;
 				}
@@ -961,7 +967,7 @@ var Parser = Class.new({
 				    leave_while();
 				}
 				p.advance();
-				if (p.token.id() != ",") {
+				if (!p.check(",")) {
 				    leave_while();
 				}
 				p.advance(",");
@@ -1022,7 +1028,7 @@ var Parser = Class.new({
 			var a = [];
 			var n;
 			var v;
-			if (p.token.id() != "}") {
+			if (!p.check("}")) {
 			  leave_while:
 			    while (true) {
 				n = p.token;
@@ -1034,7 +1040,7 @@ var Parser = Class.new({
 				p.advance(":");
 				n.first = p.expression(0);
 				a.append(n);
-				if (p.token.id() != ",") {
+				if (!p.check(",")) {
 				    leave_while();
 				}
 				p.advance(",");
@@ -1105,7 +1111,7 @@ var Parser = Class.new({
 			p.define(n); // define variable
 			this.first = n;
 			p.advance();
-			if (p.token.id() == "=") {
+			if (p.check("=")) {
 			    p.advance("=");
 			    this.second = p.expression(0);
 			}
@@ -1134,11 +1140,10 @@ var Parser = Class.new({
 			p.advance(")");
 			this.second = p.block();
 			// XXX change "else if" exception (crock) to "elif"?
-			if (p.token.id() == "else") {
+			if (p.check("else")) {
 			    p.advance("else");
-			    this.third = p.token.id() == "if"
-				? p.statement() // no longer a list!
-				: p.block();	// (also no longer a list!)
+			    // never a list:
+			    this.third = p.check("if") ? p.statement() : p.block();
 			}
 			else {
 			    this.third = null;
@@ -1338,8 +1343,8 @@ var Parser = Class.new({
 	end: function (this) {	// test if at end of block or file
 	    // called from Parser.statements and in bootstrap.xxl
 	    return(this.token
-		   && (this.token.id() == "}"
-		       || this.token.id() == "(end)")); // this.END?
+		   && (this.check("}")
+		       || this.check("(end)"))); // this.END?
 	}
     } // Parser methods
 });
