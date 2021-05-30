@@ -693,58 +693,6 @@ class NewInstr(VMInstr1):
         vm.temp = system.create_sys_type(self.value, vm.iscope, v)
 
 ################
-
-# used for init, str, repr
-def invoke_method(obj, method, vm, args=[]):
-    """
-    call an `obj` method from Python
-    `method` is Python string
-    `scope` is used to find System object
-    `args` is Python list of CObjects
-    """
-
-    m = classes.find_in_class(obj, method)
-    if not m or m is classes.null_value:
-        raise Exception("method %s not found" % method)
-    return invoke_function(m, vm, args)
-
-def invoke_function(func, vm, args=[]):
-    """
-    `func` is CObject to be called
-    `args` is Python list of CObjects
-    """
-    if isinstance(func, classes.CPyFunc): # shortcut for Python, no VM needed
-        # similar mess inside CPyFunc.invoke
-        n = len(args)
-        if n == 0:
-            ret = func.func()
-        elif n == 1:
-            ret = func.func(args[0])
-        elif n == 2:
-            ret = func.func(args[0], args[1])
-        elif n == 3:
-            ret = func.func(args[0], args[1], args[2])
-        else:
-            ret = func.func(*args)
-        return ret
-
-    # XXX XXX XXX XXX execute in caller VM for traceback?!
-    # XXX push_frame, and ?????
-    vm2 = VM(vm.iscope, stats=vm.stats, trace=vm.trace)
-
-    # XXX could have a version of CallInstr that takes vm.args directly
-    for arg in reversed(args):
-        vm2.push(arg)
-    vm2.ac = func               # CClosure, etc....
-
-    fn = 'vmx.py'
-    where = "invoke"
-    code = [CallInstr(None, fn, where, len(args)), ExitInstr(None, fn, where)]
-
-    vm2.start(code, vm.iscope)
-    return vm2.ac
-
-################
 # convert Python list into XxxInstr(ruction) instances
 # (this is the .vmx file assembler!)
 

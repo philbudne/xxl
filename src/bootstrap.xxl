@@ -13,6 +13,16 @@ if (true) {			// hide temp variables
     };
 
     ////////////////
+    // Class
+
+    // default 'new' method!!
+    System.types.Class.__methods['new'] = function (this, ...args) {
+	var obj = this.create();
+	obj.init(...args);
+	return(obj);
+    };
+
+    ////////////////
     // Dict
 
     var Dict = System.types.Dict;

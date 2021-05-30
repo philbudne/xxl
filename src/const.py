@@ -38,6 +38,7 @@ CLASS_PROPS = {
 
 # Class methods
 NEW = 'new'
+CREATE = 'create'
 INIT = 'init'
 
 # XXX Object methods (str/len/repr)?

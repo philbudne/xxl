@@ -279,7 +279,6 @@ class CPyFunc(CObject):
         return "<PyFunc: %s>" % self.func.__name__
         
     def invoke(self, vm):
-        # XXX have helper method for this & invoke_function??!!
         args = vm.args
         n = len(args)
         if n == 0:
@@ -557,19 +556,13 @@ def is_true(obj):
 ################ Object -- the base type for all instances and classes
 
 @pyvmfunc
-def new_obj(vm, this_class, *args):
+def obj_create(vm, this_class, *args):
     """
     default "new" method for Object (and therefore Class)
     makes an instance of this_class
     Creates a Python CObject, calls this_class's 'init' method with args
     """
-    # XXX stash Python class to use in a Python attr??????
-    n = CObject(this_class)
-
-    m = find_in_class(n, const.INIT) # returns BoundMethod
-    if m and m is not null_value:
-        vmx.invoke_function(m, vm, args) # XXX reuse VM
-    return n
+    return CObject(this_class)
 
 @pyfunc
 def obj_init(this_obj, *args):
@@ -834,7 +827,7 @@ def class_subclass_of(l, c):
 # Class: a meta-class: all Classes are instances of a meta-class
 # (Class.new creates a new Class)
 Class.setprop(const.METHODS, _mkdict({
-    const.NEW: new_obj,
+    const.CREATE: obj_create,
     const.INIT: class_init,     # Class.new creates new Classes
     # NOTE: "name" is a member
     "subclass_of": class_subclass_of
@@ -847,22 +840,16 @@ Class.setprop(const.BINOPS, _mkdict({
 ################ PClass -- metaclass for PObjects
 
 @pyvmfunc
-def pclass_new(vm, this_class, arg):
+def pclass_create(vm, this_class):
     """
-    'new' method for PClass metaclass (ie; Number.new, Dict.new)
+    'create' method for PClass metaclass
     makes an instance of this_class backed by a CPObject
+    used to create PClass subclass objects (Number, List, Dict, Bool, Null)
     """
-    o = CPObject(this_class)
-
-    m = find_in_class(o, const.INIT) # returns BoundMethod
-    if not m or m is null_value:
-        # should not happen: should call back to pobj_init
-        raise Exception("SNH: {} has no init method".format(this_class))
-    vmx.invoke_function(m, vm, [arg])
-    return o
+    return CPObject(this_class)
 
 PClass.setprop(const.METHODS, _mkdict({
-   const.NEW: pclass_new
+   const.CREATE: pclass_create
 }))
 
 ################ generic methods for PObject

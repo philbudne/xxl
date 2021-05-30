@@ -1,5 +1,8 @@
 FIX
 ===
+init methods for PObjects: Number, String, Bool, Null
+	BoolMetaClass
+
 handle import of .vmx files!!
 	Have bootstrap.vmx explicitly import parser!?
 
@@ -7,8 +10,8 @@ hook in bootstrap.vmx build in Makefile
 
 bootstrap.md -- adding operator
 
-**** flush invoke_function/method?!
-	or use existing VM!!
+pass VM into import_worker!!!
+	VMX files need to end w/ return??
 
 *** BUG: Only CPObjects can be used as Dict keys
 	(Dicts currently indexed by Python values,
@@ -26,18 +29,11 @@ bootstrap.md -- adding operator
 run "__extensions__" (pass importer's initial scope? iscope.System??)
 	(unless requested not to!)
 
-bootstrap.vmx:
-	load System object(??)
-	"System.parser = System.import_vmx('parser.vmx');"
-
 type wrapping:
 	*** have __classes instead of System.types?? __xxl.classes?
 	clean up!!!
 	create_sys_type passes Python value!!!!!!!!!!!
 	Fix all access to System types (get from module top level scope??)
-
-pass VM into import_worker
-	compiled code needs to end w/ return
 
 break import cycles??
 	keep dict of filename => module??
