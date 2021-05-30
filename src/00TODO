@@ -1,6 +1,6 @@
 FIX
 ===
-init methods for PObjects: Number, String, Bool, Null
+init methods for PObjects: Number, String, Bool, Null, List, Dict
 	BoolMetaClass
 
 handle import of .vmx files!!
@@ -21,18 +21,14 @@ pass VM into import_worker!!!
 
 ** add .git/pre-commit check?
 
-** -s (stats) broken??
-
-* regression test depends on order dicts (Python 3.6)
+* regression test depends on ordered dicts (Python 3.6)
 	remove first line (and add back compile time?!)
 
 run "__extensions__" (pass importer's initial scope? iscope.System??)
 	(unless requested not to!)
 
 type wrapping:
-	*** have __classes instead of System.types?? __xxl.classes?
 	clean up!!!
-	create_sys_type passes Python value!!!!!!!!!!!
 	Fix all access to System types (get from module top level scope??)
 
 break import cycles??
@@ -55,32 +51,31 @@ TEST
 ====
 str & repr methods (& Str.join)
 	Callables
-	write print/error as native functions
 
 CLEANUP
 =======
-"make update_parser"?  Have parser out of data message tell you to run it????
+reviter()?? use for each_for??
+	for_each/each_for methods of Iterable mixin??
+"make update_parser"?  Have PARSER_VMX out of date message tell you to run it???
 Object "getstr()" method for PyFuncs, or utility function????
 handle System.types.Foo.new() -- need 'init' method for each Class?!
 	Number.init -- take string (and radix?)
-replace [this.]token.id() == X w/ this.check(X)???
 rename System to xxl? __xxl??
 split Number into Float and Int
 flush __mkobject for:
 	import -- return Module!
 	tokenizer -- return List?
-Do wrapping in CPyFunc/CPyObj?
+Do type wrapping in CPyFunc/CPyObj?
 
 test if implementing VM as chain of if's (on ints)
 	instead step on Instr objects is faster
-Have pyfunc "invoke" method (un)wrap args/results??
-	wrap as tail call
 split up parser.xxl (into pratt,xlparser,vmcode??)
 Make Scopes transparent??
 	System.scope()??
 	Scope.parent()??
 Make callable objects (more) transparent??
-	CClosure.get{code,scope}??
+	Closure.get{code,scope}??
+	BoundMethod.get{object,function}??
 implement methods, class members, class methods via descriptors???
 reenable MethodInstr (replace lit/push/./call), avoid BoundMethod
 make native Tokenizer (gonna be slow!)
