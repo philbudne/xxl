@@ -126,3 +126,14 @@ add docstrings?
 
 XXXop opcodes do not consume vm.args
 	("clargs" needed for spread args; clear needed in "call")
+
+create superClass for CObjects with real invoke method,
+	with a "(" binop that calls invoke??
+
+bring back is_true?
+	native code???
+	use len() method, if avail
+	use to_int() method, if avail
+
+Helper to declare PyFunc wrappers for methods???
+	take string of argument types to expect/translate
