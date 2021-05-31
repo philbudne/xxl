@@ -68,6 +68,31 @@ if (true) {			// hide temp variables
     ////////////////
     // Dict
 
+    System.types.Dict.__methods['init'] = function (this, arg) {
+	this.init0();
+	var i = (arg || []).iter; // fetch method, but do not call
+	if (!i) {
+	    System.error(this.name + ".init needs iterable");
+	    System.exit(1);		// XXX raise
+	}
+	var iter = i();
+	while (true) {
+	    var item = iter.next(return);
+	    // if first item, set sentinal
+	    // make sure all following items of same size/shape
+	    if (item.instance_of(System.types.List)) {
+		if (item.len() != 2) {
+		    System.error(this.name + ".init got List w/ len != 2");
+		    System.exit(1); // XXX raise
+		}
+		this[item[0]] = item[1];
+	    }
+	    else {
+		this[item] = arg[item];
+	    }
+	}
+    };
+
     System.types.Dict.__methods['repr'] = function (this) {
 	var items = [];
 	this.for_each(
@@ -80,6 +105,19 @@ if (true) {			// hide temp variables
 
     ////////////////
     // List
+
+    System.types.List.__methods['init'] = function (this, arg) {
+	this.init0();
+	var i = (arg || []).iter; // fetch method, but do not call
+	if (!i) {
+	    System.error(this.name + ".init needs iterable");
+	    System.exit(1);		// XXX raise
+	}
+	var iter = i();
+	while (true) {
+	    this.append(iter.next(return));
+	}
+    };
 
     var repr = function (x) { return(x.repr()); };
     System.types.List.__methods['repr'] = function (this) {

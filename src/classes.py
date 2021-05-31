@@ -50,6 +50,9 @@ By default language Classes are instances of the "Class" metaclass,
 If a language Class "ClassName" needs a Python class of it's own,
         the python class should be named CClassName
 
+"this" is used in pyfunc (Class methods) to show that the argument
+is a language CObject, and not just any Python object.
+
 [some of the above probably DOESN'T belong in the docstring!!]
 """
 
@@ -261,7 +264,7 @@ class CBoundMethod(CObject):
 
 # Calling Python functions (ie; primative class methods) was orignally
 # implemented as a Closure with two VM instructions (pycall, return).
-# The CObject.invoke method avoids those two instructions.
+# The CObject.invoke method avoids that.
 
 class CPyFunc(CObject):
     """
@@ -269,6 +272,7 @@ class CPyFunc(CObject):
     """
     def __init__(self, func):
         super().__init__(PyFunc)
+        # detect pyfunc() calls on a pre-decorated function
         if isinstance(func, CPyFunc):
             raise Exception("double wrapping %s" % func.func)
         self.func = func
@@ -292,14 +296,15 @@ class CPyFunc(CObject):
         else:
             ret = self.func(*args)
 
-        # XXX wrap result here, so function doesn't need to know about
-        # initial scope??  Would need to check if ret is not an instance
-        # of CObject, so maybe have different PyFunc flavors
-        # that do or do not do wrapping??
+        # XXX wrap result here, so func doesn't need to know about
+        # initial scope??
         vm.ac = ret
 
     def __call__(self, *args):
-        # to catch mistakenly calling a CPyFunc (eg; from another method)
+        """
+        catch mistakenly calling a CPyFunc (decorated Python function)
+        from another Python function.
+        """
         raise Exception("Attempt to call %s" % self)
 
 def pyfunc(func):
@@ -326,7 +331,7 @@ class CPyVMFunc(CPyFunc):
     and my current (may 2021) thoughts are to expose particulars with
     Objects created on demand, either with copies of the backing data,
     or, in the case of Scopes, an Object which references the backing
-    (Python) dict.
+    (Python) dict, or (late may) perhaps with methods to alter live data.
     """
     # XXX NOTE no __init__ method: looks just like PyFunc
     def invoke(self, vm):
@@ -341,20 +346,16 @@ def pyvmfunc(func):
 
 ################
 
-class CPyIterator(CObject):
+class CPyIterator(CPObject):
     """
     wrapper around a Python iterator
-    MAYBE should be a CPObject????
-    (obj2python_json would need to be updated)
     """
-    __slots__ = ['iterator']
-
     def __init__(self, iterator):
         super().__init__(PyIterator)
-        self.iterator = iterator
+        self.value = iterator
 
-    def __repr__(self):
-        return '<%s: %s>' % (self.classname(), self.iterator)
+    def __str__(self):
+        return repr(self)
 
 def pyiterator(iterator):
     """
@@ -408,6 +409,9 @@ def mkstr(s, scope):
     used to create Str from Python str, once up and running
     """
     return system.create_sys_type('Str', scope, s)
+
+def mkiterable(i, scope):
+    return system.create_sys_type('PyIterable', scope, i)
 
 ################
 null_value = None               # forward
@@ -486,22 +490,27 @@ PClass = defclass(Class, 'PClass', [Class])
 # superclass (with .value) of Classes that are wrappers around Python classes
 PObject = defclass(PClass, 'PObject', [Object])
 
-# pure virtual (no metaclass????)
-Iterable = defclass(PClass, 'Iterable', [PObject])
-
 # wrappers, with .value
-List = defclass(PClass, 'List', [Iterable])
-Str = defclass(PClass, 'Str', [Iterable])
-Dict  = defclass(PClass, 'Dict', [Iterable])
-Number = defclass(PClass, 'Number', [PObject])
 
 # XXX own metaclass to return singleton?
 Null = defclass(PClass, 'Null', [PObject]) # XXX singleton
 # XXX own metaclass to return doubleton values? subclass into two singletons??
 Bool = defclass(PClass, 'Bool', [PObject])
 
-# Str, List now exist:
+# pure virtual base:
+Iterable = defclass(PClass, 'Iterable', [PObject])
 
+List = defclass(PClass, 'List', [Iterable])
+Str = defclass(PClass, 'Str', [Iterable])
+Dict  = defclass(PClass, 'Dict', [Iterable])
+
+# non-iterable:
+Number = defclass(PClass, 'Number', [PObject])
+
+PyIterable = defclass(PClass, 'PyIterable', [Iterable])
+
+################
+# Str, List now exist:
 # set Class metaclass super list
 Class.setprop(const.SUPERS, _mklist([Object]))
 
@@ -515,13 +524,13 @@ for klass, supers in _saved_supers.items():
 #       (avoids binop lookup and List construction on each call)
 # all backed by Python CXyZzy classes with invoke methods:
 # XXX use metaclass (CClass?) that prohibits user call of 'new' method?
-
 BoundMethod = defclass(Class, 'BoundMethod', [Object])
 Closure = defclass(Class, 'Closure', [Object])
 Continuation = defclass(Class, 'Continuation', [Object])
 PyFunc = defclass(Class, 'PyFunc', [Object])
 PyVMFunc = defclass(Class, 'PyVMFunc', [Object])
 
+# wrapper around a Python iterator (w/ next method)
 PyIterator = defclass(Class, 'PyIterator', [Object])
 
 ################
@@ -920,7 +929,7 @@ PObject.setprop(const.METHODS, _mkdict({
     'init0': pobj_init0
 }))
 
-################ Iterable base
+################ Iterable base class
 
 @pyfunc
 def iterable_iter(this):
@@ -930,10 +939,15 @@ def iterable_iter(this):
 def iterable_reversed(this):
     return pyiterator(reversed(this.value))
 
-# for_each, each_for in bootstrap.xxl
+# for_each, each_for, map, map2 in bootstrap.xxl
 Iterable.setprop(const.METHODS, _mkdict({
     'iter': iterable_iter,
-    'reversed': iterable_reversed
+    'reversed': iterable_reversed,
+}))
+
+# subclass of Iteravle for mkiterable callers: Dict.{key,value,item}s()
+PyIterable.setprop(const.METHODS, _mkdict({
+    'str': pobj_reprx 
 }))
 
 ################ Dict
@@ -952,16 +966,35 @@ def dict_get(l, r):
 
 @pyfunc
 def dict_init0(obj):
+    """
+    called by Dict.init (in bootstrap.xxl)
+    Dodges needing private metaclass for Dict
+    """
     obj.value = {}
 
 @pyfunc
 def dict_pop(obj, arg):
     return obj.value.pop(arg.value) # XXX check arg has value!!!
 
+@pyvmfunc
+def dict_items(vm, this):
+    return mkiterable(this.value.items(), vm.iscope)
+
+@pyvmfunc
+def dict_keys(vm, this):
+    return mkiterable(this.value.keys(), vm.iscope)
+
+@pyvmfunc
+def dict_values(vm, this):
+    return mkiterable(this.value.values(), vm.iscope)
+
 Dict.setprop(const.METHODS, _mkdict({
+    'init0': dict_init0,
+    'items': dict_items,
+    'keys': dict_keys,
     'len': pobj_len,
     'pop': dict_pop,
-    'init0': dict_init0,
+    'values': dict_values,
 }))
 Dict.setprop(const.BINOPS, _mkdict({
     '[': dict_get
@@ -974,6 +1007,10 @@ Dict.setprop(const.LHSOPS, _mkdict({
 
 @pyfunc
 def list_init0(l):
+    """
+    called by List.init (in bootstrap.xxl)
+    Dodges needing private metaclass for List
+    """
     l.value = []
 
 @pyfunc
@@ -1081,6 +1118,7 @@ def gt(l, r):
 Number.setprop(const.METHODS, _mkdict({
 #    const.INIT: num_init       # XXX invoke arg.number()?
 }))
+
 Number.setprop(const.UNOPS, _mkdict({
     '-': neg,
 }))
@@ -1158,7 +1196,7 @@ Str.setprop(const.METHODS, _mkdict({
     'slice': str_slice,
     'str': str_str,
     'strip': str_strip,
-    const.INIT: pobj_init,
+    const.INIT: pobj_init
 }))
 Str.setprop(const.BINOPS, _mkdict({
     '+': str_concat,
@@ -1240,16 +1278,19 @@ def unwrap(x):
 @pyvmfunc
 def pyobj_getprop(vm, l, r):
     """
-    installed as "." binop
+    PyObject "." binop -- proxies to Python object getattr
     """
     # XXX r must be Str
-    # XXX check if exists first? obscures all Class members/methods!!
-    # XXX '..' should allow access to parent class methods (getprop/setprop)?
+    # XXX '..' should allow access to parent class methods (getprop/setprop)
+    #   for access to Object properties?
     v = getattr(l.value, r.value, None) # get Python object attribute
     return wrap(v, vm.iscope)
 
 @pyvmfunc
 def pyobj_getitem(vm, l, r):
+    """
+    PyObject "[" binop
+    """
     v = l.value[r.value]        # XXX unwrap(r)??
     return wrap(v, vm.iscope)
 
@@ -1274,21 +1315,38 @@ PyObject.setprop(const.BINOPS, _mkdict({
 
 ################ PyIterator
 
+@pyfunc
+def pyiterator_iter(this):
+    """
+    Python iterators are also iterables (return self)
+    https://docs.python.org/3/library/stdtypes.html#typeiter says
+    an iterator should have an __iter__ method:
+
+    Return the iterator object itself. This is required to allow
+    both containers and iterators to be used with the for and in
+    statements. This method corresponds to the tp_iter slot of the
+    type structure for Python objects in the Python/C API.
+    """
+    return this
+
 @pyvmfunc
 def pyiterator_next(vm, this, finished):
     """
-    `finished` should be a Closure to call when iterator exhausted
+    `finished` should be a Continuation
+    (eg; block leave label or "return")
+    to call when iterator exhausted
     """
     try:
-        return wrap(next(this.iterator), vm.iscope)
+        return wrap(next(this.value), vm.iscope)
     except StopIteration:
-        # XXX check up front?
+        # here to avoid check on each iteration:
         if not isinstance(finished, CContinuation):
-            raise UError("need finished Continuation")
+            raise UError("iterator .next takes Continuation")
         vm.args = []            # default to null
-        finished.invoke(vm)
+        finished.invoke(vm)     # alters VM state; return immediately!
 
 PyIterator.setprop(const.METHODS, _mkdict({
+    'iter': pyiterator_iter,    # see above
     'next': pyiterator_next
 }))
 ################################################################
@@ -1298,7 +1356,7 @@ def wrap(value, iscope):
     wrap a Python `value` in a language CObject
     `scope` used to find System types by name
 
-    used by vm `lit`, `push_list`; `pyfunc`; type `PyObject`
+    used by vm `lit`, `push_list` opcodes; type `PyObject`; `PyIterator.next`
     """
     if isinstance(value, CObject):
         return value
@@ -1314,7 +1372,7 @@ def wrap(value, iscope):
 
     # XXX handle bytes??
 
-    if isinstance(value, list): # for System.argv creation!
+    if isinstance(value, (list,tuple)): # for System.argv creation!
         return system.create_sys_type('List', iscope,
                                       [wrap(x, iscope) for x in value])
 
