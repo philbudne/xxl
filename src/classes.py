@@ -1115,8 +1115,23 @@ def le(l, r):
 def gt(l, r):
     return _not(_le(l, r))
 
+@pyfunc
+def num_init(obj, value):
+    if instance_of(value, [Str]):
+        # (move this to Str.to_number()???)
+        v = value.value
+        try:
+            obj.value = int(v)
+        except:
+            obj.value = float(v)
+    elif instance_of(value, [Number]):
+        # XXX intercept in metaclass 'new' and return "this"?
+        obj.value = value.value
+    else:
+        raise UError("{}.new needs Str or Number".format(obj.getclass().name))
+
 Number.setprop(const.METHODS, _mkdict({
-#    const.INIT: num_init       # XXX invoke arg.number()?
+    const.INIT: num_init
 }))
 
 Number.setprop(const.UNOPS, _mkdict({

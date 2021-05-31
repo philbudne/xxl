@@ -1,0 +1,16 @@
+// -*-js-*-
+var t = function(x) {
+    var n1 = System.types.Number.new(x); // string arg
+    var n2 = System.types.Number.new(n1); // Number arg
+
+    System.print(x,
+		 n1, n1.getclass().name,
+		 n2, n2.getclass().name,
+		 n1 == n2,
+		 n1 === n2	// SHOULD succeed, but does not!
+    );
+};
+
+t(1);
+t(2.0);
+t(3e2);
