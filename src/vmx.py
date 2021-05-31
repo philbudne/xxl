@@ -326,7 +326,6 @@ class PopTempInstr(VMInstr0):
     pop top of stack into TEMP
     (used with "new")
     """
-
     name = "pop_temp"
 
     def step(self, vm):
@@ -674,7 +673,7 @@ class JumpEInstr(VMInstr1):
 @reginstr
 class NewInstr(VMInstr1):
     """
-    for [ ... ] and { .... } sugar *ONLY*
+    for [ ... ] and { .... } sugar (from compiler) *ONLY*
     push VM TEMP register onto stack (so nestable)
     "arg" contains Python string of name of container class to create
     leave new, empty container in VM TEMP register
@@ -683,8 +682,6 @@ class NewInstr(VMInstr1):
 
     def step(self, vm):
         vm.push(vm.temp)
-        # XXX CROCK!!! each Class needs own 'init' method
-        #       and supply default when no value passed
         if self.value == 'Dict':
             v = {}
         elif self.value == 'List':
