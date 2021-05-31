@@ -1,0 +1,15 @@
+================ items()
+[1, 2]
+['hello', 'world']
+================ values()
+2
+world
+================ keys()
+1
+hello
+================ reversed()
+hello
+1
+================ e.items()
+[1, 2]
+['hello', 'world']

@@ -1,0 +1,23 @@
+// -*-js-*-
+
+// note: depends on Python dict ordering (Python 3.4?)
+
+var d = {1:2, hello: "world"};
+
+var p = function (what, iterable) {
+    System.print("================", what);
+    var iter = iterable.iter();
+//  System.print("iterable", iterable);
+//  System.print("iter", iter);
+    while (true) {
+	System.print(iter.next(return));
+    }
+};
+
+p("items()", d.items());
+p("values()", d.values());
+p("keys()", d.keys());
+p("reversed()", d.reversed());
+
+var e = System.types.Dict.new(d);
+p("e.items()", e.items());

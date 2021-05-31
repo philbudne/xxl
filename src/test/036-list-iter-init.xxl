@@ -1,0 +1,5 @@
+// -*-js-*-
+System.print(System.types.List.new([1,2,3]));
+System.print(System.types.List.new({1:2, hello: "world"}));
+
+
