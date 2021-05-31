@@ -1,6 +1,6 @@
 // -*-js-*-
 
-// note: depends on Python dict ordering (Python 3.4?)
+// note: depends on Python dict ordering (Python 3.6?)
 
 var d = {1:2, hello: "world"};
 
