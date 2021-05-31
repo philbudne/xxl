@@ -87,6 +87,7 @@ var VMCode = Class.new({
 	    return(this.code);
 	},
 	gen_push: function (this, symbol) {
+	    // evaluate "this" and push on stack (*may* crush AC)
 	    if (symbol.id() == "(literal)") { // instanceof(Lit)
 		this.emit_push_lit(symbol.value, symbol);
 	    }

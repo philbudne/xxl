@@ -363,14 +363,6 @@ def pyiterator(iterator):
     assert hasattr(iterator, '__next__')
     return CPyIterator(iterator)
 
-def make_pyiterator(iterable):
-    """
-    return a PyIterator for a Python iterable (has an __iter__ method)
-    ie; list, dict, dict.items(), range()
-    """
-    assert hasattr(iterable, '__iter__')
-    return pyiterator(iter(iterable))
-
 ################################################################
 
 def _new_pobj(this_class, arg):
@@ -494,10 +486,13 @@ PClass = defclass(Class, 'PClass', [Class])
 # superclass (with .value) of Classes that are wrappers around Python classes
 PObject = defclass(PClass, 'PObject', [Object])
 
+# pure virtual (no metaclass????)
+Iterable = defclass(PClass, 'Iterable', [PObject])
+
 # wrappers, with .value
-List = defclass(PClass, 'List', [PObject]) # subclass of Sequence? FrozenList??
-Str = defclass(PClass, 'Str', [PObject])   # subclass of Sequence?
-Dict  = defclass(PClass, 'Dict', [PObject]) # subclass of Mapping? FrozenDict??
+List = defclass(PClass, 'List', [Iterable])
+Str = defclass(PClass, 'Str', [Iterable])
+Dict  = defclass(PClass, 'Dict', [Iterable])
 Number = defclass(PClass, 'Number', [PObject])
 
 # XXX own metaclass to return singleton?
@@ -895,6 +890,10 @@ def pobj_reprx(vm, l):
 def pobj_init(l, value):
     raise UError("{} missing init method".format(l.classname()))
 
+@pyfunc
+def pobj_init0(l, value):
+    raise UError("{} missing init0 method".format(l.classname()))
+
 # XXX unused?
 @pyfunc
 def pobj_ge(l, r):
@@ -917,7 +916,24 @@ def pobj_eq(l, r):
 PObject.setprop(const.METHODS, _mkdict({
     'repr': pobj_repr,
     'reprx': pobj_reprx,
-    const.INIT: pobj_init
+    const.INIT: pobj_init,
+    'init0': pobj_init0
+}))
+
+################ Iterable base
+
+@pyfunc
+def iterable_iter(this):
+    return pyiterator(iter(this.value))
+
+@pyfunc
+def iterable_reversed(this):
+    return pyiterator(reversed(this.value))
+
+# for_each, each_for in bootstrap.xxl
+Iterable.setprop(const.METHODS, _mkdict({
+    'iter': iterable_iter,
+    'reversed': iterable_reversed
 }))
 
 ################ Dict
@@ -935,25 +951,17 @@ def dict_get(l, r):
     return ret
 
 @pyfunc
-def dict_init(obj, arg=None):
-    if arg:
-        obj.value = dict(arg.value) # XXX check if Dict!!!
-    else:
-        obj.value = {}
+def dict_init0(obj):
+    obj.value = {}
 
 @pyfunc
 def dict_pop(obj, arg):
     return obj.value.pop(arg.value) # XXX check arg has value!!!
 
-@pyfunc
-def dict_iter(this):
-    return make_pyiterator(this.value)
-
 Dict.setprop(const.METHODS, _mkdict({
-    'iter': dict_iter,
     'len': pobj_len,
     'pop': dict_pop,
-    const.INIT: dict_init,
+    'init0': dict_init0,
 }))
 Dict.setprop(const.BINOPS, _mkdict({
     '[': dict_get
@@ -965,10 +973,8 @@ Dict.setprop(const.LHSOPS, _mkdict({
 ################ List
 
 @pyfunc
-def list_init(l, value=None):   # XXX take List
-    if value is None:
-        value = []
-    l.value = value
+def list_init0(l):
+    l.value = []
 
 @pyfunc
 def list_append(l, item):
@@ -991,18 +997,13 @@ def list_put(l, r, value):
     l.value[r.value] = value
     return value
 
-@pyfunc
-def list_iter(this):
-    return make_pyiterator(this.value)
-
 # str, repr, for_each, each_for, map, map2 in bootstrap.xxl
 List.setprop(const.METHODS, _mkdict({
     'append': list_append,
-    'iter': list_iter,
     'len': pobj_len,
     'pop': list_pop,
     # XXX slice(start[,end]) (return range of elements)
-    const.INIT: list_init,
+    'init0': list_init0,
 }))
 List.setprop(const.BINOPS, _mkdict({
     '[': list_get
@@ -1299,6 +1300,9 @@ def wrap(value, iscope):
 
     used by vm `lit`, `push_list`; `pyfunc`; type `PyObject`
     """
+    if isinstance(value, CObject):
+        return value
+
     if isinstance(value, bool):
         return mkbool(value) # XXX lookup local true/false???
 

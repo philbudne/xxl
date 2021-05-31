@@ -7,7 +7,7 @@
 // parser extensions are available as soon as they are added!!
 
 if (true) {			// hide temp variables
-    // default str to this.repr:
+    // default this.str() to this.repr():
     System.types.Object.__methods['str'] = function (this) {
 	return(this.repr());
     };
@@ -23,12 +23,25 @@ if (true) {			// hide temp variables
     };
 
     ////////////////
-    // Dict
+    // Iterable (subclasses w/ .iter() and .reversed() methods)
 
-    var Dict = System.types.Dict;
+    var Iterable = System.types.Iterable;
 
-    // _should_ work for List too -- put in var interable_for_each??
-    Dict.__methods['for_each'] = function (this, func) {
+    Iterable.__methods['for_each'] = function (this, func) {
+	var iter = this.iter();
+	while (true) {
+	    func(iter.next(return));
+	}
+    };
+
+    Iterable.__methods['each_for'] = function (this, func) {
+	var iter = this.reversed();
+	while (true) {
+	    func(iter.next(return));
+	}
+    };
+
+    Iterable.__methods['map'] = function (this, func) {
 	var iter = this.iter();
 	var ret = [];
       break_while:
@@ -38,12 +51,28 @@ if (true) {			// hide temp variables
 	return(ret);
     };
 
-    Dict.__methods['str'] = function (this) {
+    // ignore entries where func returns `ignore` value
+    Iterable.__methods['map2'] = function (this, func, ignore) {
+	var iter = this.iter();
+	var ret = [];
+      break_while:
+	while (true) {
+	    var x = func(iter.next(break_while));
+	    if (x != ignore) {
+		ret.append(x);
+	    }
+	}
+	return(ret);
+    };
+
+    ////////////////
+    // Dict
+
+    System.types.Dict.__methods['repr'] = function (this) {
 	var items = [];
 	this.for_each(
 	    function (key) {
-		// NOTE! JavaScript style {} literals: takes const, not expr
-		items.append(key.str() + ": " + this[key].repr());
+		items.append(key.repr() + ": " + this[key].repr());
 	    }
 	);
 	return("{" + ", ".join(items) + "}");
@@ -52,55 +81,8 @@ if (true) {			// hide temp variables
     ////////////////
     // List
 
-    var List = System.types.List;
-
-    // XXX use Dict version??
-    List.__methods['for_each'] = function (this, func) {
-	var i = 0;
-	var l = this.len();
-	while (i < l) {
-	    func(this[i]);
-	    i += 1;
-	}
-    };
-
-    List.__methods['each_for'] = function (this, func) {
-	var i = this.len();
-	while (i > 0) {
-	    i -= 1;
-	    func(this[i]);
-	}
-    };
-
-    // XXX define using this.iter(), make avail for Dict too???
-    List.__methods['map'] = function (this, func) {
-	var l = this.len();
-	var i = 0;
-	var ret = [];
-	while (i < l) {
-	    ret.append(func(this[i]));
-	    i += 1;
-	}
-	return(ret);
-    };
-
-    // ignore entries where func returns `ignore` value
-    List.__methods['map2'] = function (this, func, ignore) {
-	var l = this.len();
-	var i = 0;
-	var ret = [];
-	while (i < l) {
-	    var x = func(this[i]);
-	    if (x != ignore) {
-		ret.append(x);
-	    }
-	    i += 1;
-	}
-	return(ret);
-    };
-
     var repr = function (x) { return(x.repr()); };
-    List.__methods['str'] = List.__methods['repr'] = function (this) {
+    System.types.List.__methods['repr'] = function (this) {
 	return("[" + ", ".join(this.map(repr)) + "]");
     };
 
@@ -109,8 +91,7 @@ if (true) {			// hide temp variables
 
     var str = function (x) { return(x.str()); };
     var __print = function (file, l) {
-	l = l.map(str);
-	file.write(" ".join(l) + "\n");
+	file.write(" ".join(l.map(str)) + "\n");
     };
 
     var py_sys = System.pyimport("sys");
