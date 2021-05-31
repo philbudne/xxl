@@ -1,7 +1,7 @@
 FIX
 ===
-init methods for PObjects: Number, String, Bool, Null, List, Dict
-	BoolMetaClass
+init methods for String, Bool, Null
+	BoolMetaClass, NullMetaClass?
 
 handle import of .vmx files!!
 	Have bootstrap.vmx explicitly import parser!?
@@ -54,14 +54,11 @@ str & repr methods (& Str.join)
 
 CLEANUP
 =======
-reviter()?? use for each_for??
-	for_each/each_for methods of Iterable mixin??
 "make update_parser"?  Have PARSER_VMX out of date message tell you to run it???
 Object "getstr()" method for PyFuncs, or utility function????
-handle System.types.Foo.new() -- need 'init' method for each Class?!
-	Number.init -- take string (and radix?)
 rename System to xxl? __xxl??
 split Number into Float and Int
+	Have Int initializer take optional radix
 flush __mkobject for:
 	import -- return Module!
 	tokenizer -- return List?
