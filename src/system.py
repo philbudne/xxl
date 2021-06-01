@@ -258,8 +258,9 @@ def sys_pyimport(vm, module):
 
 ################
 
-# used only by import_worker XXX inline?
-# XXX take filename, save (as __file, or __module.file??)
+# used only by import_worker; XXX inline?
+# XXX take filename, save as __module.file?
+#       change __main__ to __module.main
 # XXX keep Dict of modules by (file)name??  in System.modules???
 def init_module(argv, main=False):
     """
@@ -267,10 +268,9 @@ def init_module(argv, main=False):
     main: bool -- used to set __main__
     """
     scope = scopes.Scope(None)    # create scope for module
-    sys = create_sys_object(scope, argv)
+    sys = create_sys_object(scope, argv) # new System object
     classes.copy_types(scope, sys) # populate scope
 
-    # put in System.main?? __module.main???
     scope.defvar('__main__', classes.mkbool(main))
 
     return scope                # XXX return Module object??
@@ -293,6 +293,10 @@ def load_parser(scope, parser_vmx, filename=None, trace=False):
         m.setprop('filename', classes.mkstr(filename, scope))
 
 def breakpoint_if_debugging():
+    """
+    call from exception handlers
+    check command line debug option???
+    """
     #breakpoint()
     pass
 
@@ -309,6 +313,7 @@ def sys_import(filename):
     # XXX take filename w/o extension?????
     # XXX search for .vmx file?
     # XXX propogate trace from caller??
+    # XXX pass VM!
     mod = import_worker(src_file=filename.value) # XXX getstr???
     if mod is None:
         Exception("import failed")
@@ -370,7 +375,7 @@ def import_worker(src_file=None,
         vm.backtrace()
         breakpoint_if_debugging()
         sys.exit(1)
-    except classes.UError as e:
+    except classes.UError as e: # handle ValueError??
         # NOTE: user error: just displays "where" and VM backtrace
         if vm.ir:
             sys.stderr.write("Error @ {}:{}: {}\n".format(
@@ -407,11 +412,11 @@ def create_sys_object(iscope, argv):
     sys_obj.setprop('argv',  classes.wrap(argv, iscope))
     sys_obj.setprop('exit', sys_exit)
 
-    # for parser:
+    # functions for parser & bootstrap:
     sys_obj.setprop('tokenizer', sys_tokenizer) # TEMP creates token generator
     sys_obj.setprop('tree', sys_tree) # TEMP!!!
     sys_obj.setprop('vtree', sys_vtree) # TEMP!!!
-    sys_obj.setprop('assemble', sys_assemble) # move to Module?  __module??
+    sys_obj.setprop('assemble', sys_assemble) # move to __module??
 
     # external modules:
     sys_obj.setprop('import', sys_import) # import source module

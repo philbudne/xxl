@@ -2,8 +2,9 @@ FIX
 ===
 init methods for String, Bool, Null
 	BoolMetaClass, NullMetaClass?
+	String & Number metaclasses (to return self)?
 
-handle import of .vmx files!!
+handle import() of .vmx files!!
 	Have bootstrap.vmx explicitly import parser!?
 
 hook in bootstrap.vmx build in Makefile
@@ -124,7 +125,7 @@ add docstrings?
 XXXop opcodes do not consume vm.args
 	("clargs" needed for spread args; clear needed in "call")
 
-create superClass for CObjects with real invoke method,
+create wrapper Class for CObjects with real invoke method,
 	with a "(" binop that calls invoke??
 
 bring back is_true?
@@ -134,3 +135,6 @@ bring back is_true?
 
 Helper to declare PyFunc wrappers for methods???
 	take string of argument types to expect/translate
+
+string tokenizer (takes string)! => "eval" function???
+
