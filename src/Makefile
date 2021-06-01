@@ -1,4 +1,7 @@
-# parser/VM test Makefile 
+# XXL build/test Makefile
+
+# set XXL_PYTHON on command line (ie; "make XXL_PYTHON=pypy3")
+#	to override xxl.py "#!" line choice of Python interpreter
 
 PARSER= parser
 
@@ -27,9 +30,9 @@ IDENTICAL2=.identical.parser-c
 
 all:	$(TESTED) $(IDENTICAL) $(IDENTICAL2)
 
-$(TESTED):	$(B) $(C)
+$(TESTED): $(B) $(C)
 	cmp $(B) $(C)
-	XXL_PARSER=$(C) ./test.sh
+	XXL_PARSER=$(C) CMD="$(XXL_PYTHON) ./$(XXL)" ./test.sh
 	date > $(TESTED)
 
 $(IDENTICAL): $(A) $(B)
@@ -55,7 +58,7 @@ install: $(TESTED)
 	cp $(C) $(PARSER_VMX)	
 
 #TIME=time -p
-RUNVMX=$(TIME) ./$(XXL) -x
+RUNVMX=$(TIME) $(XXL_PYTHON) ./$(XXL) -x
 
 # step A: run PARSER_VMX on PARSER_SRC generating VMX
 # Compiles, but DOES NOT RUN new source.
