@@ -41,8 +41,8 @@ BLOCK:	[NAME «:»] «{» STMT … «}»
 EXPR:   NAME |
         NUMBER |
         STRING |
-        «[» [ EXPR [«,» EXPR]… «]» |
-        «{» KEY: EXPR [«,» KEY:EXPR ]… «}» |
+        «[» [ EXPR [«,» EXPR]… ] «]» |
+        «{» [ KEY: EXPR [«,» KEY:EXPR ]… ] «}» |
         EXPR «.» NAME |                 (precedence 80)
         EXPR «..» NAME |                (precedence 80)
         «(» EXPR «)» |                  (precedence 80)
@@ -68,7 +68,7 @@ ASSIGNOP: «=» | «+=» | «-=»
 
 BOOLOP: «&&» | «||»
 
-RELOP:  «==» | «!=» | «<» | «<=» | «>» | «>=»
+RELOP:  «===» | «!==» | «==» | «!=» | «<» | «<=» | «>» | «>=»
 
 MULDIV: «*» | «/»
 
