@@ -481,7 +481,7 @@ class SpreadArgInstr(VMInstr0):
     def step(self, vm):
         arg = vm.pop()            # pop argument
         #print("sparg", arg)
-        vm.args.extend(arg.value) # XXX getlist XXX need to reverse???
+        vm.args.extend(arg.value) # XXX getlist
 
 @reginstr
 class Call0Instr(VMInstr0):
