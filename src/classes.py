@@ -945,7 +945,7 @@ Iterable.setprop(const.METHODS, _mkdict({
     'reversed': iterable_reversed,
 }))
 
-# subclass of Iteravle for mkiterable callers: Dict.{key,value,item}s()
+# subclass of Iterable for mkiterable callers: Dict.{key,value,item}s()
 PyIterable.setprop(const.METHODS, _mkdict({
     'str': pobj_reprx 
 }))
@@ -1032,7 +1032,7 @@ def list_get(l, r):
 def list_put(l, r, value):
     # XXX check if integer
     l.value[r.value] = value
-    return value
+    return value		# lhsop MUST return value
 
 # str, repr, for_each, each_for, map, map2 in bootstrap.xxl
 List.setprop(const.METHODS, _mkdict({
