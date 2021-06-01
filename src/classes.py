@@ -168,11 +168,11 @@ class CPObject(CObject):
         return '<%s: %s at %#x>' % \
             (self.classname(), repr(self.value), id(self))
 
-    def str(self):              # XXX EXP for PyObject
-        return str(self)
+#    def str(self):              # XXX EXP for PyObject
+#        return str(self)
 
-    def repr(self):             # XXX EXP for PyObject
-        return repr(self)
+#    def repr(self):             # XXX EXP for PyObject
+#        return repr(self)
 
 
 ################
@@ -1296,9 +1296,15 @@ def pyobj_getprop(vm, l, r):
     PyObject "." binop -- proxies to Python object getattr
     """
     # XXX r must be Str
-    # XXX '..' should allow access to parent class methods (getprop/setprop)
     #   for access to Object properties?
-    v = getattr(l.value, r.value, None) # get Python object attribute
+    rv = r.value                # XXX getstr
+    if hasattr(l.value, rv):
+        v = getattr(l.value, rv) # get Python object attribute
+    elif l.hasprop(rv):  # check Object properties (most likely empty)
+        v = l.getprop(rv)
+    else:
+        # allow 'str' method so Object can be printed!!
+        v = find_in_class(l, rv) # may return BoundMethod
     return wrap(v, vm.iscope)
 
 @pyvmfunc
@@ -1387,18 +1393,20 @@ def wrap(value, iscope):
 
     # XXX handle bytes??
 
-    if isinstance(value, (list,tuple)): # for System.argv creation!
+    # tuple added for dict_items iterator
+    # but exclude tuple-like things (os.stat results, namedtuples)
+    if isinstance(value, list) or type(value) is tuple:
         return system.create_sys_type('List', iscope,
                                       [wrap(x, iscope) for x in value])
 
     if value is None:
         return null_value
 
-    # XXX handle dict???
+    # XXX handle dict?!!!
 
-    #if hasattr(value, '__next__'): return pyiterator(value)
+    #if hasattr(value, '__next__'): return pyiterator(value)???
+    # Add next/iter/reversed methods to PyObject??????
 
-    # XXX complain??
     return system.create_sys_type(const.PYOBJECT, iscope, value)
 
 ################################################################
