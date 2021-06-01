@@ -141,6 +141,7 @@ if (true) {			// hide temp variables
 
     var er = function (...args) {
 	__print(py_sys.stderr, args);
+	py_sys.stderr.flush();
     };
     System.error = er;
 }
