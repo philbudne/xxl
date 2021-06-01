@@ -17,7 +17,9 @@ var p = function (what, iterable) {
 p("items()", d.items());
 p("values()", d.values());
 p("keys()", d.keys());
-p("reversed()", d.reversed());
+
+// requires Python 3.8?
+//p("reversed()", d.reversed());
 
 var e = System.types.Dict.new(d);
 p("e.items()", e.items());
