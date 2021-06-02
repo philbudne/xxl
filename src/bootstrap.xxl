@@ -72,8 +72,7 @@ if (true) {			// hide temp variables
 	this.init0();
 	var i = (arg || []).iter; // fetch method, but do not call
 	if (!i) {
-	    System.error(this.name + ".init needs iterable");
-	    System.exit(1);		// XXX raise
+	    System.uerror(this.name + ".init needs iterable");
 	}
 	var iter = i();
 	while (true) {
@@ -82,8 +81,7 @@ if (true) {			// hide temp variables
 	    // make sure all following items of same size/shape
 	    if (item.instance_of(System.types.List)) {
 		if (item.len() != 2) {
-		    System.error(this.name + ".init got List w/ len != 2");
-		    System.exit(1); // XXX raise
+		    System.uerror(this.name + ".init got List w/ len != 2");
 		}
 		this[item[0]] = item[1];
 	    }
@@ -110,8 +108,7 @@ if (true) {			// hide temp variables
 	this.init0();
 	var i = (arg || []).iter; // fetch method, but do not call
 	if (!i) {
-	    System.error(this.name + ".init needs iterable");
-	    System.exit(1);		// XXX raise
+	    System.uerror(this.name + ".init needs iterable");
 	}
 	var iter = i();
 	while (true) {

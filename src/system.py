@@ -69,6 +69,12 @@ def sys_break(x=None):
 
 ################
 
+@classes.pyfunc
+def sys_uerror(msg):
+    raise classes.UError(msg)
+
+################
+
 # XXX replace with native code
 # (need file I/O; use pyimport??)
 
@@ -404,6 +410,8 @@ def create_sys_object(iscope, argv):
     sys_obj.setprop(SYS_TYPES, tt)         # XXX XXX top level __classes?
 
     # *** now safe to call "create_sys_type" and "wrap" ***
+
+    sys_obj.setprop('uerror', sys_uerror) # fatal error w/ backtrace
 
     # debug functions (TEMP?!)
     sys_obj.setprop('break', sys_break) # break to PDB
