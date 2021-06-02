@@ -1,15 +1,22 @@
 FIX
 ===
 init methods for String, Bool, Null
-	BoolMetaClass, NullMetaClass?
-	String & Number metaclasses (to return self)?
+	BoolClass, NullClass?
+	StringClass & NumberClass metaclasses (to return self)?
+
+PClass: proxy === !== to "x.value is [not] y"????
 
 handle import() of .vmx files!!
+	Module.import_vmx()?
 	Have bootstrap.vmx explicitly import parser!?
 
 hook in bootstrap.vmx build in Makefile
 
-bootstrap.md -- adding operator
+bootstrap.md -- describe adding operator;
+	add to VM or bootstrap first.
+	recompile bootstrap (if needed)
+	write test; add to test directory
+	use in parser.xxl
 
 pass VM into import_worker!!!
 	VMX files need to end w/ return??
@@ -138,3 +145,6 @@ Helper to declare PyFunc wrappers for methods???
 
 string tokenizer (takes string)! => "eval" function???
 
+move comparison operators to an Orderable mixin?
+
+pyimport => PyObject.new??
