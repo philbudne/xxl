@@ -1409,10 +1409,11 @@ var Parser = Class.new({
 });
 
 ////////////////
-// XXX XXX remove this and put in compile.xxl
+// move to compile.xxl?
 //	(regression test will need to do "-P x.vmx")
+//
 // compile an XXL file, return VMX (VM metadata and code) JSON
-// for regression testing, creating .vmx files (esp. parser.vmx!)
+// for regression testing, creating .vmx files (parser.vmx, bootstrap.vmx)
 
 // NOTE!
 //	compiling test programs to a .vmx file w/
