@@ -33,7 +33,8 @@ import classes
 import system
 import const
 
-INST2CODE = ('close', 'bccall') # opcodes where inst[2] is code list
+# opcodes where inst[2] is code list, used in system.py:
+INST2CODE = ('close', 'bccall')
 
 instr_class_by_name = {}        # Instr classes by name
 
@@ -62,17 +63,17 @@ class VM:
 
     def __init__(self, iscope, stats, trace):
         self.run = False
-        self.ac = 0
+        self.ac = None          # CObject: Accumulator
         self.sp = None          # Stack Pointer (value, next) tuples
-        self.cb = None          # Code Base (Python list of VMInst)
-        self.scope = None       # Current scope
-        self.pc = 0             # offset into code base
-        self.ir = None          # Instruction Register
-        self.fp = None          # Frame pointer (for return)
-        self.temp = None        # holds new dict/array
+        self.cb = None          # Code Base (Python list of VMInstr)
+        self.scope = None       # Scope: Current scope
+        self.pc = 0             # int: offset into code base
+        self.ir = None          # VMInstr: Instruction Register
+        self.fp = None          # Frame: Frame pointer (for return)
+        self.temp = None        # holds new Dict/List
         self.iscope = iscope    # initial scope (for pyscope functions)
-        self.stats = stats      # bool
-        self.trace = trace      # bool
+        self.stats = stats      # bool: enable timing
+        self.trace = trace      # bool: enable tracing
 
         # argument list from last call/method/op invocation
         # User defined functions (Python CClosure) pick up args with
