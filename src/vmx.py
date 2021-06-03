@@ -33,6 +33,8 @@ import classes
 import system
 import const
 
+INST2CODE = ('close', 'bccall') # opcodes where inst[2] is code list
+
 instr_class_by_name = {}        # Instr classes by name
 
 class VMError(Exception):
