@@ -127,25 +127,27 @@ def sys_exit(value=0):
     sys.exit(value.value)       # XXX to_int??
 
 ################
-# XXX should be a string() method!
 
 @classes.pyvmfunc
 def sys_tree(vm, t):
     """
-    format JSON (returns Str)
+    format JSON (returns Str) from AST of Symbols
     """
     t2 = obj2python_json(t)     # strip down to Python data structures
     return classes.mkstr(json.dumps(t2, indent=1), vm.iscope)
 
+################
+
 def format_instr(instr, indent=''):
     """
+    helper for sys_vtree
     format one instruction (Python list)
     """
     op = instr[1]
-    if op not in ('close', 'bccall'):
+    if op not in vmx.INST2CODE:
         return indent + json.dumps(instr)
 
-    # here to handle "close" and "bccall" (instr[2] is a new code list)
+    # here to handle "close" and "bccall" (instr[2] is a code list)
     nindent = indent + " "
     return ('%s["%s", "%s",\n%s%s]' % \
             (indent, instr[0], op,
@@ -153,6 +155,7 @@ def format_instr(instr, indent=''):
 
 def format_code(code, indent=''):
     """
+    helper for sys_vtree
     takes Python list of instructions (Python lists)
     """
     sep = ",\n" + indent + " "
@@ -162,17 +165,18 @@ def format_code(code, indent=''):
 
 def trim_where(code, fname):
     """
-    trim `fname` from all instruction list where fields
+    helper for sys_vtree, sys_assemble
     `code` is Python list of lists: MODIFIED IN PLACE!!!
+    trim `fname` from all Python instruction list "where" fields
     """
     if not fname:
         return
-    fnamelen = len(fname) + 1   # remove fname:
+    fnamelen = len(fname) + 1   # remove "fname:"
     def helper(c):
         for instr in c:
             if instr[0].startswith(fname):
                 instr[0] = instr[0][fnamelen:]
-            if instr[1] in ('close', 'bccall'):
+            if instr[1] in vmx.INST2CODE:
                 helper(instr[2])
     helper(code)
 
@@ -189,44 +193,39 @@ def sys_vtree(vm, t, fname=classes.null_value):
 
     return classes.mkstr(format_code(t2), vm.iscope)
 
-# used in System.tree (above), parse, parse_and_execute, System.assemble (below)
+# used in:
+# System.tree (above) XXX replace with a Symbol.json method??
+# System.vtree (above)
+# System.assemble (below)
 def obj2python_json(x):
     """
-    take AST (tree of Objects) or List of VMCode (Lists)
+    take AST (tree of parser Symbols) or List of VMCode (Lists)
     return as Python list of lists
     *NOT* a general purpose JSON converter!!!
     """
 
-    # can't remember why;
-    # parser ASTs may once have had cycles?
-    memo = {}
     value_classes = [classes.Number, classes.Str, classes.Bool, classes.Null]
     iterable_classes = [classes.List]
     def clean1(x):
         """
         worker function
         """
-        if not isinstance(x, classes.CPObject): # paranoia
-            raise classes.UError("obj2python only handles primatives")
-
-        ix = id(x)
-        if ix in memo:
-            return memo[ix]
         if classes.instance_of(x, value_classes):
             return x.value
         if classes.instance_of(x, iterable_classes):
             return [clean1(z) for z in x.value]
 
-        # here with Dict; handle AST nodes:
+        if not classes.instance_of(x, [classes.Dict]):
+            raise classes.UError("obj2python only handles ASTs, code/JSON")
+
+        # here with AST "Symbol" node; turn into JSON list
         r = []
         for attr in ['where', 'arity', 'value']:
             r.append(clean1(x.getprop(attr)))
             for attr in ['first', 'second', 'third']:
-                if attr not in x.props: # OUCH!!!
+                if attr not in x.props:
                     break
                 r.append(clean1(x.getprop(attr)))
-
-            memo[ix] = r
             return r
 
     return clean1(x)
