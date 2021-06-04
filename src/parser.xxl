@@ -162,7 +162,7 @@ var VMCode = Class.new({
 	},
 	emit_exit: function (this) {
 	    // VM exit; return to caller of VM.start()
-	    this._emit(["EOF", "exit"]);
+	    this._emit(["EOF", "return"]);
 	},
 	emit_binop: function (this, op, sym) {
 	    // fetch and call binary operator "op" (constant)
@@ -1387,7 +1387,8 @@ var Parser = Class.new({
 	    predef("false");
 	    predef("null");
 	    predef("true");
-	    predef("__main__");
+	    predef("__modinfo");
+	    predef("__main__");	// XXX REMOVE!
 				   
 	    this.advance();	// prime the pump (load this.token)
 	},

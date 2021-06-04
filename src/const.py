@@ -46,3 +46,10 @@ INIT = 'init'
 # Class names
 # XXX more here??
 PYOBJECT = 'PyObject'
+
+# per-module:
+MODINFO = '__modinfo'
+
+# ModInfo properties
+MODINFO_MAIN = 'main'
+MODINFO_MODULE = 'module'

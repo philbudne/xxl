@@ -532,6 +532,7 @@ class ExitInstr(VMInstr0):
     name = "exit"               # XXX rename to "halt"???
 
     def step(self, vm):
+        #sys.stderr.write("exit\n")
         vm.run = False
 
 @reginstr

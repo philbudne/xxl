@@ -62,6 +62,7 @@ is a language CObject, and not just any Python object.
 #       maybe have one file per Class?? named classes/ClassName.py??
 #       (lots of stuff is missing, so it's bound to grow....)
 
+import scopes
 import system
 import const
 import vmx
@@ -1370,6 +1371,55 @@ PyIterator.setprop(const.METHODS, _mkdict({
     'iter': pyiterator_iter,    # see above
     'next': pyiterator_next
 }))
+
+################################################################
+
+Module = defclass(Class, 'Module', [Object])
+
+class CModule(CObject):
+    __slots__ = ['scope', 'modinfo']
+    def __init__(self, scope):
+        super().__init__(Module)
+        self.scope = scope
+        self.modinfo = None
+
+ModInfo = defclass(Class, 'ModInfo', [Object])
+
+def new_modinfo(main, module):
+    mi = CObject(ModInfo)
+    mi.setprop(const.MODINFO_MAIN, mkbool(main))
+    mi.setprop(const.MODINFO_MODULE, module)
+    # XXX srcfile, vmxfile??
+    return mi
+
+# XXX pass srcfile and vmxfile:
+# XXX keep (global?) dict of modules by file name??
+def new_module(main, argv):
+    scope = scopes.Scope(None)  # create root scope for module
+    sys = system.create_sys_object(scope, argv) # new System object
+    copy_types(scope, sys)      # populate scope
+
+    mod = CModule(scope)
+    mod.props = scope.get_vars() # XXX THWACK!
+
+    mi = new_modinfo(main, mod) # XXX vmx/src files!!
+    mod.modinfo = mi
+    scope.defvar(const.MODINFO, mi) # make ModInfo visible in module namespace
+
+    scope.defvar('__main__', mkbool(main)) # XXX TEMP REMOVE
+
+    return mod                  # XXX return (mod, modinfo)?
+
+@pyfunc
+def modinfo_load_vmx(this, fname):
+    mod = this.getprop(MODINFO_MODULE) # XXX check return
+    code = vmx.load_vm_json(fname.value, mod.scope) # XXX getstr
+    return CClosure(code, vm.iscope)
+
+ModInfo.setprop(const.METHODS, _mkdict({
+    'load_vmx': modinfo_load_vmx
+}))
+
 ################################################################
 
 def wrap(value, iscope):

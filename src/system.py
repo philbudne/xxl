@@ -33,12 +33,10 @@ import vmx
 
 SYSTEM = 'System'               # maybe __xxl??
 SYS_TYPES = 'types'             # maybe top level __classes?
-SYS_PARSER = 'parser'
 
 # should be used ONLY to create items to set up "System" & System.types objects!
 # can't use create_sys_type: which needs the System object!!!
 # ALSO used for:
-#       sys_import (returned module) -- should return Module??
 #       tokenizer returns -- should return Token??
 def __obj_create(props):        # TEMP??
     return classes._mkobj(props)
@@ -46,10 +44,7 @@ def __obj_create(props):        # TEMP??
 ################################################################
 # functions
 
-try:
-    STR = basestring            # Python2: unicode and str
-except:
-    STR = (str, bytes)          # Python3
+STR = (str, bytes)              # Python3
 
 def isstr(x):                   # XXX TEMP
     """
@@ -232,13 +227,13 @@ def obj2python_json(x):
 
 ################
 
+# XXX XXX make a ModInfo method (won't need vm arg?)!!!
 @classes.pyvmfunc
 def sys_assemble(vm, tree, srcfile):
     """
     `tree`: List of Lists of VM code
     `srcfile`: source of code
     returns Closure using caller's initial scope
-        (XXX XXX XXX make this a Module method????)
     """
     # convert List of Lists to Python list of lists
     js = obj2python_json(tree)
@@ -259,43 +254,7 @@ def sys_pyimport(vm, module):
     m = importlib.import_module(module.value) # XXX getstr?
     return classes.wrap(m, vm.iscope)         # make PyObject
 
-# XXX create an "auto-import" object? __python.sys == pyimport("sys")???
-
 ################
-
-# used only by import_worker; XXX inline?
-# XXX take filename, save as __module.file?
-#       change __main__ to __module.main
-# XXX keep Dict of modules by (file)name??  in System.modules???
-def init_module(argv, main=False):
-    """
-    create namespace and System object (w/o parser)
-    main: bool -- used to set __main__
-    """
-    scope = scopes.Scope(None)    # create scope for module
-    sys = create_sys_object(scope, argv) # new System object
-    classes.copy_types(scope, sys) # populate scope
-
-    scope.defvar('__main__', classes.mkbool(main))
-
-    return scope                # XXX return Module object??
-
-# called only from import_worker! XXX inline?
-# requires initial scope with System.types set up.
-def load_parser(scope, parser_vmx, filename=None, trace=False):
-    """
-    load parser from vmx file into scope's System.parser
-    """
-    sys_obj = scope.lookup(SYSTEM)
-    m = import_worker(vmx_file=parser_vmx, main=False,
-                      trace=trace, parser=False)
-    # XXX check return
-
-    # point System.parser at parser module
-    sys_obj.setprop(SYS_PARSER, m)
-
-    if filename:                # source file name, for bootstrap.vmx
-        m.setprop('filename', classes.mkstr(filename, scope))
 
 def breakpoint_if_debugging():
     """
@@ -319,9 +278,15 @@ def sys_import(filename):
     # XXX search for .vmx file?
     # XXX propogate trace from caller??
     # XXX pass VM!
-    mod = import_worker(src_file=filename.value) # XXX getstr???
+
+    fname = filename.value      # XXX getstr???
+    if fname.endswith('.vmx'):
+        mod = import_worker(vmx_file=fname)
+    else:
+        mod = import_worker(src_file=fname)
+
     if mod is None:
-        Exception("import failed")
+        Exception("import failed") # XXX UError?
 
     # XXX run __extensions__ on caller's initial scope? System object?
     # XXX take arg to bypass __extensions__
@@ -330,13 +295,11 @@ def sys_import(filename):
 # Worker function to implement "import" (where modules come from)
 # used by: vmx.py (running src & vmx files)
 #       sys_import (System.import function)
-#       load_parser (called from here!)
-# XXX returns Object (want Module)
+# returns `Module`
 def import_worker(src_file=None,
                   vmx_file=None,
                   main=False,
                   argv=[],
-                  parser=True,
                   parser_vmx=None,
                   stats=False,
                   trace=False):
@@ -346,31 +309,38 @@ def import_worker(src_file=None,
         XXX take bare name and try both .xxl and .vmx??
     `argv`: list of str for command line args
     bool `main` True when loading from command line
-    bool `parser` to create System.parser (False to load parser.vmx)
     str `parser_vmx` name of file with parser VM code
     bool `stats` enable VM stats
     bool `trace` enable VM trace of user code
     """
-    scope = init_module(argv, main=main) # XXX pass fname(s)?
+    #print("BEGIN import_worker", src_file, vmx_file, main, argv)
 
-    if parser:
-        # NOTE!!! Calls this routine recursively, w/ parser=False & vmx_file
-        # passes source file name in to set System.parser.filename
-        load_parser(scope,
-                    parser_vmx or os.environ.get('XXL_PARSER', 'parser.vmx'),
-                    filename=src_file
-        )
+    mod = classes.new_module(main, argv)
+    modinfo = mod.modinfo
+    scope = mod.scope
 
-    vmx_files = ['bootstrap.vmx']
     if vmx_file:
-        vmx_files.append(vmx_file)
+        modinfo.setprop('vmxfile', classes.mkstr(vmx_file, scope))
+
+    if src_file:
+        modinfo.setprop('srcfile', classes.mkstr(src_file, scope))
+
+    modinfo.setprop('parser_vmx',
+                    classes.mkstr((parser_vmx or
+                                   os.environ.get('XXL_PARSER',
+                                                  'parser.vmx')),
+                                  scope))
+
+    # XXX take as argument
+    bootstrap_vmx = os.environ.get('XXL_BOOTSTRAP', 'bootstrap.vmx')
+
+    # XXX handle Exception!
+    #sys.stderr.write("calling load_vm_json %s %s\n" % (bootstrap_vmx, main))
+    code = vmx.load_vm_json(bootstrap_vmx, scope)
 
     vm = vmx.VM(scope, stats=stats, trace=trace)
     try:
-        for vf in vmx_files:
-            # XXX handle Exception from load_vm_json?
-            code = vmx.load_vm_json(vf, scope)
-            vm.start(code, scope)
+        vm.start(code, scope)
     except SystemExit:          # from os.exit
         raise
     except vmx.VMError as e:    # an internal error
@@ -392,11 +362,21 @@ def import_worker(src_file=None,
         sys.exit(1)
     # NOTE!! copies vars dict; not a live view!
     #   (System.types needs to be a copy)
-    return __obj_create(scope.get_vars()) # XXX want Module
+    #print("END import_worker", mod)
+    return mod
+
+################
+
+# called by bootstrap.vmx to load __modinfo.vmxfile (if set)
+# XXX make a ModInfo method?!!!
+@classes.pyvmfunc
+def sys_load_vmx(vm, fname):
+    code = vmx.load_vm_json(fname.value, vm.iscope) # XXX getstr
+    return classes.CClosure(code, vm.iscope)
 
 ################################################################
 
-# called only from init_module: create SYSTEM Object
+# called only from classes.new_module: create SYSTEM Object
 def create_sys_object(iscope, argv):
     sys_obj = __obj_create({})
     iscope.defvar(SYSTEM, sys_obj)
@@ -416,14 +396,15 @@ def create_sys_object(iscope, argv):
     sys_obj.setprop('break', sys_break) # break to PDB
 
     # command line args, and exit:
-    sys_obj.setprop('argv',  classes.wrap(argv, iscope))
-    sys_obj.setprop('exit', sys_exit)
+    sys_obj.setprop('argv',  classes.wrap(argv, iscope)) # move to ModInfo??
+    sys_obj.setprop('exit', sys_exit)                    # move to ModInfo??
 
     # functions for parser & bootstrap:
     sys_obj.setprop('tokenizer', sys_tokenizer) # TEMP creates token generator
     sys_obj.setprop('tree', sys_tree) # TEMP!!!
     sys_obj.setprop('vtree', sys_vtree) # TEMP!!!
-    sys_obj.setprop('assemble', sys_assemble) # move to __module??
+    sys_obj.setprop('assemble', sys_assemble) # make ModInfo method?
+    sys_obj.setprop('load_vmx', sys_load_vmx) # make ModInfo method?
 
     # external modules:
     sys_obj.setprop('import', sys_import) # import source module

@@ -143,10 +143,19 @@ if (true) {			// hide temp variables
     System.error = er;
 }
 
-if (System.parser.filename) {
-    var fname = System.parser.filename; // set by system.py:load_parser
-    var p = System.parser.Parser.new();
-    System.parser.parser = p;	// make visible to extensions
+if (__modinfo.vmxfile) {
+    var v = __modinfo.vmxfile;
+    var f = System.load_vmx(v);
+    if (f) {
+	f();
+    }
+}
+
+if (__modinfo.srcfile) {
+    var fname = __modinfo.srcfile;
+    var pm = System.import(__modinfo.parser_vmx); // parser module
+    var p = pm.Parser.new();	// Parser instance
+    __modinfo.parser = p;	// make visible to extensions
 
     p.start_parse(fname);
     while (!p.end()) {
@@ -154,7 +163,7 @@ if (System.parser.filename) {
 	var ast = p.statement();
 
 	// generate VM code
-	var vmcode = System.parser.VMCode.new();
+	var vmcode = pm.VMCode.new();
 	ast.gen(vmcode);
 	var insts = vmcode.finish(ast); // List of instruction Lists
 
