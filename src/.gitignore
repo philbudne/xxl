@@ -8,3 +8,4 @@ pytest
 mkboot
 mkparser
 *.bak
+notes
