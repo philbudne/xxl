@@ -390,6 +390,10 @@ var PrattParser = Class.new({
 	    return(v);
 	}, // statement
 
+	predef: function (this, name) { // predefine Str `name` as a Name
+	    this.scope.defname("@predef", name);
+	},
+
 	init: function (this_parser) {
 	    var p = this_parser; // brevity
 
@@ -413,6 +417,9 @@ var PrattParser = Class.new({
 				    : "Already defined.");
 			}
 			this.def[n.value] = n;
+		    },
+		    defname: function(this, where, name) {
+			this._define(p.Name.new(where, name, "name"));
 		    },
 		    find_class: function (this, n) {
 			// n is string from lexer
@@ -991,9 +998,7 @@ var Parser = Class.new({
 		    nud: function (this) {
 			var a = [];
 			p.scope = p.Scope.new(p.scope);
-			p.scope._define( // XXX want p.defname?
-			    p.Name.new(this.where, "return", "name")); //!!
-
+			p.scope.defname(this.where, "return");
 			if (p.token.arity == "name") { // function NAME?
 			    // NOTE!! name (currently) defined only
 			    // INSIDE the function's scope, to allow
@@ -1113,8 +1118,7 @@ var Parser = Class.new({
 		    std: function (this) { // { block }
 			p.scope = p.Scope.new(p.scope);
 			if (this.label) {
-			    p.scope._define( // XXX want p.defname?
-				p.Name.new(this.where, this.label, "name"));
+			    p.scope.defname(this.where, this.label);
 			}
 			this.first = p.statements();
 			p.scope = p.scope.pop();
@@ -1244,14 +1248,14 @@ var Parser = Class.new({
 			if (n.reserved) {
 			    n.error("'" + p.token.value + "' reserved.");
 			}
-			// XXX enter new scope
-			p.define(n); // define variable
+			p.scope = p.Scope.new(p.scope);
+			p.define(n); // define variable for label
 			this.arity = "statement";
 			this.first = n;
 			p.advance();
 			p.advance(":");
 			this.second = p.statement(); // recurse!
-			// XXX leave scope
+			p.scope = p.scope.pop();
 			return(this);
 		    },
 		    gen: function (this, vmcode) { // gen
@@ -1376,18 +1380,13 @@ var Parser = Class.new({
 	    this.get_token = System.tokenizer(fname, '=<>!+-*&|/%^.', '=<>&|.');
 	    this.token = null;	// current Symbol object
 
-	    var predef = function (name) { // XXX make a base class method?
-		// direct:
-		this.scope._define(this.Name.new("@predef", name, "name"));
-	    };
-
-	    predef("Class");
-	    predef("System");
+	    this.predef("Class");
+	    this.predef("System");
 	    // declare these as unwritable??
-	    predef("false");
-	    predef("null");
-	    predef("true");
-	    predef("__modinfo");
+	    this.predef("false");
+	    this.predef("null");
+	    this.predef("true");
+	    this.predef("__modinfo");
 				   
 	    this.advance();	// prime the pump (load this.token)
 	},
