@@ -41,7 +41,6 @@ tokenizer: accept \xXX \UXXXXXXXX
 fix/revive "reserved" attribute in parser?!!
 
 true/null/false are writable!!!??? (bug or feature?)
-use native print
 
 xxl.py: w/o filename run read/eval/print loop
 	need to change statement() and std() methods
@@ -137,6 +136,6 @@ move comparison operators to an Orderable mixin?
 
 pyimport => PyObject.new??
 
-Have Module.new() do import?
-	do more in native code!!!
+Have Module.init() do import?
+	all native code???
 		call __extensions__ ??!!!
