@@ -25,13 +25,18 @@ eXperimental/eXtensible Language Zero (XXL/0)
 command line interface
 
 a small file, hopefully it stays that way!
+
 """
+
 
 # python libraries:
 import sys
 
-# VM:
+# XXL:
 import system                   # import_worker
+import vmx
+
+# XXX Convert to native code, put in bootstrap.xxl??
 
 argv = list(sys.argv)           # copy
 argv.pop(0)                     # vmx.py
@@ -77,8 +82,9 @@ import_args = {
     fname_arg: fname,           # vmx_file or src_file
     "argv": argv,               # remains of the argv
     "main": True,
-    "parser_vmx": parser,
-    "stats": stats,
-    "trace": trace
+    "parser_vmx": parser
 }
-system.import_worker(**import_args)
+mod, code = system.import_worker(**import_args)
+
+vm = vmx.VM(mod.scope, stats=stats, trace=trace)
+vmx.run(vm, code, mod.scope)

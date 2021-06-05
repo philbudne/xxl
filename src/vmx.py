@@ -731,3 +731,46 @@ def load_vm_json(fname, iscope):
         j = json.load(f)
 
     return convert_instrs(j, iscope, metadata.get('fn'))
+
+################
+
+def breakpoint_if_debugging():
+    """
+    call from exception handlers
+    check command line debug option???
+    """
+    #breakpoint()
+    pass
+
+def run(vm, boot, scope):
+    """
+    cold start (from xxl.py)
+    `boot` is Closure w/ bootstrap.vmx code for main module
+    """
+    vm.ac = boot                # Closure
+    # XXX make a method?!!!
+    where = "boot0"
+    b0 = [[where, "call0"],
+          [where, "exit"]]
+    code = convert_instrs(b0, scope, "")
+    try:
+        vm.start(code, scope)
+    except SystemExit:          # from os.exit
+        raise
+    except VMError as e:        # an internal error
+        # NOTE: displays VM Instr
+        sys.stderr.write("VM Error @ {}: {}\n".format(vm.ir, e))
+        # XXX dump VM registers?
+        vm.backtrace()
+        breakpoint_if_debugging()
+        sys.exit(1)
+    except classes.UError as e: # handle ValueError??
+        # NOTE: user error: just displays "where" and VM backtrace
+        if vm.ir:
+            sys.stderr.write("Error @ {}:{}: {}\n".format(
+                vm.ir.fn, vm.ir.where, e))
+        else:
+            sys.stderr.write("Error @ ???: {}\n".format(e))
+        vm.backtrace()
+        breakpoint_if_debugging()
+        sys.exit(1)

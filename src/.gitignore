@@ -5,3 +5,6 @@ tested
 t
 pytest
 .identical*
+mkboot
+mkparser
+bootstrap.vmx.saved

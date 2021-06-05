@@ -62,12 +62,19 @@ is a language CObject, and not just any Python object.
 #       maybe have one file per Class?? named classes/ClassName.py??
 #       (lots of stuff is missing, so it's bound to grow....)
 
+# Python
+import os
+
+# XXL:
 import scopes
 import system
 import const
 import vmx
 
 NUM = (int, float)              # Python3
+
+# used to set MODINFO_DEBUG_BOOTSTRAP
+XXL_DEBUG_BOOTSTRAP = os.getenv('XXL_DEBUG_BOOTSTRAP', None)
 
 # used to initialize new System.types objects in new top level (module) scopes.
 # for _current_ definitions, need to lookup in iscope (use find_sys_type)
@@ -1374,6 +1381,9 @@ PyIterator.setprop(const.METHODS, _mkdict({
 
 ################################################################
 
+# Module is what "import" function returns
+#       properties are the namespace of the target Module
+
 Module = defclass(Class, 'Module', [Object])
 
 class CModule(CObject):
@@ -1383,12 +1393,16 @@ class CModule(CObject):
         self.scope = scope
         self.modinfo = None
 
+# ModInfo is the __modinfo Object inside each Module
+#       (for internal use)
 ModInfo = defclass(Class, 'ModInfo', [Object])
 
 def new_modinfo(main, module):
     mi = CObject(ModInfo)
     mi.setprop(const.MODINFO_MAIN, mkbool(main))
     mi.setprop(const.MODINFO_MODULE, module)
+    if XXL_DEBUG_BOOTSTRAP:
+        mi.setprop(const.MODINFO_DEBUG_BOOTSTRAP, true_val)
     # XXX srcfile, vmxfile??
     return mi
 
@@ -1406,18 +1420,27 @@ def new_module(main, argv):
     mod.modinfo = mi
     scope.defvar(const.MODINFO, mi) # make ModInfo visible in module namespace
 
-    scope.defvar('__main__', mkbool(main)) # XXX TEMP REMOVE
-
     return mod                  # XXX return (mod, modinfo)?
 
 @pyfunc
 def modinfo_load_vmx(this, fname):
-    mod = this.getprop(MODINFO_MODULE) # XXX check return
+    mod = this.getprop(const.MODINFO_MODULE) # XXX check return
     code = vmx.load_vm_json(fname.value, mod.scope) # XXX getstr
-    return CClosure(code, vm.iscope)
+    return CClosure(code, mod.scope)
+
+@pyfunc
+def modinfo_assemble(this, tree, srcfile):
+    """
+    `tree`: List of Lists of VM code
+    `srcfile`: source of code
+    returns Closure in __modinfo.module initial scope
+    """
+    mod = this.getprop(const.MODINFO_MODULE) # XXX check
+    return system.assemble(mod.scope, tree, srcfile)
 
 ModInfo.setprop(const.METHODS, _mkdict({
-    'load_vmx': modinfo_load_vmx
+    'load_vmx': modinfo_load_vmx,
+    'assemble': modinfo_assemble
 }))
 
 ################################################################

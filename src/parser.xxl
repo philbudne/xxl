@@ -1388,7 +1388,6 @@ var Parser = Class.new({
 	    predef("null");
 	    predef("true");
 	    predef("__modinfo");
-	    predef("__main__");	// XXX REMOVE!
 				   
 	    this.advance();	// prime the pump (load this.token)
 	},
@@ -1465,7 +1464,9 @@ var compile = function (fname) {
     return(meta_json + code_json); // return as List??
 }; // compile
 
-if (__main__) {			
+if (__modinfo.main) {
+    // here when run as: ./xxl.py parser.xxl sourcefile
+    // OR: ./xxl.py -x parser.vmx sourcefile
     if (System.argv.len() < 1) {
 	System.error("Usage: parser SOURCEFILE");
 	System.exit(1);

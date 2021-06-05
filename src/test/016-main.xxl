@@ -1,6 +1,1 @@
-if (__main__) {
-	System.print("__main__ is true");
-}
-else {
-	System.print("__main__ is false");
-}
+System.print("__modinfo.main is", __modinfo.main);

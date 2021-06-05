@@ -143,21 +143,37 @@ if (true) {			// hide temp variables
     System.error = er;
 }
 
+if (__modinfo.debug_bootstrap) { // from environment XXL_DEBUG_BOOTSTRAP
+    System.error("bootstrap __modinfo.module", __modinfo.module);
+    System.error("bootstrap __modinfo.main", __modinfo.main);
+}
+
 if (__modinfo.vmxfile) {
     var v = __modinfo.vmxfile;
-    var f = System.load_vmx(v);
+    if (__modinfo.debug_bootstrap) {
+	System.error("bootstrap vmxfile", v);
+    }
+    var f = __modinfo.load_vmx(v);
     if (f) {
 	f();
+    }
+    if (__modinfo.debug_bootstrap) {
+	System.error("bootstrap vmxfile", v, "finished");
     }
 }
 
 if (__modinfo.srcfile) {
-    var fname = __modinfo.srcfile;
-    var pm = System.import(__modinfo.parser_vmx); // parser module
+    var srcfile = __modinfo.srcfile;
+    var parser_vmx = __modinfo.parser_vmx; // for import
+    if (__modinfo.debug_bootstrap) {
+	System.error("bootstrap srcfile", srcfile);
+	System.error("bootstrap parser_vmx", parser_vmx);
+    }
+    var pm = System.import(parser_vmx); // parser module
     var p = pm.Parser.new();	// Parser instance
-    __modinfo.parser = p;	// make visible to extensions
+    __modinfo.parser = p;	// make visible to parser extensions
 
-    p.start_parse(fname);
+    p.start_parse(srcfile);
     while (!p.end()) {
 	// parse one statement into abstact syntax tree of Symbols
 	var ast = p.statement();
@@ -167,10 +183,10 @@ if (__modinfo.srcfile) {
 	ast.gen(vmcode);
 	var insts = vmcode.finish(ast); // List of instruction Lists
 
-	// generate Closure (w/ initial scope)
-	var f = System.assemble(insts, fname); // take module for scope???
+	// generate Closure in module initial scope
+	var f = __modinfo.assemble(insts, srcfile);
 
 	// run statement
 	f();
     }
-} // if (System.parser.filename)
+} // if (__modinfo.srcfile)

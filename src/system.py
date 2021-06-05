@@ -34,6 +34,8 @@ import vmx
 SYSTEM = 'System'               # maybe __xxl??
 SYS_TYPES = 'types'             # maybe top level __classes?
 
+DEBUG_IMPORT = False
+
 # should be used ONLY to create items to set up "System" & System.types objects!
 # can't use create_sys_type: which needs the System object!!!
 # ALSO used for:
@@ -160,7 +162,7 @@ def format_code(code, indent=''):
 
 def trim_where(code, fname):
     """
-    helper for sys_vtree, sys_assemble
+    helper for sys_vtree, assemble
     `code` is Python list of lists: MODIFIED IN PLACE!!!
     trim `fname` from all Python instruction list "where" fields
     """
@@ -227,24 +229,18 @@ def obj2python_json(x):
 
 ################
 
-# XXX XXX make a ModInfo method (won't need vm arg?)!!!
-@classes.pyvmfunc
-def sys_assemble(vm, tree, srcfile):
-    """
-    `tree`: List of Lists of VM code
-    `srcfile`: source of code
-    returns Closure using caller's initial scope
-    """
+# helper for ModInfo.assemble
+def assemble(scope, tree, srcfile):
     # convert List of Lists to Python list of lists
     js = obj2python_json(tree)
     trim_where(js, srcfile.value) # XXX getstr?
 
     # convert into Python list of Instrs (scope for type name lookup):
-    code = vmx.convert_instrs(js, vm.iscope, srcfile)
+    code = vmx.convert_instrs(js, scope, srcfile)
 
-    # turn into Closure in module initial scope
+    # turn into Closure in scope
     #   (any variables created are globals):
-    return classes.CClosure(code, vm.iscope)
+    return classes.CClosure(code, scope)
 
 ################ "pyimport" returns a PyObject wrapper around a Python module
 
@@ -256,18 +252,8 @@ def sys_pyimport(vm, module):
 
 ################
 
-def breakpoint_if_debugging():
-    """
-    call from exception handlers
-    check command line debug option???
-    """
-    #breakpoint()
-    pass
-
-################
-
-@classes.pyfunc
-def sys_import(filename):
+@classes.pyvmfunc
+def sys_import(vm, filename):
     """
     user called System.import function
     `filename` is Str of name of source file to parse
@@ -275,95 +261,80 @@ def sys_import(filename):
     # XXX check if already imported (or import in progress)
     #   lookup in System.modules[filename]????
     # XXX take filename w/o extension?????
-    # XXX search for .vmx file?
-    # XXX propogate trace from caller??
-    # XXX pass VM!
 
     fname = filename.value      # XXX getstr???
+    args = {}
     if fname.endswith('.vmx'):
-        mod = import_worker(vmx_file=fname)
+        args['vmx_file'] = fname
     else:
-        mod = import_worker(src_file=fname)
+        # XXX search for .vmx file?
+        args['src_file'] = fname
 
+    mod, bootstrap = import_worker(**args)
     if mod is None:
         Exception("import failed") # XXX UError?
 
+    if DEBUG_IMPORT:
+        print("sys_import", mod, bootstrap)
+
     # XXX run __extensions__ on caller's initial scope? System object?
     # XXX take arg to bypass __extensions__
-    return mod
+    vm.save_frame()
+    vm.push(mod)                # save Module on stack
+    where = "sys_import"
+    c2 = [[where, "call0"],     # call bootstrap.vmx Closure
+          [where, "pop_temp"],  # UGH: restore Module to TEMP
+          [where, "temp"],      # UGH: TEMP to AC
+          [where, "return"]]    # return to caller
+    vm.cb = vmx.convert_instrs(c2, mod.scope, "")
+    vm.pc = 0
+    return bootstrap            # CClosure w/ bootstrap.vmx
 
 # Worker function to implement "import" (where modules come from)
-# used by: vmx.py (running src & vmx files)
+# used by: xxl.py (startup)
 #       sys_import (System.import function)
 # returns `Module`
 def import_worker(src_file=None,
                   vmx_file=None,
                   main=False,
                   argv=[],
-                  parser_vmx=None,
-                  stats=False,
-                  trace=False):
+                  parser_vmx=None):
     """
-    NOTE!!!! ALWAYS PASS ARGS BY NAME!!!
     Takes either `src_file` or `vmx_file` [XXX autodetect by filename?]
         XXX take bare name and try both .xxl and .vmx??
     `argv`: list of str for command line args
     bool `main` True when loading from command line
     str `parser_vmx` name of file with parser VM code
-    bool `stats` enable VM stats
-    bool `trace` enable VM trace of user code
     """
-    #print("BEGIN import_worker", src_file, vmx_file, main, argv)
+    if DEBUG_IMPORT:
+        print("BEGIN import_worker", src_file, vmx_file, main, argv)
 
     mod = classes.new_module(main, argv)
     modinfo = mod.modinfo
     scope = mod.scope
 
     if vmx_file:
-        modinfo.setprop('vmxfile', classes.mkstr(vmx_file, scope))
+        modinfo.setprop(const.MODINFO_VMXFILE, classes.mkstr(vmx_file, scope))
 
     if src_file:
-        modinfo.setprop('srcfile', classes.mkstr(src_file, scope))
+        modinfo.setprop(const.MODINFO_SRCFILE, classes.mkstr(src_file, scope))
 
-    modinfo.setprop('parser_vmx',
+    modinfo.setprop(const.MODINFO_PARSER_VMX,
                     classes.mkstr((parser_vmx or
                                    os.environ.get('XXL_PARSER',
                                                   'parser.vmx')),
                                   scope))
 
-    # XXX take as argument
     bootstrap_vmx = os.environ.get('XXL_BOOTSTRAP', 'bootstrap.vmx')
 
     # XXX handle Exception!
     #sys.stderr.write("calling load_vm_json %s %s\n" % (bootstrap_vmx, main))
     code = vmx.load_vm_json(bootstrap_vmx, scope)
 
-    vm = vmx.VM(scope, stats=stats, trace=trace)
-    try:
-        vm.start(code, scope)
-    except SystemExit:          # from os.exit
-        raise
-    except vmx.VMError as e:    # an internal error
-        # NOTE: displays VM Instr
-        sys.stderr.write("VM Error @ {}: {}\n".format(vm.ir, e))
-        # XXX dump VM registers?
-        vm.backtrace()
-        breakpoint_if_debugging()
-        sys.exit(1)
-    except classes.UError as e: # handle ValueError??
-        # NOTE: user error: just displays "where" and VM backtrace
-        if vm.ir:
-            sys.stderr.write("Error @ {}:{}: {}\n".format(
-                vm.ir.fn, vm.ir.where, e))
-        else:
-            sys.stderr.write("Error @ ???: {}\n".format(e))
-        vm.backtrace()
-        breakpoint_if_debugging()
-        sys.exit(1)
-    # NOTE!! copies vars dict; not a live view!
-    #   (System.types needs to be a copy)
-    #print("END import_worker", mod)
-    return mod
+    boot = classes.CClosure(code, mod.scope) # CClosure with bootstrap_vmx code
+    if DEBUG_IMPORT:
+        print("END import_worker", mod)
+    return mod, boot
 
 ################
 
@@ -403,8 +374,6 @@ def create_sys_object(iscope, argv):
     sys_obj.setprop('tokenizer', sys_tokenizer) # TEMP creates token generator
     sys_obj.setprop('tree', sys_tree) # TEMP!!!
     sys_obj.setprop('vtree', sys_vtree) # TEMP!!!
-    sys_obj.setprop('assemble', sys_assemble) # make ModInfo method?
-    sys_obj.setprop('load_vmx', sys_load_vmx) # make ModInfo method?
 
     # external modules:
     sys_obj.setprop('import', sys_import) # import source module

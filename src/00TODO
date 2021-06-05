@@ -6,10 +6,6 @@ init methods for String, Bool, Null
 
 PClass: proxy === !== to "x.value is [not] y"????
 
-handle import() of .vmx files!!
-	Module.import_vmx()?
-	Have bootstrap.vmx explicitly import parser!?
-
 hook in bootstrap.vmx build in Makefile
 
 bootstrap.md -- describe adding operator;
@@ -17,9 +13,6 @@ bootstrap.md -- describe adding operator;
 	recompile bootstrap (if needed)
 	write test; add to test directory
 	use in parser.xxl
-
-pass VM into import_worker!!!
-	VMX files need to end w/ return??
 
 *** BUG: Only CPObjects can be used as Dict keys
 	(Dicts currently indexed by Python values,
@@ -67,11 +60,7 @@ Object "getstr()" method for PyFuncs, or utility function????
 rename System to xxl? __xxl??
 split Number into Float and Int
 	Have Int initializer take optional radix
-flush __mkobject for:
-	import -- return Module!
-	tokenizer -- return List?
-Do type wrapping in CPyFunc/CPyObj?
-
+flush __obj_create for tokenizer -- return Token? List??
 test if implementing VM as chain of if's (on ints)
 	instead step on Instr objects is faster
 split up parser.xxl (into pratt,xlparser,vmcode??)
@@ -94,7 +83,7 @@ make native Tokenizer (gonna be slow!)
 
 FEATURES (or extensions)
 ========================
-Object: dir() method??
+Object: dir() method?? Return Set??
 	props() method return Dict?
 load compressed vmx (JSON) files and/or use some faster serialization library!!
 make obj_get of unknown property an error
@@ -103,16 +92,14 @@ make obj_get of unknown property an error
 	Object.has_method method?
 add "undefined" value (initial/default value for vars/args)??
 
-exceptions (using Continuations)
+exceptions (using Continuations?)
+	resumable/non-resumable
 	Have "try" create scope with "raise" variable.
 	silently pass "raise" variable?
 
 "in" operator for collections?
 
 port VM to rpython?!
-
-JS "spread" operator in function arguments ...array
-	(may be used any number of times!)
 
 missing methods (lots!!!)
     Str binop: full relops (require str lhs)
@@ -143,8 +130,13 @@ bring back is_true?
 Helper to declare PyFunc wrappers for methods???
 	take string of argument types to expect/translate
 
-string tokenizer (takes string)! => "eval" function???
+tokenizer that takes string for input
+	(could use for "eval")
 
 move comparison operators to an Orderable mixin?
 
 pyimport => PyObject.new??
+
+Have Module.new() do import?
+	do more in native code!!!
+		call __extensions__ ??!!!

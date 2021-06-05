@@ -82,6 +82,7 @@ $(C):	$(VM) $(B) $(PARSER_SRC)
 # XXX save old (working) file??
 bootstrap.vmx: bootstrap.xxl $(PARSER_VMX) $(VM)
 	$(RUNVMX) $(PARSER_VMX) bootstrap.xxl > bootstrap.vmx.tmp && \
+		mv bootstrap.vmx bootstrap.vmx.saved && \
 		mv bootstrap.vmx.tmp bootstrap.vmx
 
 clean:

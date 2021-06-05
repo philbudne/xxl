@@ -1,6 +1,6 @@
 // -*-js-*-
 // define "do" statement
-var p = System.parser.parser;	// Parser object
+var p = __modinfo.parser;	// Parser object
 
 var Do = Class.new({
     name: "Do",
