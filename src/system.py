@@ -107,9 +107,13 @@ def sys_tokenizer(vm, filename, prefix, suffix):
             if not t:
                 return null
             where = "%s:%s:%s" % (fnstr, t.lineno, t.from_)
+            if t.type_ == 'number':
+                v = classes.mknumber(t.value, vm.iscope)
+            else:
+                v = classes.mkstr(t.value, vm.iscope)
             return __obj_create({ # XXX create a Token
                 'type': classes.mkstr(t.type_, vm.iscope),
-                'value': classes.mkstr(t.value, vm.iscope),
+                'value': v,
                 'where': classes.mkstr(where, vm.iscope)
             })
         except StopIteration:

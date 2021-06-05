@@ -402,6 +402,12 @@ def mkstr(s, scope):
     """
     return system.create_sys_type('Str', scope, s)
 
+def mknumber(n, scope):
+    """
+    used to create Number from Python int/float, once up and running
+    """
+    return system.create_sys_type('Number', scope, n)
+
 def mkiterable(i, scope):
     return system.create_sys_type('PyIterable', scope, i)
 
