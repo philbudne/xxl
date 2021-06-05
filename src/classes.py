@@ -612,6 +612,7 @@ def obj_putprop(l, r, value):
     return value                # lhsop MUST return value
 
 # NOTE! utility, not method
+# XXX return (obj, value) to avoid generating BoundMethod?
 def find_in_supers(l, rv):
     """
     breadth first search of superclass methods/properties
@@ -650,6 +651,7 @@ def find_in_supers(l, rv):
     return null_value
 
 # NOTE! utility, not method
+# XXX return (obj, value) to avoid generating BoundMethod?
 def find_in_class(l, rv):
     """
     `rv` is Python string
