@@ -58,7 +58,8 @@ install: $(TESTED)
 	cp $(C) $(PARSER_VMX)	
 
 #TIME=time -p
-RUNVMX=$(TIME) $(XXL_PYTHON) ./$(XXL) -x
+# no longer requires -x!
+RUNVMX=$(TIME) $(XXL_PYTHON) ./$(XXL)
 
 # step A: run PARSER_VMX on PARSER_SRC generating VMX
 # Compiles, but DOES NOT RUN new source.
@@ -79,12 +80,13 @@ $(B):	$(VM) $(A) $(PARSER_SRC)
 $(C):	$(VM) $(B) $(PARSER_SRC)
 	$(RUNVMX) $(B) $(PARSER_SRC) > $(C).tmp && mv $(C).tmp $(C)
 
-# XXX save old (working) file??
+# XXX test new file before replacing?!!
 bootstrap.vmx: bootstrap.xxl $(PARSER_VMX) $(VM)
 	$(RUNVMX) $(PARSER_VMX) bootstrap.xxl > bootstrap.vmx.tmp && \
-		mv bootstrap.vmx bootstrap.vmx.saved && \
+		mv bootstrap.vmx bootstrap.vmx.bak && \
 		mv bootstrap.vmx.tmp bootstrap.vmx
 
+GENERATED=$(A) $(B) $(C) $(TESTED) $(IDENTICAL) $(IDENTICAL2)
 clean:
-	rm -f *.tmp $(A) $(B) $(C) $(TESTED) $(IDENTICAL) $(IDENTICAL2) .tmp*
+	rm -f *.tmp .tmp* *.bak *~ $(GENERATED)
 	rm -rf __pycache__

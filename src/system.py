@@ -263,14 +263,7 @@ def sys_import(vm, filename):
     # XXX take filename w/o extension?????
 
     fname = filename.value      # XXX getstr???
-    args = {}
-    if fname.endswith('.vmx'):
-        args['vmx_file'] = fname
-    else:
-        # XXX search for .vmx file?
-        args['src_file'] = fname
-
-    mod, bootstrap = import_worker(**args)
+    mod, bootstrap = import_worker(fname=fname)
     if mod is None:
         Exception("import failed") # XXX UError?
 
@@ -279,7 +272,7 @@ def sys_import(vm, filename):
 
     # XXX run __extensions__ on caller's initial scope? System object?
     # XXX take arg to bypass __extensions__
-    vm.save_frame()
+    vm.save_frame()             # save return
     vm.push(mod)                # save Module on stack
     c2 = [["0", "call0"],       # call bootstrap.vmx Closure
           ["1", "pop_temp"],    # UGH: restore Module to TEMP
@@ -292,47 +285,45 @@ def sys_import(vm, filename):
 # Worker function to implement "import" (where modules come from)
 # used by: xxl.py (startup)
 #       sys_import (System.import function)
-# returns `Module`
-def import_worker(src_file=None,
-                  vmx_file=None,
-                  main=False,
-                  argv=[],
-                  parser_vmx=None):
+# returns new `Module`
+def import_worker(fname, main=False, argv=[], parser_vmx=None):
     """
-    Takes either `src_file` or `vmx_file` [XXX autodetect by filename?]
+    Takes file name `fname`
         XXX take bare name and try both .xxl and .vmx??
-    `argv`: list of str for command line args
     bool `main` True when loading from command line
+    `argv`: list of str for command line args
     str `parser_vmx` name of file with parser VM code
     """
     if DEBUG_IMPORT:
-        print("BEGIN import_worker", src_file, vmx_file, main, argv)
+        print("BEGIN import_worker", fname, main, argv)
 
     mod = classes.new_module(main, argv)
     modinfo = mod.modinfo
     scope = mod.scope
 
-    if vmx_file:
-        modinfo.setprop(const.MODINFO_VMXFILE, classes.mkstr(vmx_file, scope))
+    if fname.endswith('.vmx'):
+        modinfo.setprop(const.MODINFO_VMXFILE, classes.mkstr(fname, scope))
+    else:
+        modinfo.setprop(const.MODINFO_SRCFILE, classes.mkstr(fname, scope))
 
-    if src_file:
-        modinfo.setprop(const.MODINFO_SRCFILE, classes.mkstr(src_file, scope))
-
-    modinfo.setprop(const.MODINFO_PARSER_VMX,
-                    classes.mkstr((parser_vmx or
-                                   os.environ.get('XXL_PARSER',
-                                                  'parser.vmx')),
-                                  scope))
+        if not parser_vmx:
+            # XXX _COULD_ choose parser based on file name!!!
+            parser_vmx = os.environ.get('XXL_PARSER', 'parser.vmx')
+            modinfo.setprop(const.MODINFO_PARSER_VMX,
+                            classes.mkstr(parser_vmx, scope))
 
     bootstrap_vmx = os.environ.get('XXL_BOOTSTRAP', 'bootstrap.vmx')
 
-    # XXX handle Exception!
-    #sys.stderr.write("calling load_vm_json %s %s\n" % (bootstrap_vmx, main))
-    code = vmx.load_vm_json(bootstrap_vmx, scope)
+    if DEBUG_IMPORT:
+        sys.stderr.write("calling load_vm_json %s %s\n" % (bootstrap_vmx, main))
+    code = vmx.load_vm_json(bootstrap_vmx, scope) # XXX may raise exceptions!!
 
     boot = classes.CClosure(code, mod.scope) # CClosure with bootstrap_vmx code
     if DEBUG_IMPORT:
-        print("END import_worker", mod)
+        print("END import_worker", fname, mod)
+
+    # XXX stash "boot" closure in __modinfo.boot, so "System.import"
+    #   can be all native code (and avoid @sys_import hand coded glue)???
     return mod, boot
 
 ################

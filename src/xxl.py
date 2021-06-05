@@ -41,7 +41,6 @@ import vmx
 argv = list(sys.argv)           # copy
 argv.pop(0)                     # vmx.py
 
-fname_arg = "src_file"         # import_worker argument name for fname
 stats = trace = help = False
 parser = None
 # XXX use real arg parser!
@@ -60,9 +59,6 @@ while argv:
     elif argv[0] == '-P':
         argv.pop(0)
         parser = argv.pop(0)
-    elif argv[0] == '-x':
-        fname_arg = "vmx_file"  # load .vmx (JSON VM code) file
-        argv.pop(0)
     else:
         sys.stderr.write("unknown option {}\n".format(argv[0]))
         sys.exit(1)
@@ -72,19 +68,13 @@ if not argv:
     help = True
 
 if help:
-    sys.stderr.write("Usage: xxl.py [-h][-s][-t][-T][-x][-P parser.vmx] file args ...\n")
+    sys.stderr.write("Usage: xxl.py [-h][-s][-t][-T][-P parser.vmx] file args ...\n")
     sys.exit(1)
 
 fname = argv.pop(0)
 
-# common arguments:
-import_args = {
-    fname_arg: fname,           # vmx_file or src_file
-    "argv": argv,               # remains of the argv
-    "main": True,
-    "parser_vmx": parser
-}
-mod, code = system.import_worker(**import_args)
+mod, code = system.import_worker(fname=fname, argv=argv, main=True,
+                                 parser_vmx=parser)
 
 vm = vmx.VM(mod.scope, stats=stats, trace=trace)
 vmx.run(vm, code, mod.scope)

@@ -289,24 +289,8 @@ class CPyFunc(CObject):
         return "<PyFunc: %s>" % self.func.__name__
         
     def invoke(self, vm):
-        args = vm.args
-        n = len(args)
-        if n == 0:
-            ret = self.func()
-        elif n == 1:
-            ret = self.func(args[0])
-        elif n == 2:
-            ret = self.func(args[0], args[1])
-        elif n == 3:
-            ret = self.func(args[0], args[1], args[2])
-        elif n == 4:
-            ret = self.func(args[0], args[1], args[2], args[3])
-        else:
-            ret = self.func(*args)
-
-        # XXX wrap result here, so func doesn't need to know about
-        # initial scope??
-        vm.ac = ret
+        vm.ac = self.func(*vm.args)
+        assert(isinstance(vm.ac, CObject))
 
     def __call__(self, *args):
         """
@@ -582,6 +566,7 @@ def obj_init(this_obj, *args):
     if len(args) > 0:
         raise UError("%s.%s takes no arguments" %
                         (this_obj.classname(), const.INIT))
+    return null_value
 
 @pyvmfunc
 def obj_str(vm, l):
@@ -825,6 +810,7 @@ def class_init(this_class, props):
     if const.SUPERS not in this_class.props:
         # XXX complain??
         this_class.setprop(const.SUPERS, _mklist([Object]))
+    return null_value
 
 @pyfunc
 def class_call(this_class, *args):
@@ -979,6 +965,7 @@ def dict_init0(obj):
     Dodges needing private metaclass for Dict
     """
     obj.value = {}
+    return null_value
 
 @pyfunc
 def dict_pop(obj, arg):
@@ -1020,10 +1007,12 @@ def list_init0(l):
     Dodges needing private metaclass for List
     """
     l.value = []
+    return null_value
 
 @pyfunc
 def list_append(l, item):
     l.value.append(item)
+    return null_value
 
 @pyfunc
 def list_pop(l,item=None):
@@ -1137,6 +1126,7 @@ def num_init(obj, value):
         obj.value = value.value
     else:
         raise UError("{}.new needs Str or Number".format(obj.getclass().name))
+    return null_value
 
 Number.setprop(const.METHODS, _mkdict({
     const.INIT: num_init
@@ -1373,6 +1363,7 @@ def pyiterator_next(vm, this, finished):
             raise UError("iterator .next takes Continuation")
         vm.args = []            # default to null
         finished.invoke(vm)     # alters VM state; return immediately!
+    return null_value
 
 PyIterator.setprop(const.METHODS, _mkdict({
     'iter': pyiterator_iter,    # see above

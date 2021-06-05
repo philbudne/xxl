@@ -161,8 +161,7 @@ if (__modinfo.vmxfile) {
 	System.error("bootstrap vmxfile", v, "finished");
     }
 }
-
-if (__modinfo.srcfile) {
+else if (__modinfo.srcfile) {
     var srcfile = __modinfo.srcfile;
     var parser_vmx = __modinfo.parser_vmx; // for import
     if (__modinfo.debug_bootstrap) {
@@ -190,3 +189,7 @@ if (__modinfo.srcfile) {
 	f();
     }
 } // if (__modinfo.srcfile)
+else {
+    System.uerror("bootstrap: no file to load");
+}
+
