@@ -825,6 +825,7 @@ var Parser = Class.new({
 	    });
 	    p.add_symbol_class(".", p.Dot);
 
+	    // superclass "." operator
 	    p.DotDot = Class.new({
 		name: "DotDot",
 		supers: [p.Dot],
@@ -911,7 +912,7 @@ var Parser = Class.new({
 			p.advance(")");
 			return(e);		// this node discarded
 		    },
-		    led: function (this, left) {
+		    led: function (this, left) { // parse function call
 			var a = [];
 			var spread = false;
 			if (!p.check(")")) {
@@ -922,7 +923,7 @@ var Parser = Class.new({
 				    p.advance();
 				    arg.first = p.expression(0);
 				    a.append(arg);
-				    spread = true;
+				    spread = true; // spread arguments used
 				}
 				else {
 				    a.append(p.expression(0));
@@ -942,7 +943,6 @@ var Parser = Class.new({
 			return(this);
 		    }, // led
 		    gen: function (this, vmcode) {
-
 			if (this.third) { // ...args present
 			    // generate code for actuals, placing them on stack
 			    this.second.each_for(
