@@ -213,7 +213,9 @@ def obj2python_json(x):
             return [clean1(z) for z in x.value]
 
         if not classes.instance_of(x, [classes.Dict]):
-            raise classes.UError("obj2python only handles ASTs, code/JSON")
+            raise classes.UError(
+                "obj2python only handles ASTs, code/JSON, got %s" %
+                x.classname())
 
         # here with AST "Symbol" node; turn into JSON list
         r = []

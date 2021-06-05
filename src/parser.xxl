@@ -88,7 +88,7 @@ var VMCode = Class.new({
 	},
 	gen_push: function (this, symbol) {
 	    // evaluate "this" and push on stack (*may* crush AC)
-	    if (symbol.id() == "(literal)") { // instanceof(Lit)
+	    if (symbol.id() == "(literal)") { // XXX instanceof(Lit)
 		this.emit_push_lit(symbol.value, symbol);
 	    }
 	    else {
@@ -178,6 +178,9 @@ var VMCode = Class.new({
 	    // fetch and call LHS operator "op" (const)
 	    // for object in AC w/ three args from stack: OBJ, RHS, VALUE
 	    this._emit([sym.where, "lhsop", op]);
+	},
+	emit_binop_lit: function (this, op, value, sym) {
+	    this._emit([sym.where, "binop_lit", op, value]);
 	},
 	emit_call: function (this, nargs, sym) {
 	    // call object in AC with nargs (constant) args on stack
@@ -554,9 +557,15 @@ var PrattParser = Class.new({
 			return(this);
 		    },
 		    gen_infix: function (this, vmcode) {
-			vmcode.gen_push(this.second);
-			this.first.gen(vmcode);
-			vmcode.emit_binop(this.id(), this);
+			if (this.second.id() == "(literal)") { // XXX instance_of(Lit)
+			    this.first.gen(vmcode);
+			    vmcode.emit_binop_lit(this.id(), this.second.value, this);
+			}
+			else { // second NOT a Lit
+			    vmcode.gen_push(this.second); // just push?
+			    this.first.gen(vmcode);
+			    vmcode.emit_binop(this.id(), this);
+			}
 		    },
 		    gen: function (this, vmcode) {
 			// XXX have top level call gen_XXX based on arity?
@@ -809,11 +818,9 @@ var Parser = Class.new({
 			return(this);
 		    },
 		    gen: function (this, vmcode) {
-			// XXX member name always constant, could
-			// have special case of binop that takes const (avoid lit)
-			vmcode.emit_push_lit(this.second.value, this); // member
-			this.first.gen(vmcode);
-			vmcode.emit_binop(this.id(), this);
+			this.first.gen(vmcode); // object
+			// this.second ALWAYS Lit!
+			vmcode.emit_binop_lit(this.id(), this.second.value, this);
 		    },
 		    gen_lhs: function (this, vmcode) {
 			vmcode.emit_push(this);	// save value to store as arg

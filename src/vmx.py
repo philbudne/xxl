@@ -365,6 +365,27 @@ class BinOpInstr(VMInstr1):
         vm.call_op(const.BINOPS, self)
 
 @reginstr
+class BinOpLitInstr(BinOpInstr):
+    """
+    RHS binary operator with literal LHS operand
+    """
+    name = "binop_lit"
+
+    __slots__ = ['lit']
+    def __init__(self, iscope, fn, where, op, lit):
+        # convert to Class when code is loaded
+        super().__init__(iscope, fn, where, op) # vm.call_op expects op in "value"
+        self.lit = classes.wrap(lit, iscope)
+
+    def step(self, vm):
+        # NOTE: find_op does not return BoundMethod:
+        vm.args = [vm.ac, self.lit]
+        vm.call_op(const.BINOPS, self)
+
+    def json(self):
+        return [self.fn_where(), self.name, self.value, self.lit]
+
+@reginstr
 class LHSOpInstr(VMInstr1):
     """
     execute (LHS) binary operator for object in AC
