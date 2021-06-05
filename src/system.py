@@ -281,12 +281,11 @@ def sys_import(vm, filename):
     # XXX take arg to bypass __extensions__
     vm.save_frame()
     vm.push(mod)                # save Module on stack
-    where = "sys_import"
-    c2 = [[where, "call0"],     # call bootstrap.vmx Closure
-          [where, "pop_temp"],  # UGH: restore Module to TEMP
-          [where, "temp"],      # UGH: TEMP to AC
-          [where, "return"]]    # return to caller
-    vm.cb = vmx.convert_instrs(c2, mod.scope, "")
+    c2 = [["0", "call0"],       # call bootstrap.vmx Closure
+          ["1", "pop_temp"],    # UGH: restore Module to TEMP
+          ["2", "temp"],        # UGH: TEMP to AC
+          ["3", "return"]]      # return to caller
+    vm.cb = vmx.convert_instrs(c2, mod.scope, "@sys_import")
     vm.pc = 0
     return bootstrap            # CClosure w/ bootstrap.vmx
 

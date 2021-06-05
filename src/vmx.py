@@ -742,17 +742,16 @@ def breakpoint_if_debugging():
     #breakpoint()
     pass
 
+# XXX make a VM method?!!!
 def run(vm, boot, scope):
     """
     cold start (from xxl.py)
     `boot` is Closure w/ bootstrap.vmx code for main module
     """
     vm.ac = boot                # Closure
-    # XXX make a method?!!!
-    where = "boot0"
-    b0 = [[where, "call0"],
-          [where, "exit"]]
-    code = convert_instrs(b0, scope, "")
+    b0 = [["0", "call0"],       # call Closure
+          ["1", "exit"]]        # quit VM
+    code = convert_instrs(b0, scope, "@boot0")
     try:
         vm.start(code, scope)
     except SystemExit:          # from os.exit
