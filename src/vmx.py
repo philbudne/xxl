@@ -59,7 +59,9 @@ class VM:
     """
     __slots__ = ['run', 'ac', 'sp', 'cb', 'pc', 'ir',
                  'scope', 'fp', 'temp', 'args', 'iscope',
-                 'op_count', 'op_time', 'stats', 'trace']
+                 # stats/trace:
+                 'op_count', 'op_time', 'stats', 'trace',
+                 'bop_count', 'bop_time']
 
     def __init__(self, iscope, stats, trace):
         self.run = False
@@ -71,7 +73,7 @@ class VM:
         self.ir = None          # VMInstr: Instruction Register
         self.fp = None          # Frame: Frame pointer (for return)
         self.temp = None        # holds new Dict/List
-        self.iscope = iscope    # initial scope (for pyscope functions)
+        self.iscope = iscope    # initial scope (XXX no longer correct!)
         self.stats = stats      # bool: enable timing
         self.trace = trace      # bool: enable tracing
 
@@ -104,47 +106,75 @@ class VM:
             ir.step(self)       # execute instruction
 
     def _start_trace(self):
+        # XXX get terminal width, use to create format?
         while self.run:
             # NOTE! self.ir for debug.
             self.ir = ir = self.cb[self.pc] # instruction register
             self.pc += 1        # jumps will overwrite
             ir.step(self)       # execute instruction
             irstr = str(ir)[1:-1] # remove []'s -- XXX remove quotes too???
-            print("%-40.40s | %-37.37s" % (irstr, repr(self.ac)))
+            print("%-45.45s | %-32.32s" % (irstr, repr(self.ac)))
 
     def _start_stats(self):
         # stats
-        op_count = {}
-        op_time = {}
+        self.op_count = {}
+        self.op_time = {}
+        self.bop_count = {}
+        self.bop_time = {}
+
         for op in instr_class_by_name.keys():
-            op_count[op] = op_time[op] = 0
+            self.op_count[op] = self.op_time[op] = 0
         trace = self.trace
+        # XXX inside try, to catch SystemExit??
         while self.run:
             self.ir = ir = self.cb[self.pc] # instruction register
             self.pc += 1        # jumps will overwrite
             t0 = time.time()
             ir.step(self)       # execute instruction
-            # XXX save in history buf??
+            # XXX save ir in history buf??
+            ir.prof(self, time.time() - t0)
             if trace:
                 print(ir, self.ac)
-            op_count[ir.name] += 1
-            op_time[ir.name] += time.time() - t0
 
         ttime = tcount = 0
         for op in instr_class_by_name:
-            ttime += op_time[op]
-            tcount += op_count[op]
+            ttime += self.op_time[op]
+            tcount += self.op_count[op]
 
-        for op in op_count:
-            pcount = 100*op_count[op]/tcount
-            ptime = 100*op_time[op]/ttime
+        s = sys.stderr
+        print("insts", tcount, ttime, file=s)
+
+        for op in self.op_count:
+            pcount = 100*self.op_count[op]/tcount
+            ptime = 100*self.op_time[op]/ttime
             # ratio of pct time spent to pct times called
-            # larger means time hog
+            # >1.0 means time hog
             if pcount:
                 ratio = ptime/pcount
             else:
                 ratio = 0
-            print(op, pcount, ptime, ratio) # XXX send to stderr? file??
+            print(op, self.op_count[op], pcount, ptime, ratio, file=s)
+
+        print("", file=s)
+        bcount = 0
+        btime = 0
+        for op in self.bop_count:
+            bcount += self.bop_count[op]
+            btime += self.bop_time[op]
+        print("binops", bcount, btime, file=s)
+
+        for op in self.bop_count:
+            pcount = 100 * self.bop_count[op] / bcount # percentage of calls
+            ptime = 100 * self.bop_time[op] / btime # percentage of time
+
+            # ratio of pct time spent to pct times called
+            # >1.0 means time hog
+            if pcount:
+                ratio = ptime/pcount
+            else:
+                ratio = 0
+
+            print(op, self.bop_count[op], pcount, ptime, ratio, file=s)
 
     def dump_stack(self):
         """
@@ -247,6 +277,10 @@ class VMInstr0(object):
 
     def step(self, vm):
         raise VMError("'%s' has no step method" % type(self).__name__)
+
+    def prof(self, vm, elapsed):
+        vm.op_count[self.name] += 1
+        vm.op_time[self.name] += elapsed
 
 class VMInstr1(VMInstr0):
     """
@@ -364,8 +398,16 @@ class BinOpInstr(VMInstr1):
         vm.args = [vm.ac, arg]
         vm.call_op(const.BINOPS, self)
 
+    def prof(self, vm, secs):
+        super().prof(vm, secs)
+        op = self.value         # NOT a CObject!
+        if op not in vm.bop_count:
+            vm.bop_count[op] = vm.bop_time[op] = 0
+        vm.bop_count[op] += 1
+        vm.bop_time[op] += secs
+
 @reginstr
-class BinOpLitInstr(BinOpInstr):
+class BinOpLitInstr(BinOpInstr): # NOTE! inherits special "prof" method!
     """
     RHS binary operator with literal LHS operand
     """

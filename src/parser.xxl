@@ -1479,6 +1479,6 @@ if (__modinfo.main) {
     }
     else {
 	System.print(compile(System.argv[0]));
-	System.exit(0);
+	// no System.exit, so stats visible w/o catching SystemExit
     }
 }
