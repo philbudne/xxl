@@ -1413,6 +1413,9 @@ def new_module(main, argv):
 
     return mod                  # XXX return (mod, modinfo)?
 
+# NOTE! This _could_ be replaced by native code in bootstrap.xxl
+# (reading JSON and calling modinfo_assemble)
+# *BUT* load_vm_json has to exist to load the bootstrap anyway!
 @pyfunc
 def modinfo_load_vmx(this, fname):
     mod = this.getprop(const.MODINFO_MODULE) # XXX check return
