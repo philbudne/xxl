@@ -63,6 +63,7 @@ def sys_break(x=None):
     argument (if any) available as `x`
     """
     breakpoint()
+    return classes.null_value
 
 ################
 
