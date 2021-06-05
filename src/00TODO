@@ -7,6 +7,10 @@ init methods for String, Bool, Null
 PClass: proxy === !== to "x.value is [not] y"????
 
 hook in bootstrap.vmx build in Makefile
+	all outputs depend on $(BOOTSTRAP_VMX)
+	recurse setting BOOTSTRAP_VMX to bootstrap.vmx.tmp to test before replacing
+
+always replace parser.vmx?
 
 bootstrap.md -- describe adding operator;
 	add to VM or bootstrap first.
