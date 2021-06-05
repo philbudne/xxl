@@ -800,10 +800,11 @@ def load_vm_json(fname, iscope):
 def breakpoint_if_debugging():
     """
     call from exception handlers
-    check command line debug option???
+    drop into pdb if it's loaded
+    (previous breakpoint, or -mpdb on command line)
     """
-    #breakpoint()
-    pass
+    if 'pdb' in sys.modules:
+        breakpoint()
 
 # XXX make a VM method?!!!
 def run(vm, boot, scope):
@@ -819,11 +820,16 @@ def run(vm, boot, scope):
         vm.start(code, scope)
     except SystemExit:          # from os.exit
         raise
-    except VMError as e:        # an internal error
+    except (VMError, AssertionError) as e: # an internal error
         # NOTE: displays VM Instr
         sys.stderr.write("VM Error @ {}: {}\n".format(vm.ir, e))
         # XXX dump VM registers?
         vm.backtrace()
+
+        # print Python traceback
+        import traceback
+        traceback.print_exc()
+
         breakpoint_if_debugging()
         sys.exit(1)
     except classes.UError as e: # handle ValueError??
