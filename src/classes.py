@@ -1410,8 +1410,8 @@ ModInfo = defclass(Class, 'ModInfo', [Object])
 # called from new_module
 def new_modinfo(main, module, fname, parser_vmx=None):
     mi = CObject(ModInfo)
-    mi.setprop(const.MODINFO_MAIN, mkbool(main))
-    mi.setprop(const.MODINFO_MODULE, module)
+    mi.setprop(const.MODINFO_MAIN, mkbool(main)) # is main program
+    mi.setprop(const.MODINFO_MODULE, module)     # pointer to Module
     if XXL_DEBUG_BOOTSTRAP:
         mi.setprop(const.MODINFO_DEBUG_BOOTSTRAP, true_val)
 
@@ -1426,10 +1426,11 @@ def new_modinfo(main, module, fname, parser_vmx=None):
         mi.setprop(const.MODINFO_SRCFILE, mkstr(fname, scope))
 
         if not parser_vmx:
-            # XXX _COULD_ choose parser based on file name!!!
-            # XXX take optional argument??
+            # XXX _COULD_ choose parser based on source file name!!!
+            #  (could have a file w/ .SUFFIX<TAB>PARSER.VMX lines)
             parser_vmx = os.environ.get('XXL_PARSER', 'parser.vmx')
-            mi.setprop(const.MODINFO_PARSER_VMX, mkstr(parser_vmx, scope))
+
+        mi.setprop(const.MODINFO_PARSER_VMX, mkstr(parser_vmx, scope))
 
 
     return mi
@@ -1445,7 +1446,7 @@ def new_module(main, argv, fname, parser_vmx=None):
     mod = CModule(scope)
     mod.props = scope.get_vars() # XXX THWACK!
 
-    mi = new_modinfo(main, mod, fname) # XXX vmx/src files!!
+    mi = new_modinfo(main=main, module=mod, fname=fname, parser_vmx=parser_vmx)
     mod.modinfo = mi
     scope.defvar(const.MODINFO, mi) # make ModInfo visible in module namespace
 
