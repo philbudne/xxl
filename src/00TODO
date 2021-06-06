@@ -1,13 +1,13 @@
 FIX
 ===
+do-while example: need to reserve "while"!!
+
 vm.iscope no longer correct!!!!!
 	put iscope in CClosures???? or do full lookup of type names!!!
 
 init methods for String, Bool, Null
 	BoolClass, NullClass?
 	StringClass & NumberClass metaclasses (to return self)?
-
-PClass: proxy === !== to "x.value is [not] y"????
 
 hook in bootstrap.vmx build in Makefile
 	all outputs depend on $(BOOTSTRAP_VMX)

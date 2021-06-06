@@ -917,18 +917,28 @@ def pobj_ge(l, r):
         return mkbool(int(lv) >= int(rv))
     return mkbool(str(lv) >= str(rv))
 
-# XXX unused?
 @pyfunc
-def pobj_eq(l, r):
+def pobj_ident(l, r):
     lv = l.value
     rv = r.value
-    return mkbool(lv == rv)
+    return mkbool(lv is rv)
+
+@pyfunc
+def pobj_differ(l, r):
+    lv = l.value
+    rv = r.value
+    return mkbool(lv is not rv)
 
 PObject.setprop(const.METHODS, _mkdict({
     'repr': pobj_repr,
     'reprx': pobj_reprx,
     const.INIT: pobj_init,
     'init0': pobj_init0
+}))
+
+PObject.setprop(const.BINOPS, _mkdict({
+    '===': pobj_ident,
+    '!==': pobj_differ
 }))
 
 ################ Iterable base class
