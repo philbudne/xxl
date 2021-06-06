@@ -6,6 +6,11 @@
 // Parses and executes source file (if any) one line at a time so that
 // parser extensions are available as soon as they are added!!
 
+if (__modinfo.booting) {
+    System.uerror("bootstrap: already running!");
+}
+__modinfo.booting = true;
+
 if (true) {			// hide temp variables
     // default this.str() to this.repr():
     System.types.Object.__methods['str'] = function (this) {
@@ -192,4 +197,4 @@ else if (__modinfo.srcfile) {
 else {
     System.uerror("bootstrap: no file to load");
 }
-
+__modinfo.booting = false;
