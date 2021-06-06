@@ -5,7 +5,7 @@ Example defining an infix operator:
 ```
     var math = System.pyimport("math");
 
-    var p = System.parser.parser;	// Parser object
+    var p = __modinfo.parser;	// Parser object
 
     // add operator, at precedence higher than * and /
     p.add_infix("Exp", "^", true, 65);
