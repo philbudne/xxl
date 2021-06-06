@@ -1,10 +1,5 @@
 FIX
 ===
-vm.iscope no longer correct!!!!!
-	put iscope in CClosures???? or do full lookup of type names!!!
-
-pass parser to nud/std/led; move Symbol classes out of Parser.init
-
 init methods for String, Bool, Null
 	BoolClass, NullClass?
 	StringClass & NumberClass metaclasses (to return self)?
