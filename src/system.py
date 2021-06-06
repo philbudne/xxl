@@ -101,20 +101,20 @@ def sys_tokenizer(vm, filename, prefix, suffix):
         """
         # find_sys_types doesn't like to return "null_value"
         # XXX just uses classes.null_value???
-        null = vm.iscope.lookup(SYSTEM).getprop(SYS_TYPES).getprop('null')
+        null = vm.scope.lookup(SYSTEM).getprop(SYS_TYPES).getprop('null')
         try:
             t = next(generator)
             if not t:
                 return null
             where = "%s:%s:%s" % (fnstr, t.lineno, t.from_)
             if t.type_ == 'number':
-                v = classes.mknumber(t.value, vm.iscope)
+                v = classes.mknumber(t.value, vm.scope)
             else:
-                v = classes.mkstr(t.value, vm.iscope)
+                v = classes.mkstr(t.value, vm.scope)
             return __obj_create({ # XXX create a Token
-                'type': classes.mkstr(t.type_, vm.iscope),
+                'type': classes.mkstr(t.type_, vm.scope),
                 'value': v,
-                'where': classes.mkstr(where, vm.iscope)
+                'where': classes.mkstr(where, vm.scope)
             })
         except StopIteration:
             return null
@@ -136,7 +136,7 @@ def sys_tree(vm, t):
     format JSON (returns Str) from AST of Symbols
     """
     t2 = obj2python_json(t)     # strip down to Python data structures
-    return classes.mkstr(json.dumps(t2, indent=1), vm.iscope)
+    return classes.mkstr(json.dumps(t2, indent=1), vm.scope)
 
 ################
 
@@ -193,7 +193,7 @@ def sys_vtree(vm, t, fname=classes.null_value):
         fn = fname.value        # getstr?
         trim_where(t2, fn)
 
-    return classes.mkstr(format_code(t2), vm.iscope)
+    return classes.mkstr(format_code(t2), vm.scope)
 
 # used in:
 # System.tree (above) XXX replace with a Symbol.json method??
@@ -255,7 +255,7 @@ def assemble(scope, tree, srcfile):
 def sys_pyimport(vm, module):
     import importlib
     m = importlib.import_module(module.value) # XXX getstr?
-    return classes.wrap(m, vm.iscope)         # make PyObject
+    return classes.wrap(m, vm.scope)         # make PyObject
 
 ################
 

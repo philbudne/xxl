@@ -58,12 +58,12 @@ class VM:
     (see above note about cactus/saguro/spaghetti stack).
     """
     __slots__ = ['run', 'ac', 'sp', 'cb', 'pc', 'ir',
-                 'scope', 'fp', 'temp', 'args', 'iscope',
+                 'scope', 'fp', 'temp', 'args',
                  # stats/trace:
                  'op_count', 'op_time', 'stats', 'trace',
                  'bop_count', 'bop_time']
 
-    def __init__(self, iscope, stats, trace):
+    def __init__(self, stats, trace):
         self.run = False
         self.ac = None          # CObject: Accumulator
         self.sp = None          # Stack Pointer (value, next) tuples
@@ -73,7 +73,6 @@ class VM:
         self.ir = None          # VMInstr: Instruction Register
         self.fp = None          # Frame: Frame pointer (for return)
         self.temp = None        # holds new Dict/List
-        self.iscope = iscope    # initial scope (XXX no longer correct!)
         self.stats = stats      # bool: enable timing
         self.trace = trace      # bool: enable tracing
 
@@ -755,7 +754,7 @@ class NewInstr(VMInstr1):
             v = []
         else:
             VMError("new Instr unknown type %s" % self.value)
-        vm.temp = system.create_sys_type(self.value, vm.iscope, v)
+        vm.temp = system.create_sys_type(self.value, vm.scope, v)
 
 ################
 # convert Python list into XxxInstr(ruction) instances
@@ -807,11 +806,13 @@ def breakpoint_if_debugging():
         breakpoint()
 
 # XXX make a VM method?!!!
-def run(vm, boot, scope):
+def run(boot, scope, stats, trace):
     """
     cold start (from xxl.py)
     `boot` is Closure w/ bootstrap.vmx code for main module
     """
+    vm = VM(stats=stats, trace=trace)
+
     vm.ac = boot                # Closure
     b0 = [["0", "call0"],       # call Closure
           ["1", "exit"]]        # quit VM

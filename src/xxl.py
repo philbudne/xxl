@@ -73,8 +73,7 @@ if help:
 
 fname = argv.pop(0)
 
-mod, code = system.import_worker(fname=fname, argv=argv, main=True,
+mod, boot = system.import_worker(fname=fname, argv=argv, main=True,
                                  parser_vmx=parser)
 
-vm = vmx.VM(mod.scope, stats=stats, trace=trace)
-vmx.run(vm, code, mod.scope)
+vmx.run(boot=boot, scope=mod.scope, stats=stats, trace=trace)

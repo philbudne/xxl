@@ -313,7 +313,7 @@ def pyfunc(func):
 class CPyVMFunc(CPyFunc):
     """
     A Callable instance backed by a Python function, passed VM as
-    first argument.  MOSTLY used for access to "initial scope" for
+    first argument.  MOSTLY used for access to scope for
     lookup of Classes by name.  But could be used for all kinds of
     reflection fun (inspection of current scope, code, traceback,
     etc).
@@ -325,7 +325,8 @@ class CPyVMFunc(CPyFunc):
     or, in the case of Scopes, an Object which references the backing
     (Python) dict, or (late may) perhaps with methods to alter live data.
     """
-    # XXX NOTE no __init__ method: looks just like PyFunc
+    # __init__ method from PyFunc
+
     def invoke(self, vm):
         vm.args.insert(0, vm)   # prepend vm to arguments
         super().invoke(vm)
@@ -576,18 +577,18 @@ def obj_init(this_obj, *args):
 
 @pyvmfunc
 def obj_str(vm, l):
-    return mkstr(str(l), vm.iscope) # native method that calls this.repr()?
+    return mkstr(str(l), vm.scope) # native method that calls this.repr()?
 
 @pyvmfunc
 def obj_repr(vm, l):
-    return mkstr(repr(l), vm.iscope)
+    return mkstr(repr(l), vm.scope)
 
 @pyvmfunc
 def obj_reprx(vm, l):
     """
     for debug: show Class, and Python value (which may include id?)
     """
-    return mkstr("<%s: %s>" % (l.classname(), repr(l)), vm.iscope)
+    return mkstr("<%s: %s>" % (l.classname(), repr(l)), vm.scope)
 
 @pyfunc
 def obj_ident(x, y):            # SNOBOL4 IDENT
@@ -879,14 +880,14 @@ def pobj_str(vm, l):
     """
     use Python str function on value
     """
-    return mkstr(str(l.value), vm.iscope)
+    return mkstr(str(l.value), vm.scope)
 
 @pyvmfunc
 def pobj_repr(vm, l):
     """
     use Python repr function on value
     """
-    return mkstr(repr(l.value), vm.iscope)
+    return mkstr(repr(l.value), vm.scope)
 
 @pyvmfunc
 def pobj_reprx(vm, l):
@@ -895,7 +896,7 @@ def pobj_reprx(vm, l):
     XXX show id()? of value???
     """
     return mkstr("<%s: %s>" % (l.classname(), repr(l.value)),
-                 vm.iscope)
+                 vm.scope)
 
 @pyfunc
 def pobj_init(l, value):
@@ -991,15 +992,15 @@ def dict_pop(obj, arg):
 
 @pyvmfunc
 def dict_items(vm, this):
-    return mkiterable(this.value.items(), vm.iscope)
+    return mkiterable(this.value.items(), vm.scope)
 
 @pyvmfunc
 def dict_keys(vm, this):
-    return mkiterable(this.value.keys(), vm.iscope)
+    return mkiterable(this.value.keys(), vm.scope)
 
 @pyvmfunc
 def dict_values(vm, this):
-    return mkiterable(this.value.values(), vm.iscope)
+    return mkiterable(this.value.values(), vm.scope)
 
 Dict.setprop(const.METHODS, _mkdict({
     'init0': dict_init0,
@@ -1245,7 +1246,7 @@ Str.setprop(const.BINOPS, _mkdict({
 
 @pyvmfunc
 def null_str(vm, this):
-    return mkstr("null", vm.iscope)
+    return mkstr("null", vm.scope)
 
 @pyfunc
 def null_call(this, *args):
@@ -1264,9 +1265,9 @@ Null.setprop(const.BINOPS, _mkdict({
 @pyvmfunc
 def bool_str(vm, this):
     if this.value:
-        return mkstr("true", vm.iscope)
+        return mkstr("true", vm.scope)
     else:
-        return mkstr("false", vm.iscope)
+        return mkstr("false", vm.scope)
 
 # XXX have own MetaClass "new" to return one of the doubleton values?
 # XXX subclass into True and False singleton classes????
@@ -1321,7 +1322,7 @@ def pyobj_getprop(vm, l, r):
     else:
         # allow 'str' method so Object can be printed!!
         v = find_in_class(l, rv) # may return BoundMethod
-    return wrap(v, vm.iscope)
+    return wrap(v, vm.scope)
 
 @pyvmfunc
 def pyobj_getitem(vm, l, r):
@@ -1329,13 +1330,13 @@ def pyobj_getitem(vm, l, r):
     PyObject "[" binop
     """
     v = l.value[r.value]        # XXX unwrap(r)??
-    return wrap(v, vm.iscope)
+    return wrap(v, vm.scope)
 
 @pyvmfunc
 def pyobj_call(vm, this, *args):
     a2 = [unwrap(x) for x in args]
     ret = this.value(*a2)
-    return wrap(ret, vm.iscope) # may create another PyObject!
+    return wrap(ret, vm.scope) # may create another PyObject!
 
 PyObject.setprop(const.METHODS, _mkdict({
     const.INIT: pobj_init
@@ -1374,7 +1375,7 @@ def pyiterator_next(vm, this, finished):
     to call when iterator exhausted
     """
     try:
-        return wrap(next(this.value), vm.iscope)
+        return wrap(next(this.value), vm.scope)
     except StopIteration:
         # here to avoid check on each iteration:
         if not isinstance(finished, CContinuation):
