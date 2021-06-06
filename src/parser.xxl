@@ -88,7 +88,7 @@ var VMCode = Class.new({
 	},
 	gen_push: function (this, symbol) {
 	    // evaluate "this" and push on stack (*may* crush AC)
-	    if (symbol.id() == "(literal)") { // XXX instanceof(Lit)
+	    if (symbol.arity == "literal") {
 		this.emit_push_lit(symbol.value, symbol);
 	    }
 	    else {
@@ -281,7 +281,8 @@ var PrattParser = Class.new({
 	_gtok: function (this) {
 	    var t = this.get_token();
 	    if (!t) {
-		return(this.End.new("EOF", "(end)", null));
+		// value MUST be this.END
+		return(this.End.new("EOF", this.END, null));
 	    }
 	    var t_error = function (msg) {
 		System.error(t.where, "ERROR: ", msg);
@@ -290,6 +291,7 @@ var PrattParser = Class.new({
 	    var v = t.value;
 	    var a = t.type;		// arity (name,number,string,operator)
 	    var c;			// class
+	    // var id = v;
 	    if (a == "name") {
 		c = this.scope.find_class(v)
 		    || this.symbol_classes[v]
@@ -304,6 +306,7 @@ var PrattParser = Class.new({
 	    else if (a == "string" || a == "number") {
 		c = this.Lit;	// XXX separate classes, opcodes?
 		a = "literal";
+		// id = this.LIT;
 	    }
 	    else {
 		t_error("Unexpected token " + v);
@@ -311,12 +314,13 @@ var PrattParser = Class.new({
 	    return(c.new(t.where, v, a)); // Symbol!!!
 	}, // _gtok
 	check: function (this, id) {
-	    // would like to have member, not function!
-	    // this is the one place that calls id method
-	    return(this.token.id() == id);
+	    // tempting take class_list, check this.token.is_instance(class_list)
+	    //  *BUT* advance uses string for "Expected" message
+	    //  (so advance would need to take both)
+	    return(this.token.check(id));
 	},
 	advance: function (this, id) {
-	    if (id && !this.check(id)) {
+	    if (id && !this.token.check(id)) {
 		this.token.error("Expected '" + id + "'");
 	    }
 	    if (this._next_token) { // saved from peek?
@@ -365,7 +369,7 @@ var PrattParser = Class.new({
 	    var n = this.token;
 	    if (n.arity == "name") { // possible label name?
 		var next = this.peek(); // peek at next token
-		if (next.id() == ":") {
+		if (next.check(":")) {
 		    // will be defined inside of a new scope (closure)
 		    if (n.reserved) { // XXX ???
 			n.error("'" + n.value + "' reserved.");
@@ -386,7 +390,7 @@ var PrattParser = Class.new({
 		return(std());
 	    }
 	    var v = this.expression(0);
-	    if (v.assignment === null && v.id() != "(") {
+	    if (v.statement === null) { // XXX MEMBER
 		v.error("Bad expression statement.");
 	    }
 	    this.advance(";");
@@ -399,6 +403,8 @@ var PrattParser = Class.new({
 
 	init: function (this_parser) {
 	    var p = this_parser; // brevity
+
+	    p.END = "(end)";
 
 	    p.symbol_classes = {}; // string to Symbol subclass
 
@@ -466,13 +472,19 @@ var PrattParser = Class.new({
 		name: "Symbol",
 		methods: {
 		    init: function (this, where, value, arity) {
-			this.where = where;
-			this.value = value;
-			this.arity = arity;
-			// XXX set id, reserved??
+			this.where = where; // fname:line:charnum
+			this.value = value; // Str or Number
+			this.arity = arity; // "operator", "name", "literal"
+			// XXX set reserved??
 		    },
-		    id: function(this) {
-			return(this.value);
+		    check: function (this, value) {
+			// "id" originally existed w/ same value as .value
+			// excpet was "(literal)" for literals
+			// COULD be reinstated
+			// (with optional 4th arg to init)
+			// *IF* someone wants check/advance(p.LIT)
+			return(this.arity != "literal" &&
+			       this.value == value);
 		    },
 		    // "null denotation": invoked by parser at the start
 		    // of an expression.
@@ -503,7 +515,6 @@ var PrattParser = Class.new({
 		name: "Name",
 		supers: [p.Symbol],
 		methods: {
-		    id: function (this) { return(this.value); }, // ??? XXX member
 		    //reserved: function (this) { return(false); }, // XXX member
 		    nud: function (this) {
 			this.lvalue = true;
@@ -523,7 +534,6 @@ var PrattParser = Class.new({
 		name: "Lit",
 		supers: [p.Symbol],
 		methods: {
-		    id: function (this) { return("(literal)"); }, // XXX p.LIT?
 		    nud: function (this) { return(this); },
 		    gen: function (this, vmcode) {
 			vmcode.emit_lit(this.value, this);
@@ -536,7 +546,6 @@ var PrattParser = Class.new({
 		name: "End",
 		supers: [p.Symbol],
 		methods: {
-		    id: function (this) { return("(end)"); }, // XXX
 		    nud: function (this) { return(this); }
 		}
 	    });
@@ -557,14 +566,14 @@ var PrattParser = Class.new({
 			return(this);
 		    },
 		    gen_infix: function (this, vmcode) {
-			if (this.second.id() == "(literal)") { // XXX instance_of(Lit)
+			if (this.second.arity == "literal") {
 			    this.first.gen(vmcode);
-			    vmcode.emit_binop_lit(this.id(), this.second.value, this);
+			    vmcode.emit_binop_lit(this.value, this.second.value, this);
 			}
 			else { // second NOT a Lit
 			    vmcode.gen_push(this.second); // just push?
 			    this.first.gen(vmcode);
-			    vmcode.emit_binop(this.id(), this);
+			    vmcode.emit_binop(this.value, this);
 			}
 		    },
 		    gen: function (this, vmcode) {
@@ -596,7 +605,7 @@ var PrattParser = Class.new({
 		    },
 		    gen_prefix: function (this, vmcode) {
 			this.first.gen(vmcode);
-			vmcode.emit_unop(this.id(), this);
+			vmcode.emit_unop(this.value, this);
 		    },
 		    gen: function (this, vmcode) { // XXX call gen_xxx on arity?
 			this.gen_prefix(vmcode);
@@ -643,9 +652,8 @@ var Parser = Class.new({
 		supers: [p.InfixR],
 		name: "Assign",
 		methods: {
-		    id: function (this) { return("="); }, // XXX member
 		    lbp: function (this) { return(10); }, // XXX member
-		    assignment: function (this) { return(true); }, // XXX
+		    statement: function (this) { return(true); }, // XXX MEMBER
 		    led: function (this, left) {
 			if (!left.lvalue) {
 			    left.error("Bad lvalue.");
@@ -686,7 +694,6 @@ var Parser = Class.new({
 		    name: name,
 		    supers: [p.AssignOp],
 		    methods: {
-			id: function (this) { return(id); }, // XXX member
 			aop: function (this) { return(aop); } // XXX member
 		    }
 		});
@@ -699,7 +706,6 @@ var Parser = Class.new({
 		name: "Ternary",
 		supers: [p.Symbol],
 		methods: {
-		    id: function (this) { return("?"); },
 		    lbp: function (this) { return(20); },
 		    led: function (this, left) {
 			this.first = left;
@@ -731,7 +737,6 @@ var Parser = Class.new({
 		name: "AndIf",
 		supers: [p.InfixR],
 		methods: {
-		    id: function (this) { return("&&"); },
 		    lbp: function (this) { return(30); },
 		    gen: function (this, vmcode) {
 			this.first.gen(vmcode);
@@ -748,7 +753,6 @@ var Parser = Class.new({
 		name: "OrIf",
 		supers: [p.InfixR],
 		methods: {
-		    id: function (this) { return("||"); },
 		    lbp: function (this) { return(30); },
 		    gen: function (this, vmcode) {
 			this.first.gen(vmcode); // eval lhs
@@ -779,7 +783,6 @@ var Parser = Class.new({
 		name: "Minus",
 		supers: [p.Infix, p.Prefix],
 		methods: {
-		    id: function (this) { return("-"); },
 		    lbp: function (this) { return(50); },
 		    gen: function (this, vmcode) {
 			if (this.arity == "unary") {
@@ -801,7 +804,6 @@ var Parser = Class.new({
 		name: "Dot",
 		supers: [p.Symbol],
 		methods: {
-		    id: function (this) { return("."); },
 		    lbp: function (this) { return(80); },
 		    led: function (this, left) {
 			// XXX bring back exp.NAME( ternary as optimization
@@ -820,13 +822,13 @@ var Parser = Class.new({
 		    gen: function (this, vmcode) {
 			this.first.gen(vmcode); // object
 			// this.second ALWAYS Lit!
-			vmcode.emit_binop_lit(this.id(), this.second.value, this);
+			vmcode.emit_binop_lit(this.value, this.second.value, this);
 		    },
 		    gen_lhs: function (this, vmcode) {
 			vmcode.emit_push(this);	// save value to store as arg
 			vmcode.emit_push_lit(this.second.value, this); // member
 			this.first.gen(vmcode); // object
-			vmcode.emit_lhsop(this.id(), this);
+			vmcode.emit_lhsop(this.value, this);
 		    }
 		} // methods
 	    });
@@ -835,20 +837,14 @@ var Parser = Class.new({
 	    // superclass "." operator
 	    p.DotDot = Class.new({
 		name: "DotDot",
-		supers: [p.Dot],
-		methods: {
-		    id: function (this) { return(".."); }
-		}
+		supers: [p.Dot]
 	    });
 	    p.add_symbol_class("..", p.DotDot);
 
 	    // only used for ...rest (so far)
 	    p.DotDotDot = Class.new({
 		name: "DotDotDot",
-		supers: [p.Symbol],
-		methods: {
-		    id: function (this) { return("..."); }
-		}
+		supers: [p.Symbol]
 	    });
 	    p.add_symbol_class("...", p.DotDotDot);
 
@@ -856,7 +852,6 @@ var Parser = Class.new({
 		name: "LBrack",
 		supers: [p.Infix],
 		methods: {
-		    id: function (this) { return("["); }, // XXX
 		    lbp: function (this) { return(80); }, // XXX
 		    led: function (this, left) {
 			this.first = left;
@@ -902,7 +897,7 @@ var Parser = Class.new({
 			vmcode.emit_push(this); // value to store
 			vmcode.gen_push(this.second); // index
 			this.first.gen(vmcode); // container
-			vmcode.emit_lhsop(this.id(), this);
+			vmcode.emit_lhsop(this.value, this);
 		    }
 		} // methods
 	    });
@@ -912,7 +907,7 @@ var Parser = Class.new({
 		name: "LParen",
 		supers: [p.Infix],
 		methods: {
-		    id: function (this) { return("("); }, // XXX
+		    statement: function (this) { return(true); }, // XXX MEMBER
 		    lbp: function (this) { return(80); }, // XXX
 		    nud: function (this) {	// (expr)
 			var e = p.expression(0);
@@ -1001,7 +996,6 @@ var Parser = Class.new({
 		name: "Function",
 		supers: [p.Prefix],
 		methods: {
-		    id: function (this) { return("function"); },
 		    nud: function (this) {
 			var a = [];
 			p.scope = p.Scope.new(p.scope);
@@ -1094,7 +1088,6 @@ var Parser = Class.new({
 		name: "LBrace",
 		supers: [p.Stmt],
 		methods: {
-		    id: function (this) { return("{"); },
 		    nud: function (this) { // { key: value .... }
 			var a = [];
 			var n;
@@ -1105,7 +1098,7 @@ var Parser = Class.new({
 				n = p.token;
 				if (n.arity != "name"
 				    && n.arity != "literal") {
-				    p.token.error("Bad property name.");
+				    p.token.error("Bad Dict key.");
 				}
 				p.advance();
 				p.advance(":");
@@ -1167,7 +1160,6 @@ var Parser = Class.new({
 		name: "Var",
 		supers: [p.Stmt],
 		methods: {
-		    id: function (this) { return("var"); },
 		    std: function (this) {
 			var t;
 			this.arity = "statement";
@@ -1203,7 +1195,6 @@ var Parser = Class.new({
 		name: "If",
 		supers: [p.Stmt],
 		methods: {
-		    id: function (this) { return("if"); },
 		    std: function (this) {	// parse
 			p.advance("(");
 			this.first = p.expression(0);
@@ -1245,8 +1236,6 @@ var Parser = Class.new({
 		name: "Label",
 		supers: [p.Stmt],
 		methods: {
-		    id: function (this) { return("label"); },
-		    // REMOVE ME!!!
 		    std: function (this) {	// parse
 			var n = p.token;
 			if (n.arity != "name") {
@@ -1281,7 +1270,6 @@ var Parser = Class.new({
 		name: "While",
 		supers: [p.Stmt],
 		methods: {
-		    id: function (this) { return("while"); }, // XXX
 		    std: function (this) {	// parse
 			p.advance("(");
 			this.first = p.expression(0);
@@ -1316,10 +1304,7 @@ var Parser = Class.new({
 	add_terminal: function (this_parser, name, id) {
 	    var c = Class.new({
 		name: name,
-		supers: [this_parser.Symbol],
-		methods: {
-		    id: function (this) { return(id); }
-		}
+		supers: [this_parser.Symbol]
 	    });
 	    this_parser.add_symbol_class(id, c);
 	}, // add_terminal
@@ -1331,7 +1316,6 @@ var Parser = Class.new({
 		name: name,
 		supers: [right ? this_parser.InfixR : this_parser.Infix],
 		methods: {
-		    id: function (this) { return(id); },
 		    lbp: function (this) { return(lbp); }
 		}
 	    });
@@ -1343,10 +1327,7 @@ var Parser = Class.new({
 	    // helper to generate simple prefix Symbol classes
 	    var c = Class.new({
 		name: name,
-		supers: [this_parser.Prefix],
-		methods: {
-		    id: function (this) { return(id); }
-		}
+		supers: [this_parser.Prefix]
 	    });
 	    this_parser.add_symbol_class(id, c);
 	},
@@ -1370,7 +1351,7 @@ var Parser = Class.new({
 	    var t = this.token;
 	    var label;
 	    if (t.arity == "name") { // label name?
-		label = t.id();
+		label = t.value;
 		this.advance();
 		this.advance(":");
 		t = this.token;
@@ -1400,16 +1381,15 @@ var Parser = Class.new({
 	parse: function (this, fname) {	// parse whole file
 	    this.start_parse(fname);
 	    var s = this.statements();
-	    this.advance("(end)"); // p.END?
+	    this.advance(this.END);
 	    this.scope = this.scope.pop();
 	    return(s);		// return list of statement ASTs
 	},
 
 	end: function (this) {	// test if at end of block or file
 	    // called from Parser.statements and in bootstrap.xxl
-	    return(this.token
-		   && (this.check("}")
-		       || this.check("(end)"))); // this.END?
+	    var t = this.token;
+	    return(t && (t.check("}") || t.check(this.END)));
 	}
     } // Parser methods
 });
