@@ -75,9 +75,9 @@ Make callable objects (more) transparent??
 	Closure.get{code,scope}??
 	BoundMethod.get{object,function}??
 implement methods, class members, class methods via descriptors???
-reenable MethodInstr (replace lit/push/./call), avoid BoundMethod
+reenable MethodInstr (binop_lit_call?); avoid BoundMethod!!
 make native Tokenizer (gonna be slow!)
-	need str[n], str.ord() str.isalpha() str.isdigit()?
+	need str.ord() str.isalpha() str.isdigit()?
 	arbitrary spans of op chars
 	allow unicode
 		in identifiers (if leading A-Za-z_ ??)
