@@ -4,15 +4,16 @@ Example defining a C-style "do-while" statement to XXL:
 
 ```
     // define "do" statement
-    var p = System.parser.parser;       // active Parser object
+    var p = __modinfo.parser;   // Parser object
 
     var Do = Class.new({
         name: "Do",
         supers: [p.Stmt],
         methods: {
-            id: function (this) { return("do"); }, // XXX want member!
             std: function (this) {      // parse as statement
                 this.first = p.block(); // parse { STATEMENTS... }
+                p.check("while");
+                p.scope.reserve(this.token);
                 p.advance("while");
                 p.advance("(");
                 this.second = p.expression(0); // parse condition
@@ -32,7 +33,7 @@ Example defining a C-style "do-while" statement to XXL:
                 // leaves value in VM "AC" (accumulator)
                 this.second.gen(vmcode); // condition
 
-                // if AC is true, jump to jump to top of loop.
+                // if AC is true, jump to top of loop.
                 vmcode.emit_iftrue(top_label, this);
             }
         }
