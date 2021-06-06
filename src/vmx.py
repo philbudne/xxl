@@ -789,6 +789,13 @@ def load_vm_json(fname, iscope):
         # parse metadata
         metadata = json.loads(l.strip())
 
+        # check metadata
+        if not isinstance(metadata, dict) or 'v' not in metadata:
+            raise classes.UError("bad vmx file")
+        v = float(metadata['v'])
+        if v < 1.0 or v >= 2.0:
+            raise classes.UError("unsupported vmx file version %s" % v)
+
         # load list of instructions
         j = json.load(f)
 
