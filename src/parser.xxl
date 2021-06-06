@@ -281,7 +281,8 @@ var PrattParser = Class.new({
 	_gtok: function (this) {
 	    var t = this.get_token();
 	    if (!t) {
-		// value MUST be this.END
+		// value MUST be this.END (for advance/check calls)
+		// stash pointer so only one instance created? make Singleton??
 		return(this.End.new("EOF", this.END, null));
 	    }
 	    var t_error = function (msg) {
@@ -293,9 +294,9 @@ var PrattParser = Class.new({
 	    var c;			// class
 	    // var id = v;
 	    if (a == "name") {
-		c = this.scope.find_class(v)
-		    || this.symbol_classes[v]
-		    || this.Symbol;	// "Undefined" on reference
+		c = this.scope.find_class(v) // class of an existing Symbol
+		    || this.symbol_classes[v] // keywords
+		    || this.Symbol;	// undefined on reference in expr
 	    }
 	    else if (a == "operator") {
 		c = this.symbol_classes[v];
@@ -304,7 +305,7 @@ var PrattParser = Class.new({
 		}
 	    }
 	    else if (a == "string" || a == "number") {
-		c = this.Lit;	// XXX separate classes, opcodes?
+		c = this.Lit;	// XXX separate classes, opcodes for Str/Number?
 		a = "literal";
 		// id = this.LIT;
 	    }
@@ -405,7 +406,7 @@ var PrattParser = Class.new({
 	init: function (this_parser) {
 	    var p = this_parser; // brevity
 
-	    p.END = "(end)";
+	    p.END = "(end)";	// .value for End Symbol
 
 	    p.symbol_classes = {}; // string to Symbol subclass
 
@@ -503,11 +504,11 @@ var PrattParser = Class.new({
 			// XXX set reserved??
 		    },
 		    check: function (this, value) {
-			// "id" originally existed w/ same value as .value
-			// excpet was "(literal)" for literals
+			// .id field originally existed w/ same value as .value
+			// EXCPET was "(literal)" for literals
 			// COULD be reinstated
-			// (with optional 4th arg to init)
-			// *IF* someone wants check/advance(p.LIT)
+			// (with optional 4th arg to Symbol.init)
+			// *IF* someone needs check/advance(p.LIT)
 			return(this.arity != "literal" &&
 			       this.value == value);
 		    },
