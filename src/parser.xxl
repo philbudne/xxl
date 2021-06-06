@@ -321,7 +321,7 @@ var PrattParser = Class.new({
 	    return(this.token.check(id));
 	},
 	advance: function (this, id) {
-	    if (id && !this.token.check(id)) {
+	    if (id && !this.check(id)) {
 		this.token.error("Expected '" + id + "'");
 	    }
 	    if (this._next_token) { // saved from peek?
@@ -494,6 +494,8 @@ var PrattParser = Class.new({
 	    // be done by explicitly passing the parser object to the
 	    // nud/led/std methods.
 
+	    // define as a Class member, since used as base Class
+	    // for other Classes defined in this init method.
 	    p.Symbol = Class.new({
 		name: "Symbol",
 		methods: {
@@ -662,6 +664,11 @@ var Parser = Class.new({
     supers: [PrattParser],
     methods: {
 	init: function (this_parser) {
+	    // XXX split into two parts,
+	    // first which creates p.Classname variables
+	    // second which uses them,
+	    // so that the Classes can be overridden??
+
 	    var p = this_parser; // for brevity
 	    p..init();		 // call superclass init
 
@@ -970,7 +977,7 @@ var Parser = Class.new({
 			    // generate code for actuals, placing them on stack
 			    this.second.each_for(
 				function (actual) {
-				    if (actual.instance_of(p.DotDotDot)) {
+				    if (actual.check("...")) {
 					vmcode.gen_push(actual.first);
 				    }
 				    else {
@@ -985,7 +992,7 @@ var Parser = Class.new({
 			    vmcode.emit_clargs(this);
 			    this.second.each_for(
 				function (actual) {
-				    if (actual.instance_of(p.DotDotDot)) {
+				    if (actual.check("...")) {
 					vmcode.emit_sprarg(this);
 				    }
 				    else {
@@ -1046,11 +1053,11 @@ var Parser = Class.new({
 				    p.token.error("Expected a parameter name.");
 				}
 				p.define(p.token); // define argument
-				if (!last) {
+				if (!last) {	   // not ...args
 				    a.append(p.token);
 				}
 				else {
-				    this.third = p.token;
+				    this.third = p.token; // ...formal name
 				    p.advance();
 				    leave_while();
 				}
