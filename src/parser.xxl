@@ -357,7 +357,7 @@ var PrattParser = Class.new({
 	    var t = this.token;
 	    this.advance();
 	    var left = t.nud();
-	    while (rbp < this.token.lbp()) {
+	    while (rbp < this.token.lbp) {
 		t = this.token;
 		this.advance();
 		left = t.led(left);
@@ -390,7 +390,7 @@ var PrattParser = Class.new({
 		return(std());
 	    }
 	    var v = this.expression(0);
-	    if (v.statement === null) { // XXX MEMBER
+	    if (!v.exp_stmt) {
 		v.error("Bad expression statement.");
 	    }
 	    this.advance(";");
@@ -504,12 +504,11 @@ var PrattParser = Class.new({
 		    gen: function (this, vmcode) {
 			// XXX call gen_XXX based on this.arity???
 			this.error("No gen function.");
-		    },
-		    // XXX TEMP until class members??  set in constructor???
-		    lbp: function (this) { return(0); }
+		    }
 		    // XXX reserved = True?
 		} // methods
 	    }); // Symbol
+	    p.Symbol.lbp = 0;	// Class member
 
 	    p.Name = Class.new({
 		name: "Name",
@@ -557,10 +556,9 @@ var PrattParser = Class.new({
 		name: "Infix",
 		supers: [p.Symbol],
 		methods: {
-		    _right_assoc: function (this) { return(0); }, // XXX member
 		    led: function (this, left) {
 			this.first = left;
-			var rbp = this.lbp() - this._right_assoc();
+			var rbp = this.lbp - this.right_assoc;
 			this.second = p.expression(rbp);
 			this.arity = "binary";
 			return(this);
@@ -582,15 +580,14 @@ var PrattParser = Class.new({
 		    }
 		} // methods
 	    });
+	    p.Infix.right_assoc = 0; // Class member
 
 	    // Right associative infix
 	    p.InfixR = Class.new({
 		name: "InfixR",
-		supers: [p.Infix],
-		methods: {
-		    _right_assoc: function (this) { return(1); } // XXX member
-		}
+		supers: [p.Infix]
 	    });
+	    p.InfixR.right_assoc = 1; // Class member
 
 	    // XXX move add_infix here??
 
@@ -652,8 +649,6 @@ var Parser = Class.new({
 		supers: [p.InfixR],
 		name: "Assign",
 		methods: {
-		    lbp: function (this) { return(10); }, // XXX member
-		    statement: function (this) { return(true); }, // XXX MEMBER
 		    led: function (this, left) {
 			if (!left.lvalue) {
 			    left.error("Bad lvalue.");
@@ -669,6 +664,8 @@ var Parser = Class.new({
 		    }
 		}
 	    });
+	    p.Assign.lbp = 10;	// Class member
+	    p.Assign.exp_stmt = true;
 	    p.add_symbol_class("=", p.Assign);
 
 	    // base class for OP=
@@ -706,7 +703,6 @@ var Parser = Class.new({
 		name: "Ternary",
 		supers: [p.Symbol],
 		methods: {
-		    lbp: function (this) { return(20); },
 		    led: function (this, left) {
 			this.first = left;
 			this.second = p.expression(0);
@@ -731,13 +727,13 @@ var Parser = Class.new({
 		    }
 		} // methods
 	    });
+	    p.Ternary.lbp = 20;	// Class member
 	    p.add_symbol_class("?", p.Ternary);
 
 	    p.AndIf = Class.new({
 		name: "AndIf",
 		supers: [p.InfixR],
 		methods: {
-		    lbp: function (this) { return(30); },
 		    gen: function (this, vmcode) {
 			this.first.gen(vmcode);
 			var done_label = vmcode.def_fwd_label();
@@ -747,13 +743,13 @@ var Parser = Class.new({
 		    }
 		}
 	    });
+	    p.AndIf.lbp = 30;	// Class member
 	    p.add_symbol_class("&&", p.AndIf);
 
 	    p.OrIf = Class.new({
 		name: "OrIf",
 		supers: [p.InfixR],
 		methods: {
-		    lbp: function (this) { return(30); },
 		    gen: function (this, vmcode) {
 			this.first.gen(vmcode); // eval lhs
 			var done_label = vmcode.def_fwd_label();
@@ -763,6 +759,7 @@ var Parser = Class.new({
 		    }
 		}
 	    });
+	    p.OrIf.lbp = 30;	// Class member
 	    p.add_symbol_class("||", p.OrIf);
 
 	    // right associative
@@ -783,7 +780,6 @@ var Parser = Class.new({
 		name: "Minus",
 		supers: [p.Infix, p.Prefix],
 		methods: {
-		    lbp: function (this) { return(50); },
 		    gen: function (this, vmcode) {
 			if (this.arity == "unary") {
 			    this.gen_prefix(vmcode);
@@ -794,6 +790,7 @@ var Parser = Class.new({
 		    } // gen
 		} // methods
 	    });
+	    p.Minus.lbp = 50;	// Class member
 	    p.add_symbol_class("-", p.Minus);
 
 	    // right associative
@@ -804,7 +801,6 @@ var Parser = Class.new({
 		name: "Dot",
 		supers: [p.Symbol],
 		methods: {
-		    lbp: function (this) { return(80); },
 		    led: function (this, left) {
 			// XXX bring back exp.NAME( ternary as optimization
 			//	(avoid creating BoundMethod)????
@@ -832,6 +828,7 @@ var Parser = Class.new({
 		    }
 		} // methods
 	    });
+	    p.Dot.lbp = 80;	// Class member
 	    p.add_symbol_class(".", p.Dot);
 
 	    // superclass "." operator
@@ -852,7 +849,6 @@ var Parser = Class.new({
 		name: "LBrack",
 		supers: [p.Infix],
 		methods: {
-		    lbp: function (this) { return(80); }, // XXX
 		    led: function (this, left) {
 			this.first = left;
 			this.second = p.expression(0);
@@ -901,14 +897,13 @@ var Parser = Class.new({
 		    }
 		} // methods
 	    });
+	    p.LBrack.lbp = 80;	// Class member
 	    p.add_symbol_class("[", p.LBrack);
 
 	    p.LParen = Class.new({
 		name: "LParen",
 		supers: [p.Infix],
 		methods: {
-		    statement: function (this) { return(true); }, // XXX MEMBER
-		    lbp: function (this) { return(80); }, // XXX
 		    nud: function (this) {	// (expr)
 			var e = p.expression(0);
 			p.advance(")");
@@ -988,6 +983,8 @@ var Parser = Class.new({
 		    } // gen
 		} // methods
 	    }); // LParen
+	    p.LParen.lbp = 80;	// Class member
+	    p.LParen.exp_stmt = true; // Class member
 	    p.add_symbol_class("(", p.LParen);
 
 	    p.add_prefix("Not", "!");
@@ -1314,11 +1311,9 @@ var Parser = Class.new({
 	    // helper to generate simple infix Symbol classes
 	    var c = Class.new({
 		name: name,
-		supers: [right ? this_parser.InfixR : this_parser.Infix],
-		methods: {
-		    lbp: function (this) { return(lbp); }
-		}
+		supers: [right ? this_parser.InfixR : this_parser.Infix]
 	    });
+	    c.lbp = lbp;	// Class member
 	    this_parser.add_symbol_class(id, c);
 	},
 
