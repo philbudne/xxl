@@ -387,6 +387,7 @@ var PrattParser = Class.new({
 	    var std = n.std;
 	    if (std) {
 		this.advance();
+		this.scope.reserve(n);
 		return(std());
 	    }
 	    var v = this.expression(0);
@@ -422,10 +423,11 @@ var PrattParser = Class.new({
 			var t = this.def[n.value];
 			if (t) {
 			    n.error(t.reserved
-				    ? "Already reserved."
-				    : "Already defined.");
+				    ? "is reserved."
+				    : "already defined.");
 			}
 			this.def[n.value] = n;
+			n.reserved = false;
 		    },
 		    defname: function(this, where, name) {
 			this._define(p.Name.new(where, name, "name"));
@@ -455,7 +457,30 @@ var PrattParser = Class.new({
 		    pop: function (this) {
 			// discard top scope: returns old scope
 			return(this.parent);
-		    }
+		    },
+		    reserve: function (this, n) {
+			if (n.arity != "name" || n.reserved) {
+			    return();
+			}
+			// NOTE!! In original (JavaScript) parser,
+			// scope was per-function, and original code
+			// was "var t = this.def[n.value];"
+			// BUT, scope is now per-block
+			// (and there isn't CURRENTLY a way
+			//  to only search to start of current function scope)
+			// SO, looking ALL the way up the scope chain...
+			var t = this.find_definition(n.value);
+			if (t) {
+			    if (t.reserved) {
+				return();
+			    }
+			    if (t.arity == "name") {
+				n.error("already defined.");
+			    }
+			} // t
+			this.def[n.value] = n;
+			n.reserved = true;
+		    } // reserve
 		} // methods
 	    }); // Scope
 
@@ -531,7 +556,10 @@ var PrattParser = Class.new({
 		name: "Lit",
 		supers: [p.Symbol],
 		methods: {
-		    nud: function (this) { return(this); },
+		    nud: function (this) {
+			p.scope.reserve(this);
+			return(this);
+		    },
 		    gen: function (this, vmcode) {
 			vmcode.emit_lit(this.value, this);
 		    } // gen
@@ -594,6 +622,7 @@ var PrattParser = Class.new({
 		supers: [p.Symbol],
 		methods: {
 		    nud: function (this) {
+			p.scope.reserve(this);
 			this.first = p.expression(70); // XXX member for rbp?
 			this.arity = "unary";
 			return(this);
@@ -1195,6 +1224,7 @@ var Parser = Class.new({
 			this.second = p.block();
 			// XXX change "else if" exception (crock) to "elif"?
 			if (p.check("else")) {
+			    p.scope.reserve(p.token);
 			    p.advance("else");
 			    // never a list:
 			    this.third = p.check("if") ? p.statement() : p.block();

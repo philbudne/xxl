@@ -45,8 +45,6 @@ break import cycles??
 tokenizer: accept \xXX \UXXXXXXXX
 	take \n \r \t ..... >>>
 
-fix/revive "reserved" attribute in parser?!!
-
 true/null/false are writable!!!??? (bug or feature?)
 
 xxl.py: w/o filename run read/eval/print loop
