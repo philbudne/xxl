@@ -1403,21 +1403,40 @@ class CModule(CObject):
         self.modinfo = None
 
 # ModInfo is the __modinfo Object inside each Module
-#       (for internal use)
+#       (for use inside the module)
 ModInfo = defclass(Class, 'ModInfo', [Object])
 
-def new_modinfo(main, module):
+# called from new_module
+def new_modinfo(main, module, fname, parser_vmx=None):
     mi = CObject(ModInfo)
     mi.setprop(const.MODINFO_MAIN, mkbool(main))
     mi.setprop(const.MODINFO_MODULE, module)
     if XXL_DEBUG_BOOTSTRAP:
         mi.setprop(const.MODINFO_DEBUG_BOOTSTRAP, true_val)
-    # XXX srcfile, vmxfile??
+
+    scope = module.scope
+
+    # XXX handle fname w/o extension?
+    #     (would require knowing src extension (based on parser?))
+    # XXX just pass fname to bootstrap?
+    if fname.endswith('.vmx'):
+        mi.setprop(const.MODINFO_VMXFILE, mkstr(fname, scope))
+    else:
+        mi.setprop(const.MODINFO_SRCFILE, mkstr(fname, scope))
+
+        if not parser_vmx:
+            # XXX _COULD_ choose parser based on file name!!!
+            # XXX take optional argument??
+            parser_vmx = os.environ.get('XXL_PARSER', 'parser.vmx')
+            mi.setprop(const.MODINFO_PARSER_VMX, mkstr(parser_vmx, scope))
+
+
     return mi
 
+# called from system.import_worker
 # XXX pass srcfile and vmxfile:
 # XXX keep (global?) dict of modules by file name??
-def new_module(main, argv):
+def new_module(main, argv, fname, parser_vmx=None):
     scope = scopes.Scope(None)  # create root scope for module
     sys = system.create_sys_object(scope, argv) # new System object
     copy_types(scope, sys)      # populate scope
@@ -1425,12 +1444,13 @@ def new_module(main, argv):
     mod = CModule(scope)
     mod.props = scope.get_vars() # XXX THWACK!
 
-    mi = new_modinfo(main, mod) # XXX vmx/src files!!
+    mi = new_modinfo(main, mod, fname) # XXX vmx/src files!!
     mod.modinfo = mi
     scope.defvar(const.MODINFO, mi) # make ModInfo visible in module namespace
 
     return mod                  # XXX return (mod, modinfo)?
 
+# called by bootstrap.vmx to load __modinfo.vmxfile (if set)
 # NOTE! This _could_ be replaced by native code in bootstrap.xxl
 # (reading JSON and calling modinfo_assemble)
 # *BUT* load_vm_json has to exist to load the bootstrap anyway!

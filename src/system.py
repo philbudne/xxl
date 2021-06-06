@@ -290,57 +290,43 @@ def sys_import(vm, filename):
     return bootstrap            # CClosure w/ bootstrap.vmx
 
 # Worker function to implement "import" (where modules come from)
-# used by: xxl.py (startup)
+# called by:
+#       xxl.py (startup)
 #       sys_import (System.import function)
-# returns new `Module`
+# (both callers have hand crafted code that call the Closure
+#  see @sys_import above and @boot in vmx.py)
+# returns new `Module` Object and Closure for module bootstrap
 def import_worker(fname, main=False, argv=[], parser_vmx=None):
     """
-    Takes file name `fname`
-        XXX take bare name and try both .xxl and .vmx??
+    str `fname` VMX or source file to load
     bool `main` True when loading from command line
-    `argv`: list of str for command line args
+    list of str `argv`
     str `parser_vmx` name of file with parser VM code
     """
     if DEBUG_IMPORT:
         print("BEGIN import_worker", fname, main, argv)
 
-    mod = classes.new_module(main, argv)
-    modinfo = mod.modinfo
-    scope = mod.scope
+    mod = classes.new_module(main, argv, fname, parser_vmx)
 
-    if fname.endswith('.vmx'):
-        modinfo.setprop(const.MODINFO_VMXFILE, classes.mkstr(fname, scope))
-    else:
-        modinfo.setprop(const.MODINFO_SRCFILE, classes.mkstr(fname, scope))
+    # XXX push down into new_module??
 
-        if not parser_vmx:
-            # XXX _COULD_ choose parser based on file name!!!
-            parser_vmx = os.environ.get('XXL_PARSER', 'parser.vmx')
-            modinfo.setprop(const.MODINFO_PARSER_VMX,
-                            classes.mkstr(parser_vmx, scope))
-
+    # XXX take as optional argument??
     bootstrap_vmx = os.environ.get('XXL_BOOTSTRAP', 'bootstrap.vmx')
 
     if DEBUG_IMPORT:
         sys.stderr.write("calling load_vm_json %s %s\n" % (bootstrap_vmx, main))
-    code = vmx.load_vm_json(bootstrap_vmx, scope) # XXX may raise exceptions!!
+
+    # XXX handle Exceptions for I/O, bad JSON, bad instructions
+    code = vmx.load_vm_json(bootstrap_vmx, mod.scope)
 
     boot = classes.CClosure(code, mod.scope) # CClosure with bootstrap_vmx code
     if DEBUG_IMPORT:
         print("END import_worker", fname, mod)
 
-    # XXX stash "boot" closure in __modinfo.boot, so "System.import"
-    #   can be all native code (and avoid @sys_import hand coded glue)???
+    # XXX stash "boot" closure in __modinfo.boot
+    #   and have native code call the closure,
+    #   (and avoid @sys_import hand coded glue)???
     return mod, boot
-
-################
-
-# called by bootstrap.vmx to load __modinfo.vmxfile (if set)
-# XXX make a ModInfo method?!!!
-@classes.pyvmfunc
-def sys_load_vmx(vm, fname):
-    code = vmx.load_vm_json(fname.value, vm.iscope) # XXX getstr
-    return classes.CClosure(code, vm.iscope)
 
 ################################################################
 
