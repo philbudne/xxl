@@ -135,6 +135,7 @@ def tokenize(finput, prefix='<>+-&', suffix='=>&:'):
         line = s.line()
 
         def make(type_, value):
+            #print('make', type_, value, line, from_, s.pos())
             return Token(type_, value, line, from_, s.pos())
 
         # Ignore whitespace.
