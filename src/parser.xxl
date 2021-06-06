@@ -197,7 +197,7 @@ var VMCode = Class.new({
 	    this._emit([sym.where, "bccall", vmcode.finish(sym)]);
 	},
 	emit_append: function (this, sym) {
-	    // XXX could emit: push, temp, lit "append", binop ".", call
+	    // for [] List literal values
 	    this._emit([sym.where, "append"]);
 	},
 
@@ -378,9 +378,9 @@ var PrattParser = Class.new({
 			// would generate nested closures! could just chain them on...
 			n.error("statement already labeled");
 		    }
-		    var nn = this.Label.new(n.where, n.value, "name"); //!!
+		    // create Label node: creates new scope & defines label var
+		    var nn = this.Label.new(n.where, n.value, "name");
 		    nn.std();	// call Label.std
-		    // XXX leave scope
 		    return(nn);
 		} // peek == ":"
 	    } // name
@@ -420,7 +420,7 @@ var PrattParser = Class.new({
 		    },
 		    _define: function (this, n) { // n is Symbol instance
 			var t = this.def[n.value];
-			if (t) { // XXX was typeof t == "object"
+			if (t) {
 			    n.error(t.reserved
 				    ? "Already reserved."
 				    : "Already defined.");
@@ -514,7 +514,6 @@ var PrattParser = Class.new({
 		name: "Name",
 		supers: [p.Symbol],
 		methods: {
-		    //reserved: function (this) { return(false); }, // XXX member
 		    nud: function (this) {
 			this.lvalue = true;
 			return(this);
@@ -527,7 +526,6 @@ var PrattParser = Class.new({
 		    }
 		}
 	    });
-	    // XXX p.NAME = "(name)";??
 
 	    p.Lit = Class.new({
 		name: "Lit",
@@ -680,7 +678,7 @@ var Parser = Class.new({
 			// XXX eval children of RHS once???
 
 			this.first.gen(vmcode);  // fetch lhs as variable
-			vmcode.emit_binop(this.aop(), this); // XXX aop member
+			vmcode.emit_binop(this.aop, this);
 			this.first.gen_lhs(vmcode); // store in lhs
 		    }
 		}
@@ -689,11 +687,9 @@ var Parser = Class.new({
 	    p.add_assignop = function (name, id, aop) {
 		var c = Class.new({
 		    name: name,
-		    supers: [p.AssignOp],
-		    methods: {
-			aop: function (this) { return(aop); } // XXX member
-		    }
+		    supers: [p.AssignOp]
 		});
+		c.aop = aop;	// Class member
 		p.add_symbol_class(id, c);
 	    };
 	    p.add_assignop("AssignPlus",  "+=", "+");
@@ -707,7 +703,7 @@ var Parser = Class.new({
 			this.first = left;
 			this.second = p.expression(0);
 			p.advance(":");
-			this.third = p.expression(0); // XXX need parser
+			this.third = p.expression(0);
 			this.arity = "ternary";
 			return(this);
 		    },
@@ -936,7 +932,7 @@ var Parser = Class.new({
 			this.first = left;
 			this.second = a; // actuals
 			this.third = spread;
-			// XXX removed variable check
+			// removed check that function is a variable
 			return(this);
 		    }, // led
 		    gen: function (this, vmcode) {
