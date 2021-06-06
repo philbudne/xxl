@@ -68,7 +68,15 @@ if not argv:
     help = True
 
 if help:
-    sys.stderr.write("Usage: xxl.py [-h][-s][-t][-T][-P parser.vmx] file args ...\n")
+    sys.stderr.write("""Usage: xxl.py [-h][-s][-t][-P parser.vmx] file args ...
+
+file can be .xxl (source) or .vmx (VM code)
+
+-h    display this message
+-s    enable VM stats
+-t    enable VM instruction trace
+-P    load alternate parser.vmx file
+""")
     sys.exit(1)
 
 fname = argv.pop(0)
