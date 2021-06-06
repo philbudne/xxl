@@ -399,8 +399,12 @@ var PrattParser = Class.new({
 	    return(v);
 	}, // statement
 
+	defname: function(this, where, name) {
+	    this.scope._define(this.Name.new(where, name, "name"));
+	},
+
 	predef: function (this, name) { // predefine Str `name` as a Name
-	    this.scope.defname("@predef", name);
+	    this.defname("@predef", name);
 	},
 
 	init: function (this_parser) {
@@ -429,9 +433,6 @@ var PrattParser = Class.new({
 			}
 			this.def[n.value] = n;
 			n.reserved = false;
-		    },
-		    defname: function(this, where, name) {
-			this._define(p.Name.new(where, name, "name"));
 		    },
 		    find_class: function (this, n) {
 			// n is string from lexer
@@ -468,7 +469,8 @@ var PrattParser = Class.new({
 			// was "var t = this.def[n.value];"
 			// BUT, scope is now per-block
 			// (and there isn't CURRENTLY a way
-			//  to only search to start of current function scope)
+			//  to only search to start of current function scope
+			//  could do it with a Scope.function property)
 			// SO, looking ALL the way up the scope chain...
 			var t = this.find_definition(n.value);
 			if (t) {
@@ -1029,7 +1031,7 @@ var Parser = Class.new({
 		    nud: function (this) {
 			var a = [];
 			p.scope = p.Scope.new(p.scope);
-			p.scope.defname(this.where, "return");
+			p.defname(this.where, "return");
 			if (p.token.arity == "name") { // function NAME?
 			    // NOTE!! name (currently) defined only
 			    // INSIDE the function's scope, to allow
@@ -1148,7 +1150,8 @@ var Parser = Class.new({
 		    std: function (this) { // { block }
 			p.scope = p.Scope.new(p.scope);
 			if (this.label) {
-			    p.scope.defname(this.where, this.label);
+			    // label defined inside block scope
+			    p.defname(this.where, this.label);
 			}
 			this.first = p.statements();
 			p.scope = p.scope.pop();
