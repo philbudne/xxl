@@ -1,3 +1,4 @@
+
 # XXL build/test Makefile
 
 # set XXL_PYTHON on command line (ie; "make XXL_PYTHON=pypy3")
@@ -26,6 +27,8 @@ VM=	$(XXL) vmx.py classes.py const.py jslex.py system.py scopes.py
 
 TESTED=tested
 IDENTICAL=.identical.ab
+
+# never created (always display "up to date")
 IDENTICAL2=.identical.parser-c
 
 all:	$(TESTED) $(IDENTICAL) $(IDENTICAL2)
