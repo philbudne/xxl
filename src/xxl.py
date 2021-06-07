@@ -33,7 +33,8 @@ a small file, hopefully it stays that way!
 import sys
 
 # XXL:
-import system                   # import_worker
+import system                   # before classes
+import classes                  # new_module
 import vmx
 
 # XXX Convert to native code, put in bootstrap.xxl??
@@ -81,7 +82,7 @@ file can be .xxl (source) or .vmx (VM code)
 
 fname = argv.pop(0)
 
-mod, boot = system.import_worker(fname=fname, argv=argv, main=True,
-                                 parser_vmx=parser)
+mod, boot = classes.new_module(fname=fname, argv=argv, main=True,
+                               parser_vmx=parser)
 
 vmx.run(boot=boot, scope=mod.scope, stats=stats, trace=trace)

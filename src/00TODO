@@ -1,8 +1,6 @@
 FIX
 ===
 bootstrap:
-    ModuleClass.new:
-	Keep Dict of modules by filename in Module.modules? return if exists
     boot1 (level 1 / once-only)
 	_COULD_ define native code __modinfo.load_vmx (using .assemble)
 	define native code Module.init method:
@@ -47,9 +45,6 @@ run "__extensions__" (pass importer's initial scope? iscope.System??)
 type wrapping:
 	classes.py pyfuncs do not invoke Class init methods!
 	revisit wrapping return values in CPyFunc.invoke???
-
-break import cycles??
-	keep dict of filename => module?? (class member Module.modules??)
 
 tokenizer: accept \xXX \UXXXXXXXX
 	take \n \r \t ..... >>>

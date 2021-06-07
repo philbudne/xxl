@@ -1426,6 +1426,7 @@ PyIterator.setprop(const.METHODS, _mkdict({
 
 # XXX need ModuleClass metaclass (unless/until Scope objects visible!!)
 Module = defclass(Class, 'Module', [Object])
+Module.setprop('modules', _mkdict({}))
 
 class CModule(CObject):
     __slots__ = ['scope', 'modinfo']
@@ -1465,21 +1466,43 @@ def new_modinfo(main, module, fname, parser_vmx=None):
 
     return mi
 
-# called from system.import_worker -- should be moduleclass_new?!!
-def new_module(main, argv, fname, parser_vmx=None):
-    # XXX keep modules by file name (in Modules.modules Dict), return if exists?!
+# "where Modules come from"
+# called by:
+#       xxl.py (startup)
+#       sys_import (System.import function)
+# XXX should be moduleclass_new?!!
+# XXX take optional bootstrap_vmx arg??
+def new_module(fname, main=False, argv=[], parser_vmx=None):
+    """
+    returns (CModule, CClosure) if newly loaded module
+        the Closure is the (bootstrap) code to populate the Module
+    returns (CModule, None) if previously loaded
+    """
+
+    md = Module.getprop('modules') # Module Dict/directory
+    if fname in md.value:          # previously loaded?
+        return md.value[fname], None # yes; return it, no bootstrap needed
 
     scope = scopes.Scope(None)  # create root scope for module
     sys = system.create_sys_object(scope, argv) # new System object
 
     mod = CModule(scope)
-    mod.props = scope.get_vars() # XXX THWACK!
+    mod.props = scope.get_vars() # XXX THWACK (stealing Scope dict)!!
+    md.value[fname] = mod        # save as previously loaded
 
     mi = new_modinfo(main=main, module=mod, fname=fname, parser_vmx=parser_vmx)
     mod.modinfo = mi
     scope.defvar(const.MODINFO, mi) # make ModInfo visible in module namespace
 
-    return mod                  # XXX return (mod, modinfo)?
+    # XXX take as optional argument??
+    bootstrap_vmx = os.environ.get('XXL_BOOTSTRAP', 'bootstrap.vmx')
+
+    # XXX handle Exceptions for I/O, bad JSON, bad instructions
+    code = vmx.load_vm_json(bootstrap_vmx, mod.scope)
+
+    boot = CClosure(code, mod.scope) # CClosure with bootstrap_vmx code
+
+    return mod, boot
 
 # called by bootstrap.vmx to load __modinfo.vmxfile (if set)
 # NOTE! This _could_ be replaced by native code in bootstrap.xxl

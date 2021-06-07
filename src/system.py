@@ -250,34 +250,33 @@ def sys_import(vm, filename):
     user called System.import function
     `filename` is Str of name of source file to parse
     """
-    # XXX check if already imported (or import in progress)
-    #   lookup in System.modules[filename]????
-    # XXX take filename w/o extension?????
+    # XXX run __extensions__ on caller's initial scope? System object?
+    # XXX take arg to bypass __extensions__
 
     fname = filename.value      # XXX getstr???
-    mod, bootstrap = import_worker(fname=fname)
+
+    mod, bootstrap = classes.new_module(fname=fname)
+    # bootstrap is None if module already loaded, Closure if newly loaded.
+
     if mod is None:
         Exception("import failed") # XXX UError?
 
     if DEBUG_IMPORT:
         print("sys_import", mod, bootstrap)
 
-    # XXX run __extensions__ on caller's initial scope? System object?
-    # XXX take arg to bypass __extensions__
-    vm.save_frame()             # save return
-    vm.push(mod)                # save Module on stack
-    c2 = [["0", "call0"],       # call bootstrap.vmx Closure
-          ["1", "pop_temp"],    # UGH: restore Module to TEMP
-          ["2", "temp"],        # UGH: TEMP to AC
-          ["3", "return"]]      # return to caller
-    vm.cb = vmx.convert_instrs(c2, mod.scope, "@sys_import")
-    vm.pc = 0
-    return bootstrap            # CClosure w/ bootstrap.vmx
+    if bootstrap:
+        vm.save_frame()             # save return
+        vm.push(mod)                # save Module on stack
+        c2 = [["0", "call0"],       # call bootstrap.vmx Closure
+              ["1", "pop_temp"],    # UGH: restore Module to TEMP
+              ["2", "temp"],        # UGH: TEMP to AC
+              ["3", "return"]]      # return to caller
+        vm.cb = vmx.convert_instrs(c2, mod.scope, "@sys_import")
+        vm.pc = 0
+        return bootstrap            # CClosure w/ bootstrap.vmx => AC
+    else:
+        return mod
 
-# Worker function to implement "import" (where modules come from)
-# called by:
-#       xxl.py (startup)
-#       sys_import (System.import function)
 # (both callers have hand crafted code that call the Closure
 #  see @sys_import above and @boot in vmx.py)
 # returns new `Module` Object and Closure for module bootstrap
@@ -291,27 +290,11 @@ def import_worker(fname, main=False, argv=[], parser_vmx=None):
     if DEBUG_IMPORT:
         print("BEGIN import_worker", fname, main, argv)
 
-    mod = classes.new_module(main, argv, fname, parser_vmx)
-
-    # XXX push down into new_module??
-
-    # XXX take as optional argument??
-    bootstrap_vmx = os.environ.get('XXL_BOOTSTRAP', 'bootstrap.vmx')
-
-    if DEBUG_IMPORT:
-        sys.stderr.write("calling load_vm_json %s %s\n" % (bootstrap_vmx, main))
-
-    # XXX handle Exceptions for I/O, bad JSON, bad instructions
-    code = vmx.load_vm_json(bootstrap_vmx, mod.scope)
-
-    boot = classes.CClosure(code, mod.scope) # CClosure with bootstrap_vmx code
-    if DEBUG_IMPORT:
-        print("END import_worker", fname, mod)
-
+    # return (Module, Closure)
     # XXX stash "boot" closure in __modinfo.boot
     #   and have native code call the closure,
     #   (and avoid @sys_import hand coded glue)???
-    return mod, boot
+    return classes.new_module(main, argv, fname, parser_vmx)
 
 ################################################################
 
