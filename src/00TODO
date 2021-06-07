@@ -2,21 +2,29 @@ FIX
 ===
 keep default parser vmx file in __xxl.parser_vmx?
 
-bootstrap.xxl =>
+bootstrap:
+    use ends_with in bootstrap.xxl (loader.xxl?) on __modinfo.file to detect vmx??
+    ModuleClass.new:
+	Keep Dict of modules by filename in Module.modules? return if exists
     boot1 (level 1 / once-only)
-	Module.init method: this.load_vmx(bootstrap) & invoke??
-		optional second arg for parser??
+	_COULD_ define native code __modinfo.load_vmx (using .assemble)
+	define native code Module.init method:
+		optional second arg for parser (set __modinfo.parser)
+		optional third arg for bootstrap
+		this.load_vmx(bootstrap) & invoke??
+	invoke __modinfo.module.init?!!!
 
 init methods for String, Bool, Null
 	BoolClass, NullClass?
 	StringClass & NumberClass metaclasses (to return self)?
 
-hook in bootstrap.vmx build in Makefile
-	all outputs depend on $(BOOTSTRAP_VMX)
-	recurse setting BOOTSTRAP_VMX to bootstrap.vmx.tmp to test before replacing
-
-always install parser.vmx?
+replace parser.vmx at end of tests?
 	save .bak file??
+
+build/replace bootstrap.vmx in normal Makefile
+	all outputs depend on $(BOOTSTRAP_VMX)?
+	recurse setting BOOTSTRAP_VMX to bootstrap.vmx.tmp to test before replacing
+	don't replace (mv) if no change
 
 bootstrap.md -- describe adding operator;
 	add to VM or bootstrap first.
