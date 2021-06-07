@@ -1170,8 +1170,8 @@ Number.setprop(const.BINOPS, _mkdict({
 
 @pyfunc
 def str_concat(x, y):
-    xv = x.value
-    yv = y.value
+    xv = x.value                # XXX getstr
+    yv = y.value                # XXX getstr
     if xv == "":
         return y
     if yv == "":
@@ -1180,7 +1180,7 @@ def str_concat(x, y):
 
 @pyfunc
 def str_strip(this):
-    return _new_pobj(this.getclass(), this.value.strip())
+    return _new_pobj(this.getclass(), this.value.strip()) # XXX getstr
 
 @pyfunc
 def str_get(l, r):
@@ -1221,10 +1221,20 @@ def str_join(this, arg):
     return _new_pobj(this.getclass(),
                      this.value.join([x.value for x in arg.value]))
 
+@pyfunc
+def str_starts_with(this, arg):
+    return mkbool(this.value.startswith(arg.value))
+
+@pyfunc
+def str_ends_with(this, arg):
+    return mkbool(this.value.endswith(arg.value))
+
 Str.setprop(const.METHODS, _mkdict({
+    'ends_with': str_ends_with,
     'join': str_join,
     'len': pobj_len,
     'slice': str_slice,
+    'starts_with': str_starts_with,
     'str': str_str,
     'strip': str_strip,
     const.INIT: pobj_init
