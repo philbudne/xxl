@@ -104,10 +104,24 @@ var VMCode = Class.new({
 	    );
 	},
 	_emit: function (this, op) { // worker method
-	    // XXX "peephole" here?
-	    // omit "load x" after "store x"
-	    // (but not if label just dropped)
+	    var p = this.peep;	     // one instruction peephole
+	    if (p) {
+		// omit "load x" after "store x"
+		// omit "store x" after "store x"
+		if (p[1] == "store" &&
+		    (op[1] == "load" || op[1] == "store") &&
+		    op[2] == p[2]) {
+		    //System.error("dropping", op, "after", p);
+		    return();
+		}
+		// omit any instruction after "jrst" or "return"
+		if (p[1] == "jrst" || p[1] == "return") {
+		    //System.error("dropping", op, "after", p);
+		    return();
+		}
+	    }
 	    this.code.append(op);
+	    this.peep = op;
 	},
 
 	//// per-opcode emit functions
@@ -261,9 +275,13 @@ var VMCode = Class.new({
 		}
 	    );
 	    this.forward_refs.pop(label); // discard entry
+	    //System.error("discarding peep", this.peep);
+	    this.peep = null;
 	},
 	get_off: function (this) {
 	    // return offset of next inst for backwards jump (loop) labels
+	    //System.error("discarding peep", this.peep);
+	    this.peep = null;
 	    return(this.code.len());
 	}
     } // methods
