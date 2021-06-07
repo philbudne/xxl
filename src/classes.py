@@ -721,8 +721,7 @@ def find_op(obj, optype, op):
             break
         c = q.pop(0)
 
-    raise Exception("%s %s %s not found" %
-                    (obj, optype, op))
+    raise UError("%s %s %s not found" % (obj, optype, op))
 
 @pyfunc
 def obj_get_in_supers(l, r):
