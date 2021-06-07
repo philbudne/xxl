@@ -107,14 +107,20 @@ var VMCode = Class.new({
 	    var p = this.peep;	     // one instruction peephole
 	    if (p) {
 		// omit "load x" after "store x"
+		// omit "load x" after "load x"
 		// omit "store x" after "store x"
-		if (p[1] == "store" &&
+		// omit "store x" after "load x"
+		if ((p[1] == "store" || p[1] == "load") &&
 		    (op[1] == "load" || op[1] == "store") &&
 		    op[2] == p[2]) {
 		    //System.error("dropping", op, "after", p);
 		    return();
 		}
+		// XXX delete "load x" if followed by "load y"
+
 		// omit any instruction after "jrst" or "return"
+		// (inst after jrst should always be a branch target
+		//  so this is unlikely to fire!)
 		if (p[1] == "jrst" || p[1] == "return") {
 		    //System.error("dropping", op, "after", p);
 		    return();
