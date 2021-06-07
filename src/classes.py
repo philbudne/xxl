@@ -80,6 +80,8 @@ XXL_DEBUG_BOOTSTRAP = os.getenv('XXL_DEBUG_BOOTSTRAP', None)
 # for _current_ definitions, need to lookup in iscope (use find_sys_type)
 sys_types = {}
 
+__initialized = False
+
 class UError(Exception):
     """
     Exception class for user errors; show vm backtrace
@@ -376,12 +378,14 @@ def _mkdict(vals):
     """
     ONLY USE TO CONSTRUCT BASE TYPES!
     """
+    assert(not __initialized)
     return _new_pobj(Dict, vals)
 
 def _mklist(vals):
     """
     ONLY USE TO CONSTRUCT BASE TYPES!
     """
+    assert(not __initialized)
     return _new_pobj(List, vals)
 
 def _mkstr(s):
@@ -389,29 +393,36 @@ def _mkstr(s):
     ONLY USE TO CONSTRUCT BASE TYPES!
     see mkstr
     """
+    assert(not __initialized)
     return _new_pobj(Str, s)
 
 def _mkobj(props):
     """
     used to create System, System.types, tokens
     """
+    #assert(not __initialized)
     o = CObject(Object)
     o.props.update(props)       # copy, so System.types is module local
     return o
+
+################ use once System.types initialized
 
 def mkstr(s, scope):
     """
     used to create Str from Python str, once up and running
     """
+    assert(__initialized)
     return system.create_sys_type('Str', scope, s)
 
 def mknumber(n, scope):
     """
     used to create Number from Python int/float, once up and running
     """
+    assert(__initialized)
     return system.create_sys_type('Number', scope, n)
 
 def mkiterable(i, scope):
+    assert(__initialized)
     return system.create_sys_type('PyIterable', scope, i)
 
 ################
@@ -789,8 +800,8 @@ Object.setprop(const.LHSOPS, _mkdict({
 
 ################ Class -- base type for Classes (a MetaClass)
 
-@pyfunc
-def class_init(this_class, props):
+@pyvmfunc
+def class_init(vm, this_class, props):
     """
     init method for meta-class "Class" -- used to create new Classes
     `props` is Dict holding properties (see const.CLASS_PROPS)
@@ -817,7 +828,7 @@ def class_init(this_class, props):
 
     if const.SUPERS not in this_class.props:
         # XXX complain??
-        this_class.setprop(const.SUPERS, _mklist([Object]))
+        this_class.setprop(const.SUPERS, wrap([Object], vm.scope))
     return null_value
 
 @pyfunc
@@ -1179,11 +1190,7 @@ def str_concat(x, y):
     return _new_pobj(x.getclass(), xv + yv)
 
 @pyfunc
-def str_strip(this):
-    return _new_pobj(this.getclass(), this.value.strip()) # XXX getstr
-
-@pyfunc
-def str_get(l, r):
+def str_get(l, r):              # [] operator
     # XXX check if r is integer
     return _new_pobj(l.getclass(), l.value[r.value])
 
@@ -1197,9 +1204,22 @@ def str_slice(l, a, b=None):
         ret = l.value[av:]
     return _new_pobj(l.getclass(), ret)
 
+@pyvmfunc
+def str_split(vm, this, sep=None, limit=-1):
+    if sep is not None:
+        sep = sep.value         # XXX getstr
+    if limit != -1:
+        limit = limit.value     # XXX getint
+    # will use current "Str" defn:
+    return wrap(this.value.split(sep, limit), vm.scope)
+
 @pyfunc
 def str_str(this):
     return this                 # identity
+
+@pyfunc
+def str_strip(this):
+    return _new_pobj(this.getclass(), this.value.strip()) # XXX getstr
 
 def _str_eq(l, r):
     l = l.value
@@ -1212,8 +1232,8 @@ def str_eq(l, r):
     return mkbool(_str_eq(l, r))
 
 @pyfunc
-def str_ne(l, r):
-    return mkbool(not _str_eq(l, r))
+def str_ends_with(this, arg):
+    return mkbool(this.value.endswith(arg.value))
 
 @pyfunc
 def str_join(this, arg):
@@ -1222,18 +1242,19 @@ def str_join(this, arg):
                      this.value.join([x.value for x in arg.value]))
 
 @pyfunc
-def str_starts_with(this, arg):
-    return mkbool(this.value.startswith(arg.value))
+def str_ne(l, r):
+    return mkbool(not _str_eq(l, r))
 
 @pyfunc
-def str_ends_with(this, arg):
-    return mkbool(this.value.endswith(arg.value))
+def str_starts_with(this, arg):
+    return mkbool(this.value.startswith(arg.value))
 
 Str.setprop(const.METHODS, _mkdict({
     'ends_with': str_ends_with,
     'join': str_join,
     'len': pobj_len,
     'slice': str_slice,
+    'split': str_split,
     'starts_with': str_starts_with,
     'str': str_str,
     'strip': str_strip,
@@ -1403,21 +1424,28 @@ PyIterator.setprop(const.METHODS, _mkdict({
 # Module is what "import" function returns
 #       properties are the namespace of the target Module
 
+# XXX need ModuleClass metaclass (unless/until Scope objects visible!!)
 Module = defclass(Class, 'Module', [Object])
 
 class CModule(CObject):
     __slots__ = ['scope', 'modinfo']
     def __init__(self, scope):
         super().__init__(Module)
-        self.scope = scope
-        self.modinfo = None
+        self.scope = scope      # HIDDEN!
+        self.modinfo = None     # convenience; __modinfo should suffice
 
 # ModInfo is the __modinfo Object inside each Module
 #       (for use inside the module)
 ModInfo = defclass(Class, 'ModInfo', [Object])
 
-# called from new_module
+# called from new_module -- should be modinfo_init!
 def new_modinfo(main, module, fname, parser_vmx=None):
+    """
+    bool `main`
+    CModule `module`
+    str `fname`
+    str `parser_vmx`
+    """
     mi = CObject(ModInfo)
     mi.setprop(const.MODINFO_MAIN, mkbool(main)) # is main program
     mi.setprop(const.MODINFO_MODULE, module)     # pointer to Module
@@ -1428,7 +1456,8 @@ def new_modinfo(main, module, fname, parser_vmx=None):
 
     # XXX handle fname w/o extension?
     #     (would require knowing src extension (based on parser?))
-    # XXX just pass fname to bootstrap?
+    # XXX just pass fname to bootstrap (now that Str.ends_with exists!)?
+    #   pass (default) parser_vmx in __xxl.parser_vmx and/or __modinfo.parser_vmx?!
     if fname.endswith('.vmx'):
         mi.setprop(const.MODINFO_VMXFILE, mkstr(fname, scope))
     else:
@@ -1436,11 +1465,10 @@ def new_modinfo(main, module, fname, parser_vmx=None):
 
         if not parser_vmx:
             # XXX _COULD_ choose parser based on source file name!!!
-            #  (could have a file w/ .SUFFIX<TAB>PARSER.VMX lines)
+            #  (could have a file with SUFFIX => VMXFILE mappings)
             parser_vmx = os.environ.get('XXL_PARSER', 'parser.vmx')
 
         mi.setprop(const.MODINFO_PARSER_VMX, mkstr(parser_vmx, scope))
-
 
     return mi
 
@@ -1450,7 +1478,6 @@ def new_modinfo(main, module, fname, parser_vmx=None):
 def new_module(main, argv, fname, parser_vmx=None):
     scope = scopes.Scope(None)  # create root scope for module
     sys = system.create_sys_object(scope, argv) # new System object
-    copy_types(scope, sys)      # populate scope
 
     mod = CModule(scope)
     mod.props = scope.get_vars() # XXX THWACK!
@@ -1479,11 +1506,17 @@ def modinfo_assemble(this, tree, srcfile):
     returns Closure in __modinfo.module initial scope
     """
     mod = this.getprop(const.MODINFO_MODULE) # XXX check
+    code = vmx.assemble(mod.scope, tree, srcfile)
+
+    # turn into Closure in scope
+    #   (any variables created are globals):
+    return CClosure(code, mod.scope)
+
     return system.assemble(mod.scope, tree, srcfile)
 
 ModInfo.setprop(const.METHODS, _mkdict({
-    'load_vmx': modinfo_load_vmx,
-    'assemble': modinfo_assemble
+    'load_vmx': modinfo_load_vmx, # create Closure from .vmx file
+    'assemble': modinfo_assemble  # create Closure from List of instruction Lists
 }))
 
 ################################################################
@@ -1495,6 +1528,8 @@ def wrap(value, iscope):
 
     used by vm `lit`, `push_list` opcodes; type `PyObject`; `PyIterator.next`
     """
+    assert(__initialized)
+
     if isinstance(value, CObject):
         return value
 
@@ -1532,12 +1567,13 @@ sys_types['true'] =  true_val
 sys_types['false'] = false_val
 sys_types['null'] = null_value
 
-def copy_types(to, sys_obj):
+def init_scope(iscope):
     """
-    copy a limited set of types/values from
-    dict "sys_types" to (top level) Scope "to"
+    copy a limited set of types/values to initial Scope `iscope`
     NOTE: they all end up writable!!!
     """
-    sys_types = sys_obj.getprop('types')
+    global __initialized
+    __initialized = True        # don't allow _mkXXX any more
+
     for x in ['true', 'false', 'null', 'Class']:
-        to.defvar(x, sys_types.getprop(x))
+        iscope.defvar(x, sys_types[x])

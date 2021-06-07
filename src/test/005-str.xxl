@@ -1,6 +1,10 @@
-var a = "hello" + " " + "world";
+var a = "hello" + "  " + "world";
 System.print(a);
 
 var as = a.str();
 System.print(a, as, a === as, a == as);
 System.print(a.starts_with("hello"), a.ends_with("world"));
+
+System.print(a.split());
+System.print(a.split(' '));
+System.print(a.split(' ', 1));

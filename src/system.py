@@ -234,21 +234,6 @@ def obj2python_json(x):
 
     return clean1(x)
 
-################
-
-# helper for ModInfo.assemble
-def assemble(scope, tree, srcfile):
-    # convert List of Lists to Python list of lists
-    js = obj2python_json(tree)
-    trim_where(js, srcfile.value) # XXX getstr?
-
-    # convert into Python list of Instrs (scope for type name lookup):
-    code = vmx.convert_instrs(js, scope, srcfile)
-
-    # turn into Closure in scope
-    #   (any variables created are globals):
-    return classes.CClosure(code, scope)
-
 ################ "pyimport" returns a PyObject wrapper around a Python module
 
 @classes.pyvmfunc
@@ -340,7 +325,10 @@ def create_sys_object(iscope, argv):
     #   so that each module has a private namespace!!!
     #   **BUT** the referenced Class Objects are all shared(?)!!!
     tt = __obj_create(classes.sys_types)
-    sys_obj.setprop(SYS_TYPES, tt)         # XXX XXX top level __classes?
+
+    sys_obj.setprop(SYS_TYPES, tt) # XXX XXX top level __classes?
+
+    classes.init_scope(iscope) # populate scope w/ true/false/...
 
     # *** now safe to call "create_sys_type" and "wrap" ***
 

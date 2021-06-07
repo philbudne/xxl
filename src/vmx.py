@@ -804,6 +804,21 @@ def load_vm_json(fname, iscope):
 
 ################
 
+# helper for ModInfo.assemble
+def assemble(scope, tree, srcfile):
+    """
+    Scope `scope` for Lit type name lookup
+    List of Lists `tree` of instructions to assemble
+    str `srcfile` source file name for trimming "where" fields
+    """
+    js = system.obj2python_json(tree) # get Python list of lists
+    system.trim_where(js, srcfile.value) # XXX getstr?
+
+    # convert into Python list of Instrs (scope for type name lookup):
+    return convert_instrs(js, scope, srcfile)
+
+################
+
 def breakpoint_if_debugging():
     """
     call from exception handlers

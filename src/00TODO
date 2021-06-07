@@ -1,5 +1,12 @@
 FIX
 ===
+keep default parser vmx file in __xxl.parser_vmx?
+
+bootstrap.xxl =>
+    boot1 (level 1 / once-only)
+	Module.init method: this.load_vmx(bootstrap) & invoke??
+		optional second arg for parser??
+
 init methods for String, Bool, Null
 	BoolClass, NullClass?
 	StringClass & NumberClass metaclasses (to return self)?
@@ -8,7 +15,8 @@ hook in bootstrap.vmx build in Makefile
 	all outputs depend on $(BOOTSTRAP_VMX)
 	recurse setting BOOTSTRAP_VMX to bootstrap.vmx.tmp to test before replacing
 
-always replace parser.vmx?
+always install parser.vmx?
+	save .bak file??
 
 bootstrap.md -- describe adding operator;
 	add to VM or bootstrap first.
@@ -31,11 +39,11 @@ run "__extensions__" (pass importer's initial scope? iscope.System??)
 	(unless requested not to!)
 
 type wrapping:
-	clean up!!!
-	Fix all access to System types (get from module top level scope??)
+	classes.py pyfuncs do not invoke Class init methods!
+	revisit wrapping return values in CPyFunc.invoke???
 
 break import cycles??
-	keep dict of filename => module??
+	keep dict of filename => module?? (class member Module.modules??)
 
 tokenizer: accept \xXX \UXXXXXXXX
 	take \n \r \t ..... >>>
