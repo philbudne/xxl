@@ -1,7 +1,5 @@
 FIX
 ===
-keep default parser vmx file in __xxl.parser_vmx?
-
 bootstrap:
     ModuleClass.new:
 	Keep Dict of modules by filename in Module.modules? return if exists
@@ -10,6 +8,7 @@ bootstrap:
 	define native code Module.init method:
 		optional second arg for parser (set __modinfo.parser)
 		optional third arg for bootstrap
+		default parser in __xxl.parser?
 		this.load_vmx(bootstrap) & invoke??
 	invoke __modinfo.module.init?!!!
 
