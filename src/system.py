@@ -378,7 +378,7 @@ def find_sys_type(name, scope):
             if ty and ty is not classes.null_value:
                 return ty
     # internal error:
-    raise Exception("cannot find %s.%s.%s" % (SYSTEM, SYS_TYPES, name))
+    raise classes.UError("cannot find %s.%s.%s" % (SYSTEM, SYS_TYPES, name))
 
 def create_sys_type(name, scope, value):
     """
