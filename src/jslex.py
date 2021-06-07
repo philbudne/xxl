@@ -29,6 +29,11 @@ import readline                 # enable editing in input()
 # XXX XXX PLB allow any unicode character in identifier?
 # XXX PLB replace with native code (likely to be sloooower)
 
+class LexError(Exception):
+    """
+    Class for lexer errors
+    """
+
 class Token(object):
     def __init__(self, type_, value, lineno, from_, to):
         self.type_ = type_
@@ -38,7 +43,8 @@ class Token(object):
         self.to = to
 
     def error(self, s):
-        raise Exception(s)
+        # XXX need filename!
+        raise LexError("%s at %s:%s" % (s, self.lineno, self.from_))
 
     def __repr__(self):
         return "<Token %s %s l%d %d:%d>" % \

@@ -32,6 +32,7 @@ import collections
 import classes
 import system
 import const
+import jslex                    # LexError
 
 # opcodes where inst[2] is code list, used in system.py:
 INST2CODE = ('close', 'bccall')
@@ -623,9 +624,9 @@ class ArgsInstr(VMInstr1):
 
     def step(self, vm):
         if len(vm.args) > len(self.value):
-            # NOTE: Exception: a user error!
-            raise Exception("%s: too many arguments. got %d, expected %d" % \
-                            (self.where, len(vm.args), len(self.value)))
+            raise classes.UError(
+                "%s: too many arguments. got %d, expected %d" % \
+                (self.where, len(vm.args), len(self.value)))
         # NOTE: scope.func_scope() creates a cactus stack of scopes;
         #       defines 'return' as a Continuation to prev frame
         vm.scope = vm.scope.func_scope(vm.fp)
@@ -849,4 +850,7 @@ def run(boot, scope, stats, trace):
             sys.stderr.write("Error @ ???: {}\n".format(e))
         vm.backtrace()
         breakpoint_if_debugging()
+        sys.exit(1)
+    except jslex.LexError as e:
+        sys.stderr.write("Lexer error %s\n" % e)
         sys.exit(1)
