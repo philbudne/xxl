@@ -23,7 +23,7 @@
 (the remains of terp.py)
 """
 
-import classes                  # CContinuation
+import classes                  # CContinuation, UError
 
 class Scope:
     """
@@ -67,7 +67,7 @@ class Scope:
             if name in s.vars:
                 return s.vars[name]
             s = s.parent
-        raise Exception("Unknown variable %s" % name) # SNH
+        raise UError("Unknown variable %s" % name) # SNH
 
     # see note above "lookup" (compiler could tell us stuff)
     def store(self, name, val):
@@ -81,7 +81,7 @@ class Scope:
                 s.vars[name] = val
                 return val
             s = s.parent
-        raise Exception("Unknown variable %s" % name)
+        raise UError("Unknown variable %s" % name)
 
-    def get_vars(self):         # UGH! used by import_worker
+    def get_vars(self):         # UGH! used by new_module
         return self.vars
