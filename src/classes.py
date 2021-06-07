@@ -122,7 +122,7 @@ class CObject:
         return n
 
     def invoke(self, vm):
-        # will raise exception if op not found:
+        # will raise UError if op not found:
         # NOTE!! find_op does not return BoundMethod
         #       (called 99.999% of time from XxxOpInstrs)
         m = find_op(self, const.BINOPS, '(')
@@ -282,6 +282,7 @@ class CPyFunc(CObject):
         super().__init__(PyFunc)
         # detect pyfunc() calls on a pre-decorated function
         if isinstance(func, CPyFunc):
+            # Python programming error, want Python backtrace:
             raise Exception("double wrapping %s" % func.func)
         self.func = func
 
@@ -297,6 +298,7 @@ class CPyFunc(CObject):
         catch mistakenly calling a CPyFunc (decorated Python function)
         from another Python function.
         """
+        # Python programming error, want Python backtrace:
         raise Exception("Attempt to call %s" % self)
 
 def pyfunc(func):
@@ -625,8 +627,6 @@ def find_in_supers(l, rv):
     breadth first search of superclass methods/properties
     """
     c = l.getclass()
-    #if c is null_value:
-    #    return null_value       # XXX raise Exception?
 
     supers = c.getprop(const.SUPERS)
     q = []                      # queue
