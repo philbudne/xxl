@@ -427,9 +427,10 @@ var PrattParser = Class.new({
 		    _define: function (this, n) { // n is Symbol instance
 			var t = this.def[n.value];
 			if (t) {
-			    n.error(t.reserved
-				    ? "is reserved."
-				    : "already defined.");
+			    n.error((t.reserved
+				     ? "reserved at "
+				     : "defined at ")
+				    + t.where);
 			}
 			this.def[n.value] = n;
 			n.reserved = false;
@@ -457,32 +458,34 @@ var PrattParser = Class.new({
 			return(null);
 		    },
 		    pop: function (this) {
-			// discard top scope: returns old scope
+			// discard top scope: returns old scope (new current scope)
 			return(this.parent);
 		    },
-		    reserve: function (this, n) {
-			if (n.arity != "name" || n.reserved) {
+		    reserve: function (this, sym) { // mark name used as a keyword
+			if (sym.arity != "name" || sym.reserved) {
 			    return();
 			}
 			// NOTE!! In original (JavaScript) parser,
 			// scope was per-function, and original code
-			// was "var t = this.def[n.value];"
+			// was "var t = this.def[sym.value];"
 			// BUT, scope is now per-block
 			// (and there isn't CURRENTLY a way
 			//  to only search to start of current function scope
 			//  could do it with a Scope.function property)
 			// SO, looking ALL the way up the scope chain...
-			var t = this.find_definition(n.value);
+			var t = this.find_definition(sym.value);
 			if (t) {
 			    if (t.reserved) {
 				return();
 			    }
 			    if (t.arity == "name") {
-				n.error("already defined.");
+				// here with an operator keyword previously
+				// used as an identifier??
+				sym.error("defined at " + t.where);
 			    }
 			} // t
-			this.def[n.value] = n;
-			n.reserved = true;
+			this.def[sym.value] = sym;
+			sym.reserved = true;
 		    } // reserve
 		} // methods
 	    }); // Scope
