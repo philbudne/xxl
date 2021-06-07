@@ -96,7 +96,7 @@ exceptions (using Continuations?)
 	Have "try" create scope with "raise" variable.
 	silently pass "raise" variable?
 
-"in" operator for collections?
+"in" operator for iterables?
 
 port VM to rpython?!
 
