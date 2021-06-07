@@ -1438,7 +1438,7 @@ class CModule(CObject):
 #       (for use inside the module)
 ModInfo = defclass(Class, 'ModInfo', [Object])
 
-# called from new_module -- should be modinfo_init!
+# called from new_module -- should be modinfo_init (ModInfo.init method)?
 def new_modinfo(main, module, fname, parser_vmx=None):
     """
     bool `main`
@@ -1454,10 +1454,6 @@ def new_modinfo(main, module, fname, parser_vmx=None):
 
     scope = module.scope
 
-    # XXX handle fname w/o extension?
-    #     (would require knowing src extension (based on parser?))
-    # XXX just pass fname to bootstrap (now that Str.ends_with exists!)?
-    #   pass (default) parser_vmx in __xxl.parser_vmx and/or __modinfo.parser_vmx?!
     mi.setprop(const.MODINFO_FILE, mkstr(fname, scope))
 
     if not parser_vmx:
@@ -1469,10 +1465,10 @@ def new_modinfo(main, module, fname, parser_vmx=None):
 
     return mi
 
-# called from system.import_worker
-# XXX pass srcfile and vmxfile:
-# XXX keep (global?) dict of modules by file name??
+# called from system.import_worker -- should be moduleclass_new?!!
 def new_module(main, argv, fname, parser_vmx=None):
+    # XXX keep modules by file name (in Modules.modules Dict), return if exists?!
+
     scope = scopes.Scope(None)  # create root scope for module
     sys = system.create_sys_object(scope, argv) # new System object
 
