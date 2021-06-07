@@ -11,7 +11,7 @@ if (__modinfo.booting) {
 }
 __modinfo.booting = true;
 
-if (true) {			// hide temp variables
+if (__modinfo.main) {		// once only
     // default this.str() to this.repr():
     System.types.Object.__methods['str'] = function (this) {
 	return(this.repr());
@@ -125,7 +125,9 @@ if (true) {			// hide temp variables
     System.types.List.__methods['repr'] = function (this) {
 	return("[" + ", ".join(this.map(repr)) + "]");
     };
+} // main / once only
 
+if (true) {			// hide temp variables
     ////////////////
     // print
 
