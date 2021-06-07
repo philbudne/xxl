@@ -2,3 +2,5 @@ System.print("here");
 var foo = System.import("test/imported.xxl");
 System.print("foo.a", foo.a);
 foo.func();
+var bar = System.import("test/imported.xxl");
+System.print(foo === bar);
