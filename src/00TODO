@@ -3,7 +3,6 @@ FIX
 keep default parser vmx file in __xxl.parser_vmx?
 
 bootstrap:
-    use ends_with in bootstrap.xxl (loader.xxl?) on __modinfo.file to detect vmx??
     ModuleClass.new:
 	Keep Dict of modules by filename in Module.modules? return if exists
     boot1 (level 1 / once-only)

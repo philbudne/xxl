@@ -52,8 +52,7 @@ MODINFO = '__modinfo'
 
 # ModInfo properties
 MODINFO_DEBUG_BOOTSTRAP = 'debug_bootstrap'
+MODINFO_FILE = 'file'
 MODINFO_MAIN = 'main'
 MODINFO_MODULE = 'module'
 MODINFO_PARSER_VMX = 'parser_vmx' # bootstrap: load for Parser, VMCode
-MODINFO_SRCFILE = 'srcfile'
-MODINFO_VMXFILE = 'vmxfile'

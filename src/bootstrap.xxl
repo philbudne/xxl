@@ -153,49 +153,41 @@ if (true) {			// hide temp variables
 if (__modinfo.debug_bootstrap) { // from environment XXL_DEBUG_BOOTSTRAP
     System.error("bootstrap __modinfo.module", __modinfo.module);
     System.error("bootstrap __modinfo.main", __modinfo.main);
+    System.error("bootstrap __modinfo.file", __modinfo.file);
 }
 
-if (__modinfo.vmxfile) {
-    var v = __modinfo.vmxfile;
-    if (__modinfo.debug_bootstrap) {
-	System.error("bootstrap vmxfile", v);
-    }
-    var f = __modinfo.load_vmx(v);
-    if (f) {
-	f();
-    }
-    if (__modinfo.debug_bootstrap) {
-	System.error("bootstrap vmxfile", v, "finished");
-    }
-}
-else if (__modinfo.srcfile) {
-    var srcfile = __modinfo.srcfile;
-    var parser_vmx = __modinfo.parser_vmx; // for import
-    if (__modinfo.debug_bootstrap) {
-	System.error("bootstrap srcfile", srcfile);
-	System.error("bootstrap parser_vmx", parser_vmx);
-    }
-    var pm = System.import(parser_vmx); // parser module
-    var p = pm.Parser.new();	// Parser instance
-    __modinfo.parser = p;	// make visible to parser extensions
+if (__modinfo.file) {
+    var file = __modinfo.file;
+    if (file.ends_with(".vmx")) {
+	__modinfo.load_vmx(file)(); // load vmx as Closure and invoke
+	if (__modinfo.debug_bootstrap) {
+	    System.error("bootstrap vmxfile", file, "finished");
+	}
+    } // .vmx
+    else {
+	var parser_vmx = __modinfo.parser_vmx; // for import
+	if (__modinfo.debug_bootstrap) {
+	    System.error("bootstrap parser_vmx", parser_vmx);
+	}
+	var pm = System.import(parser_vmx); // parser module
+	var p = pm.Parser.new();	// Parser instance
+	__modinfo.parser = p;	// make visible to parser extensions
 
-    p.start_parse(srcfile);
-    while (!p.end()) {
-	// parse one statement into abstact syntax tree of Symbols
-	var ast = p.statement();
+	p.start_parse(file);
+	while (!p.end()) {
+	    // parse one statement into abstact syntax tree of Symbols
+	    var ast = p.statement();
 
-	// generate VM code
-	var vmcode = pm.VMCode.new();
-	ast.gen(vmcode);
-	var insts = vmcode.finish(ast); // List of instruction Lists
+	    // generate VM code
+	    var vmcode = pm.VMCode.new();
+	    ast.gen(vmcode);
+	    var insts = vmcode.finish(ast); // List of instruction Lists
 
-	// generate Closure in module initial scope
-	var f = __modinfo.assemble(insts, srcfile);
-
-	// run statement
-	f();
-    }
-} // if (__modinfo.srcfile)
+	    // generate Closure in module initial scope and invoke
+	    __modinfo.assemble(insts, file)();
+	}
+    } // not .vmx
+} // if (__modinfo.file)
 else {
     System.uerror("bootstrap: no file to load");
 }

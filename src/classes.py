@@ -1458,17 +1458,14 @@ def new_modinfo(main, module, fname, parser_vmx=None):
     #     (would require knowing src extension (based on parser?))
     # XXX just pass fname to bootstrap (now that Str.ends_with exists!)?
     #   pass (default) parser_vmx in __xxl.parser_vmx and/or __modinfo.parser_vmx?!
-    if fname.endswith('.vmx'):
-        mi.setprop(const.MODINFO_VMXFILE, mkstr(fname, scope))
-    else:
-        mi.setprop(const.MODINFO_SRCFILE, mkstr(fname, scope))
+    mi.setprop(const.MODINFO_FILE, mkstr(fname, scope))
 
-        if not parser_vmx:
-            # XXX _COULD_ choose parser based on source file name!!!
-            #  (could have a file with SUFFIX => VMXFILE mappings)
-            parser_vmx = os.environ.get('XXL_PARSER', 'parser.vmx')
+    if not parser_vmx:
+        # XXX _COULD_ choose parser based on source file name!!!
+        #  (could have a file with SUFFIX => VMXFILE mappings)
+        parser_vmx = os.environ.get('XXL_PARSER', 'parser.vmx')
 
-        mi.setprop(const.MODINFO_PARSER_VMX, mkstr(parser_vmx, scope))
+    mi.setprop(const.MODINFO_PARSER_VMX, mkstr(parser_vmx, scope))
 
     return mi
 
