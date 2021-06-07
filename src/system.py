@@ -265,7 +265,12 @@ def sys_import(vm, filename):
         print("sys_import", mod, bootstrap)
 
     if bootstrap:
-        vm.save_frame()             # save return
+        # XXX construct code that:
+        #       takes mod, boot as args, calls boot, returns mod??
+        #       less tortued than below, but not smaller
+        #       (args [], load boot, call, load mod, return)!
+        #       consider native code, if "Level 1" boot ever created?
+        vm.save_frame()             # save our caller
         vm.push(mod)                # save Module on stack
         c2 = [["0", "call0"],       # call bootstrap.vmx Closure
               ["1", "pop_temp"],    # UGH: restore Module to TEMP
