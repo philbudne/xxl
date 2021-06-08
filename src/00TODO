@@ -1,5 +1,22 @@
 FIX
 ===
+parser:
+    "end" flag on Symbols? add "accept" method??
+
+tokenizer:
+    flush __obj_create for tokenizer -- return Token? List??
+    make native Tokenizer
+	need str.ord() str.isalpha() str.isdigit()?
+	arbitrary spans of op chars
+    allow unicode
+	in identifiers (if leading A-Za-z_ ??)
+	else "operator" (may not contain alphanumeric)
+	must be terminated by ascii!
+    """string"""
+    r"str"?
+    accept \OO \xXX \UXXXXXXXX?
+    accept \n \r \t ..... 
+
 bootstrap:
     boot1 (level 1 / once-only)
 	_COULD_ define native code __modinfo.load_vmx (using .assemble)
@@ -46,9 +63,6 @@ type wrapping:
 	classes.py pyfuncs do not invoke Class init methods!
 	revisit wrapping return values in CPyFunc.invoke???
 
-tokenizer: accept \xXX \UXXXXXXXX
-	take \n \r \t ..... >>>
-
 true/null/false are writable!!!??? (bug or feature?)
 
 xxl.py: w/o filename run read/eval/print loop
@@ -69,7 +83,6 @@ Object "getstr()" method for PyFuncs, or utility function????
 rename System to xxl? __xxl??
 split Number into Float and Int
 	Have Int initializer take optional radix
-flush __obj_create for tokenizer -- return Token? List??
 test if implementing VM as chain of if's (on ints)
 	instead step on Instr objects is faster
 split up parser.xxl (into pratt,xlparser,vmcode??)
@@ -81,17 +94,12 @@ Make callable objects (more) transparent??
 	BoundMethod.get{object,function}??
 implement methods, class members, class methods via descriptors???
 reenable MethodInstr (binop_lit_call?); avoid BoundMethod!!
-make native Tokenizer (gonna be slow!)
-	need str.ord() str.isalpha() str.isdigit()?
-	arbitrary spans of op chars
-	allow unicode
-		in identifiers (if leading A-Za-z_ ??)
-		else "operator" (may not contain alphanumeric)
-	/* */ comments?
-	"""string""" (or use some unicode chars for quoting?)
 
 FEATURES (or extensions)
 ========================
+docstrings / formatter
+Iterable.sorted() method
+Set
 Object: dir() method?? Return Set??
 	props() method return Dict?
 load compressed vmx (JSON) files and/or use some faster serialization library!!
@@ -121,7 +129,6 @@ make function name () .... define name in local scope?????
 make a full expression language??
 	is "{" ambiguous?? forbid at "top level"??
 
-add multi-line strings
 
 add docstrings?
 
