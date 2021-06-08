@@ -113,7 +113,7 @@ class VM:
             self.pc += 1        # jumps will overwrite
             ir.step(self)       # execute instruction
             irstr = str(ir)[1:-1] # remove []'s -- XXX remove quotes too???
-            print("%-45.45s | %-32.32s" % (irstr, repr(self.ac)))
+            print("%-50.50s | %-27.27s" % (irstr, repr(self.ac)))
 
     def _start_stats(self):
         # stats
