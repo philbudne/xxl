@@ -1242,6 +1242,13 @@ def str_join(this, arg):
     return _new_pobj(this.getclass(),
                      this.value.join([x.value for x in arg.value]))
 
+@pyvmfunc
+def str_ord(vm, this):
+    s = this.value              # XXX getstr
+    if len(s) != 1:
+        raise UError("Str.ord length != 1")
+    return mknumber(ord(s), vm.scope)
+
 @pyfunc
 def str_starts_with(this, arg):
     return mkbool(this.value.startswith(arg.value))
@@ -1258,6 +1265,7 @@ Str.setprop(const.METHODS, _mkdict({
     'ends_with': str_ends_with,
     'join': str_join,
     'len': pobj_len,
+    'ord': str_ord,
     'slice': str_slice,
     'split': str_split,
     'starts_with': str_starts_with,
