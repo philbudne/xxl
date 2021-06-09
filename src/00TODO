@@ -77,7 +77,6 @@ str & repr methods (& Str.join)
 
 CLEANUP
 =======
-All Classes: .getdoc() method
 "make update_parser"?  Have PARSER_VMX out of date message tell you to run it???
 Object "getstr()" method for PyFuncs, or utility function????
 rename System to xxl? __xxl??
@@ -97,7 +96,8 @@ reenable MethodInstr (binop_lit_call?); avoid BoundMethod!!
 
 FEATURES (or extensions)
 ========================
-docstrings / formatter
+All Classes: .getdoc() method
+	docstrings / formatter
 Iterable.sorted() method
 Set
 Object: dir() method?? Return Set??

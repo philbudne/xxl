@@ -845,6 +845,7 @@ def run(boot, scope, stats, trace):
     except SystemExit:          # from os.exit
         raise
     except (VMError, AssertionError) as e: # an internal error
+        # KeyboardInterrupt??
         # NOTE: displays VM Instr
         sys.stderr.write("VM Error @ {}: {}\n".format(vm.ir, e))
         # XXX dump VM registers?

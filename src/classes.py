@@ -960,6 +960,7 @@ def iterable_iter(this):
 
 @pyfunc
 def iterable_reversed(this):
+    # XXX handle TypeError for "not reversible"
     return pyiterator(reversed(this.value))
 
 # for_each, each_for, map, map2 in bootstrap.xxl
@@ -968,10 +969,27 @@ Iterable.setprop(const.METHODS, _mkdict({
     'reversed': iterable_reversed,
 }))
 
+################ PyIterable
+
 # subclass of Iterable for mkiterable callers: Dict.{key,value,item}s()
 PyIterable.setprop(const.METHODS, _mkdict({
     'str': pobj_reprx 
 }))
+
+@pyvmfunc
+def pyiterable_range(vm, *args):
+    if len(args) == 1:
+        r = range(args[0].value) # XXX getint?
+    elif len(args) == 2:
+        r = range(args[0].value, args[1].value) # XXX getint?
+    elif len(args) == 3:
+        r = range(args[0].value, args[1].value, args[2].value) # XXX getint?
+    else:
+        raise UError("range requires one to three arguments")
+
+    return mkiterable(r, vm.scope)
+
+PyIterable.setprop('range', pyiterable_range) # static method
 
 ################ Dict
 
@@ -1169,6 +1187,7 @@ Number.setprop(const.BINOPS, _mkdict({
     '-': sub,
     '*': mul,
     '/': div,
+    # XXX Orderable mixin?
     '==': eq,
     '!=': ne,
     '>=': ge,
@@ -1214,24 +1233,6 @@ def str_split(vm, this, sep=None, limit=-1):
     return wrap(this.value.split(sep, limit), vm.scope)
 
 @pyfunc
-def str_str(this):
-    return this                 # identity
-
-@pyfunc
-def str_strip(this):
-    return _new_pobj(this.getclass(), this.value.strip()) # XXX getstr
-
-def _str_eq(l, r):
-    l = l.value
-    if hasattr(r, 'value'):     # faster than isinstance?
-        r = r.value
-    return l == r
-
-@pyfunc
-def str_eq(l, r):
-    return mkbool(_str_eq(l, r))
-
-@pyfunc
 def str_ends_with(this, arg):
     return mkbool(this.value.endswith(arg.value))
 
@@ -1242,12 +1243,16 @@ def str_join(this, arg):
                      this.value.join([x.value for x in arg.value]))
 
 @pyfunc
-def str_ne(l, r):
-    return mkbool(not _str_eq(l, r))
-
-@pyfunc
 def str_starts_with(this, arg):
     return mkbool(this.value.startswith(arg.value))
+
+@pyfunc
+def str_str(this):
+    return this                 # identity
+
+@pyfunc
+def str_strip(this):
+    return _new_pobj(this.getclass(), this.value.strip()) # XXX getstr
 
 Str.setprop(const.METHODS, _mkdict({
     'ends_with': str_ends_with,
@@ -1262,14 +1267,14 @@ Str.setprop(const.METHODS, _mkdict({
 }))
 Str.setprop(const.BINOPS, _mkdict({
     '+': str_concat,
-    '==': str_eq,
-    '!=': str_ne,
+    '[': str_get,
+    # XXX Orderable mixin?
+    '==': eq,
     '!=': ne,
     '>=': ge,
     '<=': le,
     '>': gt,
     '<': lt,
-    '[': str_get,
 }))
 
 ################ Null
