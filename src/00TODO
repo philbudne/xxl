@@ -1,5 +1,7 @@
 FIX
 ===
+Make PLOR < PLAND??
+
 parser:
     "end" flag on Symbols? add "accept" method??
 

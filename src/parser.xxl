@@ -667,12 +667,14 @@ var PrattParser = Class.new({
 //	(the original name for the project was ASAP (As Simple As Possible).
 //	Apologies in advance for any perceived sizist slights.
 
-// precedence levels
+// precedence levels (keep as Parser.PXXX properties??)
 var PASSIGN = 10;
 var PTERNARY = 20;
+var PLOR = 30;			// logical or (||) -- make lower than PLAND??
 var PLAND = 30;			// logical and (&&)
-var PLOR = 30;			// logical or (||)
 var PCOMP = 40;			// comparison
+// PBOR (bitwise OR) here?
+// PBAND (bitwise AND) here??
 var PADD = 50;
 var PSUB = 50;
 var PMUL = 60;
