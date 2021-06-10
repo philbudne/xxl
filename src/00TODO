@@ -1,5 +1,7 @@
 FIX
 ===
+treat TypeError same as UError?
+
 Make PLOR < PLAND??
 
 parser:
@@ -16,8 +18,7 @@ tokenizer:
 	must be terminated by ascii!
     """string"""
     r"str"?
-    accept \OO \xXX \UXXXXXXXX?
-    accept \n \r \t ..... 
+    accept \xXX \UXXXXXXXX \n \r \t
 
 bootstrap:
     boot1 (level 1 / once-only)
@@ -154,3 +155,7 @@ tokenizer that takes string for input
 move comparison operators to an Orderable mixin?
 
 pyimport => PyObject.new??
+
+Undefined Class / undef value
+    ?? (nullish or-if) operator
+    ?. (optional chaining)
