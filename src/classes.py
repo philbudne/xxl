@@ -117,7 +117,7 @@ class CObject:
         if not c or c == null_value:
             return "Unknown!"
 
-        n = c.getprop(const.NAME).value # XXX guard!!
+        n = c.getprop(const.NAME).value # XXX getstr
         if subclass_of(c, [Class]):
             return '%s: %s' % (n, self.getprop(const.NAME).value)
 
@@ -190,7 +190,7 @@ class CPObject(CObject):
 class CContinuation(CObject):
     """
     A Callable instance backed by a native (VM) Continuation
-    NOTE: opaque (no Class methods to expose innerds) for now
+    NOTE: opaque (no Class methods to expose innards) for now
     """
     def __init__(self, fp):
         super().__init__(Continuation)
@@ -213,7 +213,7 @@ class CContinuation(CObject):
 class CClosure(CObject):
     """
     A Callable instance backed by a Closure (VM code + scope)
-    NOTE: opaque (no Class methods to expose innerds) for now
+    NOTE: opaque (no Class methods to expose innards) for now
     """
     def __init__(self, code, scope):
         super().__init__(Closure)
@@ -226,8 +226,8 @@ class CClosure(CObject):
         
     def invoke(self, vm):
         vm.save_frame(True)     # show=True
-        # return or leave label Continuation will be generated from FP
-        #       by "args" or "[lu]scope" Instr (first Instr in code)
+        # 'return' Continuation will be generated from FP
+        #       by "args" Instr (first Instr in code)
         vm.pc = 0
         vm.cb = self.code
         vm.scope = self.scope
@@ -246,6 +246,8 @@ class CBClosure(CClosure):
         
     def invoke(self, vm):
         vm.save_frame(False)    # show=False
+        # leave label Continuation will be generated from FP
+        #       by ""[lu]scope" Instr (first Instr in code)
         vm.pc = 0
         vm.cb = self.code
         vm.scope = self.scope
@@ -254,10 +256,10 @@ class CBoundMethod(CObject):
     """
     A method bound to an object
     created when Object.methodname dereferenced
-    XXX bring back use of "method" opcode as optimization
-        which fetches method and calls invoke without creating
-        a BoundMethod Object!!!???
-    NOTE: opaque (no Class methods to expose innerds) for now
+    XXX bring back use of "method" opcode (or binop_lit_call?)
+        as optimization which fetches method and calls invoke
+        without creating a BoundMethod Object!!!???
+    NOTE: opaque (no Class methods to expose innards) for now
     """
     def __init__(self, obj, method):
         super().__init__(BoundMethod)
