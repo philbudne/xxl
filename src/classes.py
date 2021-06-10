@@ -1346,7 +1346,7 @@ def unwrap(x):
             return [unwrap(y) for y in x]
         elif isinstance(x, dict): # XXX handle any mapping?
             return {key: unwrap(val) for key, val in x.items()}
-        # return x?
+        return x
     # XXX complain??!!!
     return x
 
