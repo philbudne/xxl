@@ -50,9 +50,6 @@ class Scope:
         s.defvar(name, classes.CContinuation(fp))
         return s
 
-    # XXX the compiler could tell us how far up the ("static") scope chain
-    # the variable lives (and could assign numeric slot ids for variable
-    # lookup to avoid dict)
     def defvar(self, var, value):
         """
         `var` is Python string
@@ -61,6 +58,9 @@ class Scope:
         # duplicate var is fatal in compiler
         self.vars[var] = value
 
+    # XXX the compiler could tell us how far up the ("static") scope chain
+    # the variable lives (and could assign numeric slot ids for variable
+    # lookup to avoid dict)
     def lookup(self, name):
         s = self
         while s:
