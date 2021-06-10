@@ -7,7 +7,7 @@ var math = System.pyimport("math");
 var p = __modinfo.parser;	// active Parser object
 
 // add operator, at precedence higher than * and /
-p.add_infix("Exp", "^", true, 65);
+p.add_infix("Exp", "^", true, p.PMUL + 4);
 
 // Subclass Number, adding operator, and use from here on out:
 System.types.Number = Class.new({

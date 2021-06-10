@@ -7,7 +7,7 @@ var math = System.pyimport("math");
 var p = __modinfo.parser;	// Parser object
 
 // add operator, at precedence higher than * and /
-p.add_infix("Exp", "^", true, 65);
+p.add_infix("Exp", "^", true, p.PMUL + 4);
 
 // add binary operator method to Number type:
 System.types.Number.__binops["^"] = math.pow;

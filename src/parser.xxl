@@ -667,31 +667,6 @@ var PrattParser = Class.new({
 //	(the original name for the project was ASAP (As Simple As Possible).
 //	Apologies in advance for any perceived sizist slights.
 
-// precedence levels (keep as Parser.PXXX properties??)
-// ***USE EVEN VALUES ONLY: prec-1 used for right associativity!!!***
-var PASS = 10;			// assignment
-
-var PTERN = PASS + 10;
-
-var PLOR = PTERN + 10;		// logical or (||)
-var PLAND = PLOR;		// logical and (&&) make higher than PLOR?!
-
-var PCOMP = PLAND + 10;		// comparison
-// PBOR (bitwise OR) here?
-// PBAND (bitwise AND) here??
-
-var PADD = PCOMP + 10;
-var PSUB = PADD;
-
-var PMUL = PSUB + 10;
-var PDIV = PMUL;
-
-var PPFX = PDIV + 10;		// prefix (unary)
-
-var PDOT = PPFX + 10;		// exp.member
-var PIDX = PDOT;		// exp[index]
-var PFUN = PDOT;
-
 var Parser = Class.new({
     name: "Parser",
     supers: [PrattParser],
@@ -704,6 +679,33 @@ var Parser = Class.new({
 
 	    var p = this_parser; // for brevity
 	    p..init();		 // call superclass init
+
+	    // precedence levels (keep as Parser.PXXX properties??)
+	    // ***USE EVEN VALUES ONLY: prec-1 used for right associativity!!!
+	    p.PASS = 10;		// assignment
+
+	    p.PTERN = p.PASS + 10;	// ternary
+
+	    p.PLOR = p.PTERN + 10;	// logical or (||)
+	    p.PLAND = p.PLOR;		// logical and (&&) higher than PLOR?!
+
+	    p.PCOMP = p.PLAND + 10;	// comparison
+
+	    p.PBOR = p.PCOMP + 10;	// bitwise or (|)
+
+	    p.PBAND = p.PBOR + 10;	// bitwise and (&)
+
+	    p.PADD = p.PBAND + 10;
+	    p.PSUB = p.PADD;
+
+	    p.PMUL = p.PSUB + 10;
+	    p.PDIV = p.PMUL;
+
+	    p.PPFX = p.PDIV + 10;	// prefix (unary)
+
+	    p.PDOT = p.PPFX + 10;	// exp.member
+	    p.PIDX = p.PDOT;		// exp[index]
+	    p.PFUN = p.PDOT;
 
 	    p.add_terminal("Colon",  ":");
 	    p.add_terminal("Comma",  ",");
@@ -732,7 +734,7 @@ var Parser = Class.new({
 		    }
 		}
 	    });
-	    p.Assign.lbp = PASS; // Class member
+	    p.Assign.lbp = p.PASS; // Class member
 	    p.Assign.exp_stmt = true;
 	    p.add_symbol_class("=", p.Assign);
 
@@ -793,7 +795,7 @@ var Parser = Class.new({
 		    }
 		} // methods
 	    });
-	    p.Ternary.lbp = PTERN; // Class member
+	    p.Ternary.lbp = p.PTERN; // Class member
 	    p.add_symbol_class("?", p.Ternary);
 
 	    p.AndIf = Class.new({
@@ -809,7 +811,7 @@ var Parser = Class.new({
 		    }
 		}
 	    });
-	    p.AndIf.lbp = PLAND; // Class member
+	    p.AndIf.lbp = p.PLAND; // Class member
 	    p.add_symbol_class("&&", p.AndIf);
 
 	    p.OrIf = Class.new({
@@ -825,21 +827,25 @@ var Parser = Class.new({
 		    }
 		}
 	    });
-	    p.OrIf.lbp = PLOR;	// Class member
+	    p.OrIf.lbp = p.PLOR;	// Class member
 	    p.add_symbol_class("||", p.OrIf);
 
 	    // right associative
-	    p.add_infix("Is",  "===", true, PCOMP);
-	    p.add_infix("Isnt","!==", true, PCOMP);
-	    p.add_infix("Eq",  "==",  true, PCOMP);
-	    p.add_infix("NEq", "!=",  true, PCOMP);
-	    p.add_infix("LT",  "<",   true, PCOMP);
-	    p.add_infix("LEq", "<=",  true, PCOMP);
-	    p.add_infix("GT",  ">",   true, PCOMP);
-	    p.add_infix("GEq", ">=",  true, PCOMP);
+	    p.add_infix("Is",  "===", true, p.PCOMP);
+	    p.add_infix("Isnt","!==", true, p.PCOMP);
+	    p.add_infix("Eq",  "==",  true, p.PCOMP);
+	    p.add_infix("NEq", "!=",  true, p.PCOMP);
+	    p.add_infix("LT",  "<",   true, p.PCOMP);
+	    p.add_infix("LEq", "<=",  true, p.PCOMP);
+	    p.add_infix("GT",  ">",   true, p.PCOMP);
+	    p.add_infix("GEq", ">=",  true, p.PCOMP);
+
+	    p.add_infix("BOr", "|",   true, p.PBOR);
+
+	    p.add_infix("BAnd", "&",  true, p.PBAND);
 
 	    // left associative
-	    p.add_infix("Plus", "+",  false, PADD);
+	    p.add_infix("Plus", "+",  false, p.PADD);
 
 	    p.Prefix = Class.new({
 		name: "Prefix",
@@ -847,7 +853,7 @@ var Parser = Class.new({
 		methods: {
 		    nud: function (this) {
 			p.scope.reserve(this);
-			this.first = p.expression(PPFX); // XXX member for rbp?
+			this.first = p.expression(p.PPFX); // XXX member for rbp?
 			this.arity = "unary";
 			return(this);
 		    },
@@ -876,12 +882,12 @@ var Parser = Class.new({
 		    } // gen
 		} // methods
 	    });
-	    p.Minus.lbp = PSUB; // Class member
+	    p.Minus.lbp = p.PSUB; // Class member
 	    p.add_symbol_class("-", p.Minus);
 
 	    // right associative
-	    p.add_infix("Mult", "*",  true, PMUL);
-	    p.add_infix("Div", "/",   true, PDIV);
+	    p.add_infix("Mult", "*",  true, p.PMUL);
+	    p.add_infix("Div", "/",   true, p.PDIV);
 
 	    p.Dot = Class.new({
 		name: "Dot",
@@ -914,7 +920,7 @@ var Parser = Class.new({
 		    }
 		} // methods
 	    });
-	    p.Dot.lbp = PDOT;	// Class member
+	    p.Dot.lbp = p.PDOT;	// Class member
 	    p.add_symbol_class(".", p.Dot);
 
 	    // superclass "." operator
@@ -983,7 +989,7 @@ var Parser = Class.new({
 		    }
 		} // methods
 	    });
-	    p.LBrack.lbp = PIDX; // Class member
+	    p.LBrack.lbp = p.PIDX; // Class member
 	    p.add_symbol_class("[", p.LBrack);
 
 	    p.LParen = Class.new({
@@ -1069,7 +1075,7 @@ var Parser = Class.new({
 		    } // gen
 		} // methods
 	    }); // LParen
-	    p.LParen.lbp = PFUN;      // Class member
+	    p.LParen.lbp = p.PFUN;      // Class member
 	    p.LParen.exp_stmt = true; // Class member
 	    p.add_symbol_class("(", p.LParen);
 
