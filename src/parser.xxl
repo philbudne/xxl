@@ -668,21 +668,29 @@ var PrattParser = Class.new({
 //	Apologies in advance for any perceived sizist slights.
 
 // precedence levels (keep as Parser.PXXX properties??)
-var PASSIGN = 10;
-var PTERNARY = 20;
-var PLOR = 30;			// logical or (||) -- make lower than PLAND??
-var PLAND = 30;			// logical and (&&)
-var PCOMP = 40;			// comparison
+// ***USE EVEN VALUES ONLY: prec-1 used for right associativity!!!***
+var PASS = 10;			// assignment
+
+var PTERN = PASS + 10;
+
+var PLOR = PTERN + 10;		// logical or (||)
+var PLAND = PLOR;		// logical and (&&) make higher than PLOR?!
+
+var PCOMP = PLAND + 10;		// comparison
 // PBOR (bitwise OR) here?
 // PBAND (bitwise AND) here??
-var PADD = 50;
-var PSUB = 50;
-var PMUL = 60;
-var PDIV = 60;
-var PPFX = 70;
-var PDOT = 80;
-var PIDX = 80;			// var[index]
-var PFUN = 80;
+
+var PADD = PCOMP + 10;
+var PSUB = PADD;
+
+var PMUL = PSUB + 10;
+var PDIV = PMUL;
+
+var PPFX = PDIV + 10;		// prefix (unary)
+
+var PDOT = PPFX + 10;		// exp.member
+var PIDX = PDOT;		// exp[index]
+var PFUN = PDOT;
 
 var Parser = Class.new({
     name: "Parser",
@@ -714,7 +722,7 @@ var Parser = Class.new({
 			    left.error("Bad lvalue.");
 			}
 			this.first = left;
-			this.second = p.expression(PASSIGN-1);
+			this.second = p.expression(this.lbp-1);
 			this.arity = "binary";
 			return(this);
 		    },
@@ -724,7 +732,7 @@ var Parser = Class.new({
 		    }
 		}
 	    });
-	    p.Assign.lbp = PASSIGN; // Class member
+	    p.Assign.lbp = PASS; // Class member
 	    p.Assign.exp_stmt = true;
 	    p.add_symbol_class("=", p.Assign);
 
@@ -785,7 +793,7 @@ var Parser = Class.new({
 		    }
 		} // methods
 	    });
-	    p.Ternary.lbp = PTERNARY; // Class member
+	    p.Ternary.lbp = PTERN; // Class member
 	    p.add_symbol_class("?", p.Ternary);
 
 	    p.AndIf = Class.new({
@@ -1464,6 +1472,7 @@ var Parser = Class.new({
 	end: function (this) {	// test if at end of block or file
 	    // called from Parser.statements and in bootstrap.xxl
 	    var t = this.token;
+	    // XXX check a boolean member rather than token type?!!!
 	    return(t && (t.check("}") || t.check(this.END)));
 	}
     } // Parser methods
