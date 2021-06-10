@@ -766,6 +766,7 @@ var Parser = Class.new({
 	    };
 	    p.add_assignop("AssignPlus",  "+=", "+");
 	    p.add_assignop("AssignMinus", "-=", "-");
+	    p.add_assignop("AssignOr", "|=", "|");
 
 	    p.Ternary = Class.new({
 		name: "Ternary",

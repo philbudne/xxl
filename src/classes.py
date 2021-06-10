@@ -1175,6 +1175,14 @@ def num_init(obj, value):
         raise UError("{}.new needs Str or Number".format(obj.getclass().name))
     return null_value
 
+@pyfunc
+def bitand(l, r):
+    return _new_pobj(l.getclass(), l.value & r.value)
+
+@pyfunc
+def bitor(l, r):
+    return _new_pobj(l.getclass(), l.value | r.value)
+
 Number.setprop(const.METHODS, _mkdict({
     const.INIT: num_init
 }))
@@ -1194,6 +1202,9 @@ Number.setprop(const.BINOPS, _mkdict({
     '<=': le,
     '>': gt,
     '<': lt,
+    # Int only!
+    '&': bitand,
+    '|': bitor,
 }))
 
 ################ Str
