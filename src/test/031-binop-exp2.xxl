@@ -24,10 +24,10 @@ System.print(2^3);
 // higher precedence than division:
 System.print(2^3/2);
 System.print((2^3)/2);		// right
-System.print(2^(3/2));		// wrong
+System.print(2 ^ (3/2));	// wrong
 
 // right associative:
 System.print(2^2^3);
-System.print(2^(2^3));		// right
+System.print(2 ^ (2^3));	// right
 System.print((2^2)^3);		// wrong
 

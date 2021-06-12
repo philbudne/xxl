@@ -1455,7 +1455,9 @@ var Parser = Class.new({
 
 	    // returns generator which returns:
 	    // Objects  w/ type, value & where properties, and then null
-	    this.get_token = System.tokenizer(fname, '=<>!+-*&|/%^.', '=<>&|.');
+	    var oprs = '!@#$%^&*-=+<>\|:,./?~';
+	    // was: '=<>!+-*&|/%^.', '=<>&|.'
+	    this.get_token = System.tokenizer(fname, oprs, oprs);
 	    this.token = null;	// current Symbol object
 
 	    this.predef("Class");
