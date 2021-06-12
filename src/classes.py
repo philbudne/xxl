@@ -1169,8 +1169,8 @@ def gt(l, r):
 
 @pyfunc
 def num_init(obj, value):
+    # XXX make illegal tell them to use Str.to_{int,float} instead??!
     if instance_of(value, [Str]):
-        # (move this to Str.to_number()???)
         v = value.value
         try:
             obj.value = int(v)
