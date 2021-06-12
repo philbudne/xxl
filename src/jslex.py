@@ -24,10 +24,13 @@ import readline                 # enable editing in input()
 # will match any of these:
 #      <=  >>  >>>  <>  >=  +: -: &: &&: &&
 
-# XXX XXX XXX PLB take \u{XX...} instead of \uXXXX !!!!
-# XXX XXX PLB allow any unicode character in identifier?
-# XXX XXX PLB allow any unicode character in identifier?
-# XXX PLB replace with native code (likely to be sloooower)
+# XXX PLB replace with native code (it's SLOOOOW!)???
+
+NHEX_CHARS = { # number of hex chars for numeric escapes
+    'x':2,
+    'u':4,
+    'U':8
+}
 
 class LexError(Exception):
     """
@@ -47,7 +50,7 @@ class Token(object):
         raise LexError("%s at %s:%s" % (s, self.lineno, self.from_))
 
     def __repr__(self):
-        return "<Token %s %s l%d %d:%d>" % \
+        return "<Token %s %r l%d %d:%d>" % \
             (self.type_, self.value, self.lineno, self.from_, self.to)
 
 class Stream(object):
@@ -78,12 +81,10 @@ class Stream(object):
                 # XXX change prompt to "... " if not at top (in statement()?)
                 try:
                     # "There are no curly braces in Python!"
-                    self.buf = input('}}} ')
+                    self.buf = input('}}} ') + '\n'
                 except (EOFError, KeyboardInterrupt):
                     print('')
                     return ''
-                if self.buf:
-                    self.buf += '\n'
             else:
                 self.buf = self.f.readline()
             if not self.buf:
@@ -121,6 +122,12 @@ class Stream(object):
 def isalpha(c):
     return c.isalpha() or c == '_'
 
+def isunicode(c):
+    """
+    return True if `c` is a non-ASCII unicode code point
+    """
+    return ord(c) >= 128
+
 def tokenize(finput, prefix='<>+-&', suffix='=>&:'):
     """
     returns a generator
@@ -132,6 +139,9 @@ def tokenize(finput, prefix='<>+-&', suffix='=>&:'):
     n = 0                       # The number value.
     q = None                    # The quote character.
     str_ = ''                   # The string value.
+
+    #prefix = set(prefix)
+    #suffix = set(suffix)
 
     # Begin tokenization.
     # Loop through this text, one character at a time.
@@ -152,7 +162,7 @@ def tokenize(finput, prefix='<>+-&', suffix='=>&:'):
             s.advance()
             while True:
                 c = s.curr()
-                if isalpha(c) or c.isdigit():
+                if isalpha(c) or c.isdigit() or isunicode(c):
                     str_ += c
                     s.advance()
                 else:
@@ -164,6 +174,8 @@ def tokenize(finput, prefix='<>+-&', suffix='=>&:'):
             # It must start with a digit, possibly '0'.
             str_ = c
             s.advance()
+
+            # XXX handle 0xXXX here
 
             # Look for more digits.
             while True:
@@ -215,26 +227,49 @@ def tokenize(finput, prefix='<>+-&', suffix='=>&:'):
         elif c in ["'", '"']:
             # string
             str_ = ''
-            q = c;
+            q = c
+            escapes = (q == '"') # 'string' are "raw" (like Un*x shell)
             s.advance()
-            while True:
+            multiline = False
+            looping = True
+            c = s.curr()
+            # check for triple (multi line) quoting
+            if c == q:          # doubled quote?
+                c = s.peek()
+                if c == q:      # three times?
+                    s.advance() # consume third quote
+                    multiline = True
+                else:           # just two -- an empty string
+                    looping = False
+            #print("esc", escapes, "multi", multiline, "looping", looping)
+            while looping:
                 c = s.curr()
-                if c < ' ':
-                    if c == '\n'  or  c == '\r'  or  c == '':
-                        v = "Unterminated string."
-                    else:
-                        v = "Control Character in string."
-                    make('string', str_).error(v)
-
-                # Look for the closing quote.
-
-                if c == q:
-                    break
+                if not multiline:
+                    if c < ' ':
+                        if c == '\n'  or  c == '\r'  or  c == '':
+                            v = "Unterminated string."
+                        else:
+                            v = "Control Character in string."
+                        make('string', str_).error(v)
+                    if c == q:  # end quote?
+                        break
+                elif c == q:    # multi-line: check for end quote
+                    c = s.next()
+                    # XXX check for EOF?
+                    #print("e2", c)
+                    if c == q: # second quote?
+                        c = s.next() # consume second quote
+                        # XXX check for EOF?
+                        if c == q: # a third??
+                            break
+                        else: # just two
+                            str_ += q
+                # end multi-line end quote check
 
                 # Look for escapement.
-
-                if c == '\\':
+                if escapes and c == '\\':
                     c = s.next()
+                    #print("escaped", c)
                     if c == '':
                         make('string', str_).error("Unterminated string")
                     if c == 'b':
@@ -247,26 +282,30 @@ def tokenize(finput, prefix='<>+-&', suffix='=>&:'):
                         c = '\r'
                     elif c == 't':
                         c = '\t';
-                    elif c == 'u': # XXX change to \u{xx....}
-                        h = s.next()
-                        h += s.next()
-                        h += s.next()
-                        h += s.next()
-                        if len(h) != 4:
-                            make('string', str_).error("Unterminated string")
+                    elif c == '"'  or  c == "'":
+                        pass
+                    elif c in NHEX_CHARS:
+                        n = NHEX_CHARS[c]
+                        h = ''
+                        while len(h) < n:
+                            c = s.next()
+                            if c == '':
+                                make('string', str_).error("Unterminated string2")
+                            h += c
                         try:
                             c = int(h, 16)
                         except ValueError:
-                            make('string', str_).error("Unterminated string")
+                            make('string', str_).error("Unterminated string3")
                         c = chr(c)
-                        break
+                    # end c in NHEX_CHARS
+                # end escapement
+                #print("appending", c)
                 str_ += c
                 s.advance()
+            # end while
             yield make('string', str_)
             c = s.next()
-
-        # comment.
-        elif c == '/' and s.peek() == '/':
+        elif c == '/' and s.peek() == '/': # comment
             s.advance()
             while True:
                 c = s.curr()
@@ -275,12 +314,12 @@ def tokenize(finput, prefix='<>+-&', suffix='=>&:'):
                 s.advance()
 
         # combining
-        elif prefix.find(c) >= 0:
+        elif prefix.find(c) >= 0 or isunicode(c):
             str_ = c
             s.advance()
             while True:
                 c = s.curr()
-                if c == '' or suffix.find(c) < 0:
+                if c == '' or (suffix.find(c) < 0 and not isunicode(c)):
                     break
                 str_ += c
                 s.advance()
@@ -298,7 +337,10 @@ def tokenize(finput, prefix='<>+-&', suffix='=>&:'):
 
 if __name__ == "__main__":
     import sys
-    tokenizer = tokenize(sys.stdin)
+    if len(sys.argv) > 1:
+        tokenizer = tokenize(open(sys.argv[1]))
+    else:
+        tokenizer = tokenize(sys.stdin)
     t = 1
     while t:
         t = next(tokenizer)

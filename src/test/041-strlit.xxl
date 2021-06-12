@@ -1,0 +1,16 @@
+System.print('');
+System.print('a');
+System.print('hello\nworld'); // no escaping
+System.print("hello\nworld"); // w/ escaping
+System.print("\"\'"); // w/ escaping
+
+System.print('''
+	hello
+	world
+''');
+
+
+System.print("\xBf");	// upside down question mark
+System.print("\u01Ff");	// lower case o w/ slash and accent
+System.print("\u2135"); // mathematics aleph
+System.print("\U0001f643"); // upside down smiley
