@@ -1,24 +1,9 @@
 FIX
 ===
-treat TypeError same as UError?
-
 Make PLOR < PLAND??
 
 parser:
     "end" flag on Symbols? add "accept" method??
-
-tokenizer:
-    flush __obj_create for tokenizer -- return Token? List??
-    make native Tokenizer
-	need str.ord() str.isalpha() str.isdigit()?
-	arbitrary spans of op chars
-    allow unicode
-	in identifiers (if leading A-Za-z_ ??)
-	else "operator" (may not contain alphanumeric)
-	must be terminated by ascii!
-    """string"""
-    r"str"?
-    accept \xXX \UXXXXXXXX \n \r \t
 
 bootstrap:
     boot1 (level 1 / once-only)
@@ -28,7 +13,10 @@ bootstrap:
 		optional third arg for bootstrap
 		default parser in __xxl.parser?
 		this.load_vmx(bootstrap) & invoke??
+	native "import" function in bootstrap (uses Module.new);
+		invoke newmodule.extend(__modinfo.parser) !!!???
 	invoke __modinfo.module.init?!!!
+		(bootstrap Closure??)
 
 init methods for String, Bool, Null
 	BoolClass, NullClass?
@@ -52,8 +40,6 @@ bootstrap.md -- describe adding operator;
 	(Dicts currently indexed by Python values,
 	 tho CPObject has proxy __hash__)
 
-** clean up relops, write tests!!!!!!
-
 ** add .git/pre-commit check?
 
 * regression test depends on ordered dicts (Python 3.6)
@@ -67,6 +53,10 @@ type wrapping:
 	revisit wrapping return values in CPyFunc.invoke???
 
 true/null/false are writable!!!??? (bug or feature?)
+	add "const" statement (subclass "Var")??
+		add '.const' flag to Scope table entry,
+			copy in _gtok (after c.new??)
+			check like .lvalue?
 
 xxl.py: w/o filename run read/eval/print loop
 	need to change statement() and std() methods
@@ -149,10 +139,11 @@ bring back is_true?
 Helper to declare PyFunc wrappers for methods???
 	take string of argument types to expect/translate
 
-tokenizer that takes string for input
+tokenizer that takes string (any iterable?) for input
 	(could use for "eval")
 
-move comparison operators to an Orderable mixin?
+** clean up relops, write tests!!!!!!
+	move to Orderable mixin?
 
 pyimport => PyObject.new??
 
