@@ -36,6 +36,13 @@ CLASS_PROPS = {
     'supers': SUPERS
 }
 
+# map OP dict name to english for error
+OPDICT2ENGLISH = {
+    UNOPS: 'unary operator',
+    BINOPS: 'binary operator',
+    LHSOPS: 'LHS binary operator'
+}
+
 # Class methods
 NEW = 'new'
 CREATE = 'create'

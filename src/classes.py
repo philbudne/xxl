@@ -464,6 +464,8 @@ _saved_names = {}
 Str = None
 List = None
 
+#classes = CObject(None)         # class set to Object, once it exists!
+
 def defclass(metaclass, name, supers=None, publish=True):
     """
     define a system Class
@@ -487,6 +489,8 @@ def defclass(metaclass, name, supers=None, publish=True):
 
     if publish:
         sys_types[name] = class_obj
+        #classes.setprop(name, class_obj)
+
     return class_obj
 
 # base metaclass
@@ -496,6 +500,7 @@ Class.setclass(Class)             # circular! Class.new creates a new Class!
 
 # root Class; circular with "Class" metaclass, so defined second.
 Object = defclass(Class, 'Object', []) # root Class
+#classes.setclass(Object)
 
 # metaclass for PObjects (creates Python CPObject)
 PClass = defclass(Class, 'PClass', [Class])
@@ -734,7 +739,8 @@ def find_op(obj, optype, op):
             break
         c = q.pop(0)
 
-    raise UError("%s %s %s not found" % (obj, optype, op))
+    raise UError("%s %s for %s not found" % ( \
+        const.OPDICT2ENGLISH.get(optype,optype), op, obj.classname()))
 
 @pyfunc
 def obj_get_in_supers(l, r):
@@ -1274,6 +1280,23 @@ def str_str(this):
 def str_strip(this):
     return _new_pobj(this.getclass(), this.value.strip()) # XXX getstr
 
+@pyvmfunc
+def str_to_float(vm, this):
+    return mknumber(float(this.value), vm.scope)
+
+@pyvmfunc
+def str_to_int(vm, this, base=None):
+    if base is None:
+        base = 0                # accept 0xXXX
+    else:
+        base = base.value
+    return mknumber(int(this.value, base), vm.scope)
+
+# static methods (plain function)
+@pyvmfunc
+def str_chr(vm, value):
+    return mkstr(chr(value.value), vm.scope) # XXX getint
+
 Str.setprop(const.METHODS, _mkdict({
     'ends_with': str_ends_with,
     'join': str_join,
@@ -1284,6 +1307,8 @@ Str.setprop(const.METHODS, _mkdict({
     'starts_with': str_starts_with,
     'str': str_str,
     'strip': str_strip,
+    'to_float': str_to_float,
+    'to_int': str_to_int,
     const.INIT: pobj_init
 }))
 Str.setprop(const.BINOPS, _mkdict({
@@ -1297,6 +1322,7 @@ Str.setprop(const.BINOPS, _mkdict({
     '>': gt,
     '<': lt,
 }))
+Str.setprop('chr', str_chr)
 
 ################ Null
 
