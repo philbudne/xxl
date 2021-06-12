@@ -829,12 +829,16 @@ def breakpoint_if_debugging():
         breakpoint()
 
 # XXX make a VM method?!!!
-def run(boot, scope, stats, trace):
+def run(boot, scope, stats, trace, xcept):
     """
     cold start (from xxl.py)
     `boot` is Closure w/ bootstrap.vmx code for main module
     """
     vm = VM(stats=stats, trace=trace)
+
+    user_errors = (classes.UError,)
+    if not xcept:
+        user_errors += (IndexError, ValueError, TypeError, KeyboardInterrupt)
 
     vm.ac = boot                # Closure
     b0 = [["0", "call0"],       # call Closure
@@ -857,7 +861,7 @@ def run(boot, scope, stats, trace):
 
         breakpoint_if_debugging()
         sys.exit(1)
-    except classes.UError as e: # handle ValueError??
+    except user_errors as e:
         # NOTE: user error: just displays "where" and VM backtrace
         if vm.ir:
             sys.stderr.write("Error @ {}:{}: {}\n".format(

@@ -42,7 +42,7 @@ import vmx
 argv = list(sys.argv)           # copy
 argv.pop(0)                     # vmx.py
 
-stats = trace = help = False
+stats = trace = help = xcept = False
 parser = None
 # XXX use real arg parser!
 while argv:
@@ -57,6 +57,9 @@ while argv:
     elif argv[0] == '-s':
         stats = True
         argv.pop(0)
+    elif argv[0] == '-x':
+        xcept = True
+        argv.pop(0)
     elif argv[0] == '-P':
         argv.pop(0)
         parser = argv.pop(0)
@@ -69,7 +72,7 @@ if not argv:
     help = True
 
 if help:
-    sys.stderr.write("""Usage: xxl.py [-h][-s][-t][-P parser.vmx] file args ...
+    sys.stderr.write("""Usage: xxl.py [-h][-s][-t][-x][-P parser.vmx] file args ...
 
 file can be .xxl (source) or .vmx (VM code)
 
@@ -77,6 +80,7 @@ file can be .xxl (source) or .vmx (VM code)
 -s    enable VM stats
 -t    enable VM instruction trace
 -P    load alternate parser.vmx file
+-x    don't treat some Python exceptions as user errors
 """)
     sys.exit(1)
 
@@ -85,4 +89,4 @@ fname = argv.pop(0)
 mod, boot = classes.new_module(fname=fname, argv=argv, main=True,
                                parser_vmx=parser)
 
-vmx.run(boot=boot, scope=mod.scope, stats=stats, trace=trace)
+vmx.run(boot=boot, scope=mod.scope, stats=stats, trace=trace, xcept=xcept)
