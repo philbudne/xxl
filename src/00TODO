@@ -1,5 +1,7 @@
 FIX
 ===
+Change 'str' method to 'to_str'??
+
 Make PLOR < PLAND??
 
 parser:
@@ -91,7 +93,7 @@ FEATURES (or extensions)
 ========================
 All Classes: .getdoc() method
 	docstrings / formatter
-Iterable.sorted() method
+Iterable.sorted() method?? List???
 Set
 Object: dir() method?? Return Set??
 	props() method return Dict?
