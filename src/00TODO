@@ -1,5 +1,8 @@
 FIX
 ===
+Makefile:
+	ignore metadata line in bootstrap.vmx
+
 Add test for __extend_parser
 
 Make PLOR < PLAND??
