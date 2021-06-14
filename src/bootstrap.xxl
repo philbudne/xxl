@@ -11,8 +11,23 @@ if (__modinfo.booting) {
 }
 __modinfo.booting = true;
 
+System.import = function (name) {
+    var rets = System._import(name);
+    var boot = rets[1];
+    if (boot) {
+	boot();
+    }
+    return(rets[0]);	// module
+};
+
 if (__modinfo.main) {		// once only
+    ////////////////////////////////////////////////////////////////
+    // native code methods for built-in Classes
+
     var classes = System.import("classes");
+
+    ////////////////
+    // Object
 
     // default this.str() to this.repr():
     classes.Object.__methods['str'] = function (this) {
@@ -129,16 +144,18 @@ if (__modinfo.main) {		// once only
     };
 } // main / once only
 
-if (true) {			// hide temp variables
+if (true) {			// all modules-- hide temp variables
     ////////////////
     // print
+    var py_sys = System.pyimport("sys");
 
-    var str = function (x) { return(x.str()); };
+    var str = function (x) {
+	return(x.str());
+    };
+
     var __print = function (file, l) {
 	file.write(" ".join(l.map(str)) + "\n");
     };
-
-    var py_sys = System.pyimport("sys");
 
     var pr = function (...args) {
 	__print(py_sys.stdout, args);

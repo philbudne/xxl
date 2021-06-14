@@ -193,7 +193,7 @@ def sys_vtree(vm, t, fname=classes.null_value):
 # used in:
 # System.tree (above) XXX replace with a Symbol.json method??
 # System.vtree (above)
-# System.assemble (below)
+# ModInfo.assemble (via vmx.assemble)
 def obj2python_json(x):
     """
     take AST (tree of parser Symbols) or List of VMCode (Lists)
@@ -239,73 +239,32 @@ def sys_pyimport(vm, module):
 
 ################
 
-@classes.pyvmfunc
-def sys_import(vm, filename):
-    """
-    user called System.import function
-    `filename` is Str of name of source file to parse
-    """
-    # XXX run __extensions__ on caller's initial scope? System object?
-    # XXX take arg to bypass __extensions__
+DEBUG_IMPORT = False
 
+@classes.pyfunc
+def sys__import(filename):
+    """
+    worker function for System.import()
+    (defined in bootstrap.xxl)
+    """
     fname = filename.value      # XXX getstr???
-
-    mod, bootstrap = classes.new_module(fname=fname)
-    # bootstrap is None if module already loaded, Closure if newly loaded.
-
-    if mod is None:
-        Exception("import failed") # XXX UError?
-
     if DEBUG_IMPORT:
-        print("sys_import", mod, bootstrap)
+        print("sys__import", fname, file=sys.stderr)
 
-    if bootstrap:
-        # XXX construct Closure that takes mod, boot as args,
-        #       calls boot, returns mod??
-        #       less tortued than below, but not smaller
-        #       (args [], load boot, call, load mod, return)!
-        #       consider native code, if "Level 1" boot ever created?
-        vm.save_frame()             # save our caller
-        vm.push(mod)                # save Module on stack
-        c2 = [["0", "call0"],       # call bootstrap.vmx Closure
-              ["1", "pop_temp"],    # UGH: restore Module to TEMP
-              ["2", "temp"],        # UGH: TEMP to AC
-              ["3", "return"]]      # return to caller
-        vm.cb = vmx.convert_instrs(c2, "@sys_import")
-        vm.pc = 0
-        return bootstrap            # CClosure w/ bootstrap.vmx => AC
-    else:
-        return mod
-
-# returns new `Module` Object and Closure for module bootstrap
-# (both callers have hand crafted code that call the Closure
-#  see @sys_import above and @boot in vmx.py)
-def import_worker(fname, main=False, argv=[], parser_vmx=None):
-    """
-    str `fname` VMX or source file to load
-    bool `main` True when loading from command line
-    list of str `argv`
-    str `parser_vmx` name of file with parser VM code
-    """
+    # returns (mod,boot) tuple:
+    mod_boot = classes.new_module(fname=fname)
     if DEBUG_IMPORT:
-        print("BEGIN import_worker", fname, main, argv)
+        print("mod_boot", mod_boot, file=sys.stderr)
 
-    # return (Module, Closure)
-    # XXX stash "boot" closure in __modinfo.boot
-    #   and have native code call the closure,
-    #   (and avoid @sys_import hand coded glue)???
-    return classes.new_module(main, argv, fname, parser_vmx)
+    return classes.wrap(mod_boot) # turns into List
 
 ################################################################
 
 # called only from classes.new_module: create SYSTEM Object
+# XXX move to internal "xxl" module??
 def create_sys_object(iscope, argv):
     sys_obj = __obj_create({})
     iscope.defvar(SYSTEM, sys_obj)
-
-    classes.init_scope(iscope) # populate scope w/ true/false/...
-
-    # *** now safe to call "new_by_name" and "wrap" ***
 
     sys_obj.setprop('uerror', sys_uerror) # fatal error w/ backtrace
 
@@ -322,7 +281,7 @@ def create_sys_object(iscope, argv):
     sys_obj.setprop('vtree', sys_vtree) # TEMP!!!
 
     # external modules:
-    sys_obj.setprop('import', sys_import) # import source module
+    sys_obj.setprop('_import', sys__import) # import source module
     sys_obj.setprop('pyimport', sys_pyimport) # import Python module
 
     return sys_obj
