@@ -105,15 +105,56 @@ class VM:
             self.pc += 1        # jumps will overwrite
             ir.step(self)       # execute instruction
 
+    def _getcols(self, f=sys.stdout):
+        try:
+            import os
+            import stat
+            st = os.fstat(f.fileno())
+            if stat.S_ISREG(st.st_mode):
+                return 0
+        except:
+            pass
+
+        try:
+            # seems yukky, but POSIX now defines size and order of first two values?!
+            import fcntl
+            import struct
+            import termios
+            rows, cols = struct.unpack(
+                'hh', fcntl.ioctl(f.fileno(), termios.TIOCGWINSZ, "\000"*8)[0:4]
+            )
+            print("cols", cols, "rows", rows)
+            return cols
+        except:
+            pass
+
+        try:
+            # doesn't seem to honor any fd
+            with os.popen("tput cols") as p:
+                return int(p.readline().strip())
+        except:
+            pass
+        return 0
+
     def _start_trace(self):
-        # XXX get terminal width, use to create format?
+        cols = self._getcols()
+        sep = ' | '
+        if cols > 20:
+            acwid = int(cols * 3/8) - len(sep)
+            irwid = max(cols - acwid - len(sep), 100)
+            print(cols, acwid, irwid)
+            format = "%%%d.%ds%s%%.%ds" % (-irwid, irwid, sep, acwid)
+        else:
+            # output to file, width unavailable, or tiny
+            format = "%%s%s%%s" % sep
+
         while self.run:
             # NOTE! self.ir for debug.
             self.ir = ir = self.cb[self.pc] # instruction register
             self.pc += 1        # jumps will overwrite
             ir.step(self)       # execute instruction
             irstr = str(ir)[1:-1] # remove []'s -- XXX remove quotes too???
-            print("%-50.50s | %-27.27s" % (irstr, repr(self.ac)))
+            print(format % (irstr, repr(self.ac)))
 
     def _start_stats(self):
         # stats
