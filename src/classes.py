@@ -1682,11 +1682,9 @@ def classes_init():
     global classes_module       # XXX TEMP?
     classes_module, _ = new_module(None)
     classes_module.scope = classes_scope # XXX YUK
+    # NOTE: below crushes __modinfo!!!??? (do we care???)
     classes_module.props = classes_scope.vars # XXX XXX DOUBLY SO
     defmodule('classes', classes_module)
-
-def get_classes_module():       # XXX TEMP
-    return classes_module
 
 def init_scope(iscope):
     """
