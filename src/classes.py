@@ -1532,7 +1532,7 @@ def new_modinfo(main, module, fname, parser_vmx=None):
 # "where Modules come from"
 # called by:
 #       xxl.py (startup)
-#       sys_import (System.import function)
+#       sys__import (System._import function)
 # XXX should be moduleclass_new?!!
 # XXX take optional bootstrap_vmx arg??
 def new_module(fname, main=False, argv=[], parser_vmx=None):
@@ -1554,6 +1554,9 @@ def new_module(fname, main=False, argv=[], parser_vmx=None):
 
     scope = scopes.Scope(None)  # create root scope for module
     mod = CModule(scope)
+
+    init_scope(scope)           # populate scope w/ true/false/...
+
     if fname:
         system.create_sys_object(scope, argv) # new System object XXX TEMP
 
@@ -1673,9 +1676,6 @@ def classes_init():
     """
     call once on startup
     """
-    global __initialized
-    __initialized = True        # don't allow _mkXXX any more
-
     # UTTERLY VILE: either hide in a "make_internal_module"
     #   or do it more cleanly!!!!
     #   declare classes_module up top???????????
@@ -1694,3 +1694,6 @@ def init_scope(iscope):
     """
     for x in ['true', 'false', 'null', 'Class']:
         iscope.defvar(x, classes_scope.lookup(x))
+
+# earlier?!!
+__initialized = True        # don't allow _mkXXX any more
