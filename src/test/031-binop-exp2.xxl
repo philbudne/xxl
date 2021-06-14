@@ -10,9 +10,10 @@ var p = __modinfo.parser;	// active Parser object
 p.add_infix("Exp", "^", true, p.PMUL + 4);
 
 // Subclass Number, adding operator, and use from here on out:
-System.types.Number = Class.new({
+var classes = System.import("classes");
+classes.Number = Class.new({
     name: "MyNumber",
-    supers: [System.types.Number],
+    supers: [classes.Number],
     binops: {
 	"^": math.pow
     }

@@ -2,5 +2,7 @@ System.print("1".to_int() + 1); // 2
 System.print("0x10".to_int()); // 16
 System.print("20".to_int(8));  // 16
 System.print("20".to_int(16)); // 32
-System.print(System.types.Str.chr("A".ord()));
 System.print("31.4e-1".to_float());
+
+var classes = System.import("classes");
+System.print(classes.Str.chr("A".ord()));

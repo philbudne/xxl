@@ -12,8 +12,10 @@ if (__modinfo.booting) {
 __modinfo.booting = true;
 
 if (__modinfo.main) {		// once only
+    var classes = System.import("classes");
+
     // default this.str() to this.repr():
-    System.types.Object.__methods['str'] = function (this) {
+    classes.Object.__methods['str'] = function (this) {
 	return(this.repr());
     };
 
@@ -21,7 +23,7 @@ if (__modinfo.main) {		// once only
     // Class
 
     // default 'new' method!!
-    System.types.Class.__methods['new'] = function (this, ...args) {
+    classes.Class.__methods['new'] = function (this, ...args) {
 	var obj = this.create();
 	obj.init(...args);
 	return(obj);
@@ -30,7 +32,7 @@ if (__modinfo.main) {		// once only
     ////////////////
     // Iterable (subclasses w/ .iter() and .reversed() methods)
 
-    var Iterable = System.types.Iterable;
+    var Iterable = classes.Iterable;
 
     Iterable.__methods['for_each'] = function (this, func) {
 	var iter = this.iter();
@@ -73,7 +75,7 @@ if (__modinfo.main) {		// once only
     ////////////////
     // Dict
 
-    System.types.Dict.__methods['init'] = function (this, arg) {
+    classes.Dict.__methods['init'] = function (this, arg) {
 	this.init0();
 	var i = (arg || []).iter; // fetch method, but do not call
 	if (!i) {
@@ -84,7 +86,7 @@ if (__modinfo.main) {		// once only
 	    var item = iter.next(return);
 	    // if first item, set sentinal
 	    // make sure all following items of same size/shape
-	    if (item.instance_of(System.types.List)) {
+	    if (item.instance_of(classes.List)) {
 		if (item.len() != 2) {
 		    System.uerror(this.name + ".init got List w/ len != 2");
 		}
@@ -96,7 +98,7 @@ if (__modinfo.main) {		// once only
 	}
     };
 
-    System.types.Dict.__methods['repr'] = function (this) {
+    classes.Dict.__methods['repr'] = function (this) {
 	var items = [];
 	this.for_each(
 	    function (key) {
@@ -109,7 +111,7 @@ if (__modinfo.main) {		// once only
     ////////////////
     // List
 
-    System.types.List.__methods['init'] = function (this, arg) {
+    classes.List.__methods['init'] = function (this, arg) {
 	this.init0();
 	var i = (arg || []).iter; // fetch method, but do not call
 	if (!i) {
@@ -122,7 +124,7 @@ if (__modinfo.main) {		// once only
     };
 
     var repr = function (x) { return(x.repr()); };
-    System.types.List.__methods['repr'] = function (this) {
+    classes.List.__methods['repr'] = function (this) {
 	return("[" + ", ".join(this.map(repr)) + "]");
     };
 } // main / once only

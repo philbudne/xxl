@@ -1,5 +1,6 @@
 // -*-js-*-
-System.print(System.types.List.new([1,2,3]));
-System.print(System.types.List.new({1:2, hello: "world"}));
+var classes = System.import("classes");
+System.print(classes.List.new([1,2,3]));
+System.print(classes.List.new({1:2, hello: "world"}));
 
 

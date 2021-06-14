@@ -10,7 +10,8 @@ var p = __modinfo.parser;	// Parser object
 p.add_infix("Exp", "^", true, p.PMUL + 4);
 
 // add binary operator method to Number type:
-System.types.Number.__binops["^"] = math.pow;
+var classes = System.import("classes");
+classes.Number.__binops["^"] = math.pow;
 
 // first test:
 System.print(2^3);

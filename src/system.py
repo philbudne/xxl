@@ -32,12 +32,10 @@ import const
 import vmx
 
 SYSTEM = 'System'               # maybe __xxl??
-SYS_TYPES = 'types'             # maybe top level __classes?
 
 DEBUG_IMPORT = False
 
-# should be used ONLY to create items to set up "System" & System.types objects!
-# can't use create_sys_type: which needs the System object!!!
+# should be used ONLY to create items to set up "System" object
 # ALSO used for:
 #       tokenizer returns -- should return Token??
 def __obj_create(props):        # TEMP??
@@ -93,7 +91,7 @@ def sys_tokenizer(vm, filename, prefix, suffix):
     sstr = suffix.value    # XXX getstr()?
     generator = jslex.tokenize(open(fnstr), pstr, sstr)
 
-    # XXX create general purpose PyIterator wrapper class??
+    # XXX use PyIterator???
     @classes.pyfunc
     def gen_wrapper(*args):
         """
@@ -101,7 +99,7 @@ def sys_tokenizer(vm, filename, prefix, suffix):
         """
         # find_sys_types doesn't like to return "null_value"
         # XXX just uses classes.null_value???
-        null = vm.scope.lookup(SYSTEM).getprop(SYS_TYPES).getprop('null')
+        null = classes.classes_module.getprop('null')
         try:
             t = next(generator)
             if not t:
@@ -307,9 +305,6 @@ def import_worker(fname, main=False, argv=[], parser_vmx=None):
 def create_sys_object(iscope, argv):
     sys_obj = __obj_create({})
     iscope.defvar(SYSTEM, sys_obj)
-
-    # TEMP: point to "classes" internal Module
-    sys_obj.setprop(SYS_TYPES, classes.get_classes_module()) # XXX TEMP
 
     classes.init_scope(iscope) # populate scope w/ true/false/...
 

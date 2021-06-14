@@ -1,7 +1,8 @@
 // -*-js-*-
+var classes = System.import("classes");
 var t = function(x) {
-    var n1 = System.types.Number.new(x); // string arg
-    var n2 = System.types.Number.new(n1); // Number arg
+    var n1 = classes.Number.new(x); // string arg
+    var n2 = classes.Number.new(n1); // Number arg
 
     System.print(x,
 		 n1, n1.getclass().name,

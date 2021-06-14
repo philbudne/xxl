@@ -21,5 +21,6 @@ p("keys()", d.keys());
 // requires Python 3.8?
 //p("reversed()", d.reversed());
 
-var e = System.types.Dict.new(d);
+var classes = System.import("classes");
+var e = classes.Dict.new(d);
 p("e.items()", e.items());

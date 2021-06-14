@@ -398,11 +398,11 @@ def _mkstr(s):
 
 def _mkobj(props):
     """
-    used to create System, System.types, tokens
+    used to create System object, lexer tokens
     """
     #assert(not __initialized)
     o = CObject(Object)
-    o.props.update(props)       # copy, so System.types is module local
+    o.props.update(props)
     return o
 
 ################ use once System.types initialized
