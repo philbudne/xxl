@@ -97,13 +97,10 @@ def sys_tokenizer(vm, filename, prefix, suffix):
         """
         generator function, wrapper around jslex.tokenize
         """
-        # find_sys_types doesn't like to return "null_value"
-        # XXX just uses classes.null_value???
-        null = classes.classes_module.getprop('null')
         try:
             t = next(generator)
             if not t:
-                return null
+                return classes.null_value
             where = "%s:%s:%s" % (fnstr, t.lineno, t.from_)
             if t.type_ == 'number':
                 v = classes.mknumber(t.value)
