@@ -705,7 +705,7 @@ var Parser = Class.new({
 
 	    p.PDOT = p.PPFX + 10;	// exp.member
 	    p.PIDX = p.PDOT;		// exp[index]
-	    p.PFUN = p.PDOT;
+	    p.PFUN = p.PDOT;		// exp(args)
 
 	    p.add_terminal("Colon",  ":");
 	    p.add_terminal("Comma",  ",");
