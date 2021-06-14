@@ -1,7 +1,7 @@
 var a = "hello" + "  " + "world";
 System.print(a);
 
-var as = a.str();
+var as = a.to_str();
 System.print(a, as, a === as, a == as);
 System.print(a.starts_with("hello"), a.ends_with("world"));
 

@@ -37,8 +37,8 @@ if (__modinfo.main) {		// once only
     ////////////////
     // Object
 
-    // default this.str() to this.repr():
-    classes.Object.__methods['str'] = function (this) {
+    // default this.to_str() to this.repr():
+    classes.Object.__methods['to_str'] = function (this) {
 	return(this.repr());
     };
 
@@ -158,7 +158,7 @@ if (true) {			// all modules-- hide temp variables
     var py_sys = System.pyimport("sys");
 
     var str = function (x) {
-	return(x.str());
+	return(x.to_str());
     };
 
     var __print = function (file, l) {

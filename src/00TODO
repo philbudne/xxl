@@ -2,8 +2,6 @@ FIX
 ===
 Add test for __extend_parser
 
-Change 'str' method to 'to_str'??
-
 Make PLOR < PLAND??
 
 parser:

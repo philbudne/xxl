@@ -795,9 +795,9 @@ Object.setprop(const.METHODS, _mkdict({
     'instance_of': obj_instance_of,
     'putprop': obj_putprop,
     'getprop': obj_getprop,
-    # 'str' in bootstrap.xxl -- invokes repr.
     'repr': obj_repr,
     'reprx': obj_reprx,
+    # 'to_str' in bootstrap.xxl -- invokes repr.
 }))
 Object.setprop(const.BINOPS, _mkdict({
     '.': obj_getprop,           # same as getprop method!!
@@ -989,7 +989,7 @@ Iterable.setprop(const.METHODS, _mkdict({
 
 # subclass of Iterable for mkiterable callers: Dict.{key,value,item}s()
 PyIterable.setprop(const.METHODS, _mkdict({
-    'str': pobj_reprx 
+    'to_str': pobj_reprx
 }))
 
 @pyfunc
@@ -1313,10 +1313,10 @@ Str.setprop(const.METHODS, _mkdict({
     'slice': str_slice,
     'split': str_split,
     'starts_with': str_starts_with,
-    'str': str_str,
     'strip': str_strip,
     'to_float': str_to_float,
     'to_int': str_to_int,
+    'to_str': str_str,
     const.INIT: pobj_init
 }))
 Str.setprop(const.BINOPS, _mkdict({
@@ -1409,7 +1409,7 @@ def pyobj_getprop(l, r):
     elif l.hasprop(rv):  # check Object properties (most likely empty)
         v = l.getprop(rv)
     else:
-        # allow 'str' method so Object can be printed!!
+        # allow 'to_str' method so Object can be printed!!
         v = find_in_class(l, rv) # may return BoundMethod
     return wrap(v)
 
