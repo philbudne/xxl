@@ -262,7 +262,7 @@ class VMInstr0(object):
     """
     __slots__ = ['name', 'where']
 
-    def __init__(self, iscope, fn, where):
+    def __init__(self, fn, where):
         self.fn = fn
         self.where = where
 
@@ -288,8 +288,8 @@ class VMInstr1(VMInstr0):
     """
     __slots__ = ['name', 'where', 'value']
 
-    def __init__(self, iscope, fn, where, value):
-        super().__init__(iscope, fn, where)
+    def __init__(self, fn, where, value):
+        super().__init__(fn, where)
         self.value = value
 
     def json(self):
@@ -301,8 +301,8 @@ class VMInstr2(VMInstr0):
     """
     __slots__ = ['name', 'where', 'v1', 'v2']
 
-    def __init__(self, iscope, fn, where, v1, v2):
-        super().__init__(iscope, fn, where)
+    def __init__(self, fn, where, v1, v2):
+        super().__init__(fn, where)
         self.v1 = v1
         self.v2 = v2
 
@@ -316,9 +316,9 @@ class LitInstr(VMInstr1):
     """
     name = "lit"
 
-    def __init__(self, iscope, fn, where, value):
+    def __init__(self, fn, where, value):
         # convert to Class when code is loaded
-        super().__init__(iscope, fn, where, classes.wrap(value, iscope))
+        super().__init__(fn, where, classes.wrap(value))
 
     def step(self, vm):
         vm.ac = self.value
@@ -388,7 +388,7 @@ class BinOpInstr(VMInstr1):
     pops RHS operand from stack
     sets VM args to [AC, operand]
     inst.value is Python string for operator
-    lookup in lhsops for object and invoke
+    lookup in binops for object and invoke
     """
     name = "binop"
 
@@ -414,10 +414,10 @@ class BinOpLitInstr(BinOpInstr): # NOTE! inherits special "prof" method!
     name = "binop_lit"
 
     __slots__ = ['lit']
-    def __init__(self, iscope, fn, where, op, lit):
+    def __init__(self, fn, where, op, lit):
         # convert to Class when code is loaded
-        super().__init__(iscope, fn, where, op) # vm.call_op expects op in "value"
-        self.lit = classes.wrap(lit, iscope)
+        super().__init__(fn, where, op) # vm.call_op expects op in "value"
+        self.lit = classes.wrap(lit)
 
     def step(self, vm):
         # NOTE: find_op does not return BoundMethod:
@@ -469,8 +469,8 @@ class CloseInstr(VMInstr1):
     """
     name = "close"
 
-    def __init__(self, iscope, fn, where, value):
-        super().__init__(iscope, fn, where, convert_instrs(value, iscope, fn))
+    def __init__(self, fn, where, value):
+        super().__init__(fn, where, convert_instrs(value, fn))
 
     def step(self, vm):
         vm.ac = classes.CClosure(self.value, vm.scope)
@@ -640,9 +640,9 @@ class ArgsInstr(VMInstr1):
 @reginstr
 class Args2Instr(VMInstr2):
     """
-    first op executed in a closure ("function") w/ a ...rest argument
+    first op executed in a closure ("function") w/ a final ...rest argument
     self.v1 is Python list of formals (argument names) as Python strings
-    self.v2 is Python string for rest argument
+    self.v2 is Python string for ...rest argument name
     vm.args is Python list of actuals (argument values) as CObjects
     * creates a new scope
     * for each formal (argument name):
@@ -663,7 +663,7 @@ class Args2Instr(VMInstr2):
             vm.scope.defvar(formal, val) # declare as variable
 
         # create List from remaining args
-        l = system.create_sys_type('List', vm.scope, vm.args) # XXX want frozen?
+        l = classes.new_by_name('List', vm.args) # XXX want frozen?
         vm.scope.defvar(self.v2, l)  # declare as variable
 
 @reginstr
@@ -755,13 +755,13 @@ class NewInstr(VMInstr1):
             v = []
         else:
             VMError("new Instr unknown type %s" % self.value)
-        vm.temp = system.create_sys_type(self.value, vm.scope, v)
+        vm.temp = classes.new_by_name(self.value, v)
 
 ################
 # convert Python list into XxxInstr(ruction) instances
 # (this is the .vmx file assembler!)
 
-def convert_one_instr(i, iscope, fn):
+def convert_one_instr(i, fn):
     """
     take single instruction in JSON form and assemble.
     i[0] is "line:char"
@@ -770,17 +770,17 @@ def convert_one_instr(i, iscope, fn):
     """
     op = i.pop(1)
     # create new instruction instance
-    return instr_class_by_name[op](iscope, fn, *i)
+    return instr_class_by_name[op](fn, *i)
 
-def convert_instrs(il, iscope, fn):
+def convert_instrs(il, fn):
     """
     assemble a list of instructions in JSON form
     fn is filename
     used by CloseInstr and load_vm_json
     """
-    return [convert_one_instr(x, iscope, fn) for x in il]
+    return [convert_one_instr(x, fn) for x in il]
 
-# called only by system.import_worker
+# called by classes.new_module (w/ bootstrap.vmx) and ModInfo.load_vmx method
 def load_vm_json(fname, iscope):
     with open(fname) as f:
         l = f.readline()
@@ -800,7 +800,7 @@ def load_vm_json(fname, iscope):
         # load list of instructions
         j = json.load(f)
 
-    return convert_instrs(j, iscope, metadata.get('fn'))
+    return convert_instrs(j, metadata.get('fn'))
 
 ################
 
@@ -815,7 +815,7 @@ def assemble(scope, tree, srcfile):
     system.trim_where(js, srcfile.value) # XXX getstr?
 
     # convert into Python list of Instrs (scope for type name lookup):
-    return convert_instrs(js, scope, srcfile)
+    return convert_instrs(js, srcfile)
 
 ################
 
@@ -843,7 +843,7 @@ def run(boot, scope, stats, trace, xcept):
     vm.ac = boot                # Closure
     b0 = [["0", "call0"],       # call Closure
           ["1", "exit"]]        # quit VM
-    code = convert_instrs(b0, scope, "@boot0")
+    code = convert_instrs(b0, "@boot0")
     try:
         vm.start(code, scope)
     except SystemExit:          # from os.exit

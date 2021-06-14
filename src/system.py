@@ -108,13 +108,13 @@ def sys_tokenizer(vm, filename, prefix, suffix):
                 return null
             where = "%s:%s:%s" % (fnstr, t.lineno, t.from_)
             if t.type_ == 'number':
-                v = classes.mknumber(t.value, vm.scope)
+                v = classes.mknumber(t.value)
             else:
-                v = classes.mkstr(t.value, vm.scope)
+                v = classes.mkstr(t.value)
             return __obj_create({ # XXX create a Token
-                'type': classes.mkstr(t.type_, vm.scope),
+                'type': classes.mkstr(t.type_),
                 'value': v,
-                'where': classes.mkstr(where, vm.scope)
+                'where': classes.mkstr(where)
             })
         except StopIteration:
             return null
@@ -136,7 +136,7 @@ def sys_tree(vm, t):
     format JSON (returns Str) from AST of Symbols
     """
     t2 = obj2python_json(t)     # strip down to Python data structures
-    return classes.mkstr(json.dumps(t2, indent=1), vm.scope)
+    return classes.mkstr(json.dumps(t2, indent=1))
 
 ################
 
@@ -193,7 +193,7 @@ def sys_vtree(vm, t, fname=classes.null_value):
         fn = fname.value        # getstr?
         trim_where(t2, fn)
 
-    return classes.mkstr(format_code(t2), vm.scope)
+    return classes.mkstr(format_code(t2))
 
 # used in:
 # System.tree (above) XXX replace with a Symbol.json method??
@@ -240,7 +240,7 @@ def obj2python_json(x):
 def sys_pyimport(vm, module):
     import importlib
     m = importlib.import_module(module.value) # XXX getstr?
-    return classes.wrap(m, vm.scope)         # make PyObject
+    return classes.wrap(m)         # make PyObject
 
 ################
 
@@ -265,8 +265,8 @@ def sys_import(vm, filename):
         print("sys_import", mod, bootstrap)
 
     if bootstrap:
-        # XXX construct code that:
-        #       takes mod, boot as args, calls boot, returns mod??
+        # XXX construct Closure that takes mod, boot as args,
+        #       calls boot, returns mod??
         #       less tortued than below, but not smaller
         #       (args [], load boot, call, load mod, return)!
         #       consider native code, if "Level 1" boot ever created?
@@ -276,15 +276,15 @@ def sys_import(vm, filename):
               ["1", "pop_temp"],    # UGH: restore Module to TEMP
               ["2", "temp"],        # UGH: TEMP to AC
               ["3", "return"]]      # return to caller
-        vm.cb = vmx.convert_instrs(c2, mod.scope, "@sys_import")
+        vm.cb = vmx.convert_instrs(c2, "@sys_import")
         vm.pc = 0
         return bootstrap            # CClosure w/ bootstrap.vmx => AC
     else:
         return mod
 
+# returns new `Module` Object and Closure for module bootstrap
 # (both callers have hand crafted code that call the Closure
 #  see @sys_import above and @boot in vmx.py)
-# returns new `Module` Object and Closure for module bootstrap
 def import_worker(fname, main=False, argv=[], parser_vmx=None):
     """
     str `fname` VMX or source file to load
@@ -308,17 +308,12 @@ def create_sys_object(iscope, argv):
     sys_obj = __obj_create({})
     iscope.defvar(SYSTEM, sys_obj)
 
-    # create System.types object from sys_types
-    # NOTE!!! copies sys_types dict entries
-    #   so that each module has a private namespace!!!
-    #   **BUT** the referenced Class Objects are all shared(?)!!!
-    tt = __obj_create(classes.sys_types)
-
-    sys_obj.setprop(SYS_TYPES, tt) # XXX XXX top level __classes?
+    # TEMP: point to "classes" internal Module
+    sys_obj.setprop(SYS_TYPES, classes.get_classes_module()) # XXX TEMP
 
     classes.init_scope(iscope) # populate scope w/ true/false/...
 
-    # *** now safe to call "create_sys_type" and "wrap" ***
+    # *** now safe to call "new_by_name" and "wrap" ***
 
     sys_obj.setprop('uerror', sys_uerror) # fatal error w/ backtrace
 
@@ -326,8 +321,8 @@ def create_sys_object(iscope, argv):
     sys_obj.setprop('break', sys_break) # break to PDB
 
     # command line args, and exit:
-    sys_obj.setprop('argv',  classes.wrap(argv, iscope)) # move to ModInfo??
-    sys_obj.setprop('exit', sys_exit)                    # move to ModInfo??
+    sys_obj.setprop('argv',  classes.wrap(argv)) # move to ModInfo??
+    sys_obj.setprop('exit', sys_exit)            # move to ModInfo??
 
     # functions for parser & bootstrap:
     sys_obj.setprop('tokenizer', sys_tokenizer) # TEMP creates token generator
@@ -339,32 +334,3 @@ def create_sys_object(iscope, argv):
     sys_obj.setprop('pyimport', sys_pyimport) # import Python module
 
     return sys_obj
-
-################################################################
-
-def find_sys_type(name, scope):
-    """
-    Lookup System.types.`name` in `scope`
-    """
-    sys = scope.lookup(SYSTEM)
-    if sys:
-        types = sys.getprop(SYS_TYPES)
-        if types and types is not classes.null_value:
-            ty = types.getprop(name)
-            if ty and ty is not classes.null_value:
-                return ty
-    # internal error:
-    raise classes.UError("cannot find %s.%s.%s" % (SYSTEM, SYS_TYPES, name))
-
-def create_sys_type(name, scope, value):
-    """
-    Create an Object of Class `name`
-    `name` is Python string for a system type (System.types.name)
-    `scope` is used to find System object
-    `value` is Python value to wrap
-    """
-    #import sys
-    #print("create_sys_type", name, type(value), value, file=sys.stderr)
-    ty = find_sys_type(name, scope)
-    # does not call Class 'init' method -- would need an Object as argument!!
-    return classes._new_pobj(ty, value)

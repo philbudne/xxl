@@ -86,6 +86,8 @@ file can be .xxl (source) or .vmx (VM code)
 
 fname = argv.pop(0)
 
+classes.classes_init()
+
 mod, boot = classes.new_module(fname=fname, argv=argv, main=True,
                                parser_vmx=parser)
 

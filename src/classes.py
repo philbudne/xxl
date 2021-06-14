@@ -76,9 +76,7 @@ NUM = (int, float)              # Python3
 # used to set MODINFO_DEBUG_BOOTSTRAP
 XXL_DEBUG_BOOTSTRAP = os.getenv('XXL_DEBUG_BOOTSTRAP', None)
 
-# used to initialize new System.types objects in new top level (module) scopes.
-# for _current_ definitions, need to lookup in iscope (use find_sys_type)
-sys_types = {}
+classes_scope = scopes.Scope()  # scope for "classes" internal Module
 
 __initialized = False
 
@@ -409,31 +407,45 @@ def _mkobj(props):
 
 ################ use once System.types initialized
 
-def mkstr(s, scope):
+def class_by_name(name):
+    """
+    look for class `name` in classes Module scope
+    """
+    assert(__initialized)
+    return classes_scope.lookup(name)
+
+def new_by_name(name, value):
+    """
+    create a new CPObject of class `name` w/ value `value`
+    """
+    ty = class_by_name(name)
+    return _new_pobj(ty, value)
+
+def mkstr(s):
     """
     used to create Str from Python str, once up and running
     """
-    assert(__initialized)
-    return system.create_sys_type('Str', scope, s)
+    return new_by_name('Str', s)
 
-def mknumber(n, scope):
+def mknumber(n):
     """
     used to create Number from Python int/float, once up and running
     """
     assert(__initialized)
-    return system.create_sys_type('Number', scope, n)
+    return new_by_name('Number', n)
 
-def mkiterable(i, scope):
+def mkiterable(i):
     assert(__initialized)
-    return system.create_sys_type('PyIterable', scope, i)
+    return new_by_name('PyIterable', i)
 
 ################
 null_value = None               # forward
 
 def subclass_of(klass, bases):
     """
+    test if Class `klass` is a subclass of any Class in bases
     `klass` is CObject for a Class
-    `bases` is Python list of CObjects
+    `bases` is Python list of CObjects (of class or subclass Class)
     """
     visited = set()
     def check(c):
@@ -451,8 +463,9 @@ def subclass_of(klass, bases):
 
 def instance_of(obj, classes):
     """
+    test if `obj` is an instance of any Class in `classes` list
     `obj` is CObject
-    `classes` is Class or Python list of Classes
+    `classes` is list of Classes (CObjects of class or subclasses of Class)
     """
     return subclass_of(obj.getclass(), classes)
 
@@ -463,8 +476,6 @@ _saved_supers = {}
 _saved_names = {}
 Str = None
 List = None
-
-#classes = CObject(None)         # class set to Object, once it exists!
 
 def defclass(metaclass, name, supers=None, publish=True):
     """
@@ -488,8 +499,7 @@ def defclass(metaclass, name, supers=None, publish=True):
             _saved_supers[class_obj] = supers
 
     if publish:
-        sys_types[name] = class_obj
-        #classes.setprop(name, class_obj)
+        classes_scope.defvar(name, class_obj)
 
     return class_obj
 
@@ -500,7 +510,6 @@ Class.setclass(Class)             # circular! Class.new creates a new Class!
 
 # root Class; circular with "Class" metaclass, so defined second.
 Object = defclass(Class, 'Object', []) # root Class
-#classes.setclass(Object)
 
 # metaclass for PObjects (creates Python CPObject)
 PClass = defclass(Class, 'PClass', [Class])
@@ -579,8 +588,8 @@ def is_true(obj):
 
 ################ Object -- the base type for all instances and classes
 
-@pyvmfunc
-def obj_create(vm, this_class, *args):
+@pyfunc
+def obj_create(this_class, *args):
     """
     default "new" method for Object (and therefore Class)
     makes an instance of this_class
@@ -595,20 +604,20 @@ def obj_init(this_obj, *args):
                         (this_obj.classname(), const.INIT))
     return null_value
 
-@pyvmfunc
-def obj_str(vm, l):
-    return mkstr(str(l), vm.scope) # native method that calls this.repr()?
+@pyfunc
+def obj_str(l):
+    return mkstr(str(l)) # native method that calls this.repr()?
 
-@pyvmfunc
-def obj_repr(vm, l):
-    return mkstr(repr(l), vm.scope)
+@pyfunc
+def obj_repr(l):
+    return mkstr(repr(l))
 
-@pyvmfunc
-def obj_reprx(vm, l):
+@pyfunc
+def obj_reprx(l):
     """
     for debug: show Class, and Python value (which may include id?)
     """
-    return mkstr("<%s: %s>" % (l.classname(), repr(l)), vm.scope)
+    return mkstr("<%s: %s>" % (l.classname(), repr(l)))
 
 @pyfunc
 def obj_ident(x, y):            # SNOBOL4 IDENT
@@ -808,8 +817,8 @@ Object.setprop(const.LHSOPS, _mkdict({
 
 ################ Class -- base type for Classes (a MetaClass)
 
-@pyvmfunc
-def class_init(vm, this_class, props):
+@pyfunc
+def class_init(this_class, props):
     """
     init method for meta-class "Class" -- used to create new Classes
     `props` is Dict holding properties (see const.CLASS_PROPS)
@@ -836,7 +845,7 @@ def class_init(vm, this_class, props):
 
     if const.SUPERS not in this_class.props:
         # XXX complain??
-        this_class.setprop(const.SUPERS, wrap([Object], vm.scope))
+        this_class.setprop(const.SUPERS, wrap([Object]))
     return null_value
 
 @pyfunc
@@ -874,8 +883,8 @@ Class.setprop(const.BINOPS, _mkdict({
 
 ################ PClass -- metaclass for PObjects
 
-@pyvmfunc
-def pclass_create(vm, this_class):
+@pyfunc
+def pclass_create(this_class):
     """
     'create' method for PClass metaclass
     makes an instance of this_class backed by a CPObject
@@ -893,28 +902,27 @@ PClass.setprop(const.METHODS, _mkdict({
 def pobj_len(l):
     return _new_pobj(Number, len(l.value)) # XXX look up by name?
 
-@pyvmfunc
-def pobj_str(vm, l):
+@pyfunc
+def pobj_str(l):
     """
     use Python str function on value
     """
-    return mkstr(str(l.value), vm.scope)
+    return mkstr(str(l.value))
 
-@pyvmfunc
-def pobj_repr(vm, l):
+@pyfunc
+def pobj_repr(l):
     """
     use Python repr function on value
     """
-    return mkstr(repr(l.value), vm.scope)
+    return mkstr(repr(l.value))
 
-@pyvmfunc
-def pobj_reprx(vm, l):
+@pyfunc
+def pobj_reprx(l):
     """
     for debug: show Class, and Python value
     XXX show id()? of value???
     """
-    return mkstr("<%s: %s>" % (l.classname(), repr(l.value)),
-                 vm.scope)
+    return mkstr("<%s: %s>" % (l.classname(), repr(l.value)))
 
 @pyfunc
 def pobj_init(l, value):
@@ -984,8 +992,8 @@ PyIterable.setprop(const.METHODS, _mkdict({
     'str': pobj_reprx 
 }))
 
-@pyvmfunc
-def pyiterable_range(vm, *args):
+@pyfunc
+def pyiterable_range(*args):
     if len(args) == 1:
         r = range(args[0].value) # XXX getint?
     elif len(args) == 2:
@@ -995,7 +1003,7 @@ def pyiterable_range(vm, *args):
     else:
         raise UError("range requires one to three arguments")
 
-    return mkiterable(r, vm.scope)
+    return mkiterable(r)
 
 PyIterable.setprop('range', pyiterable_range) # static method
 
@@ -1026,17 +1034,17 @@ def dict_init0(obj):
 def dict_pop(obj, arg):
     return obj.value.pop(arg.value) # XXX check arg has value!!!
 
-@pyvmfunc
-def dict_items(vm, this):
-    return mkiterable(this.value.items(), vm.scope)
+@pyfunc
+def dict_items(this):
+    return mkiterable(this.value.items())
 
-@pyvmfunc
-def dict_keys(vm, this):
-    return mkiterable(this.value.keys(), vm.scope)
+@pyfunc
+def dict_keys(this):
+    return mkiterable(this.value.keys())
 
-@pyvmfunc
-def dict_values(vm, this):
-    return mkiterable(this.value.values(), vm.scope)
+@pyfunc
+def dict_values(this):
+    return mkiterable(this.value.values())
 
 Dict.setprop(const.METHODS, _mkdict({
     'init0': dict_init0,
@@ -1242,14 +1250,14 @@ def str_slice(l, a, b=None):
         ret = l.value[av:]
     return _new_pobj(l.getclass(), ret)
 
-@pyvmfunc
-def str_split(vm, this, sep=None, limit=-1):
+@pyfunc
+def str_split(this, sep=None, limit=-1):
     if sep is not None:
         sep = sep.value         # XXX getstr
     if limit != -1:
         limit = limit.value     # XXX getint
     # will use current "Str" defn:
-    return wrap(this.value.split(sep, limit), vm.scope)
+    return wrap(this.value.split(sep, limit))
 
 @pyfunc
 def str_ends_with(this, arg):
@@ -1261,12 +1269,12 @@ def str_join(this, arg):
     return _new_pobj(this.getclass(),
                      this.value.join([x.value for x in arg.value]))
 
-@pyvmfunc
-def str_ord(vm, this):
+@pyfunc
+def str_ord(this):
     s = this.value              # XXX getstr
     if len(s) != 1:
         raise UError("Str.ord length != 1")
-    return mknumber(ord(s), vm.scope)
+    return mknumber(ord(s))
 
 @pyfunc
 def str_starts_with(this, arg):
@@ -1280,22 +1288,22 @@ def str_str(this):
 def str_strip(this):
     return _new_pobj(this.getclass(), this.value.strip()) # XXX getstr
 
-@pyvmfunc
-def str_to_float(vm, this):
-    return mknumber(float(this.value), vm.scope)
+@pyfunc
+def str_to_float(this):
+    return mknumber(float(this.value))
 
-@pyvmfunc
-def str_to_int(vm, this, base=None):
+@pyfunc
+def str_to_int(this, base=None):
     if base is None:
         base = 0                # accept 0xXXX
     else:
         base = base.value
-    return mknumber(int(this.value, base), vm.scope)
+    return mknumber(int(this.value, base))
 
 # static methods (plain function)
-@pyvmfunc
-def str_chr(vm, value):
-    return mkstr(chr(value.value), vm.scope) # XXX getint
+@pyfunc
+def str_chr(value):
+    return mkstr(chr(value.value)) # XXX getint
 
 Str.setprop(const.METHODS, _mkdict({
     'ends_with': str_ends_with,
@@ -1326,9 +1334,9 @@ Str.setprop('chr', str_chr)
 
 ################ Null
 
-@pyvmfunc
-def null_str(vm, this):
-    return mkstr("null", vm.scope)
+@pyfunc
+def null_str(this):
+    return mkstr("null")
 
 @pyfunc
 def null_call(this, *args):
@@ -1344,12 +1352,12 @@ Null.setprop(const.BINOPS, _mkdict({
 
 ################ Bool
 
-@pyvmfunc
-def bool_str(vm, this):
+@pyfunc
+def bool_str(this):
     if this.value:
-        return mkstr("true", vm.scope)
+        return mkstr("true")
     else:
-        return mkstr("false", vm.scope)
+        return mkstr("false")
 
 # XXX have own MetaClass "new" to return one of the doubleton values?
 # XXX subclass into True and False singleton classes????
@@ -1361,7 +1369,6 @@ def mkbool(val):
     """
     convert Python truthiness
     to language true or false Object
-    XXX use find_sys_type(NAME)?
     """
     if val:
         return true_val
@@ -1389,8 +1396,8 @@ def unwrap(x):
     # XXX complain??!!!
     return x
 
-@pyvmfunc
-def pyobj_getprop(vm, l, r):
+@pyfunc
+def pyobj_getprop(l, r):
     """
     PyObject "." binop -- proxies to Python object getattr
     """
@@ -1404,21 +1411,21 @@ def pyobj_getprop(vm, l, r):
     else:
         # allow 'str' method so Object can be printed!!
         v = find_in_class(l, rv) # may return BoundMethod
-    return wrap(v, vm.scope)
+    return wrap(v)
 
-@pyvmfunc
-def pyobj_getitem(vm, l, r):
+@pyfunc
+def pyobj_getitem(l, r):
     """
     PyObject "[" binop
     """
     v = l.value[r.value]        # XXX unwrap(r)??
-    return wrap(v, vm.scope)
+    return wrap(v)
 
-@pyvmfunc
-def pyobj_call(vm, this, *args):
+@pyfunc
+def pyobj_call(this, *args):
     a2 = [unwrap(x) for x in args]
     ret = this.value(*a2)
-    return wrap(ret, vm.scope) # may create another PyObject!
+    return wrap(ret) # may create another PyObject!
 
 PyObject.setprop(const.METHODS, _mkdict({
     const.INIT: pobj_init
@@ -1452,12 +1459,12 @@ def pyiterator_iter(this):
 @pyvmfunc
 def pyiterator_next(vm, this, finished):
     """
-    `finished` should be a Continuation
+    `finished` should be a CContinuation
     (eg; block leave label or "return")
     to call when iterator exhausted
     """
     try:
-        return wrap(next(this.value), vm.scope)
+        return wrap(next(this.value))
     except StopIteration:
         # here to avoid check on each iteration:
         if not isinstance(finished, CContinuation):
@@ -1477,18 +1484,21 @@ PyIterator.setprop(const.METHODS, _mkdict({
 #       properties are the namespace of the target Module
 
 # XXX need ModuleClass metaclass (unless/until Scope objects visible!!)
+#       in order to allow .new
 Module = defclass(Class, 'Module', [Object])
-Module.setprop('modules', _mkdict({}))
+Module.setprop('modules', _mkdict({})) # Class variable
 
 class CModule(CObject):
     __slots__ = ['scope', 'modinfo']
     def __init__(self, scope):
         super().__init__(Module)
         self.scope = scope      # HIDDEN!
-        self.modinfo = None     # convenience; __modinfo should suffice
+        self.modinfo = None     # convenience; '__modinfo' should suffice
+        self.props = scope.get_vars() # XXX THWACK (stealing Scope dict)!!
 
-# ModInfo is the __modinfo Object inside each Module
-#       (for use inside the module)
+# ModInfo is the Class of the '__modinfo' variable inside each Module
+#       (meta-info about the module-- Module properties are the
+#        the contents of the Module namespace/Scope)
 ModInfo = defclass(Class, 'ModInfo', [Object])
 
 # called from new_module -- should be modinfo_init (ModInfo.init method)?
@@ -1507,14 +1517,15 @@ def new_modinfo(main, module, fname, parser_vmx=None):
 
     scope = module.scope
 
-    mi.setprop(const.MODINFO_FILE, mkstr(fname, scope))
+    if fname is not None:
+        mi.setprop(const.MODINFO_FILE, mkstr(fname))
 
     if not parser_vmx:
         # XXX _COULD_ choose parser based on source file name!!!
         #  (could have a file with SUFFIX => VMXFILE mappings)
         parser_vmx = os.environ.get('XXL_PARSER', 'parser.vmx')
 
-    mi.setprop(const.MODINFO_PARSER_VMX, mkstr(parser_vmx, scope))
+    mi.setprop(const.MODINFO_PARSER_VMX, mkstr(parser_vmx))
 
     return mi
 
@@ -1526,25 +1537,35 @@ def new_modinfo(main, module, fname, parser_vmx=None):
 # XXX take optional bootstrap_vmx arg??
 def new_module(fname, main=False, argv=[], parser_vmx=None):
     """
+    `fname` is Python str (or None for internal Module)
+    `main` is Python True for main program (from command line)
+    `argv` is Python list of str (if main is True)
+    `parser_vmx` is Python str for parser VMX file to use
     returns (CModule, CClosure) if newly loaded module
         the Closure is the (bootstrap) code to populate the Module
-    returns (CModule, None) if previously loaded
+    returns (CModule, None) if previously loaded (or internal Module)
     """
 
-    md = Module.getprop('modules') # Module Dict/directory
-    if fname in md.value:          # previously loaded?
+    md = Module.getprop('modules') # Module Dict/directory (Class variable)
+
+    # XXX Dict indexed by Python str
+    if fname and fname in md.value: # previously loaded?
         return md.value[fname], None # yes; return it, no bootstrap needed
 
     scope = scopes.Scope(None)  # create root scope for module
-    sys = system.create_sys_object(scope, argv) # new System object
-
     mod = CModule(scope)
-    mod.props = scope.get_vars() # XXX THWACK (stealing Scope dict)!!
-    md.value[fname] = mod        # save as previously loaded
+    if fname:
+        system.create_sys_object(scope, argv) # new System object XXX TEMP
+
+        # XXX Dict indexed by Python str
+        md.value[fname] = mod   # save as previously loaded
 
     mi = new_modinfo(main=main, module=mod, fname=fname, parser_vmx=parser_vmx)
     mod.modinfo = mi
     scope.defvar(const.MODINFO, mi) # make ModInfo visible in module namespace
+
+    if fname is None:           # internal module?
+        return mod, None
 
     # XXX take as optional argument??
     bootstrap_vmx = os.environ.get('XXL_BOOTSTRAP', 'bootstrap.vmx')
@@ -1589,10 +1610,9 @@ ModInfo.setprop(const.METHODS, _mkdict({
 
 ################################################################
 
-def wrap(value, iscope):
+def wrap(value):
     """
     wrap a Python `value` in a language CObject
-    `scope` used to find System types by name
 
     used by vm `lit`, `push_list` opcodes; type `PyObject`; `PyIterator.next`
     """
@@ -1602,21 +1622,20 @@ def wrap(value, iscope):
         return value
 
     if isinstance(value, bool):
-        return mkbool(value) # XXX lookup local true/false???
+        return mkbool(value)
 
     if isinstance(value, NUM):
-        return system.create_sys_type('Number', iscope, value)
+        return new_by_name('Number', value)
 
     if isinstance(value, str):
-        return mkstr(value, iscope)
+        return mkstr(value)
 
     # XXX handle bytes??
 
     # tuple added for dict_items iterator
     # but exclude tuple-like things (os.stat results, namedtuples)
     if isinstance(value, list) or type(value) is tuple:
-        return system.create_sys_type('List', iscope,
-                                      [wrap(x, iscope) for x in value])
+        return new_by_name('List', [wrap(x) for x in value])
 
     if value is None:
         return null_value
@@ -1626,22 +1645,54 @@ def wrap(value, iscope):
     #if hasattr(value, '__next__'): return pyiterator(value)???
     # Add next/iter/reversed methods to PyObject??????
 
-    return system.create_sys_type(const.PYOBJECT, iscope, value)
+    return new_by_name(const.PYOBJECT, value)
 
 ################################################################
 
-# NOT types!
-sys_types['true'] =  true_val
-sys_types['false'] = false_val
-sys_types['null'] = null_value
+def add_to_classes(name, value):
+    classes_scope.defvar(name, value)
 
-def init_scope(iscope):
+# NOT classes!
+add_to_classes('true', true_val)
+add_to_classes('false', false_val)
+add_to_classes('null', null_value)
+
+def defmodule(name, mod):
     """
-    copy a limited set of types/values to initial Scope `iscope`
-    NOTE: they all end up writable!!!
+    declare an internal Module by name
+    `name` is Python str
+    `mod` is CModule
+    """
+    assert(isinstance(mod, CModule))
+    md = Module.getprop('modules') # module Dict
+    md.value[name] = mod
+
+classes_module = None           # XXX TEMP?
+
+def classes_init():
+    """
+    call once on startup
     """
     global __initialized
     __initialized = True        # don't allow _mkXXX any more
 
+    # UTTERLY VILE: either hide in a "make_internal_module"
+    #   or do it more cleanly!!!!
+    #   declare classes_module up top???????????
+    global classes_module       # XXX TEMP?
+    classes_module, _ = new_module(None)
+    classes_module.scope = classes_scope # XXX YUK
+    classes_module.props = classes_scope.vars # XXX XXX DOUBLY SO
+    defmodule('classes', classes_module)
+
+def get_classes_module():       # XXX TEMP
+    return classes_module
+
+def init_scope(iscope):
+    """
+    copy a limited set of types/values to each Module initial Scope `iscope`
+    NOTE: they all end up writable!!!
+    (if compiler gets "const" stmt, pre-declare them as "const"?)
+    """
     for x in ['true', 'false', 'null', 'Class']:
-        iscope.defvar(x, sys_types[x])
+        iscope.defvar(x, classes_scope.lookup(x))

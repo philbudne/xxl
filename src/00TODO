@@ -56,7 +56,7 @@ type wrapping:
 
 true/null/false are writable!!!??? (bug or feature?)
 	add "const" statement (subclass "Var")??
-		add '.const' flag to Scope table entry,
+		add '.const' flag to Scope table entry? Subclass Name??
 			copy in _gtok (after c.new??)
 			check like .lvalue?
 
