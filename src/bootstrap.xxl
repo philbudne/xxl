@@ -13,8 +13,8 @@ __modinfo.booting = true;
 
 System.import = function (name) {
     var rets = System._import(name);
-    var mod  = rets[0];
-    var boot = rets[1];
+    var mod  = rets[0];	// Module
+    var boot = rets[1];	// Closure for bootstrap.vmx (first time only)
 
     if (boot) {
 	boot();
