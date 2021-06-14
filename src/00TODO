@@ -1,5 +1,7 @@
 FIX
 ===
+Add test for __extend_parser
+
 Change 'str' method to 'to_str'??
 
 Make PLOR < PLAND??
@@ -7,14 +9,19 @@ Make PLOR < PLAND??
 parser:
     "end" flag on Symbols? add "accept" method??
 
-bootstrap:
-    boot1 (level 1 / once-only)
+import:
+	Make Module.new() do importing?
+	Module.create replaces System._import?
+	Native Module.init() would call Module.create
+	    could call __modinfo.load_vmx(bootstrap)
+		*BUT* would need to do it "manually" for "main"
+	    optional args (dict?)
+		optional parser_vmx file (set __modinfo.parser)
+		    default parser in __xxl.parser?
+		optional bootstrap_vmx file
+		option to ignore __extend_parser
 	_COULD_ define native code __modinfo.load_vmx (using .assemble)
-	define native code Module.init method:
-		optional second arg for parser (set __modinfo.parser)
-		optional third arg for bootstrap
-		default parser in __xxl.parser?
-		this.load_vmx(bootstrap) & invoke??
+	    BUT still need to load bootstrap!!!
 
 init methods for String, Bool, Null
 	BoolClass, NullClass?
@@ -145,3 +152,4 @@ pyimport => PyObject.new??
 Undefined Class / undef value
     ?? (nullish or-if) operator
     ?. (optional chaining)
+
