@@ -13,11 +13,19 @@ __modinfo.booting = true;
 
 System.import = function (name) {
     var rets = System._import(name);
+    var mod  = rets[0];
     var boot = rets[1];
+
     if (boot) {
 	boot();
     }
-    return(rets[0]);	// module
+
+    // check for parser extensions at "well known" name:
+    var xp = mod.__extend_parser;
+    if (xp) {			// XXX ignore if asked?
+	xp(__modinfo.parser);
+    }
+    return(mod);
 };
 
 if (__modinfo.main) {		// once only

@@ -15,10 +15,6 @@ bootstrap:
 		optional third arg for bootstrap
 		default parser in __xxl.parser?
 		this.load_vmx(bootstrap) & invoke??
-	native "import" function in bootstrap (uses Module.new);
-		invoke newmodule.extend(__modinfo.parser) !!!???
-	invoke __modinfo.module.init?!!!
-		(bootstrap Closure??)
 
 init methods for String, Bool, Null
 	BoolClass, NullClass?
@@ -46,9 +42,6 @@ bootstrap.md -- describe adding operator;
 
 * regression test depends on ordered dicts (Python 3.6)
 	remove first line (and add back compile time?!)
-
-run "__extensions__" (pass importer's initial scope? iscope.System??)
-	(unless requested not to!)
 
 type wrapping:
 	classes.py pyfuncs do not invoke Class init methods!
