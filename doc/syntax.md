@@ -43,16 +43,18 @@ EXPR:   NAME |
         STRING |
         «[» [ EXPR [«,» EXPR]… ] «]» |
         «{» [ KEY: EXPR [«,» KEY:EXPR ]… ] «}» |
-        EXPR «.» NAME |                 (precedence 80)
-        EXPR «..» NAME |                (precedence 80)
-        «(» EXPR «)» |                  (precedence 80)
-        EXPR «[» EXPR «]» |             (precedence 80)
-        UNOP EXPR |                     (precedence 70)
-        «function» [ NAME ] «(» [ FORMALS ] «)» «{» STMTS … «}» | (precedence 70)
-        EXPR MULDIV EXPR |              (precedence 60)
-        EXPR PLUSMINUS EXPR |              (precedence 50, left associative)
+        EXPR «.» NAME |                 (precedence 100)
+        EXPR «..» NAME |                (precedence 100)
+        «(» EXPR «)» |                  (precedence 100)
+        EXPR «[» EXPR «]» |             (precedence 100)
+        UNOP EXPR |                     (precedence 90)
+        «function» [ NAME ] «(» [ FORMALS ] «)» «{» STMTS … «}» | (precedence 90)
+        EXPR MULDIV EXPR |              (precedence 80)
+        EXPR PLUSMINUS EXPR |           (precedence 70, left associative)
+        EXPR «&» EXPR                   (precedence 60)
+        EXPR «|» EXPR                   (precedence 50)
         EXPR RELOP EXPR |               (precedence 40)
-        EXPR BOOLOP EXPR |              (precedence 30)
+        EXPR LBOOLOP EXPR |             (precedence 30)
         EXPR «?» EXPR «:» EXPR |        (precedence 20)
         LHS ASSIGNOP EXPR |             (precedence 10)
         EXPR «(» [ EXPR [«,» EXPR]… «)» | (precedence 0)
@@ -66,7 +68,7 @@ FORMALS:
 
 ASSIGNOP: «=» | «+=» | «-=»
 
-BOOLOP: «&&» | «||»
+LBOOLOP: «&&» | «||»
 
 RELOP:  «===» | «!==» | «==» | «!=» | «<» | «<=» | «>» | «>=»
 
