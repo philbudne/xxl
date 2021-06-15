@@ -25,7 +25,9 @@
 import os                       # os.environ
 import sys                      # sys.exit
 import json
+import importlib                # for pyimport
 
+# XXL:
 import classes
 import scopes
 import const
@@ -74,8 +76,8 @@ def sys_uerror(msg):
 # XXX replace with native code
 # (need file I/O; use pyimport??)
 
-@classes.pyvmfunc
-def sys_tokenizer(vm, filename, prefix, suffix):
+@classes.pyfunc
+def sys_tokenizer(filename, prefix, suffix):
     """
     returns a token generator:
     returns Objects, and then null
@@ -125,8 +127,8 @@ def sys_exit(value=0):
 
 ################
 
-@classes.pyvmfunc
-def sys_tree(vm, t):
+@classes.pyfunc
+def sys_tree(t):
     """
     format JSON (returns Str) from AST of Symbols
     """
@@ -183,8 +185,8 @@ def trim_where(code, fname):
                 helper(instr[2])
     helper(code)
 
-@classes.pyvmfunc
-def sys_vtree(vm, t, fname=classes.null_value):
+@classes.pyfunc
+def sys_vtree(t, fname=classes.null_value):
     """
     pretty print a VM code tree (List of List) `t`; returns Str
     """
@@ -237,9 +239,8 @@ def obj2python_json(x):
 
 ################ "pyimport" returns a PyObject wrapper around a Python module
 
-@classes.pyvmfunc
-def sys_pyimport(vm, module):
-    import importlib
+@classes.pyfunc
+def sys_pyimport(module):
     m = importlib.import_module(module.value) # XXX getstr?
     return classes.wrap(m)         # make PyObject
 

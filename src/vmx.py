@@ -323,6 +323,9 @@ class VMInstr0:
         vm.op_count[self.name] += 1
         vm.op_time[self.name] += elapsed
 
+    def args(self):
+        return [""]
+
 class VMInstr1(VMInstr0):
     """
     base for VM Instructions with one argument
@@ -683,6 +686,12 @@ class ArgsInstr(VMInstr1):
                 val = classes.null_value # no: use null
             vm.scope.defvar(formal, val) # declare as variable
 
+    def args(self):
+        """
+        return string for arguments, for docs
+        """
+        return self.value
+
 @reginstr
 class Args2Instr(VMInstr2):
     """
@@ -711,6 +720,12 @@ class Args2Instr(VMInstr2):
         # create List from remaining args
         l = classes.new_by_name('List', vm.args) # XXX want frozen?
         vm.scope.defvar(self.v2, l)  # declare as variable
+
+    def args(self):
+        """
+        return string for arguments, for docs
+        """
+        return self.v1 + ["..." + self.v2]
 
 @reginstr
 class LScopeInstr(VMInstr1):

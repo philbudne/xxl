@@ -181,7 +181,11 @@ class CPObject(CObject):
 
 ################
 
-class CContinuation(CObject):
+class CCallable(CObject):
+    def args(self):
+        return "<FIXME>"         # XXX
+
+class CContinuation(CCallable):
     """
     A Callable instance backed by a native (VM) Continuation
     NOTE: opaque (no Class methods to expose innards) for now
@@ -204,7 +208,10 @@ class CContinuation(CObject):
         else:
             raise UError("Too many Continuation args %s" % len(vm.args))
 
-class CClosure(CObject):
+    def args(self):
+        return ["value"]
+
+class CClosure(CCallable):
     """
     A Callable instance backed by a Closure (VM code + scope)
     NOTE: opaque (no Class methods to expose innards) for now
@@ -229,6 +236,9 @@ class CClosure(CObject):
         vm.scope = self.scope
         # NOTE! vm.args picked up by "args" opcode!
 
+    def args(self):
+        return self.code[0].args() # ask first VM Instr about args!!
+
 class CBClosure(CClosure):
     """
     create closure for a {} block
@@ -248,7 +258,10 @@ class CBClosure(CClosure):
         vm.cb = self.code
         vm.scope = self.scope
 
-class CBoundMethod(CObject):
+    def args(self):
+        return ""
+
+class CBoundMethod(CCallable):
     """
     A method bound to an object
     created when Object.methodname dereferenced
@@ -270,11 +283,14 @@ class CBoundMethod(CObject):
         vm.args.insert(0, self.obj) # prepend saved "this" to arguments
         self.method.invoke(vm)      # return value in AC
 
+    def args(self):
+        return self.method.args()[1:] # omit "this" arg
+
 # Calling Python functions (ie; primative class methods) was orignally
 # implemented as a Closure with two VM instructions (pycall, return).
 # The CObject.invoke method avoids that.
 
-class CPyFunc(CObject):
+class CPyFunc(CCallable):
     """
     A Callable instance backed by a Python function
     """
@@ -302,6 +318,14 @@ class CPyFunc(CObject):
         """
         # Python programming error, want Python backtrace:
         raise Exception("Attempt to call %s" % self)
+
+    def args(self):
+        import inspect
+        fas = inspect.getfullargspec(self.func)
+        args = list(fas.args)
+        if fas.varargs:
+            args.append('...' + fas.varargs)
+        return args
 
 def pyfunc(func):
     """
@@ -334,6 +358,9 @@ class CPyVMFunc(CPyFunc):
     def invoke(self, vm):
         vm.args.insert(0, vm)   # prepend vm to arguments
         super().invoke(vm)
+
+    def args(self):
+        return super().args()[1:] # trim "vm" arg
 
 def pyvmfunc(func):
     """
@@ -558,13 +585,16 @@ for klass, doc in _saved_docs.items():
 
 # internal object w/ direct invoke methods
 #       (avoids binop lookup and List construction on each call)
+
+Callable = defclass(Class, 'Callable', [Object])
+
 # all backed by Python CXyZzy classes with invoke methods:
 # XXX use metaclass (CClass?) that prohibits user call of 'new' method?
-BoundMethod = defclass(Class, 'BoundMethod', [Object])
-Closure = defclass(Class, 'Closure', [Object])
-Continuation = defclass(Class, 'Continuation', [Object])
-PyFunc = defclass(Class, 'PyFunc', [Object])
-PyVMFunc = defclass(Class, 'PyVMFunc', [Object])
+BoundMethod = defclass(Class, 'BoundMethod', [Callable])
+Closure = defclass(Class, 'Closure', [Callable])
+Continuation = defclass(Class, 'Continuation', [Callable])
+PyFunc = defclass(Class, 'PyFunc', [Callable])
+PyVMFunc = defclass(Class, 'PyVMFunc', [Callable])
 
 # wrapper around a Python iterator (w/ next method)
 PyIterator = defclass(Class, 'PyIterator', [Object])
@@ -632,12 +662,18 @@ def obj_reprx(l):
     return mkstr("<%s: %s>" % (l.classname(), repr(l)))
 
 @pyfunc
-def obj_ident(x, y):            # SNOBOL4 IDENT
-    return mkbool(x is y)
+def obj_ident(l, r):            # SNOBOL4 IDENT
+    """
+    Test if `l` and `r` refer to the same Object
+    """
+    return mkbool(l is r)
 
 @pyfunc
-def obj_differ(x, y):           # SNOBOL4 DIFFER
-    return mkbool(x is not y)
+def obj_differ(l, r):           # SNOBOL4 DIFFER
+    """
+    Test if `l` and `r` refer to different Objects
+    """
+    return mkbool(l is not r)
 
 def _not(x):
     """
@@ -650,7 +686,8 @@ def _not(x):
 @pyfunc
 def obj_not(x):
     """
-    Object unary ! operator
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
     """
     return _not(x)
 
@@ -658,6 +695,7 @@ def obj_not(x):
 def obj_putprop(l, r, value):
     """
     Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
     """
     # XXX check r is Str!!!
     # implement access via descriptors??
@@ -729,6 +767,7 @@ def find_in_class(l, rv):
 def obj_getprop(l, r):
     """
     Object getprop method/operator
+    return `r` (String) property of object `l`
     """
     rv = r.value              # XXX must be Str
     if l.hasprop(rv):
@@ -772,34 +811,42 @@ def find_op(obj, optype, op):
         const.OPDICT2ENGLISH.get(optype,optype), op, obj.classname()))
 
 @pyfunc
-def obj_get_in_supers(l, r):
+def obj_get_in_supers(this, prop):
     """
     Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
     """
-    return find_in_supers(l, r.value) # XXX check for CPObject
+    return find_in_supers(this, prop.value) # XXX check for CPObject
 
 # once upon a time class was stored as '__class' property,
 # but it was messy when cloning.
 @pyfunc
 def obj_getclass(this):
+    """
+    return Class for `this`
+    """
     return this.getclass()
 
 @pyfunc
 def obj_setclass(this, klass):
+    """
+    set Class for `this`!!
+    """
     return this.setclass(klass)
 
 @pyfunc
 def obj_call(l, *args):
     """
-    default '(' binop
+    default Object '(' binop
+    (a fatal error)
     """
-    raise UError("%s not callable" % l.classname())
+    raise UError("%s does not have '(' binop" % l.classname())
 
 @pyfunc
 def obj_instance_of(l, c):
     """
-    `l` is Object
-    `c` is Class or List of Classes
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
     """
     if subclass_of(c.getclass(), [List]):
         c = c.value             # get Python list
@@ -809,7 +856,6 @@ def obj_instance_of(l, c):
 
 Object.setprop(const.METHODS, _mkdict({
     const.INIT: obj_init,
-    'class': obj_getclass,
     'getclass': obj_getclass,
     'setclass': obj_setclass,
     'instance_of': obj_instance_of,
@@ -872,16 +918,16 @@ def class_init(this_class, props):
 @pyfunc
 def class_call(this_class, *args):
     """
-    "(" binop for Class
+    "(" binop for Class -- a fatal error
+    (but common mistake if you have Python fingers)
     """
-    # PLB: I keep on doing this (Python fingers)
     raise UError("call %s.new!" % this_class.getprop(const.NAME).value)
 
 @pyfunc
 def class_subclass_of(l, c):
     """
-    `l` is Class
-    `c` is Class or List of Classes
+    return `true` if Class `l` is a subclass of
+    Class (or List of Classes) `c`
     """
     if subclass_of(c.getclass(), List):
         c = c.value             # get Python list
@@ -921,6 +967,9 @@ PClass.setprop(const.METHODS, _mkdict({
 
 @pyfunc
 def pobj_len(l):
+    """
+    returns length (of String, List or Dict)
+    """
     return _new_pobj(Number, len(l.value)) # XXX look up by name?
 
 @pyfunc
@@ -987,6 +1036,20 @@ PObject.setprop(const.METHODS, _mkdict({
 PObject.setprop(const.BINOPS, _mkdict({
     '===': pobj_ident,
     '!==': pobj_differ
+}))
+
+################ Callable base class
+
+@pyfunc
+def callable__args(this):
+    """
+    currently private/hidden (to create docs)
+    returns formatted string for args (as if a native function)
+    """
+    return mkstr("(%s)" % ", ".join(this.args()))
+
+Callable.setprop(const.METHODS, _mkdict({
+    '__args': callable__args
 }))
 
 ################ Iterable base class
@@ -1518,7 +1581,7 @@ def pyiterator_iter(this):
     return this
 
 @pyvmfunc
-def pyiterator_next(vm, this, finished):
+def pyiterator_next(vm, this, finished_continuation):
     """
     `finished` should be a CContinuation
     (eg; block leave label or "return")
@@ -1528,10 +1591,10 @@ def pyiterator_next(vm, this, finished):
         return wrap(next(this.value))
     except StopIteration:
         # here to avoid check on each iteration:
-        if not isinstance(finished, CContinuation):
+        if not isinstance(finished_continuation, CContinuation):
             raise UError("iterator .next takes Continuation")
-        vm.args = []            # default to null
-        finished.invoke(vm)     # alters VM state; return immediately!
+        vm.args = []            # will be defaulted to null
+        finished_continuation.invoke(vm) # alters VM state; RETURN IMMEDIATELY!
     return null_value
 
 PyIterator.setprop(const.METHODS, _mkdict({
