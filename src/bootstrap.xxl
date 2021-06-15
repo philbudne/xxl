@@ -53,12 +53,14 @@ if (__modinfo.main) {		// once only
     // Class
 
     // default 'new' method!!
-    classes.Class.__methods['new'] = function (this, ...args) {
+    classes.Class.__methods['new'] = function (this_class, ...args) {
 	"""
 	default metaclass (Class) new method
-	calls this.create, and then obj.init()
+	manually invoked as SomeClass.new
+	calls this_class.create to create obj
+	and then calls obj.init()
 	"""
-	var obj = this.create();
+	var obj = this_class.create();
 	obj.init(...args);
 	return(obj);
     };
