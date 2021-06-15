@@ -18,6 +18,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# currently just Class, Closure and Py[VM]Func
+DOC = '__doc'
+
 # Class properties
 NAME = 'name'                   # String
 METHODS = '__methods'           # Dict
@@ -31,6 +34,7 @@ CLASS_PROPS = {
     'name': NAME,
     'methods': METHODS,
     'binops': BINOPS,
+    'doc': DOC,
     'unops': UNOPS,
     'lhsops': LHSOPS,
     'supers': SUPERS
@@ -63,6 +67,3 @@ MODINFO_FILE = 'file'
 MODINFO_MAIN = 'main'
 MODINFO_MODULE = 'module'
 MODINFO_PARSER_VMX = 'parser_vmx' # bootstrap: load for Parser, VMCode
-
-# currently just Closure and Py[VM]Func
-DOC = '__doc'

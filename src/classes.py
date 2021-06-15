@@ -479,10 +479,11 @@ def instance_of(obj, classes):
 # backpatch Classes when Str/List available:
 _saved_supers = {}
 _saved_names = {}
+_saved_docs = {}
 Str = None
 List = None
 
-def defclass(metaclass, name, supers=None, publish=True):
+def defclass(metaclass, name, supers=None, publish=True, doc=None):
     """
     define a system Class
     `name` is Python string
@@ -494,8 +495,12 @@ def defclass(metaclass, name, supers=None, publish=True):
     class_obj = CObject(metaclass)
     if Str:                     # Str class available?
         class_obj.setprop(const.NAME, _mkstr(name))
+        if doc:
+            class_obj.setprop(const.DOC, _mkstr(doc))
     else:
         _saved_names[class_obj] = name
+        if doc:
+            _saved_doc[class_obj] = doc
 
     if supers:
         if List:                # List class available?
@@ -547,11 +552,13 @@ PyIterable = defclass(PClass, 'PyIterable', [Iterable])
 # set Class metaclass super list
 Class.setprop(const.SUPERS, _mklist([Object]))
 
-# do fixups for Strs and Lists in primative Classes
+# do fixups for Strs and Lists in primitive Classes
 for klass, name in _saved_names.items():
     klass.setprop(const.NAME, _mkstr(name))
 for klass, supers in _saved_supers.items():
     klass.setprop(const.SUPERS, _mklist(supers))
+for klass, doc in _saved_docs.items():
+    klass.setprop(const.DOC, _mkstr(doc))
 
 # internal object w/ direct invoke methods
 #       (avoids binop lookup and List construction on each call)
