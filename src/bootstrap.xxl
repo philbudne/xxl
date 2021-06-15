@@ -12,6 +12,10 @@ if (__modinfo.booting) {
 __modinfo.booting = true;
 
 System.import = function (name) {
+    """
+    import a source file, VM instruction (.vmx) file, or internal module.
+    returns Module.
+    """
     var rets = System._import(name);
     var mod  = rets[0];	// Module
     var boot = rets[1];	// Closure for bootstrap.vmx (first time only)
@@ -39,6 +43,9 @@ if (__modinfo.main) {		// once only
 
     // default this.to_str() to this.repr():
     classes.Object.__methods['to_str'] = function (this) {
+	"""
+	default to_str method: calls this.repr
+	"""
 	return(this.repr());
     };
 
@@ -47,6 +54,10 @@ if (__modinfo.main) {		// once only
 
     // default 'new' method!!
     classes.Class.__methods['new'] = function (this, ...args) {
+	"""
+	default metaclass (Class) new method
+	calls this.create, and then obj.init()
+	"""
 	var obj = this.create();
 	obj.init(...args);
 	return(obj);
@@ -58,6 +69,9 @@ if (__modinfo.main) {		// once only
     var Iterable = classes.Iterable;
 
     Iterable.__methods['for_each'] = function (this, func) {
+	"""
+	call `func` argument for each iterator item
+	"""
 	var iter = this.iter();
 	while (true) {
 	    func(iter.next(return));
@@ -65,6 +79,9 @@ if (__modinfo.main) {		// once only
     };
 
     Iterable.__methods['each_for'] = function (this, func) {
+	"""
+	call `func` argument for each reverse iterator item
+	"""
 	var iter = this.reversed();
 	while (true) {
 	    func(iter.next(return));
@@ -72,6 +89,9 @@ if (__modinfo.main) {		// once only
     };
 
     Iterable.__methods['map'] = function (this, func) {
+	"""
+	return List of results of `func` passed each iterator item
+	"""
 	var iter = this.iter();
 	var ret = [];
       break_while:
@@ -83,6 +103,10 @@ if (__modinfo.main) {		// once only
 
     // ignore entries where func returns `ignore` value
     Iterable.__methods['map2'] = function (this, func, ignore) {
+	"""
+	return List of results of `func` passed each iterator item,
+	ignore any returns with value `ignore` (defaults to `null`)
+	"""
 	var iter = this.iter();
 	var ret = [];
       break_while:
@@ -99,6 +123,10 @@ if (__modinfo.main) {		// once only
     // Dict
 
     classes.Dict.__methods['init'] = function (this, arg) {
+	"""
+	init method for Dict: takes Iterable returning two-item lists,
+	OR an Iterable returning keys, and implementing '['
+	"""
 	this.init0();
 	var i = (arg || []).iter; // fetch method, but do not call
 	if (!i) {
@@ -122,6 +150,9 @@ if (__modinfo.main) {		// once only
     };
 
     classes.Dict.__methods['repr'] = function (this) {
+	"""
+	return representation of Dict
+	"""
 	var items = [];
 	this.for_each(
 	    function (key) {
@@ -135,6 +166,9 @@ if (__modinfo.main) {		// once only
     // List
 
     classes.List.__methods['init'] = function (this, arg) {
+	"""
+	init method for List: takes Iterable
+	"""
 	this.init0();
 	var i = (arg || []).iter; // fetch method, but do not call
 	if (!i) {
@@ -148,6 +182,9 @@ if (__modinfo.main) {		// once only
 
     var repr = function (x) { return(x.repr()); };
     classes.List.__methods['repr'] = function (this) {
+	"""
+	return represtation of List
+	"""
 	return("[" + ", ".join(this.map(repr)) + "]");
     };
 } // main / once only
@@ -166,11 +203,17 @@ if (true) {			// all modules-- hide temp variables
     };
 
     var pr = function (...args) {
+	"""
+	print args (as strings) to stdout
+	"""
 	__print(py_sys.stdout, args);
     };
     System.print = pr;
 
     var er = function (...args) {
+	"""
+	print args (as strings) to stderr
+	"""
 	__print(py_sys.stderr, args);
 	py_sys.stderr.flush();
     };
