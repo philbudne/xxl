@@ -516,7 +516,7 @@ class CloseInstr(VMInstr1):
         self.doc = doc
 
     def step(self, vm):
-        vm.ac = classes.CClosure(self.value, vm.scope)
+        vm.ac = classes.CClosure(self.value, vm.scope, self.doc)
 
     def json(self):
         return [self.fn_where(), self.name, self.value, self.doc]
