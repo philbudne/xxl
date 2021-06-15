@@ -1,0 +1,175 @@
+// -*-js-*-
+
+var classes = System.import("classes");
+
+var collect_class_ops = function (class, prop) {
+    """
+    traverse Class hierarchy for `class`
+    collecting all methods/operators from property `prop`
+	(one of '_methods', '__unops', '__binops', '__lhsops')
+    """
+    var funcs = {};
+    var q = [class];
+    var visited = {};
+    var visit = function (c) {
+	// XXX guard against revisit!!
+	if (c !== classes.Object) { // XXX UGH! Stop The Looping!!!
+	    q.extend(c.__supers || []);
+	}
+	c.getprop(prop).items().for_each(
+	    function (item) {	// item is [key, value]
+		var name = item[0];
+		var func = item[1];
+		if (!name.starts_with("_")     // ignore private methods
+		    && func && !funcs[name]) { // don't overwrite!
+		    funcs[name] = func;
+		}
+	    }
+	);
+    };
+    while (q.len() > 0) {
+	visit(q.pop(0));
+    }
+    return(funcs);
+};
+
+var MarkUp = Class.new({
+    name: "MarkUp",
+    doc: "base class for marking up text",
+    methods: {
+	init: function (this) { this._value = []; },
+	render: function (this) { return("".join(this._value)); },
+	append: function (this, s) {
+	    this._value.append(s);
+	},
+	nappend: function (this, s) {
+	    """
+	    append newline, then string `s`
+	    """
+	    this._value.append("\n"); // XXX only if not in col zero?
+	    if (s) {
+		this._value.append(s);
+	    }
+	},
+	lwrap: function (this, prefix, list, suffix) {
+	    """
+	    wrap `list` of items between `prefix` and `suffix`
+	    AND RETURN
+	    """
+	    suffix = suffix || ""; // want "||=" or "??=" ??
+	    var l = " ".join(list); // XXX maybe list.map(str)??
+	    return("".join([prefix, l, suffix]));
+	},
+	alwrap: function (this, prefix, list, suffix) { // wrap list and APPEND
+	    this.append(this.lwrap(prefix, list, suffix));
+	}
+    } // methods
+});
+
+var MarkDown = Class.new({
+    name: "MarkDown",
+    doc: "MarkUp class for MarkDown (.md) format!",
+    supers: [MarkUp],
+    methods: {
+	// the following take multiple args, will space separate and APPEND.
+	h1: function (this, ...args) { this.alwrap("# ", args, "\n"); },
+	h2: function (this, ...args) { this.alwrap("## ", args, "\n"); },
+	h3: function (this, ...args) { this.alwrap("### ", args, "\n"); },
+	h4: function (this, ...args) { this.alwrap("#### ", args, "\n"); },
+	h5: function (this, ...args) { this.alwrap("##### ", args, "\n"); },
+
+	hr: function (this, ...args) { this.nappend("---\n"); },
+	// code_block?
+	// (un)ordered_list (take list)??
+
+	// NOTE!! the following RETURN strings:
+	bold: function (this, ...args) {
+	    return(this.lwrap("**", args, "**"));
+	},
+	italic: function (this, ...args) {
+	    return(this.lwrap("*", args, "*"));
+	},
+	code: function (this, ...args) {
+	    return(this.lwrap("`", args, "`"));
+	}
+    }
+});
+
+var prclass = function (mu, class) {
+    """
+    `mu` is a MarkUp instance
+    `class` is a Class (metaclass) to document
+    """
+    [
+     ['__methods', 'Methods'],
+     ['__unops', 'Unary operators'],
+     ['__binops', 'Binary operators'],
+     ['__lhsops', 'LHS Binary operators']
+    ].for_each(			// for_each property
+	 function (pitem) {	// pitem => ["property", "english"]
+	     mu.h3(pitem[1]);	// english name
+	     mu.nappend();	// blank line
+	     var d = collect_class_ops(class, pitem[0]); // returns Dict
+	     d.items().sorted().for_each(
+		 function (ditem) { // ditem => [method/op_name, function]
+		     var name = ditem[0]; // method name or operator string
+		     var func = ditem[1];
+		     // XXX make this "prfunc"??
+		     var args = func.__args() || "";
+		     // mname + args
+		     // Maybe "BLAH Method" (whaddabout args??)
+		     mu.h4(mu.code(ditem[0], args));
+		     var doc = func.__doc;
+		     if (doc) {
+			 mu.append(doc);
+		     }
+		     mu.nappend();
+		 }
+	     );
+	 } // function (pitem)
+    ); // for_each property
+};
+
+var describe_module = function (mu, module_name) {
+    mu.h1(mu.code(module_name), "Module");
+    mu.nappend();
+
+    // iterate over sorted names in Module
+    var mod = System.import(module_name);
+    var vars = [];
+    mod..props().sorted().for_each(
+	function (name) {
+	    if (name.starts_with("_")) {
+		return();
+	    }
+	    var x = classes..getprop(name);
+	    if (x.instance_of(classes.Class)) {
+		mu.h2("Class", name);
+		mu.nappend();
+		prclass(mu, x);
+	    }
+	    else {
+		// XXX split into vars and funcs???
+		// check .instance_of(clases.Callable)??
+		vars.append(name);
+	    }
+	}
+    );
+    mu.h2("Variables");
+    mu.nappend();
+    vars.for_each(
+	function (name) {
+	    mu.h3(name);	// XXX for function include func.__args()
+	    // XXX for function include func.__doc
+	    // else print initial value???
+	    mu.nappend();
+	}
+    );
+};
+
+var markup_class = MarkDown;	// XXX take option for format!!
+var mu = markup_class.new();
+var module_name = "classes";	// XXX take as command line argument
+
+describe_module(mu, module_name);
+System.print(mu.render());	// output results

@@ -57,6 +57,9 @@ $(IDENTICAL2): $(PARSER_VMX) $(C)
 	fi
 	@rm -f .tmp.c .tmp.p
 
+classes.md: classes.py bootstrap.vmx doc.xxl $(TESTED)
+	./$(XXL) doc.xxl > classes.md
+
 install: $(TESTED)
 	cp $(C) $(PARSER_VMX)	
 
