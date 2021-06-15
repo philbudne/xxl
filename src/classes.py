@@ -171,17 +171,13 @@ class CPObject(CObject):
     def __eq__(self, other):
         return (isinstance(other, CPObject) and self.value == other.value)
 
+    def __lt__(self, other):
+        return (isinstance(other, CPObject) and self.value < other.value)
+
     def __repr__(self):
         """show wrapped value"""
         return '<%s: %s at %#x>' % \
             (self.classname(), repr(self.value), id(self))
-
-#    def str(self):              # XXX EXP for PyObject
-#        return str(self)
-
-#    def repr(self):             # XXX EXP for PyObject
-#        return repr(self)
-
 
 ################
 
@@ -621,6 +617,10 @@ def obj_str(l):
     return mkstr(str(l)) # native method that calls this.repr()?
 
 @pyfunc
+def obj_props(l):
+    return mkiterable(iter(l.props))
+
+@pyfunc
 def obj_repr(l):
     return mkstr(repr(l))
 
@@ -807,6 +807,7 @@ Object.setprop(const.METHODS, _mkdict({
     'instance_of': obj_instance_of,
     'putprop': obj_putprop,
     'getprop': obj_getprop,
+    'props': obj_props,
     'repr': obj_repr,
     'reprx': obj_reprx,
     # 'to_str' in bootstrap.xxl -- invokes repr.
@@ -984,17 +985,31 @@ PObject.setprop(const.BINOPS, _mkdict({
 
 @pyfunc
 def iterable_iter(this):
+    """
+    return forward iterator
+    """
     return pyiterator(iter(this.value))
 
 @pyfunc
 def iterable_reversed(this):
+    """
+    return reverse iterator
+    """
     # XXX handle TypeError for "not reversible"
     return pyiterator(reversed(this.value))
+
+@pyfunc
+def iterable_sorted(this):
+    """
+    return sorted list values (or keys)
+    """
+    return wrap(sorted(this.value))
 
 # for_each, each_for, map, map2 in bootstrap.xxl
 Iterable.setprop(const.METHODS, _mkdict({
     'iter': iterable_iter,
     'reversed': iterable_reversed,
+    'sorted': iterable_sorted
 }))
 
 ################ PyIterable
@@ -1006,6 +1021,14 @@ PyIterable.setprop(const.METHODS, _mkdict({
 
 @pyfunc
 def pyiterable_range(*args):
+    """
+    return an Iterable for an integer range
+    (an Iterable can be iterated over any number of times)
+
+    range(10): returns Iterable for 0..9
+    range(1,10): returns Iterable for 1..9
+    range(1,10,2): returns Iterable for odd numbers 1..9
+    """
     if len(args) == 1:
         r = range(args[0].value) # XXX getint?
     elif len(args) == 2:
@@ -1023,12 +1046,18 @@ PyIterable.setprop('range', pyiterable_range) # static method
 
 @pyfunc
 def dict_put(l, r, value):
+    """
+    put a Dict entry
+    """
     entry = r.value             # XXX
     l.value[entry] = value
     return value                # lhsop MUST return value
 
 @pyfunc
 def dict_get(l, r):
+    """
+    get a Dict entry
+    """
     entry = r.value             # XXX
     ret = l.value.get(entry, null_value)
     return ret
@@ -1044,18 +1073,30 @@ def dict_init0(obj):
 
 @pyfunc
 def dict_pop(obj, arg):
+    """
+    remove Dict with specified key
+    """
     return obj.value.pop(arg.value) # XXX check arg has value!!!
 
 @pyfunc
 def dict_items(this):
+    """
+    return Iterable for [key, value]
+    """
     return mkiterable(this.value.items())
 
 @pyfunc
 def dict_keys(this):
+    """
+    return Iterable for keys
+    """
     return mkiterable(this.value.keys())
 
 @pyfunc
 def dict_values(this):
+    """
+    return Iterable for values
+    """
     return mkiterable(this.value.values())
 
 Dict.setprop(const.METHODS, _mkdict({
