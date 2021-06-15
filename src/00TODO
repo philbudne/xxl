@@ -1,9 +1,9 @@
 FIX
 ===
+doc string formatter
+
 Makefile:
 	ignore metadata line in bootstrap.vmx
-
-Add test for __extend_parser
 
 Make PLOR < PLAND??
 
@@ -70,6 +70,8 @@ TEST
 ====
 str & repr methods (& Str.join)
 	Callables
+__extend_parser
+Iterable.sorted()
 
 CLEANUP
 =======
@@ -92,16 +94,12 @@ reenable MethodInstr (binop_lit_call?); avoid BoundMethod!!
 
 FEATURES (or extensions)
 ========================
-All Classes: .getdoc() method
-	docstrings / formatter
-Iterable.sorted() method?? List???
 Set
 Object: dir() method?? Return Set??
-	props() method return Dict?
 load compressed vmx (JSON) files and/or use some faster serialization library!!
 make obj_get of unknown property an error
 	(depended on by .std lookup)
-	add "has_prop" method? .? operator?!!!
+	add "has_prop" method? ?. operator?!!!
 	Object.has_method method?
 add "undefined" value (initial/default value for vars/args)??
 
@@ -125,19 +123,13 @@ make function name () .... define name in local scope?????
 make a full expression language??
 	is "{" ambiguous?? forbid at "top level"??
 
-
-add docstrings?
-
 XXXop opcodes do not consume vm.args
 	("clargs" needed for spread args; clear needed in "call")
 
 create wrapper Class for CObjects with real invoke method,
 	with a "(" binop that calls invoke??
 
-bring back is_true?
-	native code???
-	use len() method, if avail
-	use to_int() method, if avail
+bring back is_true?????
 
 Helper to declare PyFunc wrappers for methods???
 	take string of argument types to expect/translate
@@ -154,3 +146,5 @@ Undefined Class / undef value
     ?? (nullish or-if) operator
     ?. (optional chaining)
 
+Parser doc formatter;
+    walk symbol_classes, display docstrings, precedence
