@@ -649,11 +649,16 @@ def _not(x):
 # XXX do this in pobj_not? all other objects always true????
 @pyfunc
 def obj_not(x):
-    """Object unary ! operator"""
+    """
+    Object unary ! operator
+    """
     return _not(x)
 
 @pyfunc
 def obj_putprop(l, r, value):
+    """
+    Object putprop method/operator
+    """
     # XXX check r is Str!!!
     # implement access via descriptors??
     l.setprop(r.value, value)
@@ -722,6 +727,9 @@ def find_in_class(l, rv):
 
 @pyfunc
 def obj_getprop(l, r):
+    """
+    Object getprop method/operator
+    """
     rv = r.value              # XXX must be Str
     if l.hasprop(rv):
         return l.getprop(rv)
