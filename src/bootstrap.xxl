@@ -174,10 +174,7 @@ if (__modinfo.main) {		// once only
 	if (!i) {
 	    System.uerror(this.name + ".init needs iterable");
 	}
-	var iter = i();
-	while (true) {
-	    this.append(iter.next(return));
-	}
+	this.extend(i());
     };
 
     var repr = function (x) { return(x.repr()); };
@@ -187,6 +184,15 @@ if (__modinfo.main) {		// once only
 	"""
 	return("[" + ", ".join(this.map(repr)) + "]");
     };
+
+    classes.List.__methods['extend'] = function (this, iterable) {
+	var iter = iterable.iter();
+	while (true) {
+	    this.append(iter.next(return));
+	}
+	// NOTE: modifies List: not chainable in Python
+    };
+
 } // main / once only
 
 if (true) {			// all modules-- hide temp variables
