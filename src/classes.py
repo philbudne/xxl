@@ -629,26 +629,36 @@ def is_true(obj):
 @pyfunc
 def obj_create(this_class, *args):
     """
-    default "new" method for Object (and therefore Class)
-    makes an instance of this_class
-    Creates a Python CObject, calls this_class's 'init' method with args
+    default create method for Object (and therefore Class)
+    makes an instance of this_class (called from default Object.new)
     """
     return CObject(this_class)
 
 @pyfunc
 def obj_init(this_obj, *args):
+    """
+    default init method for Object class
+    a fatal error if any arguments given
+    """
     if len(args) > 0:
         raise UError("%s.%s takes no arguments" %
                         (this_obj.classname(), const.INIT))
     return null_value
 
 @pyfunc
-def obj_str(l):
-    return mkstr(str(l)) # native method that calls this.repr()?
+def obj_str(this):
+    """
+    default to_str method: should return a human-friendly string
+    """
+    return mkstr(str(l))
 
 @pyfunc
-def obj_props(l):
-    return mkiterable(iter(l.props))
+def obj_props(this):
+    """
+    returns an Iterable for (String) property names
+    of `this` Object
+    """
+    return mkiterable(iter(this.props))
 
 @pyfunc
 def obj_repr(l):
@@ -838,7 +848,7 @@ def obj_setclass(this, klass):
 def obj_call(l, *args):
     """
     default Object '(' binop
-    (a fatal error)
+    (fatal error)
     """
     raise UError("%s does not have '(' binop" % l.classname())
 
@@ -918,8 +928,9 @@ def class_init(this_class, props):
 @pyfunc
 def class_call(this_class, *args):
     """
-    "(" binop for Class -- a fatal error
+    "(" binop for Class -- fatal error
     (but common mistake if you have Python fingers)
+    tells you to use .new method!!
     """
     raise UError("call %s.new!" % this_class.getprop(const.NAME).value)
 
@@ -966,62 +977,69 @@ PClass.setprop(const.METHODS, _mkdict({
 ################ generic methods for PObject
 
 @pyfunc
-def pobj_len(l):
+def pobj_len(this):
     """
     returns length (of String, List or Dict)
     """
-    return _new_pobj(Number, len(l.value)) # XXX look up by name?
+    return _new_pobj(Number, len(this.value)) # XXX look up by name?
 
 @pyfunc
-def pobj_str(l):
+def pobj_str(this):
     """
-    use Python str function on value
+    return human-friendly string representation of `this`
+    (uses Python str function on value)
     """
-    return mkstr(str(l.value))
+    return mkstr(str(this.value))
 
 @pyfunc
-def pobj_repr(l):
+def pobj_repr(this):
     """
-    use Python repr function on value
+    return less human-friendly string representation of `this`
+    (use Python repr function on value)
     """
-    return mkstr(repr(l.value))
+    return mkstr(repr(this.value))
 
 @pyfunc
-def pobj_reprx(l):
+def pobj_reprx(this):
     """
-    for debug: show Class, and Python value
-    XXX show id()? of value???
+    for debug: show Class name, and Python repr
     """
     return mkstr("<%s: %s>" % (l.classname(), repr(l.value)))
 
 @pyfunc
 def pobj_init(l, value):
+    """
+    default PObject init method
+    (fatal error)
+    """
     raise UError("{} missing init method".format(l.classname()))
 
 @pyfunc
 def pobj_init0(l, value):
+    """
+    default PObject init0 method
+    (fatal error)
+    """
     raise UError("{} missing init0 method".format(l.classname()))
-
-# XXX unused?
-@pyfunc
-def pobj_ge(l, r):
-    lv = l.value
-    rv = r.value
-    # XXX not right!!
-    if isinstance(lv, float) or isinstance(rv, float):
-        return mkbool(float(lv) >= float(rv))
-    if isinstance(lv, int) or isinstance(rv, int):
-        return mkbool(int(lv) >= int(rv))
-    return mkbool(str(lv) >= str(rv))
 
 @pyfunc
 def pobj_ident(l, r):
+    """
+    Check if value of PObject `l`
+    is the same Python Object
+    as value of PObject `r`
+    """
     lv = l.value
     rv = r.value
     return mkbool(lv is rv)
 
 @pyfunc
 def pobj_differ(l, r):
+    """
+    Check if value of PObject `l`
+    is not the same Python Object
+    as value of PObject `r`
+    """
     lv = l.value
     rv = r.value
     return mkbool(lv is not rv)
@@ -1460,10 +1478,17 @@ Str.setprop('chr', str_chr)
 
 @pyfunc
 def null_str(this):
+    """
+    to_string method for Null Class
+    """
     return mkstr("null")
 
 @pyfunc
 def null_call(this, *args):
+    """
+    "(" method for `null` value (fatal error)
+    commonly happens when a bad method name is used
+    """
     raise UError("'null' called; bad method name?")
 
 Null.setprop(const.METHODS, _mkdict({
