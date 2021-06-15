@@ -146,9 +146,15 @@ def format_instr(instr, indent=''):
 
     # here to handle "close" and "bccall" (instr[2] is a code list)
     nindent = indent + " "
-    return ('%s["%s", "%s",\n%s%s]' % \
-            (indent, instr[0], op,
-             nindent, format_code(instr[2], nindent)))
+    if op == "close" and len(instr) >= 4 and instr[3]: # now with doc string!!
+        return ('%s["%s", "%s",\n%s%s,\n%s%s]' %
+                (indent, instr[0], op,
+                 nindent, format_code(instr[2], nindent),
+                 nindent, json.dumps(instr[3])))
+    else:
+        return ('%s["%s", "%s",\n%s%s]' % \
+                (indent, instr[0], op,
+                 nindent, format_code(instr[2], nindent)))
 
 def format_code(code, indent=''):
     """

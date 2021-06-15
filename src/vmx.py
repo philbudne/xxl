@@ -297,11 +297,11 @@ def reginstr(inst_class):
     instr_class_by_name[name] = inst_class
     return inst_class           # not wrapped by decorator
 
-class VMInstr0(object):
+class VMInstr0:
     """
     base class for VM instructions with zero arguments
     """
-    __slots__ = ['name', 'where']
+    __slots__ = ['fn', 'where']
 
     def __init__(self, fn, where):
         self.fn = fn
@@ -509,12 +509,17 @@ class CloseInstr(VMInstr1):
     inst.value contains VM code (as Python list of VMInstrs)
     """
     name = "close"
+    __slots__ = ['doc']
 
-    def __init__(self, fn, where, value):
+    def __init__(self, fn, where, value, doc=None):
         super().__init__(fn, where, convert_instrs(value, fn))
+        self.doc = doc
 
     def step(self, vm):
         vm.ac = classes.CClosure(self.value, vm.scope)
+
+    def json(self):
+        return [self.fn_where(), self.name, self.value, self.doc]
 
 @reginstr
 class BCCallInstr(CloseInstr):

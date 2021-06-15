@@ -213,10 +213,12 @@ class CClosure(CObject):
     A Callable instance backed by a Closure (VM code + scope)
     NOTE: opaque (no Class methods to expose innards) for now
     """
-    def __init__(self, code, scope):
+    def __init__(self, code, scope, doc=None):
         super().__init__(Closure)
         self.code = code
         self.scope = scope
+        if doc:
+            self.setprop(const.DOC, mkstr(doc))
 
     def __repr__(self):
         i = self.code[0]
@@ -287,6 +289,8 @@ class CPyFunc(CObject):
             # Python programming error, want Python backtrace:
             raise Exception("double wrapping %s" % func.func)
         self.func = func
+        if func.__doc__:
+            self.setprop(const.DOC, _mkstr(func.__doc__))
 
     def __repr__(self):
         return "<PyFunc: %s>" % self.func.__name__
@@ -393,7 +397,8 @@ def _mkstr(s):
     ONLY USE TO CONSTRUCT BASE TYPES!
     see mkstr
     """
-    assert(not __initialized)
+    if __initialized:           # doc strings
+        return mkstr(s)
     return _new_pobj(Str, s)
 
 def _mkobj(props):

@@ -210,7 +210,7 @@ var VMCode = Class.new({
 	emit_close: function (this, code, sym) {
 	    // create closure
 	    // include function name (if any) in Closure object?!!
-	    this._emit([sym.where, "close", code]);
+	    this._emit([sym.where, "close", code, sym.doc]);
 	},
 	emit_bclose_call: function (this, vmcode, sym) {
 	    // create {} block closure and call
@@ -1131,6 +1131,10 @@ var Parser = Class.new({
 			this.first = a;
 			p.advance(")");
 			p.advance("{");
+			if (p.token.arity == "literal") {
+			    this.doc = p.token.value; // XXX check if Str??
+			    p.advance();
+			}
 			this.second = p.statements();
 			p.scope = p.scope.pop();
 			p.advance("}");
@@ -1155,7 +1159,6 @@ var Parser = Class.new({
 			}
 			fcode.gen_stmts(this.second);
 			// create closure (code pointer and current scope)
-			//  XXX include this.name, if any for debug?
 			vmcode.emit_close(fcode.finish(this), this);
 		    }
 		} // methods

@@ -63,3 +63,6 @@ MODINFO_FILE = 'file'
 MODINFO_MAIN = 'main'
 MODINFO_MODULE = 'module'
 MODINFO_PARSER_VMX = 'parser_vmx' # bootstrap: load for Parser, VMCode
+
+# currently just Closure and Py[VM]Func
+DOC = '__doc'
