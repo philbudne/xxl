@@ -220,8 +220,7 @@ class CClosure(CCallable):
         super().__init__(Closure)
         self.code = code
         self.scope = scope
-        if doc:
-            self.setprop(const.DOC, mkstr(doc))
+        self.setprop(const.DOC, mkstr(doc or ""))
 
     def __repr__(self):
         i = self.code[0]
@@ -301,8 +300,8 @@ class CPyFunc(CCallable):
             # Python programming error, want Python backtrace:
             raise Exception("double wrapping %s" % func.func)
         self.func = func
-        if func.__doc__:
-            self.setprop(const.DOC, _mkstr(func.__doc__))
+        # make sure PyFunc.__doc never shows through
+        self.setprop(const.DOC, _mkstr(func.__doc__ or ""))
 
     def __repr__(self):
         return "<PyFunc: %s>" % self.func.__name__
@@ -518,12 +517,10 @@ def defclass(metaclass, name, supers=None, publish=True, doc=None):
     class_obj = CObject(metaclass)
     if Str:                     # Str class available?
         class_obj.setprop(const.NAME, _mkstr(name))
-        if doc:
-            class_obj.setprop(const.DOC, _mkstr(doc))
+        class_obj.setprop(const.DOC, _mkstr(doc or ""))
     else:
         _saved_names[class_obj] = name
-        if doc:
-            _saved_doc[class_obj] = doc
+        _saved_docs[class_obj] = doc or ""
 
     if supers:
         if List:                # List class available?
@@ -537,38 +534,56 @@ def defclass(metaclass, name, supers=None, publish=True, doc=None):
     return class_obj
 
 # base metaclass
-Class = defclass(None, 'Class')
+Class = defclass(None, 'Class',
+                 doc="Base Metaclass, home of the default 'new' method")
+
 Class.setclass(Class)             # circular! Class.new creates a new Class!
 # supers set to [Object] below
 
 # root Class; circular with "Class" metaclass, so defined second.
-Object = defclass(Class, 'Object', []) # root Class
+Object = defclass(Class, 'Object', [],
+                  doc="Base Class") # root Class
 
 # metaclass for PObjects (creates Python CPObject)
-PClass = defclass(Class, 'PClass', [Class])
+PClass = defclass(Class, 'PClass', [Class],
+                  doc="Metaclass for Primitive/Python value Classes")
 
 # Primative Object Base Class
 # superclass (with .value) of Classes that are wrappers around Python classes
-PObject = defclass(PClass, 'PObject', [Object])
+PObject = defclass(PClass, 'PObject', [Object],
+                   doc="Base class for Primitive/Python value Classes")
 
 # wrappers, with .value
 
 # XXX own metaclass to return singleton?
-Null = defclass(PClass, 'Null', [PObject]) # XXX singleton
+Null = defclass(PClass, 'Null', [PObject],
+                doc="Built-on Class of `null` value") # XXX singleton
 # XXX own metaclass to return doubleton values? subclass into two singletons??
-Bool = defclass(PClass, 'Bool', [PObject])
+Bool = defclass(PClass, 'Bool', [PObject],
+                doc="Built-in Class for `true` and `false` values")
 
 # pure virtual base:
-Iterable = defclass(PClass, 'Iterable', [PObject])
+Iterable = defclass(PClass, 'Iterable', [PObject],
+                    doc="Virtual base Class classes that can be iterated over")
 
-List = defclass(PClass, 'List', [Iterable])
-Str = defclass(PClass, 'Str', [Iterable])
-Dict  = defclass(PClass, 'Dict', [Iterable])
+List = defclass(PClass, 'List', [Iterable],
+                doc="Built-in mutable sequence Class")
+Str = defclass(PClass, 'Str', [Iterable],
+               doc="Built-in immutable Unicode string Class")
+Dict  = defclass(PClass, 'Dict', [Iterable],
+                 doc="Built-in dictionary mapping Class")
 
 # non-iterable:
-Number = defclass(PClass, 'Number', [PObject])
+Number = defclass(PClass, 'Number', [PObject],
+                  doc="Built-in int/float wrapper Class")
 
-PyIterable = defclass(PClass, 'PyIterable', [Iterable])
+PyIterable = defclass(PClass, 'PyIterable', [Iterable],
+                      doc="""
+    Wrapper for Python 'iterable' Objects
+    (classes which can generate iterators)
+    returned by Dict.items(), Dict.keys(), Dict.values(),
+    Object.props(), PyIterable.range(),
+    """)
 
 ################
 # Str, List now exist:
@@ -586,18 +601,32 @@ for klass, doc in _saved_docs.items():
 # internal object w/ direct invoke methods
 #       (avoids binop lookup and List construction on each call)
 
-Callable = defclass(Class, 'Callable', [Object])
+Callable = defclass(Class, 'Callable', [Object],
+                    doc="""
+    Virtual base Class for built-in callable classes
+    (BoundMethod, Continuation, PyFunc, PyVMFunc)
+    """)
 
 # all backed by Python CXyZzy classes with invoke methods:
 # XXX use metaclass (CClass?) that prohibits user call of 'new' method?
-BoundMethod = defclass(Class, 'BoundMethod', [Callable])
-Closure = defclass(Class, 'Closure', [Callable])
-Continuation = defclass(Class, 'Continuation', [Callable])
-PyFunc = defclass(Class, 'PyFunc', [Callable])
-PyVMFunc = defclass(Class, 'PyVMFunc', [Callable])
+BoundMethod = defclass(Class, 'BoundMethod', [Callable],
+                       doc="Built-in Class for a method bound to an Object")
+Closure = defclass(Class, 'Closure', [Callable],
+                   doc="Built-in Class for a native function bound to a scope")
+Continuation = defclass(Class, 'Continuation', [Callable],
+                        doc="Built-in Class for a Continuation")
+PyFunc = defclass(Class, 'PyFunc', [Callable],
+                  doc="Built-in Class for function implemented in Python")
+PyVMFunc = defclass(Class, 'PyVMFunc', [Callable],
+                    doc="""
+   Built-in Class for function implemented in Python
+   with access to VM internals
+   """)
+
 
 # wrapper around a Python iterator (w/ next method)
-PyIterator = defclass(Class, 'PyIterator', [Object])
+PyIterator = defclass(Class, 'PyIterator', [Object],
+                      doc="Built-in Class for a wrapper around a Python iterator")
 
 ################
 
@@ -661,8 +690,12 @@ def obj_props(this):
     return mkiterable(iter(this.props))
 
 @pyfunc
-def obj_repr(l):
-    return mkstr(repr(l))
+def obj_repr(this):
+    """
+    Default Object string representation method
+    (calls Python repr(this))
+    """
+    return mkstr(repr(this))
 
 @pyfunc
 def obj_reprx(l):
@@ -1529,7 +1562,11 @@ def mkbool(val):
 # PyObjects are created by System.pyimport("python_module")
 # and are proxy wrappers around generic/naive Python objects
 
-PyObject = defclass(PClass, const.PYOBJECT, [Object])
+PyObject = defclass(PClass, const.PYOBJECT, [Object],
+                    doc="""
+    Built-in Class for a wrapper around an arbitrary Python Object
+    (returned by pyimport, or operations on PyObjects)
+    """)
 
 def unwrap(x):
     """
@@ -1634,7 +1671,8 @@ PyIterator.setprop(const.METHODS, _mkdict({
 
 # XXX need ModuleClass metaclass (unless/until Scope objects visible!!)
 #       in order to allow .new
-Module = defclass(Class, 'Module', [Object])
+Module = defclass(Class, 'Module', [Object],
+        doc="Built-in class for a Module (from import function)")
 Module.setprop('modules', _mkdict({})) # Class variable
 
 class CModule(CObject):
@@ -1648,7 +1686,8 @@ class CModule(CObject):
 # ModInfo is the Class of the '__modinfo' variable inside each Module
 #       (meta-info about the module-- Module properties are the
 #        the contents of the Module namespace/Scope)
-ModInfo = defclass(Class, 'ModInfo', [Object])
+ModInfo = defclass(Class, 'ModInfo', [Object],
+                   doc="Built-in Class for __modinfo Objects (inside Modules)")
 
 # called from new_module -- should be modinfo_init (ModInfo.init method)?
 def new_modinfo(main, module, fname, parser_vmx=None):
