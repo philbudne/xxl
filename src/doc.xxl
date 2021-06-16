@@ -33,6 +33,7 @@ var collect_class_ops = function (class, prop) {
     return(funcs);
 };
 
+// XXX start move to markup.xxl???
 var MarkUp = Class.new({
     name: "MarkUp",
     doc: "base class for marking up text",
@@ -94,6 +95,7 @@ var MarkDown = Class.new({
 	}
     }
 });
+// XXX end move to markup.xxl???
 
 var prclass = function (mu, class) {
     """
@@ -149,7 +151,7 @@ var describe_module = function (mu, module_name) {
 	    if (name.starts_with("_")) {
 		return();
 	    }
-	    var x = classes..getprop(name);
+	    var x = mod.getprop(name);
 	    if (x.instance_of(classes.Class)) {
 		mu.h2("Class", mu.code(name));
 		mu.nappend();
@@ -166,24 +168,34 @@ var describe_module = function (mu, module_name) {
     mu.nappend();
     vars.for_each(
 	function (name) {
-	    mu.h3(name);	// XXX for function include func.__args()
-	    // XXX for function include func.__doc
-	    // else print initial value???
+	    var x = mod.getprop(name);
+	    if (x.instance_of(classes.Callable)) {
+		mu.h3(mu.code(name, x.__args()));
+		mu.nappend(x.__doc);
+	    }
+	    else {
+		mu.h3(mu.code(name));
+		mu.nappend(mu.code(x.to_str()));
+		mu.nappend();
+	    }
 	    mu.nappend();
 	}
     );
 };
 
-var markup_class = MarkDown;	// XXX take option for format!!
-var module_name = "classes";	// XXX take as command line argument
+if (__modinfo.main) {
+    var module_name = System.argv.len() > 0 ? System.argv[0] : "classes";
 
-var mu = markup_class.new();
+    var markup_class = MarkDown;	// XXX take option for format!!
+    var mu = markup_class.new();
 
-describe_module(mu, module_name);
+    describe_module(mu, module_name);
 
-mu.hr();
-var time = System.pyimport("time");
-mu.append("formatted by doc.xxl on " + time.strftime("%F %T")); // XXX want UTC
+    mu.hr();
+    var time = System.pyimport("time");
+    mu.append("formatted by doc.xxl at "
+	      + time.strftime("%F %T")); // XXX want UTC
 
-// The very very very end.
-System.print(mu.render());	// output results
+    // The very very very end.
+    System.print(mu.render());	// output results
+}
