@@ -1435,25 +1435,6 @@ def gt(l, r):
     return _not(_le(l, r))
 
 @pyfunc
-def num_init(obj, value):
-    """
-    initialize Number from Str value
-    """
-    # XXX make illegal tell them to use Str.to_{int,float} instead??!
-    if instance_of(value, [Str]):
-        v = value.value
-        try:
-            obj.value = int(v)
-        except:
-            obj.value = float(v)
-    elif instance_of(value, [Number]):
-        # XXX intercept in metaclass 'new' and return "this"?
-        obj.value = value.value
-    else:
-        raise UError("{}.new needs Str or Number".format(obj.getclass().name))
-    return null_value
-
-@pyfunc
 def bitand(l, r):
     """
     return bitwise (binary) "and" (conjunction) of `l` and `r`
@@ -1486,8 +1467,37 @@ def bitnot(this):
     """
     return _new_pobj(this.getclass(), ~this.value)
 
+@pyfunc
+def num_to_float(this):
+    """
+    If value is a float, return `this`
+    If value is an int, return a new Number object
+    """
+    if isinstance(this.value, float):
+        return this
+    return _new_pobj(this.getclass(), float(this.value))
+
+@pyfunc
+def num_to_int(this):
+    """
+    If value is an int, return `this`
+    If value is a float, return a new Number object
+    """
+    if isinstance(this.value, int):
+        return this
+    return _new_pobj(this.getclass(), int(this.value))
+
+@pyfunc
+def num_to_number(this):
+    """
+    identity method; returns `this`
+    """
+    return this
+
 Number.setprop(const.METHODS, _mkdict({
-    const.INIT: num_init
+    'to_float': num_to_float,
+    'to_int': num_to_int,
+    'to_number': num_to_number,
 }))
 
 Number.setprop(const.UNOPS, _mkdict({
@@ -1633,6 +1643,16 @@ def str_to_int(this, base=None):
         base = base.value
     return mknumber(int(this.value, base))
 
+@pyfunc
+def str_to_number(this):
+    """
+    Convert string to a Number
+    """
+    try:
+        return mknumber(int(this.value))
+    except ValueError:
+        return mknumber(float(this.value))
+
 # static methods (plain function)
 @pyfunc
 def str_chr(i):
@@ -1652,6 +1672,7 @@ Str.setprop(const.METHODS, _mkdict({
     'strip': str_strip,
     'to_float': str_to_float,
     'to_int': str_to_int,
+    'to_number': str_to_number,
     'to_str': str_str,
     const.INIT: pobj_init
 }))
