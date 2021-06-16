@@ -18,16 +18,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# currently in Class, Closure, Py[VM]Func
-DOC = '__doc'
+# Object properties
+DOC = '__doc'           # currently in Class, Closure, Py[VM]Func
+DEFN = '__defn'         # currently in Closure, Py[VM]Func
 
 # Class properties
-NAME = 'name'                   # Str
-METHODS = '__methods'           # Dict
-BINOPS = '__binops'             # Dict
-UNOPS = '__unops'               # Dict
-LHSOPS = '__lhsops'             # Dict
-SUPERS = '__supers'             # List of Class instances
+NAME = 'name'           # Str
+METHODS = '__methods'   # Dict
+BINOPS = '__binops'     # Dict
+UNOPS = '__unops'       # Dict
+LHSOPS = '__lhsops'     # Dict
+SUPERS = '__supers'     # List of Class instances
 
 # map Class.new argument dict keys to internal property names
 CLASS_PROPS = {

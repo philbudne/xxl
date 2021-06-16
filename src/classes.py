@@ -76,6 +76,9 @@ NUM = (int, float)              # Python3
 # used to set MODINFO_DEBUG_BOOTSTRAP
 XXL_DEBUG_BOOTSTRAP = os.getenv('XXL_DEBUG_BOOTSTRAP', None)
 
+CWD = os.getcwd();              # current working directory
+CWD_SEP = CWD + os.sep
+
 classes_scope = scopes.Scope()  # scope for "classes" internal Module
 
 __initialized = False
@@ -221,10 +224,10 @@ class CClosure(CCallable):
         self.code = code
         self.scope = scope
         self.setprop(const.DOC, mkstr(doc or ""))
+        self.setprop(const.DEFN, mkstr(code[0].fn_where()))
 
     def __repr__(self):
-        i = self.code[0]
-        return "<Closure: %s:%s>" % (i.fn, i.where)
+        return "<Closure: %s>" % self.code[0].fn_where()
         
     def invoke(self, vm):
         vm.save_frame(True)     # show=True
@@ -302,6 +305,11 @@ class CPyFunc(CCallable):
         self.func = func
         # make sure PyFunc.__doc never shows through
         self.setprop(const.DOC, _mkstr(func.__doc__ or ""))
+        co = func.__code__
+        fname = co.co_filename
+        if fname.startswith(CWD_SEP):
+            fname = fname[len(CWD_SEP):]
+        self.setprop(const.DEFN, _mkstr("%s:%s" % (fname, co.co_firstlineno)))
 
     def __repr__(self):
         return "<PyFunc: %s>" % self.func.__name__
@@ -1471,13 +1479,15 @@ Number.setprop(const.METHODS, _mkdict({
 
 Number.setprop(const.UNOPS, _mkdict({
     '-': neg,
-    '~': bitnot,
+    '~': bitnot,                # Int only!!
 }))
 Number.setprop(const.BINOPS, _mkdict({
     '+': add,
     '-': sub,
     '*': mul,
     '/': div,
+    '&': bitand,                # Int only!
+    '|': bitor,                 # Int only!
     # XXX Orderable mixin?
     '==': eq,
     '!=': ne,
@@ -1485,9 +1495,6 @@ Number.setprop(const.BINOPS, _mkdict({
     '<=': le,
     '>': gt,
     '<': lt,
-    # Int only!
-    '&': bitand,
-    '|': bitor,
 }))
 
 ################ Str
@@ -1508,8 +1515,8 @@ def str_concat(x, y):
 @pyfunc
 def str_get(l, r):              # [] operator
     """
+    Str l[r]
     return `r`'th character of Str `l`
-    r[l]
     """
     # XXX check if r is integer
     return _new_pobj(l.getclass(), l.value[r.value])
