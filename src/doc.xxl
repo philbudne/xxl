@@ -192,8 +192,8 @@ if (__modinfo.main) {
 
     mu.hr();
     var time = System.pyimport("time");
-    mu.append("formatted by doc.xxl at "
-	      + time.strftime("%F %T")); // XXX want UTC
+    mu.nappend("formatted by doc.xxl on",
+	       time.strftime("%Y-%m-%d")); // XXX want UTC
 
     // The very very very end.
     System.print(mu.render());	// output results
