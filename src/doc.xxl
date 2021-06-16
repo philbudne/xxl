@@ -159,7 +159,6 @@ var describe_module = function (mu, module_name) {
 	    }
 	    else {
 		// XXX split into vars and funcs???
-		// check .instance_of(clases.Callable)??
 		vars.append(name);
 	    }
 	}
