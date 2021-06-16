@@ -25,7 +25,9 @@ until further notice!!!*
 
 * [Syntax](doc/syntax.md) -- core language syntax
 
-* [Classes](doc/classes.md) -- built in classes, and making new ones
+* [Classes](doc/classes.md) -- built in classes (machine generated docs)
+
+* [Creating a Class](doc/create-class.md.md) -- how to create a new Class
 
 * [Adding a statement](doc/adding-statement.md) -- example of adding new statement syntax
 
