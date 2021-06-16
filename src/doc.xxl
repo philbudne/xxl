@@ -43,13 +43,13 @@ var MarkUp = Class.new({
 	append: function (this, s) {
 	    this._value.append(s);
 	},
-	nappend: function (this, s) {
+	nappend: function (this, ...strings) {
 	    """
-	    append newline, then string `s`
+	    append newline, then concatenation of strings
 	    """
 	    this._value.append("\n"); // XXX only if not in col zero?
-	    if (s) {
-		this._value.append(s);
+	    if (strings.len()) {
+		this._value.append(" ".join(strings));
 	    }
 	},
 	lwrap: function (this, prefix, list, suffix) {
@@ -174,7 +174,7 @@ var describe_module = function (mu, module_name) {
 	    }
 	    else {
 		mu.h3(mu.code(name));
-		mu.nappend(mu.code(x.to_str()));
+		mu.nappend("Value:", mu.code(x.to_str()));
 		mu.nappend();
 	    }
 	    mu.nappend();
