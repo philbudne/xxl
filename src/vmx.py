@@ -899,7 +899,7 @@ def run(boot, scope, stats, trace, xcept):
 
     user_errors = (classes.UError,)
     if not xcept:
-        user_errors += (IndexError, ValueError, TypeError, KeyboardInterrupt)
+        user_errors += (Exception,) # too many to list!
 
     vm.ac = boot                # Closure
     b0 = [["0", "call0"],       # call Closure
