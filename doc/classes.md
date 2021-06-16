@@ -2,6 +2,8 @@
 
 ## Class Bool
 
+Built-in Class for `true` and `false` values
+
 ### Methods
 
 #### `getclass (this)`
@@ -106,6 +108,8 @@
     
 ## Class BoundMethod
 
+Built-in Class for a method bound to an Object
+
 ### Methods
 
 #### `create (this_class, ...args)`
@@ -149,8 +153,11 @@
     Object putprop method/operator
     store `value` as `r` (String) property of object `l`
     
-#### `repr (l)`
+#### `repr (this)`
 
+    Default Object string representation method
+    (calls Python repr(this))
+    
 #### `reprx (l)`
 
     for debug: show Class, and Python value (which may include id?)
@@ -218,6 +225,11 @@
     
 ## Class Callable
 
+
+    Virtual base Class for built-in callable classes
+    (BoundMethod, Continuation, PyFunc, PyVMFunc)
+    
+
 ### Methods
 
 #### `getclass (this)`
@@ -249,8 +261,11 @@
     Object putprop method/operator
     store `value` as `r` (String) property of object `l`
     
-#### `repr (l)`
+#### `repr (this)`
 
+    Default Object string representation method
+    (calls Python repr(this))
+    
 #### `reprx (l)`
 
     for debug: show Class, and Python value (which may include id?)
@@ -313,6 +328,8 @@
     
 ## Class Class
 
+Base Metaclass, home of the default 'new' method
+
 ### Methods
 
 #### `create (this_class, ...args)`
@@ -356,8 +373,11 @@
     Object putprop method/operator
     store `value` as `r` (String) property of object `l`
     
-#### `repr (l)`
+#### `repr (this)`
 
+    Default Object string representation method
+    (calls Python repr(this))
+    
 #### `reprx (l)`
 
     for debug: show Class, and Python value (which may include id?)
@@ -425,6 +445,8 @@
     
 ## Class Closure
 
+Built-in Class for a native function bound to a scope
+
 ### Methods
 
 #### `create (this_class, ...args)`
@@ -468,8 +490,11 @@
     Object putprop method/operator
     store `value` as `r` (String) property of object `l`
     
-#### `repr (l)`
+#### `repr (this)`
 
+    Default Object string representation method
+    (calls Python repr(this))
+    
 #### `reprx (l)`
 
     for debug: show Class, and Python value (which may include id?)
@@ -537,6 +562,8 @@
     
 ## Class Continuation
 
+Built-in Class for a Continuation
+
 ### Methods
 
 #### `create (this_class, ...args)`
@@ -580,8 +607,11 @@
     Object putprop method/operator
     store `value` as `r` (String) property of object `l`
     
-#### `repr (l)`
+#### `repr (this)`
 
+    Default Object string representation method
+    (calls Python repr(this))
+    
 #### `reprx (l)`
 
     for debug: show Class, and Python value (which may include id?)
@@ -648,6 +678,8 @@
     store `value` as `r` (String) property of object `l`
     
 ## Class Dict
+
+Built-in dictionary mapping Class
 
 ### Methods
 
@@ -812,6 +844,8 @@
     
 ## Class Iterable
 
+Virtual base Class classes that can be iterated over
+
 ### Methods
 
 #### `each_for (this, func)`
@@ -947,6 +981,8 @@
     store `value` as `r` (String) property of object `l`
     
 ## Class List
+
+Built-in mutable sequence Class
 
 ### Methods
 
@@ -1096,6 +1132,8 @@
 
 ## Class ModInfo
 
+Built-in Class for __modinfo Objects (inside Modules)
+
 ### Methods
 
 #### `assemble (this, tree, srcfile)`
@@ -1135,8 +1173,11 @@
     Object putprop method/operator
     store `value` as `r` (String) property of object `l`
     
-#### `repr (l)`
+#### `repr (this)`
 
+    Default Object string representation method
+    (calls Python repr(this))
+    
 #### `reprx (l)`
 
     for debug: show Class, and Python value (which may include id?)
@@ -1199,6 +1240,8 @@
     
 ## Class Module
 
+Built-in class for a Module (from import function)
+
 ### Methods
 
 #### `create (this_class, ...args)`
@@ -1242,8 +1285,11 @@
     Object putprop method/operator
     store `value` as `r` (String) property of object `l`
     
-#### `repr (l)`
+#### `repr (this)`
 
+    Default Object string representation method
+    (calls Python repr(this))
+    
 #### `reprx (l)`
 
     for debug: show Class, and Python value (which may include id?)
@@ -1310,6 +1356,8 @@
     store `value` as `r` (String) property of object `l`
     
 ## Class Null
+
+Built-on Class of `null` value
 
 ### Methods
 
@@ -1415,6 +1463,8 @@
     store `value` as `r` (String) property of object `l`
     
 ## Class Number
+
+Built-in int/float wrapper Class
 
 ### Methods
 
@@ -1537,6 +1587,8 @@
     
 ## Class Object
 
+Base Class
+
 ### Methods
 
 #### `getclass (this)`
@@ -1568,8 +1620,11 @@
     Object putprop method/operator
     store `value` as `r` (String) property of object `l`
     
-#### `repr (l)`
+#### `repr (this)`
 
+    Default Object string representation method
+    (calls Python repr(this))
+    
 #### `reprx (l)`
 
     for debug: show Class, and Python value (which may include id?)
@@ -1631,6 +1686,8 @@
     
 ## Class PClass
 
+Metaclass for Primitive/Python value Classes
+
 ### Methods
 
 #### `create (this_class)`
@@ -1675,8 +1732,11 @@
     Object putprop method/operator
     store `value` as `r` (String) property of object `l`
     
-#### `repr (l)`
+#### `repr (this)`
 
+    Default Object string representation method
+    (calls Python repr(this))
+    
 #### `reprx (l)`
 
     for debug: show Class, and Python value (which may include id?)
@@ -1743,6 +1803,8 @@
     store `value` as `r` (String) property of object `l`
     
 ## Class PObject
+
+Base class for Primitive/Python value Classes
 
 ### Methods
 
@@ -1850,6 +1912,8 @@
     
 ## Class PyFunc
 
+Built-in Class for function implemented in Python
+
 ### Methods
 
 #### `create (this_class, ...args)`
@@ -1893,8 +1957,11 @@
     Object putprop method/operator
     store `value` as `r` (String) property of object `l`
     
-#### `repr (l)`
+#### `repr (this)`
 
+    Default Object string representation method
+    (calls Python repr(this))
+    
 #### `reprx (l)`
 
     for debug: show Class, and Python value (which may include id?)
@@ -1961,6 +2028,13 @@
     store `value` as `r` (String) property of object `l`
     
 ## Class PyIterable
+
+
+    Wrapper for Python 'iterable' Objects
+    (classes which can generate iterators)
+    returned by Dict.items(), Dict.keys(), Dict.values(),
+    Object.props(), PyIterable.range(),
+    
 
 ### Methods
 
@@ -2098,6 +2172,8 @@
     
 ## Class PyIterator
 
+Built-in Class for a wrapper around a Python iterator
+
 ### Methods
 
 #### `getclass (this)`
@@ -2146,8 +2222,11 @@
     Object putprop method/operator
     store `value` as `r` (String) property of object `l`
     
-#### `repr (l)`
+#### `repr (this)`
 
+    Default Object string representation method
+    (calls Python repr(this))
+    
 #### `reprx (l)`
 
     for debug: show Class, and Python value (which may include id?)
@@ -2210,6 +2289,11 @@
     
 ## Class PyObject
 
+
+    Built-in Class for a wrapper around an arbitrary Python Object
+    (returned by pyimport, or operations on PyObjects)
+    
+
 ### Methods
 
 #### `getclass (this)`
@@ -2241,8 +2325,11 @@
     Object putprop method/operator
     store `value` as `r` (String) property of object `l`
     
-#### `repr (l)`
+#### `repr (this)`
 
+    Default Object string representation method
+    (calls Python repr(this))
+    
 #### `reprx (l)`
 
     for debug: show Class, and Python value (which may include id?)
@@ -2304,6 +2391,11 @@
     
 ## Class PyVMFunc
 
+
+   Built-in Class for function implemented in Python
+   with access to VM internals
+   
+
 ### Methods
 
 #### `create (this_class, ...args)`
@@ -2347,8 +2439,11 @@
     Object putprop method/operator
     store `value` as `r` (String) property of object `l`
     
-#### `repr (l)`
+#### `repr (this)`
 
+    Default Object string representation method
+    (calls Python repr(this))
+    
 #### `reprx (l)`
 
     for debug: show Class, and Python value (which may include id?)
@@ -2415,6 +2510,8 @@
     store `value` as `r` (String) property of object `l`
     
 ## Class Str
+
+Built-in immutable Unicode string Class
 
 ### Methods
 
