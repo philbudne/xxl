@@ -897,7 +897,7 @@ def run(boot, scope, stats, trace, xcept):
     """
     vm = VM(stats=stats, trace=trace)
 
-    user_errors = (classes.UError,)
+    user_errors = always_user_errors = (classes.UError,)
     if not xcept:
         user_errors += (Exception,) # too many to list!
 
@@ -930,6 +930,8 @@ def run(boot, scope, stats, trace, xcept):
         else:
             sys.stderr.write("Error @ ???: {}\n".format(e))
         vm.backtrace()
+        if not xcept and not isinstance(e, always_user_errors):
+            sys.stderr.write("\n(Use -x option to get Python traceback)\n")
         breakpoint_if_debugging()
         sys.exit(1)
     except jslex.LexError as e:
