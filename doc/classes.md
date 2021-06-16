@@ -2677,12 +2677,18 @@ Built-in immutable Unicode string Class
     
 ## Variables
 
-### false
+### `false`
 
-### null
+`false`
 
-### true
+### `null`
+
+`null`
+
+### `true`
+
+`true`
 
 
 ---
-formatted by doc.xxl on 2021-06-15 21:10:14
+formatted by doc.xxl at 2021-06-15 21:29:54
