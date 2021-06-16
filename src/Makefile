@@ -31,7 +31,9 @@ IDENTICAL=.identical.ab
 # never created (always display "up to date")
 IDENTICAL2=.identical.parser-c
 
-all:	$(TESTED) $(IDENTICAL) $(IDENTICAL2)
+DOCS= ../doc/classes.md
+
+all:	$(TESTED) $(IDENTICAL) $(IDENTICAL2) $(DOCS)
 
 $(TESTED): $(B) $(C)
 	cmp $(B) $(C)
@@ -57,8 +59,8 @@ $(IDENTICAL2): $(PARSER_VMX) $(C)
 	fi
 	@rm -f .tmp.c .tmp.p
 
-classes.md: classes.py bootstrap.vmx doc.xxl $(TESTED)
-	./$(XXL) doc.xxl > classes.md
+../doc/classes.md: classes.py bootstrap.vmx doc.xxl $(TESTED)
+	./$(XXL) doc.xxl > ../doc/classes.md
 
 install: $(TESTED)
 	cp $(C) $(PARSER_VMX)	
