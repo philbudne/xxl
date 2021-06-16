@@ -18,11 +18,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# currently just Class, Closure and Py[VM]Func
+# currently in Class, Closure, Py[VM]Func
 DOC = '__doc'
 
 # Class properties
-NAME = 'name'                   # String
+NAME = 'name'                   # Str
 METHODS = '__methods'           # Dict
 BINOPS = '__binops'             # Dict
 UNOPS = '__unops'               # Dict
