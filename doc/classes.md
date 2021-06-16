@@ -2591,7 +2591,7 @@ Built-in immutable Unicode string Class
 	
 #### `ends_with (this, suff)`
 
-    Return True if `this` ends with the suffix `suff`, False otherwise.
+    Return `true` if `this` ends with the suffix `suff`, `false` otherwise.
     
 #### `for_each (this, func)`
 

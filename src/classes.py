@@ -1546,7 +1546,7 @@ def str_split(this, sep=None, limit=-1):
 @pyfunc
 def str_ends_with(this, suff):
     """
-    Return True if `this` ends with the suffix `suff`, False otherwise.
+    Return `true` if `this` ends with the suffix `suff`, `false` otherwise.
     """
     return mkbool(this.value.endswith(suff.value))
 
