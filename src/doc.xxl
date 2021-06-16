@@ -151,7 +151,7 @@ var describe_module = function (mu, module_name) {
 	    }
 	    var x = classes..getprop(name);
 	    if (x.instance_of(classes.Class)) {
-		mu.h2("Class", name);
+		mu.h2("Class", mu.code(name));
 		mu.nappend();
 		prclass(mu, x);
 	    }
