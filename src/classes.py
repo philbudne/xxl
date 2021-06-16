@@ -468,10 +468,10 @@ def mkiterable(i):
 ################
 null_value = None               # forward
 
-def subclass_of(klass, bases):
+def subclass_of(this_class, bases):
     """
-    test if Class `klass` is a subclass of any Class in bases
-    `klass` is CObject for a Class
+    test if Class `this_class` is a subclass of any Class in bases
+    `this_class` is CObject for a Class
     `bases` is Python list of CObjects (of class or subclass Class)
     """
     visited = set()
@@ -486,15 +486,15 @@ def subclass_of(klass, bases):
             if x not in visited and check(x):
                 return True
         return False
-    return check(klass)
+    return check(this_class)
 
-def instance_of(obj, classes):
+def instance_of(this, classes):
     """
-    test if `obj` is an instance of any Class in `classes` list
-    `obj` is CObject
+    test if `this` is an instance of any Class in `classes` list
+    `this` is CObject
     `classes` is list of Classes (CObjects of class or subclasses of Class)
     """
-    return subclass_of(obj.getclass(), classes)
+    return subclass_of(this.getclass(), classes)
 
 ################################################################
 
@@ -886,7 +886,7 @@ def obj_call(l, *args):
     raise UError("%s does not have '(' binop" % l.classname())
 
 @pyfunc
-def obj_instance_of(l, c):
+def obj_instance_of(this, c):
     """
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -895,7 +895,7 @@ def obj_instance_of(l, c):
         c = c.value             # get Python list
     else:
         c = [c]                 # make Python list
-    return mkbool(instance_of(l, c))
+    return mkbool(instance_of(this, c))
 
 Object.setprop(const.METHODS, _mkdict({
     const.INIT: obj_init,
@@ -968,16 +968,16 @@ def class_call(this_class, *args):
     raise UError("call %s.new!" % this_class.getprop(const.NAME).value)
 
 @pyfunc
-def class_subclass_of(l, c):
+def class_subclass_of(this, c):
     """
-    return `true` if Class `l` is a subclass of
+    return `true` if Class `this` is a subclass of
     Class (or List of Classes) `c`
     """
     if subclass_of(c.getclass(), List):
         c = c.value             # get Python list
     else:
         c = [c]                 # make Python list
-    return mkbool(subclass_of(l, c))
+    return mkbool(subclass_of(this, c))
 
 # Class: a meta-class: all Classes are instances of a meta-class
 # (Class.new creates a new Class)
@@ -985,7 +985,7 @@ Class.setprop(const.METHODS, _mkdict({
     const.CREATE: obj_create,
     const.INIT: class_init,     # Class.new creates new Classes
     # NOTE: "name" is a member
-    "subclass_of": class_subclass_of
+    'subclass_of': class_subclass_of
 }))
 
 Class.setprop(const.BINOPS, _mkdict({
@@ -1086,7 +1086,9 @@ PObject.setprop(const.METHODS, _mkdict({
 
 PObject.setprop(const.BINOPS, _mkdict({
     '===': pobj_ident,
-    '!==': pobj_differ
+    '!==': pobj_differ,
+    '==': pobj_ident,
+    '!=': pobj_differ
 }))
 
 ################ Callable base class

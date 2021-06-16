@@ -25,7 +25,7 @@ Built-in Class for `true` and `false` values
     default PObject init0 method
     (fatal error)
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -67,7 +67,9 @@ Built-in Class for `true` and `false` values
 
 #### `!= (l, r)`
 
-    Test if `l` and `r` refer to different Objects
+    Check if value of PObject `l`
+    is not the same Python Object
+    as value of PObject `r`
     
 #### `!== (l, r)`
 
@@ -93,7 +95,9 @@ Built-in Class for `true` and `false` values
     
 #### `== (l, r)`
 
-    Test if `l` and `r` refer to the same Object
+    Check if value of PObject `l`
+    is the same Python Object
+    as value of PObject `r`
     
 #### `=== (l, r)`
 
@@ -133,7 +137,7 @@ Built-in Class for a method bound to an Object
     init method for meta-class "Class" -- used to create new Classes
     `props` is Dict holding properties (see const.CLASS_PROPS)
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -168,9 +172,9 @@ Built-in Class for a method bound to an Object
 
     set Class for `this`!!
     
-#### `subclass_of (l, c)`
+#### `subclass_of (this, c)`
 
-    return `true` if Class `l` is a subclass of
+    return `true` if Class `this` is a subclass of
     Class (or List of Classes) `c`
     
 #### `to_str (this)`
@@ -248,7 +252,7 @@ Built-in Class for a method bound to an Object
     default init method for Object class
     a fatal error if any arguments given
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -353,7 +357,7 @@ Base Metaclass, home of the default 'new' method
     init method for meta-class "Class" -- used to create new Classes
     `props` is Dict holding properties (see const.CLASS_PROPS)
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -388,9 +392,9 @@ Base Metaclass, home of the default 'new' method
 
     set Class for `this`!!
     
-#### `subclass_of (l, c)`
+#### `subclass_of (this, c)`
 
-    return `true` if Class `l` is a subclass of
+    return `true` if Class `this` is a subclass of
     Class (or List of Classes) `c`
     
 #### `to_str (this)`
@@ -470,7 +474,7 @@ Built-in Class for a native function bound to a scope
     init method for meta-class "Class" -- used to create new Classes
     `props` is Dict holding properties (see const.CLASS_PROPS)
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -505,9 +509,9 @@ Built-in Class for a native function bound to a scope
 
     set Class for `this`!!
     
-#### `subclass_of (l, c)`
+#### `subclass_of (this, c)`
 
-    return `true` if Class `l` is a subclass of
+    return `true` if Class `this` is a subclass of
     Class (or List of Classes) `c`
     
 #### `to_str (this)`
@@ -587,7 +591,7 @@ Built-in Class for a Continuation
     init method for meta-class "Class" -- used to create new Classes
     `props` is Dict holding properties (see const.CLASS_PROPS)
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -622,9 +626,9 @@ Built-in Class for a Continuation
 
     set Class for `this`!!
     
-#### `subclass_of (l, c)`
+#### `subclass_of (this, c)`
 
-    return `true` if Class `l` is a subclass of
+    return `true` if Class `this` is a subclass of
     Class (or List of Classes) `c`
     
 #### `to_str (this)`
@@ -712,7 +716,7 @@ Built-in dictionary mapping Class
     called by Dict.init (in bootstrap.xxl)
     Dodges needing private metaclass for Dict
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -795,7 +799,9 @@ Built-in dictionary mapping Class
 
 #### `!= (l, r)`
 
-    Test if `l` and `r` refer to different Objects
+    Check if value of PObject `l`
+    is not the same Python Object
+    as value of PObject `r`
     
 #### `!== (l, r)`
 
@@ -821,7 +827,9 @@ Built-in dictionary mapping Class
     
 #### `== (l, r)`
 
-    Test if `l` and `r` refer to the same Object
+    Check if value of PObject `l`
+    is the same Python Object
+    as value of PObject `r`
     
 #### `=== (l, r)`
 
@@ -877,7 +885,7 @@ Virtual base Class classes that can be iterated over
     default PObject init0 method
     (fatal error)
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -941,7 +949,9 @@ Virtual base Class classes that can be iterated over
 
 #### `!= (l, r)`
 
-    Test if `l` and `r` refer to different Objects
+    Check if value of PObject `l`
+    is not the same Python Object
+    as value of PObject `r`
     
 #### `!== (l, r)`
 
@@ -967,7 +977,9 @@ Virtual base Class classes that can be iterated over
     
 #### `== (l, r)`
 
-    Test if `l` and `r` refer to the same Object
+    Check if value of PObject `l`
+    is the same Python Object
+    as value of PObject `r`
     
 #### `=== (l, r)`
 
@@ -1020,7 +1032,7 @@ Built-in mutable sequence Class
     called by List.init (in bootstrap.xxl)
     Dodges needing private metaclass for List
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -1091,7 +1103,9 @@ Built-in mutable sequence Class
 
 #### `!= (l, r)`
 
-    Test if `l` and `r` refer to different Objects
+    Check if value of PObject `l`
+    is not the same Python Object
+    as value of PObject `r`
     
 #### `!== (l, r)`
 
@@ -1117,7 +1131,9 @@ Built-in mutable sequence Class
     
 #### `== (l, r)`
 
-    Test if `l` and `r` refer to the same Object
+    Check if value of PObject `l`
+    is the same Python Object
+    as value of PObject `r`
     
 #### `=== (l, r)`
 
@@ -1166,7 +1182,7 @@ Built-in Class for __modinfo Objects (inside Modules)
     default init method for Object class
     a fatal error if any arguments given
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -1273,7 +1289,7 @@ Built-in class for a Module (from import function)
     init method for meta-class "Class" -- used to create new Classes
     `props` is Dict holding properties (see const.CLASS_PROPS)
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -1308,9 +1324,9 @@ Built-in class for a Module (from import function)
 
     set Class for `this`!!
     
-#### `subclass_of (l, c)`
+#### `subclass_of (this, c)`
 
-    return `true` if Class `l` is a subclass of
+    return `true` if Class `this` is a subclass of
     Class (or List of Classes) `c`
     
 #### `to_str (this)`
@@ -1390,7 +1406,7 @@ Built-on Class of `null` value
     default PObject init0 method
     (fatal error)
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -1432,7 +1448,9 @@ Built-on Class of `null` value
 
 #### `!= (l, r)`
 
-    Test if `l` and `r` refer to different Objects
+    Check if value of PObject `l`
+    is not the same Python Object
+    as value of PObject `r`
     
 #### `!== (l, r)`
 
@@ -1457,7 +1475,9 @@ Built-on Class of `null` value
     
 #### `== (l, r)`
 
-    Test if `l` and `r` refer to the same Object
+    Check if value of PObject `l`
+    is the same Python Object
+    as value of PObject `r`
     
 #### `=== (l, r)`
 
@@ -1496,7 +1516,7 @@ Built-in int/float wrapper Class
     default PObject init0 method
     (fatal error)
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -1647,7 +1667,7 @@ Base Class
     default init method for Object class
     a fatal error if any arguments given
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -1752,7 +1772,7 @@ Metaclass for Primitive/Python value Classes
     init method for meta-class "Class" -- used to create new Classes
     `props` is Dict holding properties (see const.CLASS_PROPS)
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -1787,9 +1807,9 @@ Metaclass for Primitive/Python value Classes
 
     set Class for `this`!!
     
-#### `subclass_of (l, c)`
+#### `subclass_of (this, c)`
 
-    return `true` if Class `l` is a subclass of
+    return `true` if Class `this` is a subclass of
     Class (or List of Classes) `c`
     
 #### `to_str (this)`
@@ -1869,7 +1889,7 @@ Base class for Primitive/Python value Classes
     default PObject init0 method
     (fatal error)
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -1912,7 +1932,9 @@ Base class for Primitive/Python value Classes
 
 #### `!= (l, r)`
 
-    Test if `l` and `r` refer to different Objects
+    Check if value of PObject `l`
+    is not the same Python Object
+    as value of PObject `r`
     
 #### `!== (l, r)`
 
@@ -1937,7 +1959,9 @@ Base class for Primitive/Python value Classes
     
 #### `== (l, r)`
 
-    Test if `l` and `r` refer to the same Object
+    Check if value of PObject `l`
+    is the same Python Object
+    as value of PObject `r`
     
 #### `=== (l, r)`
 
@@ -1977,7 +2001,7 @@ Built-in Class for function implemented in Python
     init method for meta-class "Class" -- used to create new Classes
     `props` is Dict holding properties (see const.CLASS_PROPS)
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -2012,9 +2036,9 @@ Built-in Class for function implemented in Python
 
     set Class for `this`!!
     
-#### `subclass_of (l, c)`
+#### `subclass_of (this, c)`
 
-    return `true` if Class `l` is a subclass of
+    return `true` if Class `this` is a subclass of
     Class (or List of Classes) `c`
     
 #### `to_str (this)`
@@ -2107,7 +2131,7 @@ Built-in Class for function implemented in Python
     default PObject init0 method
     (fatal error)
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -2171,7 +2195,9 @@ Built-in Class for function implemented in Python
 
 #### `!= (l, r)`
 
-    Test if `l` and `r` refer to different Objects
+    Check if value of PObject `l`
+    is not the same Python Object
+    as value of PObject `r`
     
 #### `!== (l, r)`
 
@@ -2197,7 +2223,9 @@ Built-in Class for function implemented in Python
     
 #### `== (l, r)`
 
-    Test if `l` and `r` refer to the same Object
+    Check if value of PObject `l`
+    is the same Python Object
+    as value of PObject `r`
     
 #### `=== (l, r)`
 
@@ -2232,7 +2260,7 @@ Built-in Class for a wrapper around a Python iterator
     default init method for Object class
     a fatal error if any arguments given
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -2352,7 +2380,7 @@ Built-in Class for a wrapper around a Python iterator
     default PObject init method
     (fatal error)
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -2459,7 +2487,7 @@ Built-in Class for a wrapper around a Python iterator
     init method for meta-class "Class" -- used to create new Classes
     `props` is Dict holding properties (see const.CLASS_PROPS)
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
@@ -2494,9 +2522,9 @@ Built-in Class for a wrapper around a Python iterator
 
     set Class for `this`!!
     
-#### `subclass_of (l, c)`
+#### `subclass_of (this, c)`
 
-    return `true` if Class `l` is a subclass of
+    return `true` if Class `this` is a subclass of
     Class (or List of Classes) `c`
     
 #### `to_str (this)`
@@ -2588,7 +2616,7 @@ Built-in immutable Unicode string Class
     default PObject init0 method
     (fatal error)
     
-#### `instance_of (l, c)`
+#### `instance_of (this, c)`
 
     return `true` if Object `l` is an instance of
     Class (or List of Classes) `c`
