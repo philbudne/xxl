@@ -130,10 +130,10 @@ var MarkDown = Class.new({
 var mufunc = function (mu, level, name, func) {
     var args = func.__args() || "";
     mu.hn(level, mu.code(name, args));
-    var defn = func.__defn;
+    var defn = func.__defn();
     if (defn) {
 	// no blank line?
-	mu.nappend(mu.i("defined at", defn));
+	mu.nappend(mu.i(func.getclass().name, "defined at", defn));
     }
     var doc = func.__doc;
     if (doc) {
