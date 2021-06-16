@@ -61,7 +61,7 @@ EXPR:   NAME |
 
 KEY:    NAME | STRING
 
-UNOP:   «!» | «-»
+UNOP:   «!» | «-» | «~»
 
 FORMALS:
         NAME [ «,» NAME ]… [ «...» NAME ]
