@@ -282,7 +282,7 @@ def tokenize(finput, prefix='<>+-&', suffix='=>&:'):
                         c = '\r'
                     elif c == 't':
                         c = '\t';
-                    elif c == '"'  or  c == "'":
+                    elif c == '"'  or  c == "'" or  c == "\\":
                         pass
                     elif c in NHEX_CHARS:
                         n = NHEX_CHARS[c]
