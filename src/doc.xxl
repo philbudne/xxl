@@ -72,6 +72,22 @@ var MarkUp = Class.new({
 		this._value.append(this.joinw(words));
 	    }
 	},
+	pdoc: function (this, obj) {
+	    var doc = obj.__doc;
+	    if (!doc) {
+		return();
+	    }
+	    this.p();
+	    doc.split("\n").for_each(
+		function (x) {
+		    if (x.len() > 0) {
+			this.append(x.strip());
+			this.append(" ");
+		    }
+		}
+	    );
+	    this.nappend();
+	},
 	lwrap: function (this, prefix, list, suffix) {
 	    """
 	    wrap `list` of items between `prefix` and `suffix`
@@ -135,12 +151,7 @@ var mufunc = function (mu, level, name, func) {
 	// no blank line?
 	mu.nappend(mu.i(func.getclass().name, "defined at", defn));
     }
-    var doc = func.__doc;
-    if (doc) {
-	mu.p();
-	mu.append(doc);
-	mu.nappend();
-    }
+    mu.pdoc(func);
 };
 
 var muclass = function (mu, class) {
@@ -149,10 +160,7 @@ var muclass = function (mu, class) {
     `class` is a Class (metaclass) to document
     """
 
-    if (class.__doc) {
-	mu.append(class.__doc);
-	mu.p();
-    }
+    mu.pdoc(class);
 
     [
      ['__methods', 'Methods'],
@@ -205,7 +213,7 @@ var describe_module = function (mu, module_name) {
 	    var x = mod.getprop(name);
 	    if (x.instance_of(classes.Callable)) {
 		mu.h3(mu.code(name, x.__args()));
-		mu.nappend(x.__doc);
+		mu.pdoc(x);
 	    }
 	    else {
 		mu.h3(mu.code(name));
