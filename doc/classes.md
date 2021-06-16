@@ -42,6 +42,8 @@ Built-in Class for `true` and `false` values
     
 #### `repr (this)`
 
+    return Str representation: "true" or "false"
+    
 #### `reprx (this)`
 
     for debug: show Class name, and Python repr
@@ -58,7 +60,7 @@ Built-in Class for `true` and `false` values
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 ### Binary operators
@@ -179,7 +181,7 @@ Built-in Class for a method bound to an Object
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 ### Binary operators
@@ -282,7 +284,7 @@ Built-in Class for a method bound to an Object
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 ### Binary operators
@@ -399,7 +401,7 @@ Base Metaclass, home of the default 'new' method
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 ### Binary operators
@@ -516,7 +518,7 @@ Built-in Class for a native function bound to a scope
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 ### Binary operators
@@ -633,7 +635,7 @@ Built-in Class for a Continuation
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 ### Binary operators
@@ -717,7 +719,7 @@ Built-in dictionary mapping Class
     
 #### `items (this)`
 
-    return Iterable for [key, value]
+    return Iterable for [key, value] value pairs
     
 #### `iter (this)`
 
@@ -725,7 +727,7 @@ Built-in dictionary mapping Class
     
 #### `keys (this)`
 
-    return Iterable for keys
+    return Iterable for Dict keys
     
 #### `len (this)`
 
@@ -780,13 +782,13 @@ Built-in dictionary mapping Class
 	
 #### `values (this)`
 
-    return Iterable for values
+    return Iterable for Dict values
     
 ### Unary operators
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 ### Binary operators
@@ -829,7 +831,7 @@ Built-in dictionary mapping Class
     
 #### `[ (l, r)`
 
-    get a Dict entry
+    get entry `r` Dict from dict `l`
     
 ### LHS Binary operators
 
@@ -840,7 +842,7 @@ Built-in dictionary mapping Class
     
 #### `[ (l, r, value)`
 
-    put a Dict entry
+    put `value` into Dict `l` index `r`
     
 ## Class `Iterable`
 
@@ -932,7 +934,7 @@ Virtual base Class classes that can be iterated over
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 ### Binary operators
@@ -986,8 +988,10 @@ Built-in mutable sequence Class
 
 ### Methods
 
-#### `append (l, item)`
+#### `append (this, item)`
 
+    append `item` to `this` List
+    
 #### `each_for (this, func)`
 
 	call `func` argument for each reverse iterator item
@@ -1038,8 +1042,10 @@ Built-in mutable sequence Class
 	return List of results of `func` passed each iterator item,
 	ignore any returns with value `ignore` (defaults to `null`)
 	
-#### `pop (l, item)`
+#### `pop (l, index)`
 
+    Remove and return List item at `index` (default last)
+    
 #### `props (this)`
 
     returns an Iterable for (String) property names
@@ -1078,7 +1084,7 @@ Built-in mutable sequence Class
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 ### Binary operators
@@ -1121,6 +1127,8 @@ Built-in mutable sequence Class
     
 #### `[ (l, r)`
 
+    Return List item at index `r`
+    
 ### LHS Binary operators
 
 #### `. (l, r, value)`
@@ -1130,6 +1138,8 @@ Built-in mutable sequence Class
     
 #### `[ (l, r, value)`
 
+    Set List item at index `r` to `value`
+    
 ## Class `ModInfo`
 
 Built-in Class for __modinfo Objects (inside Modules)
@@ -1194,7 +1204,7 @@ Built-in Class for __modinfo Objects (inside Modules)
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 ### Binary operators
@@ -1311,7 +1321,7 @@ Built-in class for a Module (from import function)
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 ### Binary operators
@@ -1397,7 +1407,7 @@ Built-on Class of `null` value
     
 #### `repr (this)`
 
-    to_string method for Null Class
+    to_string/repr method for Null Class: returns "null"
     
 #### `reprx (this)`
 
@@ -1415,7 +1425,7 @@ Built-on Class of `null` value
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 ### Binary operators
@@ -1479,6 +1489,8 @@ Built-in int/float wrapper Class
     
 #### `init (obj, value)`
 
+    initialize Number from Str value
+    
 #### `init0 (l, value)`
 
     default PObject init0 method
@@ -1520,15 +1532,23 @@ Built-in int/float wrapper Class
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 #### `- (x)`
 
+    Return negative of `x`
+    
+#### `~ (this)`
+
+    return bitwise (binary) "not" (complement) of `this`
+    
 ### Binary operators
 
 #### `!= (l, r)`
 
+    return `true` if value of `l` is different from the value of `r`
+    
 #### `!== (l, r)`
 
     Check if value of PObject `l`
@@ -1537,17 +1557,25 @@ Built-in int/float wrapper Class
     
 #### `& (l, r)`
 
+    return bitwise (binary) "and" (conjunction) of `l` and `r`
+    
 #### `( (l, ...args)`
 
     default Object '(' binop
     (fatal error)
     
-#### `* (x, y)`
+#### `* (l, r)`
 
-#### `+ (x, y)`
+    multiple `l` and `r`
+    
+#### `+ (l, r)`
 
-#### `- (x, y)`
+    add `l` and `r`
+    
+#### `- (l, r)`
 
+    subtract `r` from `l`
+    
 #### `. (l, r)`
 
     Object getprop method/operator
@@ -1558,14 +1586,22 @@ Built-in int/float wrapper Class
     Object ".." operator; for calling superclass methods
     looks for `prop` as property or method of superclasses of `this`
     
-#### `/ (x, y)`
+#### `/ (l, r)`
 
+    divide `l` by `r`
+    
 #### `< (l, r)`
 
+    return `true` if value of `l` is < the value of `r`
+    
 #### `<= (l, r)`
 
+    return `true` if value of `l` is <= the value of `r`
+    
 #### `== (l, r)`
 
+    return `true` if value of `l` is the same as value of `r`
+    
 #### `=== (l, r)`
 
     Check if value of PObject `l`
@@ -1574,10 +1610,16 @@ Built-in int/float wrapper Class
     
 #### `> (l, r)`
 
+    return `true` if value of `l` is > the value of `r`
+    
 #### `>= (l, r)`
 
+    return `true` if value of `l` is >= the value of `r`
+    
 #### `| (l, r)`
 
+    return bitwise (binary) "or" (union) of `l` and `r`
+    
 ### LHS Binary operators
 
 #### `. (l, r, value)`
@@ -1641,7 +1683,7 @@ Base Class
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 ### Binary operators
@@ -1758,7 +1800,7 @@ Metaclass for Primitive/Python value Classes
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 ### Binary operators
@@ -1863,7 +1905,7 @@ Base class for Primitive/Python value Classes
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 ### Binary operators
@@ -1983,7 +2025,7 @@ Built-in Class for function implemented in Python
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 ### Binary operators
@@ -2122,7 +2164,7 @@ Built-in Class for function implemented in Python
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 ### Binary operators
@@ -2243,7 +2285,7 @@ Built-in Class for a wrapper around a Python iterator
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 ### Binary operators
@@ -2346,7 +2388,7 @@ Built-in Class for a wrapper around a Python iterator
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 ### Binary operators
@@ -2465,7 +2507,7 @@ Built-in Class for a wrapper around a Python iterator
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 ### Binary operators
@@ -2519,8 +2561,10 @@ Built-in immutable Unicode string Class
 
 	call `func` argument for each reverse iterator item
 	
-#### `ends_with (this, arg)`
+#### `ends_with (this, suff)`
 
+    Return True if `this` ends with the suffix `suff`, False otherwise.
+    
 #### `for_each (this, func)`
 
 	call `func` argument for each iterator item
@@ -2555,6 +2599,11 @@ Built-in immutable Unicode string Class
     
 #### `join (this, arg)`
 
+    Concatenate any number of strings.
+    
+    The string whose method is called is inserted in between each given string.
+    The result is returned as a new string.
+    
 #### `len (this)`
 
     returns length (of String, List or Dict)
@@ -2570,6 +2619,8 @@ Built-in immutable Unicode string Class
 	
 #### `ord (this)`
 
+    Return the Unicode code point for a one-character string `this`
+    
 #### `props (this)`
 
     returns an Iterable for (String) property names
@@ -2597,35 +2648,56 @@ Built-in immutable Unicode string Class
 
     set Class for `this`!!
     
-#### `slice (l, a, b)`
+#### `slice (this, start, end)`
 
+    return a substring (slice) of `this`
+    starting at position `start`
+    ending at position `end` (defaults to rest of string
+    
 #### `sorted (this)`
 
     return sorted list values (or keys)
     
 #### `split (this, sep, limit)`
 
-#### `starts_with (this, arg)`
+    Return a List of the words in the string,
+    using sep as the delimiter string (default to `null` -- any whitespace).
+    Limit to `limit` return values (defaults to -1 -- no limit)
+    
+#### `starts_with (this, pref)`
 
+    Return `true` if `this` starts with prefix `pref, `false` otherwise.
+    
 #### `strip (this)`
 
+    Return a copy of the string with leading and trailing whitespace removed.
+    
 #### `to_float (this)`
 
+    Convert string to a floating point Number
+    
 #### `to_int (this, base)`
 
+    Convert string to integer Number
+    `base` defaults to zero (accept 0xXXX for base 16)
+    
 #### `to_str (this)`
 
+    Identity method
+    
 ### Unary operators
 
 #### `! (x)`
 
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     
 ### Binary operators
 
 #### `!= (l, r)`
 
+    return `true` if value of `l` is different from the value of `r`
+    
 #### `!== (l, r)`
 
     Check if value of PObject `l`
@@ -2640,6 +2712,8 @@ Built-in immutable Unicode string Class
     
 #### `+ (x, y)`
 
+    String concatenation
+    
 #### `. (l, r)`
 
     Object getprop method/operator
@@ -2652,10 +2726,16 @@ Built-in immutable Unicode string Class
     
 #### `< (l, r)`
 
+    return `true` if value of `l` is < the value of `r`
+    
 #### `<= (l, r)`
 
+    return `true` if value of `l` is <= the value of `r`
+    
 #### `== (l, r)`
 
+    return `true` if value of `l` is the same as value of `r`
+    
 #### `=== (l, r)`
 
     Check if value of PObject `l`
@@ -2664,10 +2744,17 @@ Built-in immutable Unicode string Class
     
 #### `> (l, r)`
 
+    return `true` if value of `l` is > the value of `r`
+    
 #### `>= (l, r)`
 
+    return `true` if value of `l` is >= the value of `r`
+    
 #### `[ (l, r)`
 
+    return `r`'th character of Str `l`
+    r[l]
+    
 ### LHS Binary operators
 
 #### `. (l, r, value)`
@@ -2679,16 +2766,16 @@ Built-in immutable Unicode string Class
 
 ### `false`
 
-`false`
+Value: `false`
 
 ### `null`
 
-`null`
+Value: `null`
 
 ### `true`
 
-`true`
+Value: `true`
 
 
 ---
-formatted by doc.xxl at 2021-06-15 21:32:54
+formatted by doc.xxl at 2021-06-16 00:41:00
