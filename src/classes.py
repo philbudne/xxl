@@ -189,7 +189,10 @@ class CPObject(CObject):
 
 class CCallable(CObject):
     def args(self):
-        return "<FIXME>"         # XXX
+        return ["<FIXME1>"]     # XXX
+
+    def defn(self):
+        return "<FIXME2>"
 
 class CContinuation(CCallable):
     """
@@ -217,6 +220,9 @@ class CContinuation(CCallable):
     def args(self):
         return ["value"]
 
+    def defn(self):
+        return self.fp.cb[self.fp.pc].fn_where()
+
 class CClosure(CCallable):
     """
     A Callable instance backed by a Closure (VM code + scope)
@@ -227,7 +233,6 @@ class CClosure(CCallable):
         self.code = code
         self.scope = scope
         self.setprop(const.DOC, mkstr(doc or ""))
-        self.setprop(const.DEFN, mkstr(code[0].fn_where()))
 
     def __repr__(self):
         return "<Closure: %s>" % self.code[0].fn_where()
@@ -243,6 +248,9 @@ class CClosure(CCallable):
 
     def args(self):
         return self.code[0].args() # ask first VM Instr about args!!
+
+    def defn(self):
+        return self.code[0].fn_where()
 
 class CBClosure(CClosure):
     """
@@ -264,7 +272,9 @@ class CBClosure(CClosure):
         vm.scope = self.scope
 
     def args(self):
-        return ""
+        return [""]
+
+    # inherit defn() from CClosure
 
 class CBoundMethod(CCallable):
     """
@@ -291,6 +301,9 @@ class CBoundMethod(CCallable):
     def args(self):
         return self.method.args()[1:] # omit "this" arg
 
+    def defn(self):
+        return self.method.defn()
+
 # Calling Python functions (ie; primative class methods) was orignally
 # implemented as a Closure with two VM instructions (pycall, return).
 # The CObject.invoke method avoids that.
@@ -308,11 +321,6 @@ class CPyFunc(CCallable):
         self.func = func
         # make sure PyFunc.__doc never shows through
         self.setprop(const.DOC, _mkstr(func.__doc__ or ""))
-        co = func.__code__
-        fname = co.co_filename
-        if fname.startswith(CWD_SEP):
-            fname = fname[len(CWD_SEP):]
-        self.setprop(const.DEFN, _mkstr("%s:%s" % (fname, co.co_firstlineno)))
 
     def __repr__(self):
         return "<PyFunc: %s>" % self.func.__name__
@@ -336,6 +344,13 @@ class CPyFunc(CCallable):
         if fas.varargs:
             args.append('...' + fas.varargs)
         return args
+
+    def defn(self):
+        co = self.func.__code__
+        fname = co.co_filename
+        if fname.startswith(CWD_SEP):
+            fname = fname[len(CWD_SEP):]
+        return "%s:%s" % (fname, co.co_firstlineno)
 
 def pyfunc(func):
     """
@@ -1122,8 +1137,17 @@ def callable__args(this):
     """
     return mkstr("(%s)" % ", ".join(this.args()))
 
+@pyfunc
+def callable__defn(this):
+    """
+    currently private/hidden (to create docs)
+    returns location (source file and line) of function definition
+    """
+    return mkstr(this.defn())
+
 Callable.setprop(const.METHODS, _mkdict({
-    '__args': callable__args
+    '__args': callable__args,
+    '__defn': callable__defn
 }))
 
 ################ Iterable base class
