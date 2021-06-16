@@ -1,0 +1,2589 @@
+# `classes` Module
+
+## Class Bool
+
+### Methods
+
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (l, value)`
+
+    default PObject init method
+    (fatal error)
+    
+#### `init0 (l, value)`
+
+    default PObject init0 method
+    (fatal error)
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (this)`
+
+#### `reprx (this)`
+
+    for debug: show Class name, and Python repr
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `to_str (this)`
+
+	default to_str method: calls this.repr
+	
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+### Binary operators
+
+#### `!= (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `!== (l, r)`
+
+    Check if value of PObject `l`
+    is not the same Python Object
+    as value of PObject `r`
+    
+#### `( (this_class, ...args)`
+
+    "(" binop for Class -- fatal error
+    (but common mistake if you have Python fingers)
+    tells you to use .new method!!
+    
+#### `. (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+#### `=== (l, r)`
+
+    Check if value of PObject `l`
+    is the same Python Object
+    as value of PObject `r`
+    
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+## Class BoundMethod
+
+### Methods
+
+#### `create (this_class, ...args)`
+
+    default create method for Object (and therefore Class)
+    makes an instance of this_class (called from default Object.new)
+    
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (this_class, props)`
+
+    init method for meta-class "Class" -- used to create new Classes
+    `props` is Dict holding properties (see const.CLASS_PROPS)
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `new (this_class, ...args)`
+
+	default metaclass (Class) new method
+	manually invoked as SomeClass.new
+	calls this_class.create to create obj
+	and then calls obj.init()
+	
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (l)`
+
+#### `reprx (l)`
+
+    for debug: show Class, and Python value (which may include id?)
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `subclass_of (l, c)`
+
+    return `true` if Class `l` is a subclass of
+    Class (or List of Classes) `c`
+    
+#### `to_str (this)`
+
+	default to_str method: calls this.repr
+	
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+### Binary operators
+
+#### `!= (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `!== (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `( (this_class, ...args)`
+
+    "(" binop for Class -- fatal error
+    (but common mistake if you have Python fingers)
+    tells you to use .new method!!
+    
+#### `. (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+#### `=== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+## Class Callable
+
+### Methods
+
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (this_obj, ...args)`
+
+    default init method for Object class
+    a fatal error if any arguments given
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (l)`
+
+#### `reprx (l)`
+
+    for debug: show Class, and Python value (which may include id?)
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `to_str (this)`
+
+	default to_str method: calls this.repr
+	
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+### Binary operators
+
+#### `!= (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `!== (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `( (this_class, ...args)`
+
+    "(" binop for Class -- fatal error
+    (but common mistake if you have Python fingers)
+    tells you to use .new method!!
+    
+#### `. (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+#### `=== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+## Class Class
+
+### Methods
+
+#### `create (this_class, ...args)`
+
+    default create method for Object (and therefore Class)
+    makes an instance of this_class (called from default Object.new)
+    
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (this_class, props)`
+
+    init method for meta-class "Class" -- used to create new Classes
+    `props` is Dict holding properties (see const.CLASS_PROPS)
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `new (this_class, ...args)`
+
+	default metaclass (Class) new method
+	manually invoked as SomeClass.new
+	calls this_class.create to create obj
+	and then calls obj.init()
+	
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (l)`
+
+#### `reprx (l)`
+
+    for debug: show Class, and Python value (which may include id?)
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `subclass_of (l, c)`
+
+    return `true` if Class `l` is a subclass of
+    Class (or List of Classes) `c`
+    
+#### `to_str (this)`
+
+	default to_str method: calls this.repr
+	
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+### Binary operators
+
+#### `!= (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `!== (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `( (this_class, ...args)`
+
+    "(" binop for Class -- fatal error
+    (but common mistake if you have Python fingers)
+    tells you to use .new method!!
+    
+#### `. (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+#### `=== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+## Class Closure
+
+### Methods
+
+#### `create (this_class, ...args)`
+
+    default create method for Object (and therefore Class)
+    makes an instance of this_class (called from default Object.new)
+    
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (this_class, props)`
+
+    init method for meta-class "Class" -- used to create new Classes
+    `props` is Dict holding properties (see const.CLASS_PROPS)
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `new (this_class, ...args)`
+
+	default metaclass (Class) new method
+	manually invoked as SomeClass.new
+	calls this_class.create to create obj
+	and then calls obj.init()
+	
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (l)`
+
+#### `reprx (l)`
+
+    for debug: show Class, and Python value (which may include id?)
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `subclass_of (l, c)`
+
+    return `true` if Class `l` is a subclass of
+    Class (or List of Classes) `c`
+    
+#### `to_str (this)`
+
+	default to_str method: calls this.repr
+	
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+### Binary operators
+
+#### `!= (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `!== (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `( (this_class, ...args)`
+
+    "(" binop for Class -- fatal error
+    (but common mistake if you have Python fingers)
+    tells you to use .new method!!
+    
+#### `. (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+#### `=== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+## Class Continuation
+
+### Methods
+
+#### `create (this_class, ...args)`
+
+    default create method for Object (and therefore Class)
+    makes an instance of this_class (called from default Object.new)
+    
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (this_class, props)`
+
+    init method for meta-class "Class" -- used to create new Classes
+    `props` is Dict holding properties (see const.CLASS_PROPS)
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `new (this_class, ...args)`
+
+	default metaclass (Class) new method
+	manually invoked as SomeClass.new
+	calls this_class.create to create obj
+	and then calls obj.init()
+	
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (l)`
+
+#### `reprx (l)`
+
+    for debug: show Class, and Python value (which may include id?)
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `subclass_of (l, c)`
+
+    return `true` if Class `l` is a subclass of
+    Class (or List of Classes) `c`
+    
+#### `to_str (this)`
+
+	default to_str method: calls this.repr
+	
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+### Binary operators
+
+#### `!= (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `!== (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `( (this_class, ...args)`
+
+    "(" binop for Class -- fatal error
+    (but common mistake if you have Python fingers)
+    tells you to use .new method!!
+    
+#### `. (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+#### `=== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+## Class Dict
+
+### Methods
+
+#### `each_for (this, func)`
+
+	call `func` argument for each reverse iterator item
+	
+#### `for_each (this, func)`
+
+	call `func` argument for each iterator item
+	
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (this, arg)`
+
+	init method for Dict: takes Iterable returning two-item lists,
+	OR an Iterable returning keys, and implementing '['
+	
+#### `init0 (obj)`
+
+    called by Dict.init (in bootstrap.xxl)
+    Dodges needing private metaclass for Dict
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `items (this)`
+
+    return Iterable for [key, value]
+    
+#### `iter (this)`
+
+    return forward iterator
+    
+#### `keys (this)`
+
+    return Iterable for keys
+    
+#### `len (this)`
+
+    returns length (of String, List or Dict)
+    
+#### `map (this, func)`
+
+	return List of results of `func` passed each iterator item
+	
+#### `map2 (this, func, ignore)`
+
+	return List of results of `func` passed each iterator item,
+	ignore any returns with value `ignore` (defaults to `null`)
+	
+#### `pop (obj, arg)`
+
+    remove Dict with specified key
+    
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (this)`
+
+	return representation of Dict
+	
+#### `reprx (this)`
+
+    for debug: show Class name, and Python repr
+    
+#### `reversed (this)`
+
+    return reverse iterator
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `sorted (this)`
+
+    return sorted list values (or keys)
+    
+#### `to_str (this)`
+
+	default to_str method: calls this.repr
+	
+#### `values (this)`
+
+    return Iterable for values
+    
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+### Binary operators
+
+#### `!= (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `!== (l, r)`
+
+    Check if value of PObject `l`
+    is not the same Python Object
+    as value of PObject `r`
+    
+#### `( (this_class, ...args)`
+
+    "(" binop for Class -- fatal error
+    (but common mistake if you have Python fingers)
+    tells you to use .new method!!
+    
+#### `. (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+#### `=== (l, r)`
+
+    Check if value of PObject `l`
+    is the same Python Object
+    as value of PObject `r`
+    
+#### `[ (l, r)`
+
+    get a Dict entry
+    
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `[ (l, r, value)`
+
+    put a Dict entry
+    
+## Class Iterable
+
+### Methods
+
+#### `each_for (this, func)`
+
+	call `func` argument for each reverse iterator item
+	
+#### `for_each (this, func)`
+
+	call `func` argument for each iterator item
+	
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (l, value)`
+
+    default PObject init method
+    (fatal error)
+    
+#### `init0 (l, value)`
+
+    default PObject init0 method
+    (fatal error)
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `iter (this)`
+
+    return forward iterator
+    
+#### `map (this, func)`
+
+	return List of results of `func` passed each iterator item
+	
+#### `map2 (this, func, ignore)`
+
+	return List of results of `func` passed each iterator item,
+	ignore any returns with value `ignore` (defaults to `null`)
+	
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (this)`
+
+    return less human-friendly string representation of `this`
+    (use Python repr function on value)
+    
+#### `reprx (this)`
+
+    for debug: show Class name, and Python repr
+    
+#### `reversed (this)`
+
+    return reverse iterator
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `sorted (this)`
+
+    return sorted list values (or keys)
+    
+#### `to_str (this)`
+
+	default to_str method: calls this.repr
+	
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+### Binary operators
+
+#### `!= (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `!== (l, r)`
+
+    Check if value of PObject `l`
+    is not the same Python Object
+    as value of PObject `r`
+    
+#### `( (this_class, ...args)`
+
+    "(" binop for Class -- fatal error
+    (but common mistake if you have Python fingers)
+    tells you to use .new method!!
+    
+#### `. (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+#### `=== (l, r)`
+
+    Check if value of PObject `l`
+    is the same Python Object
+    as value of PObject `r`
+    
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+## Class List
+
+### Methods
+
+#### `append (l, item)`
+
+#### `each_for (this, func)`
+
+	call `func` argument for each reverse iterator item
+	
+#### `extend (this, iterable)`
+
+#### `for_each (this, func)`
+
+	call `func` argument for each iterator item
+	
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (this, arg)`
+
+	init method for List: takes Iterable
+	
+#### `init0 (l)`
+
+    called by List.init (in bootstrap.xxl)
+    Dodges needing private metaclass for List
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `iter (this)`
+
+    return forward iterator
+    
+#### `len (this)`
+
+    returns length (of String, List or Dict)
+    
+#### `map (this, func)`
+
+	return List of results of `func` passed each iterator item
+	
+#### `map2 (this, func, ignore)`
+
+	return List of results of `func` passed each iterator item,
+	ignore any returns with value `ignore` (defaults to `null`)
+	
+#### `pop (l, item)`
+
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (this)`
+
+	return represtation of List
+	
+#### `reprx (this)`
+
+    for debug: show Class name, and Python repr
+    
+#### `reversed (this)`
+
+    return reverse iterator
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `sorted (this)`
+
+    return sorted list values (or keys)
+    
+#### `to_str (this)`
+
+	default to_str method: calls this.repr
+	
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+### Binary operators
+
+#### `!= (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `!== (l, r)`
+
+    Check if value of PObject `l`
+    is not the same Python Object
+    as value of PObject `r`
+    
+#### `( (this_class, ...args)`
+
+    "(" binop for Class -- fatal error
+    (but common mistake if you have Python fingers)
+    tells you to use .new method!!
+    
+#### `. (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+#### `=== (l, r)`
+
+    Check if value of PObject `l`
+    is the same Python Object
+    as value of PObject `r`
+    
+#### `[ (l, r)`
+
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `[ (l, r, value)`
+
+## Class ModInfo
+
+### Methods
+
+#### `assemble (this, tree, srcfile)`
+
+    `tree`: List of Lists of VM code
+    `srcfile`: source of code
+    returns Closure in __modinfo.module initial scope
+    
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (this_obj, ...args)`
+
+    default init method for Object class
+    a fatal error if any arguments given
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `load_vmx (this, fname)`
+
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (l)`
+
+#### `reprx (l)`
+
+    for debug: show Class, and Python value (which may include id?)
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `to_str (this)`
+
+	default to_str method: calls this.repr
+	
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+### Binary operators
+
+#### `!= (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `!== (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `( (this_class, ...args)`
+
+    "(" binop for Class -- fatal error
+    (but common mistake if you have Python fingers)
+    tells you to use .new method!!
+    
+#### `. (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+#### `=== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+## Class Module
+
+### Methods
+
+#### `create (this_class, ...args)`
+
+    default create method for Object (and therefore Class)
+    makes an instance of this_class (called from default Object.new)
+    
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (this_class, props)`
+
+    init method for meta-class "Class" -- used to create new Classes
+    `props` is Dict holding properties (see const.CLASS_PROPS)
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `new (this_class, ...args)`
+
+	default metaclass (Class) new method
+	manually invoked as SomeClass.new
+	calls this_class.create to create obj
+	and then calls obj.init()
+	
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (l)`
+
+#### `reprx (l)`
+
+    for debug: show Class, and Python value (which may include id?)
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `subclass_of (l, c)`
+
+    return `true` if Class `l` is a subclass of
+    Class (or List of Classes) `c`
+    
+#### `to_str (this)`
+
+	default to_str method: calls this.repr
+	
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+### Binary operators
+
+#### `!= (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `!== (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `( (this_class, ...args)`
+
+    "(" binop for Class -- fatal error
+    (but common mistake if you have Python fingers)
+    tells you to use .new method!!
+    
+#### `. (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+#### `=== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+## Class Null
+
+### Methods
+
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (l, value)`
+
+    default PObject init method
+    (fatal error)
+    
+#### `init0 (l, value)`
+
+    default PObject init0 method
+    (fatal error)
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (this)`
+
+    to_string method for Null Class
+    
+#### `reprx (this)`
+
+    for debug: show Class name, and Python repr
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `to_str (this)`
+
+	default to_str method: calls this.repr
+	
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+### Binary operators
+
+#### `!= (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `!== (l, r)`
+
+    Check if value of PObject `l`
+    is not the same Python Object
+    as value of PObject `r`
+    
+#### `( (this, ...args)`
+
+    "(" method for `null` value (fatal error)
+    commonly happens when a bad method name is used
+    
+#### `. (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+#### `=== (l, r)`
+
+    Check if value of PObject `l`
+    is the same Python Object
+    as value of PObject `r`
+    
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+## Class Number
+
+### Methods
+
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (obj, value)`
+
+#### `init0 (l, value)`
+
+    default PObject init0 method
+    (fatal error)
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (this)`
+
+    return less human-friendly string representation of `this`
+    (use Python repr function on value)
+    
+#### `reprx (this)`
+
+    for debug: show Class name, and Python repr
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `to_str (this)`
+
+	default to_str method: calls this.repr
+	
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+#### `- (x)`
+
+### Binary operators
+
+#### `!= (l, r)`
+
+#### `!== (l, r)`
+
+    Check if value of PObject `l`
+    is not the same Python Object
+    as value of PObject `r`
+    
+#### `& (l, r)`
+
+#### `( (l, ...args)`
+
+    default Object '(' binop
+    (fatal error)
+    
+#### `* (x, y)`
+
+#### `+ (x, y)`
+
+#### `- (x, y)`
+
+#### `. (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `/ (x, y)`
+
+#### `< (l, r)`
+
+#### `<= (l, r)`
+
+#### `== (l, r)`
+
+#### `=== (l, r)`
+
+    Check if value of PObject `l`
+    is the same Python Object
+    as value of PObject `r`
+    
+#### `> (l, r)`
+
+#### `>= (l, r)`
+
+#### `| (l, r)`
+
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+## Class Object
+
+### Methods
+
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (this_obj, ...args)`
+
+    default init method for Object class
+    a fatal error if any arguments given
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (l)`
+
+#### `reprx (l)`
+
+    for debug: show Class, and Python value (which may include id?)
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `to_str (this)`
+
+	default to_str method: calls this.repr
+	
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+### Binary operators
+
+#### `!= (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `!== (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `( (l, ...args)`
+
+    default Object '(' binop
+    (fatal error)
+    
+#### `. (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+#### `=== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+## Class PClass
+
+### Methods
+
+#### `create (this_class)`
+
+    'create' method for PClass metaclass
+    makes an instance of this_class backed by a CPObject
+    used to create PClass subclass objects (Number, List, Dict, Bool, Null)
+    
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (this_class, props)`
+
+    init method for meta-class "Class" -- used to create new Classes
+    `props` is Dict holding properties (see const.CLASS_PROPS)
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `new (this_class, ...args)`
+
+	default metaclass (Class) new method
+	manually invoked as SomeClass.new
+	calls this_class.create to create obj
+	and then calls obj.init()
+	
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (l)`
+
+#### `reprx (l)`
+
+    for debug: show Class, and Python value (which may include id?)
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `subclass_of (l, c)`
+
+    return `true` if Class `l` is a subclass of
+    Class (or List of Classes) `c`
+    
+#### `to_str (this)`
+
+	default to_str method: calls this.repr
+	
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+### Binary operators
+
+#### `!= (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `!== (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `( (this_class, ...args)`
+
+    "(" binop for Class -- fatal error
+    (but common mistake if you have Python fingers)
+    tells you to use .new method!!
+    
+#### `. (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+#### `=== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+## Class PObject
+
+### Methods
+
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (l, value)`
+
+    default PObject init method
+    (fatal error)
+    
+#### `init0 (l, value)`
+
+    default PObject init0 method
+    (fatal error)
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (this)`
+
+    return less human-friendly string representation of `this`
+    (use Python repr function on value)
+    
+#### `reprx (this)`
+
+    for debug: show Class name, and Python repr
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `to_str (this)`
+
+	default to_str method: calls this.repr
+	
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+### Binary operators
+
+#### `!= (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `!== (l, r)`
+
+    Check if value of PObject `l`
+    is not the same Python Object
+    as value of PObject `r`
+    
+#### `( (l, ...args)`
+
+    default Object '(' binop
+    (fatal error)
+    
+#### `. (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+#### `=== (l, r)`
+
+    Check if value of PObject `l`
+    is the same Python Object
+    as value of PObject `r`
+    
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+## Class PyFunc
+
+### Methods
+
+#### `create (this_class, ...args)`
+
+    default create method for Object (and therefore Class)
+    makes an instance of this_class (called from default Object.new)
+    
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (this_class, props)`
+
+    init method for meta-class "Class" -- used to create new Classes
+    `props` is Dict holding properties (see const.CLASS_PROPS)
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `new (this_class, ...args)`
+
+	default metaclass (Class) new method
+	manually invoked as SomeClass.new
+	calls this_class.create to create obj
+	and then calls obj.init()
+	
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (l)`
+
+#### `reprx (l)`
+
+    for debug: show Class, and Python value (which may include id?)
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `subclass_of (l, c)`
+
+    return `true` if Class `l` is a subclass of
+    Class (or List of Classes) `c`
+    
+#### `to_str (this)`
+
+	default to_str method: calls this.repr
+	
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+### Binary operators
+
+#### `!= (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `!== (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `( (this_class, ...args)`
+
+    "(" binop for Class -- fatal error
+    (but common mistake if you have Python fingers)
+    tells you to use .new method!!
+    
+#### `. (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+#### `=== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+## Class PyIterable
+
+### Methods
+
+#### `each_for (this, func)`
+
+	call `func` argument for each reverse iterator item
+	
+#### `for_each (this, func)`
+
+	call `func` argument for each iterator item
+	
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (l, value)`
+
+    default PObject init method
+    (fatal error)
+    
+#### `init0 (l, value)`
+
+    default PObject init0 method
+    (fatal error)
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `iter (this)`
+
+    return forward iterator
+    
+#### `map (this, func)`
+
+	return List of results of `func` passed each iterator item
+	
+#### `map2 (this, func, ignore)`
+
+	return List of results of `func` passed each iterator item,
+	ignore any returns with value `ignore` (defaults to `null`)
+	
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (this)`
+
+    return less human-friendly string representation of `this`
+    (use Python repr function on value)
+    
+#### `reprx (this)`
+
+    for debug: show Class name, and Python repr
+    
+#### `reversed (this)`
+
+    return reverse iterator
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `sorted (this)`
+
+    return sorted list values (or keys)
+    
+#### `to_str (this)`
+
+    for debug: show Class name, and Python repr
+    
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+### Binary operators
+
+#### `!= (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `!== (l, r)`
+
+    Check if value of PObject `l`
+    is not the same Python Object
+    as value of PObject `r`
+    
+#### `( (this_class, ...args)`
+
+    "(" binop for Class -- fatal error
+    (but common mistake if you have Python fingers)
+    tells you to use .new method!!
+    
+#### `. (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+#### `=== (l, r)`
+
+    Check if value of PObject `l`
+    is the same Python Object
+    as value of PObject `r`
+    
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+## Class PyIterator
+
+### Methods
+
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (this_obj, ...args)`
+
+    default init method for Object class
+    a fatal error if any arguments given
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `iter (this)`
+
+    Python iterators are also iterables (return self)
+    https://docs.python.org/3/library/stdtypes.html#typeiter says
+    an iterator should have an __iter__ method:
+
+    Return the iterator object itself. This is required to allow
+    both containers and iterators to be used with the for and in
+    statements. This method corresponds to the tp_iter slot of the
+    type structure for Python objects in the Python/C API.
+    
+#### `next (this, finished_continuation)`
+
+    `finished` should be a CContinuation
+    (eg; block leave label or "return")
+    to call when iterator exhausted
+    
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (l)`
+
+#### `reprx (l)`
+
+    for debug: show Class, and Python value (which may include id?)
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `to_str (this)`
+
+	default to_str method: calls this.repr
+	
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+### Binary operators
+
+#### `!= (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `!== (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `( (this_class, ...args)`
+
+    "(" binop for Class -- fatal error
+    (but common mistake if you have Python fingers)
+    tells you to use .new method!!
+    
+#### `. (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+#### `=== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+## Class PyObject
+
+### Methods
+
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (l, value)`
+
+    default PObject init method
+    (fatal error)
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (l)`
+
+#### `reprx (l)`
+
+    for debug: show Class, and Python value (which may include id?)
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `to_str (this)`
+
+	default to_str method: calls this.repr
+	
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+### Binary operators
+
+#### `!= (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `!== (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `( (this, ...args)`
+
+#### `. (l, r)`
+
+    PyObject "." binop -- proxies to Python object getattr
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+#### `=== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+#### `[ (l, r)`
+
+    PyObject "[" binop
+    
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+## Class PyVMFunc
+
+### Methods
+
+#### `create (this_class, ...args)`
+
+    default create method for Object (and therefore Class)
+    makes an instance of this_class (called from default Object.new)
+    
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (this_class, props)`
+
+    init method for meta-class "Class" -- used to create new Classes
+    `props` is Dict holding properties (see const.CLASS_PROPS)
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `new (this_class, ...args)`
+
+	default metaclass (Class) new method
+	manually invoked as SomeClass.new
+	calls this_class.create to create obj
+	and then calls obj.init()
+	
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (l)`
+
+#### `reprx (l)`
+
+    for debug: show Class, and Python value (which may include id?)
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `subclass_of (l, c)`
+
+    return `true` if Class `l` is a subclass of
+    Class (or List of Classes) `c`
+    
+#### `to_str (this)`
+
+	default to_str method: calls this.repr
+	
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+### Binary operators
+
+#### `!= (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `!== (l, r)`
+
+    Test if `l` and `r` refer to different Objects
+    
+#### `( (this_class, ...args)`
+
+    "(" binop for Class -- fatal error
+    (but common mistake if you have Python fingers)
+    tells you to use .new method!!
+    
+#### `. (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+#### `=== (l, r)`
+
+    Test if `l` and `r` refer to the same Object
+    
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+## Class Str
+
+### Methods
+
+#### `each_for (this, func)`
+
+	call `func` argument for each reverse iterator item
+	
+#### `ends_with (this, arg)`
+
+#### `for_each (this, func)`
+
+	call `func` argument for each iterator item
+	
+#### `getclass (this)`
+
+    return Class for `this`
+    
+#### `getprop (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `init (l, value)`
+
+    default PObject init method
+    (fatal error)
+    
+#### `init0 (l, value)`
+
+    default PObject init0 method
+    (fatal error)
+    
+#### `instance_of (l, c)`
+
+    return `true` if Object `l` is an instance of
+    Class (or List of Classes) `c`
+    
+#### `iter (this)`
+
+    return forward iterator
+    
+#### `join (this, arg)`
+
+#### `len (this)`
+
+    returns length (of String, List or Dict)
+    
+#### `map (this, func)`
+
+	return List of results of `func` passed each iterator item
+	
+#### `map2 (this, func, ignore)`
+
+	return List of results of `func` passed each iterator item,
+	ignore any returns with value `ignore` (defaults to `null`)
+	
+#### `ord (this)`
+
+#### `props (this)`
+
+    returns an Iterable for (String) property names
+    of `this` Object
+    
+#### `putprop (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+#### `repr (this)`
+
+    return less human-friendly string representation of `this`
+    (use Python repr function on value)
+    
+#### `reprx (this)`
+
+    for debug: show Class name, and Python repr
+    
+#### `reversed (this)`
+
+    return reverse iterator
+    
+#### `setclass (this, klass)`
+
+    set Class for `this`!!
+    
+#### `slice (l, a, b)`
+
+#### `sorted (this)`
+
+    return sorted list values (or keys)
+    
+#### `split (this, sep, limit)`
+
+#### `starts_with (this, arg)`
+
+#### `strip (this)`
+
+#### `to_float (this)`
+
+#### `to_int (this, base)`
+
+#### `to_str (this)`
+
+### Unary operators
+
+#### `! (x)`
+
+    Object unary ! operator; returns `true` if `x` is "falsey"
+    (false, null, or zero)
+    
+### Binary operators
+
+#### `!= (l, r)`
+
+#### `!== (l, r)`
+
+    Check if value of PObject `l`
+    is not the same Python Object
+    as value of PObject `r`
+    
+#### `( (this_class, ...args)`
+
+    "(" binop for Class -- fatal error
+    (but common mistake if you have Python fingers)
+    tells you to use .new method!!
+    
+#### `+ (x, y)`
+
+#### `. (l, r)`
+
+    Object getprop method/operator
+    return `r` (String) property of object `l`
+    
+#### `.. (this, prop)`
+
+    Object ".." operator; for calling superclass methods
+    looks for `prop` as property or method of superclasses of `this`
+    
+#### `< (l, r)`
+
+#### `<= (l, r)`
+
+#### `== (l, r)`
+
+#### `=== (l, r)`
+
+    Check if value of PObject `l`
+    is the same Python Object
+    as value of PObject `r`
+    
+#### `> (l, r)`
+
+#### `>= (l, r)`
+
+#### `[ (l, r)`
+
+### LHS Binary operators
+
+#### `. (l, r, value)`
+
+    Object putprop method/operator
+    store `value` as `r` (String) property of object `l`
+    
+## Variables
+
+### false
+
+### null
+
+### true
+
+
