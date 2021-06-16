@@ -180,4 +180,10 @@ var module_name = "classes";	// XXX take as command line argument
 var mu = markup_class.new();
 
 describe_module(mu, module_name);
+
+mu.hr();
+var time = System.pyimport("time");
+mu.append("formatted by doc.xxl on " + time.strftime("%F %T")); // XXX want UTC
+
+// The very very very end.
 System.print(mu.render());	// output results
