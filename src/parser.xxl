@@ -1081,6 +1081,7 @@ var Parser = Class.new({
 	    p.add_symbol_class("(", p.LParen);
 
 	    p.add_prefix("Not", "!");
+	    p.add_prefix("BNot", "~");
 
 	    p.Function = Class.new({
 		name: "Function",
