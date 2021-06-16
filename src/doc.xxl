@@ -100,6 +100,13 @@ var prclass = function (mu, class) {
     `mu` is a MarkUp instance
     `class` is a Class (metaclass) to document
     """
+
+    if (class.__doc) {
+	mu.append(class.__doc);
+	mu.nappend();		// EOL
+	mu.nappend();		// blank line
+    }
+
     [
      ['__methods', 'Methods'],
      ['__unops', 'Unary operators'],
@@ -168,8 +175,9 @@ var describe_module = function (mu, module_name) {
 };
 
 var markup_class = MarkDown;	// XXX take option for format!!
-var mu = markup_class.new();
 var module_name = "classes";	// XXX take as command line argument
+
+var mu = markup_class.new();
 
 describe_module(mu, module_name);
 System.print(mu.render());	// output results
