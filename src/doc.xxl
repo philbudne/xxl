@@ -7,6 +7,7 @@ var collect_class_ops = function (class, prop) {
     traverse Class hierarchy for `class`
     collecting all methods/operators from property `prop`
 	(one of '_methods', '__unops', '__binops', '__lhsops')
+	returns Dict of Callables
     """
     var funcs = {};
     var q = [class];
