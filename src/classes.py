@@ -729,7 +729,7 @@ def _not(x):
 @pyfunc
 def obj_not(x):
     """
-    Object unary ! operator; returns `true` if `x` is "falsey"
+    Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, null, or zero)
     """
     return _not(x)
@@ -1169,7 +1169,7 @@ PyIterable.setprop('range', pyiterable_range) # static method
 @pyfunc
 def dict_put(l, r, value):
     """
-    put a Dict entry
+    put `value` into Dict `l` index `r`
     """
     entry = r.value             # XXX
     l.value[entry] = value
@@ -1178,7 +1178,7 @@ def dict_put(l, r, value):
 @pyfunc
 def dict_get(l, r):
     """
-    get a Dict entry
+    get entry `r` Dict from dict `l`
     """
     entry = r.value             # XXX
     ret = l.value.get(entry, null_value)
@@ -1203,21 +1203,21 @@ def dict_pop(obj, arg):
 @pyfunc
 def dict_items(this):
     """
-    return Iterable for [key, value]
+    return Iterable for [key, value] value pairs
     """
     return mkiterable(this.value.items())
 
 @pyfunc
 def dict_keys(this):
     """
-    return Iterable for keys
+    return Iterable for Dict keys
     """
     return mkiterable(this.value.keys())
 
 @pyfunc
 def dict_values(this):
     """
-    return Iterable for values
+    return Iterable for Dict values
     """
     return mkiterable(this.value.values())
 
@@ -1248,23 +1248,35 @@ def list_init0(l):
     return null_value
 
 @pyfunc
-def list_append(l, item):
-    l.value.append(item)
+def list_append(this, item):
+    """
+    append `item` to `this` List
+    """
+    this.value.append(item)
     return null_value
 
 @pyfunc
-def list_pop(l,item=None):
-    if item is None:
+def list_pop(l, index=None):
+    """
+    Remove and return List item at `index` (default last)
+    """
+    if index is None:
         return l.value.pop()
-    return l.value.pop(item.value) # XXX check if Number
+    return l.value.pop(index.value) # XXX check if Number
 
 @pyfunc
 def list_get(l, r):
+    """
+    Return List item at index `r`
+    """
     # XXX check if integer
     return l.value[r.value]
 
 @pyfunc
 def list_put(l, r, value):
+    """
+    Set List item at index `r` to `value`
+    """
     # XXX check if integer
     l.value[r.value] = value
     return value		# lhsop MUST return value
@@ -1291,27 +1303,58 @@ List.setprop(const.LHSOPS, _mkdict({
 
 @pyfunc
 def neg(x):
+    """
+    Return negative of `x`
+    """
     return _new_pobj(x.getclass(), -x.value)
 
 @pyfunc
-def add(x, y):
-    # XXX check if one zero?
-    return _new_pobj(x.getclass(), x.value + y.value)
+def add(l, r):
+    """
+    add `l` and `r`
+    """
+    lv = l.value
+    rv = r.value
+    if lv == 0:
+        return r
+    if rv == 0:
+        return l
+    return _new_pobj(l.getclass(), lv + rv)
 
 @pyfunc
-def sub(x, y):
-    # XXX check if y zero?
-    return _new_pobj(x.getclass(), x.value - y.value)
+def sub(l, r):
+    """
+    subtract `r` from `l`
+    """
+    lv = l.value
+    rv = r.value
+    if rv == 0:
+        return l
+    return _new_pobj(l.getclass(), lv - rv)
 
 @pyfunc
-def mul(x, y):
-    # XXX check if one is one?
-    return _new_pobj(x.getclass(), x.value * y.value)
+def mul(l, r):
+    """
+    multiple `l` and `r`
+    """
+    lv = l.value
+    rv = r.value
+    if lv == 1:
+        return r
+    if rv == 1:
+        return l
+    return _new_pobj(l.getclass(), l.value * r.value)
 
 @pyfunc
-def div(x, y):
-    # XXX check if y is one? zero??!!
-    return _new_pobj(x.getclass(), x.value / y.value)
+def div(l, r):
+    """
+    divide `l` by `r`
+    """
+    lv = l.value
+    rv = r.value
+    if rv == 1:
+        return l
+    return _new_pobj(l.getclass(), lv / rv)
 
 def _eq(l, r):
     """
@@ -1322,10 +1365,16 @@ def _eq(l, r):
 
 @pyfunc
 def eq(l, r):
+    """
+    return `true` if value of `l` is the same as value of `r`
+    """
     return _eq(l, r)
 
 @pyfunc
 def ne(l, r):
+    """
+    return `true` if value of `l` is different from the value of `r`
+    """
     return _not(_eq(l, r))
 
 def _ge(l, r):
@@ -1333,10 +1382,16 @@ def _ge(l, r):
 
 @pyfunc
 def ge(l, r):
+    """
+    return `true` if value of `l` is >= the value of `r`
+    """
     return _ge(l, r)
 
 @pyfunc
 def lt(l, r):
+    """
+    return `true` if value of `l` is < the value of `r`
+    """
     return _not(_ge(l, r))
 
 def _le(l, r):
@@ -1344,14 +1399,23 @@ def _le(l, r):
 
 @pyfunc
 def le(l, r):
+    """
+    return `true` if value of `l` is <= the value of `r`
+    """
     return _le(l, r)
 
 @pyfunc
 def gt(l, r):
+    """
+    return `true` if value of `l` is > the value of `r`
+    """
     return _not(_le(l, r))
 
 @pyfunc
 def num_init(obj, value):
+    """
+    initialize Number from Str value
+    """
     # XXX make illegal tell them to use Str.to_{int,float} instead??!
     if instance_of(value, [Str]):
         v = value.value
@@ -1368,11 +1432,36 @@ def num_init(obj, value):
 
 @pyfunc
 def bitand(l, r):
-    return _new_pobj(l.getclass(), l.value & r.value)
+    """
+    return bitwise (binary) "and" (conjunction) of `l` and `r`
+    """
+    lv = l.value
+    rv = r.value
+    if lv == 0:
+        return l
+    if rv == 0:
+        return r
+    return _new_pobj(l.getclass(), lv & rv)
 
 @pyfunc
 def bitor(l, r):
-    return _new_pobj(l.getclass(), l.value | r.value)
+    """
+    return bitwise (binary) "or" (union) of `l` and `r`
+    """
+    lv = l.value
+    rv = r.value
+    if lv == 0:
+        return r
+    if rv == 0:
+        return l
+    return _new_pobj(l.getclass(), lv | rv)
+
+@pyfunc
+def bitnot(this):
+    """
+    return bitwise (binary) "not" (complement) of `this`
+    """
+    return _new_pobj(this.getclass(), ~this.value)
 
 Number.setprop(const.METHODS, _mkdict({
     const.INIT: num_init
@@ -1380,6 +1469,7 @@ Number.setprop(const.METHODS, _mkdict({
 
 Number.setprop(const.UNOPS, _mkdict({
     '-': neg,
+    '~': bitnot,
 }))
 Number.setprop(const.BINOPS, _mkdict({
     '+': add,
@@ -1402,6 +1492,9 @@ Number.setprop(const.BINOPS, _mkdict({
 
 @pyfunc
 def str_concat(x, y):
+    """
+    String concatenation
+    """
     xv = x.value                # XXX getstr
     yv = y.value                # XXX getstr
     if xv == "":
@@ -1412,21 +1505,35 @@ def str_concat(x, y):
 
 @pyfunc
 def str_get(l, r):              # [] operator
+    """
+    return `r`'th character of Str `l`
+    r[l]
+    """
     # XXX check if r is integer
     return _new_pobj(l.getclass(), l.value[r.value])
 
 @pyfunc
-def str_slice(l, a, b=None):
-    av = a.value                # XXX check if int
-    if b is not None:
-        bv = b.value            # XXX check if int
-        ret = l.value[av:bv]
+def str_slice(this, start, end=None):
+    """
+    return a substring (slice) of `this`
+    starting at position `start`
+    ending at position `end` (defaults to rest of string
+    """
+    startv = start.value        # XXX check if int
+    if end is not None:
+        endv = end.value            # XXX check if int
+        ret = this.value[startv:endv]
     else:
-        ret = l.value[av:]
-    return _new_pobj(l.getclass(), ret)
+        ret = this.value[startv:]
+    return _new_pobj(this.getclass(), ret)
 
 @pyfunc
 def str_split(this, sep=None, limit=-1):
+    """
+    Return a List of the words in the string,
+    using sep as the delimiter string (default to `null` -- any whitespace).
+    Limit to `limit` return values (defaults to -1 -- no limit)
+    """
     if sep is not None:
         sep = sep.value         # XXX getstr
     if limit != -1:
@@ -1435,40 +1542,68 @@ def str_split(this, sep=None, limit=-1):
     return wrap(this.value.split(sep, limit))
 
 @pyfunc
-def str_ends_with(this, arg):
-    return mkbool(this.value.endswith(arg.value))
+def str_ends_with(this, suff):
+    """
+    Return True if `this` ends with the suffix `suff`, False otherwise.
+    """
+    return mkbool(this.value.endswith(suff.value))
 
 @pyfunc
 def str_join(this, arg):
+    """
+    Concatenate any number of strings.
+    
+    The string whose method is called is inserted in between each given string.
+    The result is returned as a new string.
+    """
     # XXX check arg is List (or Dict) of Str!
     return _new_pobj(this.getclass(),
                      this.value.join([x.value for x in arg.value]))
 
 @pyfunc
 def str_ord(this):
+    """
+    Return the Unicode code point for a one-character string `this`
+    """
     s = this.value              # XXX getstr
     if len(s) != 1:
         raise UError("Str.ord length != 1")
     return mknumber(ord(s))
 
 @pyfunc
-def str_starts_with(this, arg):
-    return mkbool(this.value.startswith(arg.value))
+def str_starts_with(this, pref):
+    """
+    Return `true` if `this` starts with prefix `pref, `false` otherwise.
+    """
+    return mkbool(this.value.startswith(pref.value))
 
 @pyfunc
 def str_str(this):
+    """
+    Identity method
+    """
     return this                 # identity
 
 @pyfunc
 def str_strip(this):
+    """
+    Return a copy of the string with leading and trailing whitespace removed.
+    """
     return _new_pobj(this.getclass(), this.value.strip()) # XXX getstr
 
 @pyfunc
 def str_to_float(this):
+    """
+    Convert string to a floating point Number
+    """
     return mknumber(float(this.value))
 
 @pyfunc
 def str_to_int(this, base=None):
+    """
+    Convert string to integer Number
+    `base` defaults to zero (accept 0xXXX for base 16)
+    """
     if base is None:
         base = 0                # accept 0xXXX
     else:
@@ -1477,8 +1612,11 @@ def str_to_int(this, base=None):
 
 # static methods (plain function)
 @pyfunc
-def str_chr(value):
-    return mkstr(chr(value.value)) # XXX getint
+def str_chr(i):
+    """
+    Return a Unicode string of one character with ordinal i; 0 <= i <= 0x10ffff
+    """
+    return mkstr(chr(i.value)) # XXX getint
 
 Str.setprop(const.METHODS, _mkdict({
     'ends_with': str_ends_with,
@@ -1512,7 +1650,7 @@ Str.setprop('chr', str_chr)
 @pyfunc
 def null_str(this):
     """
-    to_string method for Null Class
+    to_string/repr method for Null Class: returns "null"
     """
     return mkstr("null")
 
@@ -1536,6 +1674,9 @@ Null.setprop(const.BINOPS, _mkdict({
 
 @pyfunc
 def bool_str(this):
+    """
+    return Str representation: "true" or "false"
+    """
     if this.value:
         return mkstr("true")
     else:
