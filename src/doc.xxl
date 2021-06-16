@@ -40,30 +40,54 @@ var MarkUp = Class.new({
     doc: "base class for marking up text",
     methods: {
 	init: function (this) { this._value = []; },
-	render: function (this) { return("".join(this._value)); },
-	append: function (this, s) {
-	    this._value.append(s);
+	render: function (this) {
+	    """
+	    return final result Str
+	    """
+	    return("".join(this._value));
 	},
-	nappend: function (this, ...strings) {
+	joinw: function(this, list) {
 	    """
-	    append newline, then concatenation of strings
+	    join words and return Str
 	    """
-	    this._value.append("\n"); // XXX only if not in col zero?
-	    if (strings.len()) {
-		this._value.append(" ".join(strings));
+	    return(" ".join(list));
+	},
+	append: function (this, ...words) {
+	    """
+	    append words (w/o any newlines)
+	    """
+	    var s = this.joinw(words);
+	    if (s.len() > 0) {
+		this._value.append(s);
+	    }
+	},
+	nappend: function (this, ...words) {
+	    """
+	    start new line, then append words (w/ spaces)
+	    """
+	    if (this._value.len() > 0 && this._value[-1][-1] != "\n") {
+		this._value.append("\n"); // start new line
+	    }
+	    if (words.len()) {
+		this._value.append(this.joinw(words));
 	    }
 	},
 	lwrap: function (this, prefix, list, suffix) {
 	    """
 	    wrap `list` of items between `prefix` and `suffix`
-	    AND RETURN
+	    AND RETURN String
 	    """
 	    suffix = suffix || ""; // want "||=" or "??=" ??
-	    var l = " ".join(list); // XXX maybe list.map(str)??
+	    var l = this.joinw(list);
 	    return("".join([prefix, l, suffix]));
 	},
-	alwrap: function (this, prefix, list, suffix) { // wrap list and APPEND
-	    this.append(this.lwrap(prefix, list, suffix));
+	wrapnap: function (this, prefix, words, suffix) {
+	    """
+	    concatenate List of Str `words`
+	    wrap in prefix/suffix
+	    start new line and append
+	    """
+	    this.nappend(this.lwrap(prefix, words, suffix));
 	}
     } // methods
 });
@@ -74,31 +98,52 @@ var MarkDown = Class.new({
     supers: [MarkUp],
     methods: {
 	// the following take multiple args, will space separate and APPEND.
-	h1: function (this, ...args) { this.alwrap("# ", args, "\n"); },
-	h2: function (this, ...args) { this.alwrap("## ", args, "\n"); },
-	h3: function (this, ...args) { this.alwrap("### ", args, "\n"); },
-	h4: function (this, ...args) { this.alwrap("#### ", args, "\n"); },
-	h5: function (this, ...args) { this.alwrap("##### ", args, "\n"); },
+	h1: function (this, ...args) { this.wrapnap("# ", args, "\n"); },
+	h2: function (this, ...args) { this.wrapnap("## ", args, "\n"); },
+	h3: function (this, ...args) { this.wrapnap("### ", args, "\n"); },
+	h4: function (this, ...args) { this.wrapnap("#### ", args, "\n"); },
+	h5: function (this, ...args) { this.wrapnap("##### ", args, "\n"); },
+	hn: function (this, n, ...args) {
+	    this.wrapnap("##########".slice(0,n) + " ", args, "\n");
+	},
 
 	hr: function (this, ...args) { this.nappend("---\n"); },
+	p: function (this, ...args) { this.nappend("\n"); }, // paragraph
+
 	// code_block?
 	// (un)ordered_list (take list)??
 
 	// NOTE!! the following RETURN strings:
-	bold: function (this, ...args) {
-	    return(this.lwrap("**", args, "**"));
+	bold: function (this, ...words) { // cannot be combined w/ i??
+	    return(this.lwrap("**", words, "**"));
 	},
-	italic: function (this, ...args) {
-	    return(this.lwrap("*", args, "*"));
+	i: function (this, ...words) { // cannot be combined w/ bold?!
+	    return(this.lwrap("*", words, "*"));
 	},
-	code: function (this, ...args) {
-	    return(this.lwrap("`", args, "`"));
+	code: function (this, ...words) {
+	    return(this.lwrap("`", words, "`"));
 	}
     }
 });
 // XXX end move to markup.xxl???
 
-var prclass = function (mu, class) {
+var mufunc = function (mu, level, name, func) {
+    var args = func.__args() || "";
+    mu.hn(level, mu.code(name, args));
+    var defn = func.__defn;
+    if (defn) {
+	// no blank line?
+	mu.nappend(mu.i("defined at", defn));
+    }
+    var doc = func.__doc;
+    if (doc) {
+	mu.p();
+	mu.append(doc);
+	mu.nappend();
+    }
+};
+
+var muclass = function (mu, class) {
     """
     `mu` is a MarkUp instance
     `class` is a Class (metaclass) to document
@@ -106,8 +151,7 @@ var prclass = function (mu, class) {
 
     if (class.__doc) {
 	mu.append(class.__doc);
-	mu.nappend();		// EOL
-	mu.nappend();		// blank line
+	mu.p();
     }
 
     [
@@ -118,22 +162,13 @@ var prclass = function (mu, class) {
     ].for_each(			// for_each property
 	 function (pitem) {	// pitem => ["property", "english"]
 	     mu.h3(pitem[1]);	// english name
-	     mu.nappend();	// blank line
+	     mu.p();
 	     var d = collect_class_ops(class, pitem[0]); // returns Dict
 	     d.items().sorted().for_each(
 		 function (ditem) { // ditem => [method/op_name, function]
 		     var name = ditem[0]; // method name or operator string
-		     var func = ditem[1];
-		     // XXX make this "prfunc"??
-		     var args = func.__args() || "";
-		     // mname + args
-		     // Maybe "BLAH Method" (whaddabout args??)
-		     mu.h4(mu.code(ditem[0], args));
-		     var doc = func.__doc;
-		     if (doc) {
-			 mu.append(doc);
-		     }
-		     mu.nappend();
+		     var func = ditem[1]; // Callable
+		     mufunc(mu, 4, name, func);
 		 }
 	     );
 	 } // function (pitem)
@@ -142,7 +177,7 @@ var prclass = function (mu, class) {
 
 var describe_module = function (mu, module_name) {
     mu.h1(mu.code(module_name), "Module");
-    mu.nappend();
+    mu.p();
 
     // iterate over sorted names in Module
     var mod = System.import(module_name);
@@ -155,17 +190,16 @@ var describe_module = function (mu, module_name) {
 	    var x = mod.getprop(name);
 	    if (x.instance_of(classes.Class)) {
 		mu.h2("Class", mu.code(name));
-		mu.nappend();
-		prclass(mu, x);
+		mu.p();
+		muclass(mu, x);
 	    }
 	    else {
-		// XXX split into vars and funcs???
 		vars.append(name);
 	    }
 	}
     );
     mu.h2("Variables");
-    mu.nappend();
+    mu.p();
     vars.for_each(
 	function (name) {
 	    var x = mod.getprop(name);
@@ -175,10 +209,10 @@ var describe_module = function (mu, module_name) {
 	    }
 	    else {
 		mu.h3(mu.code(name));
+		mu.p();
 		mu.nappend("Value:", mu.code(x.to_str()));
-		mu.nappend();
 	    }
-	    mu.nappend();
+	    mu.p();
 	}
     );
 };
