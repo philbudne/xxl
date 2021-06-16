@@ -1,6 +1,6 @@
 FIX
 ===
-doc string formatter
+Str.join should take Iterable
 
 Makefile:
 	ignore metadata line in bootstrap.vmx

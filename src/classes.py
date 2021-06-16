@@ -1557,6 +1557,7 @@ def str_join(this, arg):
     The result is returned as a new string.
     """
     # XXX check arg is List (or Dict) of Str!
+    # XXX XXX should allow an Iterable
     return _new_pobj(this.getclass(),
                      this.value.join([x.value for x in arg.value]))
 
