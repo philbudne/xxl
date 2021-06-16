@@ -1,6 +1,11 @@
 FIX
 ===
+doc.xxl Classes:
+	show static methods (Class member functions) / members
+
 Str.join should take Iterable
+   have wrapper function that:
+	calls List.new(arg.iter()) (if not a List!)
 
 Makefile:
 	ignore metadata line in bootstrap.vmx
