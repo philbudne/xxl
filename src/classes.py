@@ -135,6 +135,9 @@ class CObject:
     def hasprop(self, prop):
         return prop in self.props
 
+    def delprop(self, prop):
+        self.props.pop(prop)
+
     def getprop(self, prop):
         return self.props.get(prop, null_value)
 
@@ -743,6 +746,15 @@ def obj_not(x):
     return _not(x)
 
 @pyfunc
+def obj_delprop(this, name):
+    """
+    Delete property `name` from Object `this`
+    (only effects `this` -- never Class or superclasses)
+    """
+    this.props.pop(name)
+    return null_value
+
+@pyfunc
 def obj_putprop(l, r, value):
     """
     Object putprop method/operator
@@ -910,6 +922,7 @@ Object.setprop(const.METHODS, _mkdict({
     'getclass': obj_getclass,
     'setclass': obj_setclass,
     'instance_of': obj_instance_of,
+    'delprop': obj_delprop,
     'putprop': obj_putprop,
     'getprop': obj_getprop,
     'props': obj_props,
