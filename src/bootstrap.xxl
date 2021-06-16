@@ -195,6 +195,17 @@ if (__modinfo.main) {		// once only
 	// NOTE: modifies List: not chainable in Python
     };
 
+    ////////////////
+    // Number
+
+    classes.Number.new = function (x) {
+	"""
+	Return a `Number` object with value `x`
+	NOTE!! A static method, not a (Meta)class method!!!
+	"""
+	return(x.to_number());
+    };
+
 } // main / once only
 
 if (true) {			// all modules-- hide temp variables
