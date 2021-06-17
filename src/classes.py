@@ -1078,7 +1078,7 @@ def pobj_reprx(this):
     """
     for debug: show Class name, and Python repr
     """
-    return mkstr("<%s: %s>" % (l.classname(), repr(l.value)))
+    return mkstr("<%s: %s>" % (this.classname(), repr(this.value)))
 
 @pyfunc
 def pobj_init(l, value):
@@ -1089,12 +1089,12 @@ def pobj_init(l, value):
     raise UError("{} missing init method".format(l.classname()))
 
 @pyfunc
-def pobj_init0(l, value):
+def pobj__init0(this, value):
     """
     default PObject init0 method
     (fatal error)
     """
-    raise UError("{} missing init0 method".format(l.classname()))
+    raise UError("{} missing init0 method".format(this.classname()))
 
 @pyfunc
 def pobj_ident(l, r):
@@ -1122,7 +1122,7 @@ PObject.setprop(const.METHODS, _mkdict({
     'repr': pobj_repr,
     'reprx': pobj_reprx,
     const.INIT: pobj_init,
-    'init0': pobj_init0
+    '__init0': pobj__init0
 }))
 
 PObject.setprop(const.BINOPS, _mkdict({
@@ -1237,7 +1237,7 @@ def dict_get(l, r):
     return ret
 
 @pyfunc
-def dict_init0(obj):
+def dict__init0(obj):
     """
     called by Dict.init (in bootstrap.xxl)
     Dodges needing private metaclass for Dict
@@ -1274,7 +1274,7 @@ def dict_values(this):
     return mkiterable(this.value.values())
 
 Dict.setprop(const.METHODS, _mkdict({
-    'init0': dict_init0,
+    '__init0': dict__init0,
     'items': dict_items,
     'keys': dict_keys,
     'len': pobj_len,
@@ -1291,7 +1291,7 @@ Dict.setprop(const.LHSOPS, _mkdict({
 ################ List
 
 @pyfunc
-def list_init0(l):
+def list__init0(l):
     """
     called by List.init (in bootstrap.xxl)
     Dodges needing private metaclass for List
@@ -1339,7 +1339,7 @@ List.setprop(const.METHODS, _mkdict({
     'len': pobj_len,
     'pop': list_pop,
     # XXX slice(start[,end]) (return range of elements)
-    'init0': list_init0,
+    '__init0': list__init0,
 }))
 List.setprop(const.BINOPS, _mkdict({
     '[': list_get

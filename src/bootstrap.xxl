@@ -129,7 +129,7 @@ if (__modinfo.main) {		// once only
 	init method for Dict: takes Iterable returning two-item lists,
 	OR an Iterable returning keys, and implementing '['
 	"""
-	this.init0();
+	this.__init0();
 	var i = (arg || []).iter; // fetch method, but do not call
 	if (!i) {
 	    System.uerror(this.name + ".init needs iterable");
@@ -171,12 +171,11 @@ if (__modinfo.main) {		// once only
 	"""
 	init method for List: takes Iterable
 	"""
-	this.init0();
-	var i = (arg || []).iter; // fetch method, but do not call
-	if (!i) {
-	    System.uerror(this.name + ".init needs iterable");
+	this.__init0();
+	if (!arg.instance_of(classes.Iterable) && !arg.iter) {
+	    System.uerror(this.name + ".init needs Iterable");
 	}
-	this.extend(i());
+	this.extend(arg);
     };
 
     var repr = function (x) { return(x.repr()); };
