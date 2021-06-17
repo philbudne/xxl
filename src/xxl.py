@@ -72,7 +72,8 @@ if not argv:
     help = True
 
 if help:
-    sys.stderr.write("""Usage: xxl.py [-h][-s][-t][-x][-P parser.vmx] file args ...
+    sys.stderr.write("""
+Usage: xxl.py [-h][-s][-t][-x][-P parser.vmx] file args ...
 
 file can be .xxl (source) or .vmx (VM code)
 
@@ -80,7 +81,7 @@ file can be .xxl (source) or .vmx (VM code)
 -s    enable VM stats
 -t    enable VM instruction trace
 -P    load alternate parser.vmx file
--x    don't treat some Python exceptions as user errors
+-x    show python eXception backtraces
 """)
     sys.exit(1)
 
