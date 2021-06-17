@@ -1,6 +1,6 @@
-test/013-block.xxl:3:9 WARNING: symbol a shadows previous definition at test/013-block.xxl:1:5
-test/013-block.xxl:11:9 WARNING: symbol a shadows previous definition at test/013-block.xxl:1:5
-test/013-block.xxl:18:9 WARNING: symbol a shadows previous definition at test/013-block.xxl:1:5
+test/013-block.xxl:3:9 WARNING: symbol a -- shadows previous definition at test/013-block.xxl:1:5
+test/013-block.xxl:11:9 WARNING: symbol a -- shadows previous definition at test/013-block.xxl:1:5
+test/013-block.xxl:18:9 WARNING: symbol a -- shadows previous definition at test/013-block.xxl:1:5
 2
 1
 2

@@ -99,6 +99,8 @@ var VMCode = Class.new({
 	gen_stmts: function (this, stmts) { // generate code for list of stmts
 	    stmts.for_each(
 		function (item) {
+		    // call this.gen_stmt to
+		    // emit optional "stmt" Instr for breakpoint/trace/profiling??
 		    item.gen(this);
 		}
 	    );
@@ -316,11 +318,15 @@ var PrattParser = Class.new({
 	    var v = t.value;
 	    var a = t.type;		// arity (name,number,string,operator)
 	    var c;			// class
+	    var d;			// definition (for name)
 	    // var id = v;
 	    if (a == "name") {
-		c = this.scope.find_class(v) // class of an existing Symbol
-		    || this.symbol_classes[v] // keywords
-		    || this.Symbol;	// undefined on reference in expr
+		if ((d = this.scope.find_definition(v))) { // previously defined?
+		    c = d.getclass();
+		}
+		else if (!(c = this.symbol_classes[v])) { // keyword?
+		    c = this.Symbol; // undefined on reference in expr
+		}
 	    }
 	    else if (a == "operator") {
 		c = this.symbol_classes[v];
@@ -336,7 +342,9 @@ var PrattParser = Class.new({
 	    else {
 		t_error("Unexpected token " + v);
 	    }
-	    return(c.new(t.where, v, a)); // Symbol!!!
+	    var s = c.new(t.where, v, a); // Symbol
+	    s.defn = d;	    // PLB 2021-06-17 (try to avoid repeating)
+	    return(s);
 	}, // _gtok
 	check: function (this, id) {
 	    // tempting take class_list, check this.token.is_instance(class_list)
@@ -364,17 +372,19 @@ var PrattParser = Class.new({
 	    }
 	    return(this._next_token);
 	},
-	define: function (this, sym) {
-	    // sym is a Parser Symbol (or Name if previously seen) instance
+	define: function (this, sym, read_only) {
+	    // sym is a Parser Symbol instance
 	    // declare as a Name in the current scope.
 
-	    // look for previous definition (in an outer scope)
+	    // look for previous definition, if any (in an outer scope)
+	    // XXX is sym.defn helpful???
 	    var prev = this.scope.find_definition(sym.value);
 
+	    var class = read_only ? this.ReadOnly : this.Name; // also in defname method
+
 	    // give fatal error for duplicate first!
-	    this.scope._define(this.Name.new(sym.where, sym.value, sym.arity));
+	    this.scope._define(class.new(sym.where, sym.value, sym.arity));
 	    if (prev) {
-		// XXX make fatal?
 		sym.warning("shadows previous definition at " + prev.where);
 	    }
 	},
@@ -403,7 +413,7 @@ var PrattParser = Class.new({
 			// would generate nested closures! could just chain them on...
 			n.error("statement already labeled");
 		    }
-		    // create Label node: creates new scope & defines label var
+		    // create Label node: creates new scope & defines label var in it
 		    var nn = this.Label.new(n.where, n.value, "name");
 		    nn.std();	// call Label.std
 		    return(nn);
@@ -423,12 +433,19 @@ var PrattParser = Class.new({
 	    return(v);
 	}, // statement
 
-	defname: function(this, where, name) {
-	    this.scope._define(this.Name.new(where, name, "name"));
+	defname: function(this, where, name, read_only) {
+	    """
+	    define `name` (arrived at w/o a Symbol) in current scope.
+	    NOTE: does NOT check for multiple definitions or "shadowing"
+	    so not for use with user symbols.
+	    """
+	    var class = read_only ? this.ReadOnly : this.Name; // also in "define" method
+	    this.scope._define(class.new(where, name, "name"));
 	},
 
-	predef: function (this, name) { // predefine Str `name` as a Name
-	    this.defname("@predef", name);
+	predef: function (this, name, read_only) {
+	    """predefine Str `name` as a Name"""
+	    this.defname("@predef", name, read_only);
 	},
 
 	init: function (this_parser) {
@@ -459,15 +476,6 @@ var PrattParser = Class.new({
 			this.def[n.value] = n;
 			n.reserved = false;
 		    },
-		    find_class: function (this, n) {
-			// n is string from lexer
-			// returns Symbol class to use
-			var sym = this.find_definition(n);
-			if (sym) {
-			    return(sym.getclass());
-			}
-			return(null);
-		    },
 		    find_definition: function (this, n) {
 			// n is string from lexer
 			// returns definition (Symbol instance)
@@ -493,11 +501,14 @@ var PrattParser = Class.new({
 			// scope was per-function, and original code
 			// was "var t = this.def[sym.value];"
 			// BUT, scope is now per-block
-			// (and there isn't CURRENTLY a way
-			//  to only search to start of current function scope
-			//  could do it with a Scope.function property)
-			// SO, looking ALL the way up the scope chain...
-			var t = this.find_definition(sym.value);
+			// (and there isn't CURRENTLY a way to only search
+			//  to start of current function scope see comment
+			//  on Scope.new in Function.nud method)
+			//
+			// 2021-06-17 Trying to avoid calling find_definition
+			//  again by having _gtok stash lookup used to create Symbol
+			//  in sym.defn.
+			var t = sym.defn;
 			if (t) {
 			    if (t.reserved) {
 				return();
@@ -552,11 +563,14 @@ var PrattParser = Class.new({
 			this.error("Missing operator.");
 		    },
 		    error: function (this, msg) {
-			System.error(this.where, "ERROR: symbol", this.value, msg);
+			// XXX wrap this.value in quotes??
+			System.error(this.where, "ERROR: symbol", this.value,
+				     "--", msg);
 			System.exit(1);
 		    },
 		    warning: function (this, msg) {
-			System.error(this.where, "WARNING: symbol", this.value, msg);
+			System.error(this.where, "WARNING: symbol", this.value,
+				     "--", msg);
 		    },
 		    gen: function (this, vmcode) {
 			// XXX call gen_XXX based on this.arity???
@@ -572,7 +586,6 @@ var PrattParser = Class.new({
 		supers: [p.Symbol],
 		methods: {
 		    nud: function (this) {
-			this.lvalue = true;
 			return(this);
 		    },
 		    gen: function (this, vmcode) {
@@ -583,6 +596,18 @@ var PrattParser = Class.new({
 		    }
 		}
 	    });
+	    p.Name.lvalue = true; // class member
+
+	    p.ReadOnly = Class.new({ // not Const -- keep that for Stmt
+		name: "ReadOnly",
+		supers: [p.Name],
+		methods: {
+		    gen_lhs: function (this, vmcode) {
+			this.error("should not happen: ReadOnly on LHS"); // paranoia
+		    }
+		}
+	    });
+	    p.ReadOnly.lvalue = false; // class member: override from Name
 
 	    p.Lit = Class.new({
 		name: "Lit",
@@ -721,7 +746,7 @@ var Parser = Class.new({
 		methods: {
 		    led: function (this, left) {
 			if (!left.lvalue) {
-			    left.error("Bad lvalue.");
+			    left.error("Not allowed on LHS of assignment.");
 			}
 			this.first = left;
 			this.second = p.expression(this.lbp-1);
@@ -1089,14 +1114,16 @@ var Parser = Class.new({
 		methods: {
 		    nud: function (this) {
 			var a = [];
-			p.scope = p.Scope.new(p.scope);
-			p.defname(this.where, "return");
+			p.scope = p.Scope.new(p.scope); // XXX pass true for func. scope?
+			p.defname(this.where, "return", true);
 			if (p.token.arity == "name") { // function NAME?
 			    // NOTE!! name (currently) defined only
 			    // INSIDE the function's scope, to allow
 			    // recursive functions declared in hashes.
 			    // Would need to make "function name ..." a legal
-			    //	function expression to be useful in outer scope
+			    //	statement expr. (setting .exp_stmt (as class member?))
+			    //  to allow bare "function" outside of expression.
+			    //  (would be moot point in pure expression language)
 			    this.name = p.token.value;
 			    p.define(p.token); // define function name
 			    p.advance();
@@ -1210,16 +1237,17 @@ var Parser = Class.new({
 			return(this);
 		    }, // nud
 		    std: function (this) { // { block }
+			// advance("{") here to avoid continue label bug???
 			p.scope = p.Scope.new(p.scope);
 			if (this.label) {
-			    // label defined inside block scope
-			    p.defname(this.where, this.label);
+			    // XXX use p.define for shadowing warnings???!!!
+			    p.defname(this.where, this.label, true); // read-only!?
 			}
 			this.first = p.statements();
 			p.scope = p.scope.pop();
 			p.advance("}");
 			this.arity = "statement";
-			return(this); // no longer discards this node!
+			return(this); // no longer discards LBrace stmt node!
 		    },
 		    gen: function (this, vmcode) {
 			if (this.arity == "statement") { // { block }
@@ -1265,10 +1293,11 @@ var Parser = Class.new({
 			if (n.reserved) {
 			    n.error("'" + p.token.value + "' reserved.");
 			}
-			p.define(n); // define variable
+			var read_only = this.value == "const";
+			p.define(n, read_only); // define variable
 			this.first = n;
 			p.advance();
-			if (p.check("=")) {
+			if (p.check("=") || read_only) {
 			    p.advance("=");
 			    this.second = p.expression(0);
 			}
@@ -1285,6 +1314,7 @@ var Parser = Class.new({
 		}
 	    }); // Var
 	    p.add_symbol_class("var", p.Var);
+	    p.add_symbol_class("const", p.Var);
 
 	    p.If = Class.new({
 		name: "If",
@@ -1312,12 +1342,12 @@ var Parser = Class.new({
 			this.first.gen(vmcode); // condition
 			var not_true_label = vmcode.def_fwd_label();
 			vmcode.emit_ifnot(not_true_label, this);
-			this.second.gen(vmcode);
+			this.second.gen(vmcode); // gen_stmt? should be LBrace??
 			if (this.third) { // have else?
 			    var end_label = vmcode.def_fwd_label();
 			    vmcode.emit_jrst(end_label, this);
 			    vmcode.drop_fwd_label(not_true_label);
-			    this.third.gen(vmcode);	  // else stmt(s)
+			    this.third.gen(vmcode); // else stmt(s) [vmcode.gen_stmt?]
 			    vmcode.drop_fwd_label(end_label);
 			}
 			else {
@@ -1328,6 +1358,7 @@ var Parser = Class.new({
 	    }); // If
 	    p.add_symbol_class("if", p.If);
 
+	    // parsed via peek-ahead in this.statement()
 	    p.Label = Class.new({
 		name: "Label",
 		supers: [p.Stmt],
@@ -1341,12 +1372,12 @@ var Parser = Class.new({
 			    n.error("'" + p.token.value + "' reserved.");
 			}
 			p.scope = p.Scope.new(p.scope);
-			p.define(n); // define variable for label
+			p.define(n, true); // define variable for label as read-only
 			this.arity = "statement";
 			this.first = n;
 			p.advance();
 			p.advance(":");
-			this.second = p.statement(); // recurse!
+			this.second = p.statement(true); // recurse!
 			p.scope = p.scope.pop();
 			return(this);
 		    },
@@ -1354,7 +1385,7 @@ var Parser = Class.new({
 			// wrap entire statement in a closure w/ leave label
 			var lcode = VMCode.new();
 			lcode.emit_scope(this.first.value, this);
-			this.second.gen(lcode);
+			this.second.gen(lcode); // vmcode.gen_stmt?
 			// create block closure and invoke
 			vmcode.emit_bclose_call(lcode, this);
 		    } // label.gen
@@ -1384,7 +1415,7 @@ var Parser = Class.new({
 			this.first.gen(wcode); // condition
 			var done_label = wcode.def_fwd_label();
 			wcode.emit_ifnot(done_label, this);
-			this.second.gen(wcode); // block
+			this.second.gen(wcode);
 			wcode.emit_jrst(top_label, this);
 			wcode.drop_fwd_label(done_label);
 
@@ -1428,28 +1459,24 @@ var Parser = Class.new({
 
 	statements: function (this) {
 	    var a = [];
-	    var s;
-	  leave_while:
-	    while (true) {
-		if (this.end()) { // end of block or file?
-		    leave_while();
-		}
-		s = this.statement();
-		if (s) {
-		    a.append(s);
-		}
+	    while (!this.end()) { // until end of block or file.
+		a.append(this.statement());
 	    }
-	    return(a);		// always array
+	    return(a);
 	}, // statements
 	block: function (this) { // [LABEL ":"] "{" STATEMENTS "}"
-	    var t = this.token;
 	    var label;
+	    var t = this.token;
 	    if (t.arity == "name") { // label name?
-		label = t.value;
+		label = t.value;     // get label name (Str)
 		this.advance();
 		this.advance(":");
 		t = this.token;
 	    }
+
+	    // XXX reads first token in block (if use of label, will
+	    // not be found!!!)  need to just check("{") here, and
+	    // advance in LBrace, after label defined in scope???????
 	    this.advance("{");
 	    t.label = label;	// attach label (if any) to LBrace
 	    return(t.std());
@@ -1466,10 +1493,9 @@ var Parser = Class.new({
 
 	    this.predef("Class");
 	    this.predef("System");
-	    // declare these as unwritable??
-	    this.predef("false");
-	    this.predef("null");
-	    this.predef("true");
+	    this.predef("false", true); // read-only
+	    this.predef("null", true);	// read-only
+	    this.predef("true", true);	// read-only
 	    this.predef("__modinfo");
 				   
 	    this.advance();	// prime the pump (load this.token)
