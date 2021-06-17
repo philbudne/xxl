@@ -1,5 +1,7 @@
 FIX
 ===
+doc.xxl: Show Class supers
+
 Makefile:
 	ignore metadata line in bootstrap.vmx
 
