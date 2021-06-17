@@ -65,6 +65,14 @@ def sys_break(x=None):
     breakpoint()
     return classes.null_value
 
+@classes.pyvmfunc
+def sys_backtrace(vm):
+    """
+    print VM backtrace to stderr
+    """
+    vm.backtrace()
+    return classes.null_value
+
 ################
 
 @classes.pyfunc
@@ -277,6 +285,7 @@ def create_sys_object(iscope, argv):
 
     # debug functions (TEMP?!)
     sys_obj.setprop('break', sys_break) # break to PDB
+    sys_obj.setprop('backtrace', sys_backtrace) # output backtrace to stderr
 
     # command line args, and exit:
     sys_obj.setprop('argv',  classes.wrap(argv)) # move to ModInfo??
