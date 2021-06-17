@@ -856,7 +856,7 @@ Value: `Continuation`
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*Closure at bootstrap.xxl:154:38*
+*Closure at bootstrap.xxl:153:38*
 
 > return representation of Dict
 
@@ -1132,7 +1132,7 @@ Value: `Iterable`
 > call `func` argument with each reverse iterator item
 
 #### `extend (this, iterable)`
-*Closure at bootstrap.xxl:189:40*
+*Closure at bootstrap.xxl:188:40*
 
 > 
 
@@ -1152,7 +1152,7 @@ Value: `Iterable`
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (this, arg)`
-*Closure at bootstrap.xxl:170:38*
+*Closure at bootstrap.xxl:169:38*
 
 > init method for List: takes Iterable
 
@@ -1197,7 +1197,7 @@ Value: `Iterable`
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*Closure at bootstrap.xxl:182:38*
+*Closure at bootstrap.xxl:181:38*
 
 > return represtation of List
 
@@ -1501,7 +1501,7 @@ Value: `ModInfo`
 
 ### `modules`
 
-Value: `{'classes': <Module at 0x7f9f2d3ad7c0>, 'doc.xxl': <Module at 0x7f9f2d3ad800>, 'parser.vmx': <Module at 0x7f9f2d3595c0>}`
+Value: `{'classes': <Module at 0x7f429c3f7a00>, 'doc.xxl': <Module at 0x7f429c3f7a40>, 'parser.vmx': <Module at 0x7f429c3a8c00>}`
 ### `name`
 
 Value: `Module`
@@ -1707,7 +1707,7 @@ Value: `Null`
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (x)`
-*Closure at bootstrap.xxl:200:26*
+*Closure at bootstrap.xxl:199:26*
 
 > Return a `Number` object with value `x` NOTE!! A static method, not a (Meta)class method!!!
 
@@ -2973,10 +2973,10 @@ Value: `PyVMFunc`
 
 > return forward iterator
 
-#### `join (this, arg)`
-*PyFunc at classes.py:1612*
+#### `join (this, iterable)`
+*Closure at bootstrap.xxl:210:37*
 
-> Concatenate any number of strings. The string whose method is called is inserted in between each given string. The result is returned as a new string.
+> 
 
 #### `len (this)`
 *PyFunc at classes.py:1053*

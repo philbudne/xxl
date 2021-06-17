@@ -130,11 +130,10 @@ if (__modinfo.main) {		// once only
 	OR an Iterable returning keys, and implementing '['
 	"""
 	this.__init0();
-	var i = (arg || []).iter; // fetch method, but do not call
-	if (!i) {
+	if (!arg.instance_of(classes.Iterable)) {
 	    System.uerror(this.name + ".init needs iterable");
 	}
-	var iter = i();
+	var iter = arg.iter();
 	while (true) {
 	    var item = iter.next(return);
 	    // if first item, set sentinal
@@ -203,6 +202,22 @@ if (__modinfo.main) {		// once only
 	NOTE!! A static method, not a (Meta)class method!!!
 	"""
 	return(x.to_number());
+    };
+
+    ////////////////
+    // Str
+
+    classes.Str.__methods['join'] = function (this, iterable) {
+	if (iterable.instance_of(classes.List)) {
+	    return(this.__join(iterable));
+	}
+	else if (iterable.instance_of(classes.Iterable)) {
+	    var list = classes.List.new(iterable);
+	    return(this.__join(list));
+	}
+	else {
+	    System.uerror(this.name + ".join needs Iterable");
+	}
     };
 
 } // main / once only

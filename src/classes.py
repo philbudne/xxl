@@ -713,7 +713,7 @@ def obj_props(this):
     returns an Iterable for (String) property names
     of `this` Object
     """
-    return mkiterable(iter(this.props))
+    return mkiterable(this.props.keys())
 
 @pyfunc
 def obj_repr(this):
@@ -1610,7 +1610,7 @@ def str_ends_with(this, suff):
     return mkbool(this.value.endswith(suff.value))
 
 @pyfunc
-def str_join(this, arg):
+def str__join(this, arg):
     """
     Concatenate any number of strings.
     
@@ -1692,7 +1692,7 @@ def str_chr(i):
 
 Str.setprop(const.METHODS, _mkdict({
     'ends_with': str_ends_with,
-    'join': str_join,
+    '__join': str__join,
     'len': pobj_len,
     'ord': str_ord,
     'slice': str_slice,
