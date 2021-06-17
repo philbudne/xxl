@@ -55,9 +55,12 @@ type wrapping:
 
 true/null/false are writable!!!??? (bug or feature?)
 	add "const" statement (subclass "Var")??
-		add '.const' flag to Scope table entry? Subclass Name??
+		add '.const' flag to Scope table entry?
+			Subclass Name??
 			copy in _gtok (after c.new??)
 			check like .lvalue?
+		use .setclass on Name objects to Const??  Lit????
+	have while/if detect const values
 
 xxl.py: w/o filename run read/eval/print loop
 	need to change statement() and std() methods
@@ -146,3 +149,4 @@ Undefined Class / undef value
 
 Parser doc formatter;
     walk symbol_classes, display docstrings, precedence
+    format table for symbol_classes?
