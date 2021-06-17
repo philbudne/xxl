@@ -1,8 +1,5 @@
 FIX
 ===
-BUG:	reference to "continue" label fails if first token in block
-	(see comment in Parser.block method)
-
 Can lexer operator/name dichotomy be eliminated????
 	would lose "Unknown operator" error.
 	(to allow unicode to start either operator or name)

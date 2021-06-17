@@ -1236,12 +1236,12 @@ var Parser = Class.new({
 			return(this);
 		    }, // nud
 		    std: function (this) { // { block }
-			// advance("{") here to avoid continue label bug???
 			p.scope = p.Scope.new(p.scope);
 			if (this.label) {
 			    // XXX use p.define for shadowing warnings???!!!
 			    p.defname(this.where, this.label, true); // read-only!?
 			}
+			p.advance("{"); // AFTER label defined!
 			this.first = p.statements();
 			p.scope = p.scope.pop();
 			p.advance("}");
@@ -1473,10 +1473,10 @@ var Parser = Class.new({
 		t = this.token;
 	    }
 
-	    // XXX reads first token in block (if use of label, will
-	    // not be found!!!)  need to just check("{") here, and
-	    // advance in LBrace, after label defined in scope???????
-	    this.advance("{");
+	    // was advance, but reads first token in block,
+	    // (and if it was a reference to the label on the block,
+	    // it would come up undefined), so advance moved to LBrace.std
+	    this.check("{");
 	    t.label = label;	// attach label (if any) to LBrace
 	    return(t.std());
 	},
