@@ -1,13 +1,8 @@
 FIX
 ===
-Add __defn for Continuation [overhead!! make __getdefn function????!!!!!!]
-
 doc.xxl
     Classes:
 	show static methods (Class property/member functions) / members
-    Closures:
-	show file/line of defn
-    go back to CallableClass @ __defn location??
 
 Str.join should take Iterable
    have wrapper function that:
