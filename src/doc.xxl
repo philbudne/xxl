@@ -56,116 +56,6 @@ var collect_class_ops = function (class, prop) {
     return([funcs, props]);
 };
 
-// XXX start move to markup.xxl???
-var MarkUp = Class.new({
-    name: "MarkUp",
-    doc: "base class for marking up text",
-    methods: {
-	init: function (this) { this._value = []; },
-	render: function (this) {
-	    """
-	    return final result Str
-	    """
-	    return("".join(this._value));
-	},
-	joinw: function(this, list) {
-	    """
-	    join words and return Str
-	    """
-	    return(" ".join(list));
-	},
-	append: function (this, ...words) {
-	    """
-	    append words (w/o any newlines)
-	    """
-	    var s = this.joinw(words);
-	    if (s.len() > 0) {
-		this._value.append(s);
-	    }
-	},
-	nappend: function (this, ...words) {
-	    """
-	    start new line, then append words (w/ spaces)
-	    """
-	    if (this._value.len() > 0 &&
-		this._value[-1].len() > 0 &&
-		this._value[-1][-1] != "\n") {
-		this._value.append("\n"); // start new line
-	    }
-	    if (words.len()) {
-		this._value.append(this.joinw(words));
-	    }
-	},
-	pdoc: function (this, obj) {
-	    var doc = obj.__doc;
-	    if (!doc) {
-		return();
-	    }
-	    this.p();
-	    var strip = function (x) { return(x.strip()); };
-	    // split into lines,
-	    // strip leading/trailing whitespace from lines,
-	    // ignoring empty lines, rejoin
-	    this.blockquote(" ".join(doc.split("\n").map2(strip, "")));
-	},
-	lwrap: function (this, prefix, list, suffix) {
-	    """
-	    wrap `list` of items between `prefix` and `suffix`
-	    AND RETURN String
-	    """
-	    suffix = suffix || ""; // want "||=" or "??=" ??
-	    var l = this.joinw(list);
-	    return("".join([prefix, l, suffix]));
-	},
-	wrapnap: function (this, prefix, words, suffix) {
-	    """
-	    concatenate List of Str `words`
-	    wrap in prefix/suffix
-	    start new line and append
-	    """
-	    this.nappend(this.lwrap(prefix, words, suffix));
-	}
-    } // methods
-});
-
-var MarkDown = Class.new({
-    name: "MarkDown",
-    doc: "MarkUp class for MarkDown (.md) format!",
-    supers: [MarkUp],
-    methods: {
-	// the following take multiple args, will space separate and APPEND.
-	h1: function (this, ...args) { this.wrapnap("# ", args, "\n"); },
-	h2: function (this, ...args) { this.wrapnap("## ", args, "\n"); },
-	h3: function (this, ...args) { this.wrapnap("### ", args, "\n"); },
-	h4: function (this, ...args) { this.wrapnap("#### ", args, "\n"); },
-	h5: function (this, ...args) { this.wrapnap("##### ", args, "\n"); },
-	hn: function (this, n, ...args) {
-	    this.wrapnap("##########".slice(0,n) + " ", args, "\n");
-	},
-
-	hr: function (this, ...args) { this.nappend("---\n"); },
-	p: function (this, ...args) { this.nappend("\n"); }, // paragraph
-	blockquote: function (this, ...args) {
-	    this.wrapnap("> ", args, "\n\n");
-	},
-
-	// code_block?
-	// (un)ordered_list (take list)??
-
-	// NOTE!! the following RETURN strings:
-	bold: function (this, ...words) { // cannot be combined w/ i??
-	    return(this.lwrap("**", words, "**"));
-	},
-	i: function (this, ...words) { // cannot be combined w/ bold?!
-	    return(this.lwrap("*", words, "*"));
-	},
-	code: function (this, ...words) {
-	    return(this.lwrap("`", words, "`"));
-	}
-    }
-});
-// XXX end move to markup.xxl???
-
 var mufunc = function (mu, level, name, func) {
     var args = func.__args() || "";
     mu.hn(level, mu.code(name, args));
@@ -224,7 +114,7 @@ var muclass = function (mu, class) {
     ); // for_each property
 };
 
-var describe_module = function (mu, module_name) {
+var mumodule = function (mu, module_name) {
     mu.h1(mu.code(module_name), "Module");
     mu.p();
 
@@ -267,12 +157,15 @@ var describe_module = function (mu, module_name) {
 };
 
 if (__modinfo.main) {
+    var markup = System.import("markup.xxl");
+    var markup_class = markup.MarkDown;	// XXX take option for format!!
+    var i = 0;
+
     var module_name = System.argv.len() > 0 ? System.argv[0] : "classes";
 
-    var markup_class = MarkDown;	// XXX take option for format!!
     var mu = markup_class.new();
 
-    describe_module(mu, module_name);
+    mumodule(mu, module_name);
 
     mu.hr();
     var time = System.pyimport("time");
