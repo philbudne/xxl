@@ -57,6 +57,10 @@ var collect_class_ops = function (class, prop) {
 };
 
 var mufunc = function (mu, level, name, func) {
+    """
+    Markup a function/method.
+    `level` is header level, `name` is function name, `func` is Callable.
+    """
     var args = func.__args() || "";
     mu.hn(level, mu.code(name, args));
     var defn = func.__defn();
@@ -69,7 +73,7 @@ var mufunc = function (mu, level, name, func) {
 
 var muclass = function (mu, class) {
     """
-    `mu` is a MarkUp instance
+    `mu` is a MarkUp instance,
     `class` is a Class (metaclass) to document
     """
 
@@ -115,6 +119,10 @@ var muclass = function (mu, class) {
 };
 
 var mumodule = function (mu, module_name) {
+    """
+    Import and up a module.
+    `module_name` is name to import.
+    """
     mu.h1("Module", mu.code(module_name));
     mu.p();
 
@@ -143,8 +151,7 @@ var mumodule = function (mu, module_name) {
 	function (name) {
 	    var x = mod.getprop(name);
 	    if (x.instance_of(classes.Callable)) {
-		mu.h3(mu.code(name, x.__args()));
-		mu.pdoc(x);
+		mufunc(mu, 3, name, x);
 	    }
 	    else {
 		mu.h3(mu.code(name));
