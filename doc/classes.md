@@ -1275,7 +1275,7 @@
 ### Methods
 
 #### `assemble (this, tree, srcfile)`
-*PyFunc at classes.py:1990*
+*PyFunc at classes.py:1987*
 
 > `tree`: List of Lists of VM code `srcfile`: source of code returns Closure in __modinfo.module initial scope
 
@@ -1305,7 +1305,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `load_vmx (this, fname)`
-*PyFunc at classes.py:1984*
+*PyFunc at classes.py:1981*
 
 > 
 
@@ -2504,10 +2504,10 @@
 #### `iter (this)`
 *PyFunc at classes.py:1840*
 
-> Python iterators are also iterables (return self) https://docs.python.org/3/library/stdtypes.html#typeiter says an iterator should have an __iter__ method: Return the iterator object itself. This is required to allow both containers and iterators to be used with the for and in statements. This method corresponds to the tp_iter slot of the type structure for Python objects in the Python/C API.
+> Identity function (return `this`) Python iterators are also iterables (return self) https://docs.python.org/3/library/stdtypes.html#typeiter says an iterator should have an __iter__ method.
 
 #### `next (this, finished_continuation)`
-*PyFunc at classes.py:1854*
+*PyFunc at classes.py:1851*
 
 > `finished` should be a CContinuation (eg; block leave label or "return") to call when iterator exhausted
 

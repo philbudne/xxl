@@ -1840,14 +1840,11 @@ PyObject.setprop(const.BINOPS, _mkdict({
 @pyfunc
 def pyiterator_iter(this):
     """
+    Identity function (return `this`)
+
     Python iterators are also iterables (return self)
     https://docs.python.org/3/library/stdtypes.html#typeiter says
-    an iterator should have an __iter__ method:
-
-    Return the iterator object itself. This is required to allow
-    both containers and iterators to be used with the for and in
-    statements. This method corresponds to the tp_iter slot of the
-    type structure for Python objects in the Python/C API.
+    an iterator should have an __iter__ method.
     """
     return this
 
