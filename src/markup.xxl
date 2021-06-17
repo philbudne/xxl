@@ -1,3 +1,4 @@
+// -*-js-*-
 
 var MarkUp = Class.new({
     name: "MarkUp",
@@ -103,6 +104,50 @@ var MarkDown = Class.new({
 	},
 	code: function (this, ...words) {
 	    return(this.lwrap("`", words, "`"));
+	}
+    }
+});
+
+var HTML = Class.new({
+    name: "HTML",
+    doc: "MarkUp class for HTML",
+    supers: [MarkUp],
+    methods: {
+	_twrap: function (this, tag, list) {
+	    var open = "<" + tag + ">";
+	    var close = "</" + tag + ">";
+	    return(this.lwrap(open, list, close));
+	},
+	_hn: function (this, n, list) {
+	    this.nappend(this._twrap( "h" + n.to_str(), list));
+	},
+
+	// the following take multiple args, will space separate and APPEND.
+	h1: function (this, ...args) { this._hn(1, args); },
+	h2: function (this, ...args) { this._hn(2, args); },
+	h3: function (this, ...args) { this._hn(3, args); },
+	h4: function (this, ...args) { this._hn(4, args); },
+	h5: function (this, ...args) { this._hn(5, args); },
+	hn: function (this, n, ...args) { this._hn(n, args); },
+
+	hr: function (this, ...args) { this.nappend("<hr>\n"); },
+	p: function (this, ...args) { this.nappend("<p>\n"); }, // paragraph
+	blockquote: function (this, ...args) {
+	    this.nappend(this._twrap("blockquote", args));
+	},
+
+	// code_block?
+	// (un)ordered_list (take list)??
+
+	// NOTE!! the following RETURN strings:
+	bold: function (this, ...words) { // cannot be combined w/ i??
+	    return(this._twrap("b", words));
+	},
+	i: function (this, ...words) { // cannot be combined w/ bold?!
+	    return(this._twrap("i", words));
+	},
+	code: function (this, ...words) {
+	    return(this._twrap("code", words));
 	}
     }
 });

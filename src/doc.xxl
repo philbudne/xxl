@@ -115,7 +115,7 @@ var muclass = function (mu, class) {
 };
 
 var mumodule = function (mu, module_name) {
-    mu.h1(mu.code(module_name), "Module");
+    mu.h1("Module", mu.code(module_name));
     mu.p();
 
     // iterate over sorted names in Module
@@ -160,8 +160,11 @@ if (__modinfo.main) {
     var markup = System.import("markup.xxl");
     var markup_class = markup.MarkDown;	// XXX take option for format!!
     var i = 0;
-
-    var module_name = System.argv.len() > 0 ? System.argv[0] : "classes";
+    if (System.argv.len() > i && System.argv[i] == "--html") {
+	markup_class = markup.HTML;
+	i += 1;
+    }
+    var module_name = System.argv.len() > i ? System.argv[i] : "classes";
 
     var mu = markup_class.new();
 

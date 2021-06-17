@@ -1,4 +1,4 @@
-# `classes` Module
+# Module `classes`
 
 ## Class `Bool`
 
@@ -1511,7 +1511,7 @@
 
 ### `modules`
 
-> Value: `{'classes': <Module at 0x7f28ac52a740>, 'doc.xxl': <Module at 0x7f28ac52a780>, 'parser.vmx': <Module at 0x7f28ac4dbf00>}`
+> Value: `{'classes': <Module at 0x7ff9c5af3440>, 'doc.xxl': <Module at 0x7ff9c5af3480>, 'parser.vmx': <Module at 0x7ff9c5aa4a80>, 'markup.xxl': <Module at 0x7ff9c5824940>}`
 
 ### `name`
 
@@ -3200,4 +3200,4 @@
 
 
 ---
-formatted by doc.xxl on 2021-06-16
+formatted by doc.xxl on 2021-06-17
