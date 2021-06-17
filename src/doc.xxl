@@ -162,7 +162,7 @@ var mumodule = function (mu, module_name) {
 
 if (__modinfo.main) {
     var markup = System.import("markup.xxl");
-    var markup_class = markup.MarkDown;	// XXX take option for format!!
+    var markup_class = markup.MarkDown;
     var i = 0;
     if (System.argv.len() > i && System.argv[i] == "--html") {
 	markup_class = markup.HTML;
