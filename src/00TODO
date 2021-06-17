@@ -1,5 +1,17 @@
 FIX
 ===
+Can find_definition call in Parser.define be avoided by looking at sym.defn??
+
+BUG:	reference to "continue" label fails if first token in block
+	(see comment in Parser.block method)
+
+Can lexer operator/name dichotomy be eliminated????
+	would lose "Unknown operator" error.
+	(to allow unicode to start either operator or name)
+	things that start w/ letter terminated by operator or space
+	things that start w/ operator ASCII terminated by letter or space?
+	things that contain non-ASCII need to be terminated by space or non-operator
+
 doc.xxl: Show Class supers
 
 Makefile:
@@ -152,3 +164,5 @@ Undefined Class / undef value
 Parser doc formatter;
     walk symbol_classes, display docstrings, precedence
     format table for symbol_classes?
+
+Complain about unused/unread variables (when exiting scope?)
