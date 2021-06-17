@@ -27,11 +27,6 @@
 
 > default PObject init method (fatal error)
 
-#### `init0 (l, value)`
-*PyFunc at classes.py:1091*
-
-> default PObject init0 method (fatal error)
-
 #### `instance_of (this, c)`
 *PyFunc at classes.py:928*
 
@@ -810,11 +805,6 @@ Value: `Continuation`
 
 > init method for Dict: takes Iterable returning two-item lists, OR an Iterable returning keys, and implementing '['
 
-#### `init0 (obj)`
-*PyFunc at classes.py:1239*
-
-> called by Dict.init (in bootstrap.xxl) Dodges needing private metaclass for Dict
-
 #### `instance_of (this, c)`
 *PyFunc at classes.py:928*
 
@@ -1003,11 +993,6 @@ Value: `Dict`
 
 > default PObject init method (fatal error)
 
-#### `init0 (l, value)`
-*PyFunc at classes.py:1091*
-
-> default PObject init0 method (fatal error)
-
 #### `instance_of (this, c)`
 *PyFunc at classes.py:928*
 
@@ -1147,7 +1132,7 @@ Value: `Iterable`
 > call `func` argument with each reverse iterator item
 
 #### `extend (this, iterable)`
-*Closure at bootstrap.xxl:190:40*
+*Closure at bootstrap.xxl:189:40*
 
 > 
 
@@ -1170,11 +1155,6 @@ Value: `Iterable`
 *Closure at bootstrap.xxl:170:38*
 
 > init method for List: takes Iterable
-
-#### `init0 (l)`
-*PyFunc at classes.py:1293*
-
-> called by List.init (in bootstrap.xxl) Dodges needing private metaclass for List
 
 #### `instance_of (this, c)`
 *PyFunc at classes.py:928*
@@ -1217,7 +1197,7 @@ Value: `Iterable`
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*Closure at bootstrap.xxl:183:38*
+*Closure at bootstrap.xxl:182:38*
 
 > return represtation of List
 
@@ -1521,7 +1501,7 @@ Value: `ModInfo`
 
 ### `modules`
 
-Value: `{'classes': <Module at 0x7f6917087980>, 'doc.xxl': <Module at 0x7f69170879c0>, 'parser.vmx': <Module at 0x7f6917035c00>}`
+Value: `{'classes': <Module at 0x7f9f2d3ad7c0>, 'doc.xxl': <Module at 0x7f9f2d3ad800>, 'parser.vmx': <Module at 0x7f9f2d3595c0>}`
 ### `name`
 
 Value: `Module`
@@ -1602,11 +1582,6 @@ Value: `Module`
 *PyFunc at classes.py:1083*
 
 > default PObject init method (fatal error)
-
-#### `init0 (l, value)`
-*PyFunc at classes.py:1091*
-
-> default PObject init0 method (fatal error)
 
 #### `instance_of (this, c)`
 *PyFunc at classes.py:928*
@@ -1726,18 +1701,13 @@ Value: `Null`
 
 > default PObject init method (fatal error)
 
-#### `init0 (l, value)`
-*PyFunc at classes.py:1091*
-
-> default PObject init0 method (fatal error)
-
 #### `instance_of (this, c)`
 *PyFunc at classes.py:928*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (x)`
-*Closure at bootstrap.xxl:201:26*
+*Closure at bootstrap.xxl:200:26*
 
 > Return a `Number` object with value `x` NOTE!! A static method, not a (Meta)class method!!!
 
@@ -2180,11 +2150,6 @@ Value: `PClass`
 
 > default PObject init method (fatal error)
 
-#### `init0 (l, value)`
-*PyFunc at classes.py:1091*
-
-> default PObject init0 method (fatal error)
-
 #### `instance_of (this, c)`
 *PyFunc at classes.py:928*
 
@@ -2445,11 +2410,6 @@ Value: `PyFunc`
 *PyFunc at classes.py:1083*
 
 > default PObject init method (fatal error)
-
-#### `init0 (l, value)`
-*PyFunc at classes.py:1091*
-
-> default PObject init0 method (fatal error)
 
 #### `instance_of (this, c)`
 *PyFunc at classes.py:928*
@@ -3002,11 +2962,6 @@ Value: `PyVMFunc`
 *PyFunc at classes.py:1083*
 
 > default PObject init method (fatal error)
-
-#### `init0 (l, value)`
-*PyFunc at classes.py:1091*
-
-> default PObject init0 method (fatal error)
 
 #### `instance_of (this, c)`
 *PyFunc at classes.py:928*
