@@ -804,8 +804,13 @@ def find_in_supers(l, rv):
             break
 
         c = q.pop(0)            # front of queue
+
+        # NOTE!! doc.xxl also know that
+        # properties take precedence over methods
+        # (would be moot w/ descriptors)
+
         if c.hasprop(rv):
-            return c.getprop(rv)
+            return c.getprop(rv) # never BoundMethod
 
         methods = c.getprop(const.METHODS)
         if methods and methods is not null_value:
@@ -1840,9 +1845,8 @@ PyObject.setprop(const.BINOPS, _mkdict({
 @pyfunc
 def pyiterator_iter(this):
     """
-    Identity function (return `this`)
+    Returns `this.`
 
-    Python iterators are also iterables (return self)
     https://docs.python.org/3/library/stdtypes.html#typeiter says
     an iterator should have an __iter__ method.
     """
