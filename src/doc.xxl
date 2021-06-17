@@ -147,7 +147,7 @@ var mufunc = function (mu, level, name, func) {
     var defn = func.__defn();
     if (defn) {
 	// no blank line?
-	mu.nappend(mu.i(func.getclass().name, "defined at", defn));
+	mu.nappend(mu.i(func.getclass().name, "at", defn));
     }
     mu.pdoc(func);
 };
