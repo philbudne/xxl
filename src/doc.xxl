@@ -65,7 +65,9 @@ var MarkUp = Class.new({
 	    """
 	    start new line, then append words (w/ spaces)
 	    """
-	    if (this._value.len() > 0 && this._value[-1][-1] != "\n") {
+	    if (this._value.len() > 0 &&
+		this._value[-1].len() > 0 &&
+		this._value[-1][-1] != "\n") {
 		this._value.append("\n"); // start new line
 	    }
 	    if (words.len()) {
@@ -78,15 +80,8 @@ var MarkUp = Class.new({
 		return();
 	    }
 	    this.p();
-	    doc.split("\n").for_each(
-		function (x) {
-		    if (x.len() > 0) {
-			this.append(x.strip());
-			this.append(" ");
-		    }
-		}
-	    );
-	    this.nappend();
+	    var strip = function (x) { return(x.strip()); };
+	    this.blockquote(" ".join(doc.split("\n").map2(strip, "")));
 	},
 	lwrap: function (this, prefix, list, suffix) {
 	    """
@@ -125,6 +120,9 @@ var MarkDown = Class.new({
 
 	hr: function (this, ...args) { this.nappend("---\n"); },
 	p: function (this, ...args) { this.nappend("\n"); }, // paragraph
+	blockquote: function (this, ...args) {
+	    this.wrapnap("> ", args, "\n\n");
+	},
 
 	// code_block?
 	// (un)ordered_list (take list)??
