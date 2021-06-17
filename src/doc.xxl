@@ -61,13 +61,10 @@ var mufunc = function (mu, level, name, func) {
     Markup a function/method.
     `level` is header level, `name` is function name, `func` is Callable.
     """
-    var args = func.__args() || "";
+    var args = func.__args() || "(?)";
     mu.hn(level, mu.code(name, args));
-    var defn = func.__defn();
-    if (defn) {
-	// no blank line?
-	mu.nappend(mu.i(func.getclass().name, "at", defn));
-    }
+    var defn = func.__defn() || "?";
+    mu.nappend(mu.i(func.getclass().name, "at", defn));
     mu.pdoc(func);
 };
 
