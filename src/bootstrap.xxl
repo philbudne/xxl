@@ -72,7 +72,7 @@ if (__modinfo.main) {		// once only
 
     Iterable.__methods['for_each'] = function (this, func) {
 	"""
-	call `func` argument for each iterator item
+	call `func` argument with each iterator item
 	"""
 	var iter = this.iter();
 	while (true) {
@@ -82,7 +82,7 @@ if (__modinfo.main) {		// once only
 
     Iterable.__methods['each_for'] = function (this, func) {
 	"""
-	call `func` argument for each reverse iterator item
+	call `func` argument with each reverse iterator item
 	"""
 	var iter = this.reversed();
 	while (true) {

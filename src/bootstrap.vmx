@@ -1,4 +1,4 @@
-{"v": 1.0, "fn": "bootstrap.xxl", "mt": 1623880694.779259, "sz": 6797}
+{"v": 1.0, "fn": "bootstrap.xxl", "mt": 1623890469.7376306, "sz": 6799}
 [["9:5", "load", "__modinfo"],
  ["9:14", "binop_lit", ".", "booting"],
  ["9:1", "jumpe", 4],
@@ -142,7 +142,7 @@
        ["78:2", "jrst", 1],
        ["78:2", "return"]]],
      ["73:38", "return"]],
-  "\n\tcall `func` argument for each iterator item\n\t"],
+  "\n\tcall `func` argument with each iterator item\n\t"],
    ["73:23", "push"],
    ["73:24", "push_lit", "for_each"],
    ["73:5", "load", "Iterable"],
@@ -173,7 +173,7 @@
        ["88:2", "jrst", 1],
        ["88:2", "return"]]],
      ["83:38", "return"]],
-  "\n\tcall `func` argument for each reverse iterator item\n\t"],
+  "\n\tcall `func` argument with each reverse iterator item\n\t"],
    ["83:23", "push"],
    ["83:24", "push_lit", "each_for"],
    ["83:5", "load", "Iterable"],
