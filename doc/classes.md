@@ -66,7 +66,8 @@
 
 ### `name`
 
-Value: `Bool`
+> Value: `Bool`
+
 ### Unary operators
 
 #### `! (x)`
@@ -199,7 +200,8 @@ Value: `Bool`
 
 ### `name`
 
-Value: `BoundMethod`
+> Value: `BoundMethod`
+
 ### Unary operators
 
 #### `! (x)`
@@ -317,7 +319,8 @@ Value: `BoundMethod`
 
 ### `name`
 
-Value: `Callable`
+> Value: `Callable`
+
 ### Unary operators
 
 #### `! (x)`
@@ -450,7 +453,8 @@ Value: `Callable`
 
 ### `name`
 
-Value: `Class`
+> Value: `Class`
+
 ### Unary operators
 
 #### `! (x)`
@@ -583,7 +587,8 @@ Value: `Class`
 
 ### `name`
 
-Value: `Closure`
+> Value: `Closure`
+
 ### Unary operators
 
 #### `! (x)`
@@ -716,7 +721,8 @@ Value: `Closure`
 
 ### `name`
 
-Value: `Continuation`
+> Value: `Continuation`
+
 ### Unary operators
 
 #### `! (x)`
@@ -894,7 +900,8 @@ Value: `Continuation`
 
 ### `name`
 
-Value: `Dict`
+> Value: `Dict`
+
 ### Unary operators
 
 #### `! (x)`
@@ -1057,7 +1064,8 @@ Value: `Dict`
 
 ### `name`
 
-Value: `Iterable`
+> Value: `Iterable`
+
 ### Unary operators
 
 #### `! (x)`
@@ -1230,7 +1238,8 @@ Value: `Iterable`
 
 ### `name`
 
-Value: `List`
+> Value: `List`
+
 ### Unary operators
 
 #### `! (x)`
@@ -1368,7 +1377,8 @@ Value: `List`
 
 ### `name`
 
-Value: `ModInfo`
+> Value: `ModInfo`
+
 ### Unary operators
 
 #### `! (x)`
@@ -1501,10 +1511,12 @@ Value: `ModInfo`
 
 ### `modules`
 
-Value: `{'classes': <Module at 0x7f429c3f7a00>, 'doc.xxl': <Module at 0x7f429c3f7a40>, 'parser.vmx': <Module at 0x7f429c3a8c00>}`
+> Value: `{'classes': <Module at 0x7f28ac52a740>, 'doc.xxl': <Module at 0x7f28ac52a780>, 'parser.vmx': <Module at 0x7f28ac4dbf00>}`
+
 ### `name`
 
-Value: `Module`
+> Value: `Module`
+
 ### Unary operators
 
 #### `! (x)`
@@ -1622,7 +1634,8 @@ Value: `Module`
 
 ### `name`
 
-Value: `Null`
+> Value: `Null`
+
 ### Unary operators
 
 #### `! (x)`
@@ -1760,7 +1773,8 @@ Value: `Null`
 
 ### `name`
 
-Value: `Number`
+> Value: `Number`
+
 ### Unary operators
 
 #### `! (x)`
@@ -1938,7 +1952,8 @@ Value: `Number`
 
 ### `name`
 
-Value: `Object`
+> Value: `Object`
+
 ### Unary operators
 
 #### `! (x)`
@@ -2071,7 +2086,8 @@ Value: `Object`
 
 ### `name`
 
-Value: `PClass`
+> Value: `PClass`
+
 ### Unary operators
 
 #### `! (x)`
@@ -2189,7 +2205,8 @@ Value: `PClass`
 
 ### `name`
 
-Value: `PObject`
+> Value: `PObject`
+
 ### Unary operators
 
 #### `! (x)`
@@ -2322,7 +2339,8 @@ Value: `PObject`
 
 ### `name`
 
-Value: `PyFunc`
+> Value: `PyFunc`
+
 ### Unary operators
 
 #### `! (x)`
@@ -2480,7 +2498,8 @@ Value: `PyFunc`
 
 ### `name`
 
-Value: `PyIterable`
+> Value: `PyIterable`
+
 ### Unary operators
 
 #### `! (x)`
@@ -2608,7 +2627,8 @@ Value: `PyIterable`
 
 ### `name`
 
-Value: `PyIterator`
+> Value: `PyIterator`
+
 ### Unary operators
 
 #### `! (x)`
@@ -2726,7 +2746,8 @@ Value: `PyIterator`
 
 ### `name`
 
-Value: `PyObject`
+> Value: `PyObject`
+
 ### Unary operators
 
 #### `! (x)`
@@ -2864,7 +2885,8 @@ Value: `PyObject`
 
 ### `name`
 
-Value: `PyVMFunc`
+> Value: `PyVMFunc`
+
 ### Unary operators
 
 #### `! (x)`
@@ -3077,7 +3099,8 @@ Value: `PyVMFunc`
 
 ### `name`
 
-Value: `Str`
+> Value: `Str`
+
 ### Unary operators
 
 #### `! (x)`
@@ -3163,15 +3186,18 @@ Value: `Str`
 
 ### `false`
 
-Value: `false`
+> Value: `false`
+
 
 ### `null`
 
-Value: `null`
+> Value: `null`
+
 
 ### `true`
 
-Value: `true`
+> Value: `true`
+
 
 ---
 formatted by doc.xxl on 2021-06-16

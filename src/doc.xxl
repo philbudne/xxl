@@ -103,6 +103,9 @@ var MarkUp = Class.new({
 	    }
 	    this.p();
 	    var strip = function (x) { return(x.strip()); };
+	    // split into lines,
+	    // strip leading/trailing whitespace from lines,
+	    // ignoring empty lines, rejoin
 	    this.blockquote(" ".join(doc.split("\n").map2(strip, "")));
 	},
 	lwrap: function (this, prefix, list, suffix) {
@@ -213,7 +216,7 @@ var muclass = function (mu, class) {
 			 var value = ditem[1];
 			 mu.h3(mu.code(name));
 			 mu.p();
-			 mu.nappend("Value:", mu.code(value.to_str()));
+			 mu.blockquote("Value:", mu.code(value.to_str()));
 		     } // function (ditem)
 		 ); // for_each member
 	     }
@@ -256,7 +259,7 @@ var describe_module = function (mu, module_name) {
 	    else {
 		mu.h3(mu.code(name));
 		mu.p();
-		mu.nappend("Value:", mu.code(x.to_str()));
+		mu.blockquote("Value:", mu.code(x.to_str()));
 	    }
 	    mu.p();
 	}
