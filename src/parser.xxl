@@ -376,16 +376,15 @@ var PrattParser = Class.new({
 	    // sym is a Parser Symbol instance
 	    // declare as a Name in the current scope.
 
-	    // look for previous definition, if any (in an outer scope)
-	    // XXX is sym.defn helpful???
-	    var prev = this.scope.find_definition(sym.value);
+	    // had a call to scope.find_definition to get "prev" here.
+	    // sym.defn _seems_ like the right thing!
 
 	    var class = read_only ? this.ReadOnly : this.Name; // also in defname method
 
 	    // give fatal error for duplicate first!
 	    this.scope._define(class.new(sym.where, sym.value, sym.arity));
-	    if (prev) {
-		sym.warning("shadows previous definition at " + prev.where);
+	    if (sym.defn) {
+		sym.warning("shadows previous definition at " + sym.defn.where);
 	    }
 	},
 	expression: function (this, rbp) {

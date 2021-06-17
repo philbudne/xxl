@@ -1,7 +1,5 @@
 FIX
 ===
-Can find_definition call in Parser.define be avoided by looking at sym.defn??
-
 BUG:	reference to "continue" label fails if first token in block
 	(see comment in Parser.block method)
 
