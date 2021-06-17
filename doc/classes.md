@@ -35,7 +35,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `props (this)`
 *PyFunc at classes.py:710*
@@ -89,7 +89,7 @@
 #### `( (this_class, ...args)`
 *PyFunc at classes.py:997*
 
-> "(" binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
+> `(` binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
 
 #### `. (l, r)`
 *PyFunc at classes.py:844*
@@ -153,7 +153,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (this_class, ...args)`
 *Closure at bootstrap.xxl:56:38*
@@ -217,7 +217,7 @@
 #### `( (this_class, ...args)`
 *PyFunc at classes.py:997*
 
-> "(" binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
+> `(` binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
 
 #### `. (l, r)`
 *PyFunc at classes.py:844*
@@ -276,7 +276,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `props (this)`
 *PyFunc at classes.py:710*
@@ -330,7 +330,7 @@
 #### `( (this_class, ...args)`
 *PyFunc at classes.py:997*
 
-> "(" binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
+> `(` binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
 
 #### `. (l, r)`
 *PyFunc at classes.py:844*
@@ -394,7 +394,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (this_class, ...args)`
 *Closure at bootstrap.xxl:56:38*
@@ -458,7 +458,7 @@
 #### `( (this_class, ...args)`
 *PyFunc at classes.py:997*
 
-> "(" binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
+> `(` binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
 
 #### `. (l, r)`
 *PyFunc at classes.py:844*
@@ -522,7 +522,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (this_class, ...args)`
 *Closure at bootstrap.xxl:56:38*
@@ -586,7 +586,7 @@
 #### `( (this_class, ...args)`
 *PyFunc at classes.py:997*
 
-> "(" binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
+> `(` binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
 
 #### `. (l, r)`
 *PyFunc at classes.py:844*
@@ -650,7 +650,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (this_class, ...args)`
 *Closure at bootstrap.xxl:56:38*
@@ -714,7 +714,7 @@
 #### `( (this_class, ...args)`
 *PyFunc at classes.py:997*
 
-> "(" binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
+> `(` binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
 
 #### `. (l, r)`
 *PyFunc at classes.py:844*
@@ -788,7 +788,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `items (this)`
 *PyFunc at classes.py:1250*
@@ -892,7 +892,7 @@
 #### `( (this_class, ...args)`
 *PyFunc at classes.py:997*
 
-> "(" binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
+> `(` binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
 
 #### `. (l, r)`
 *PyFunc at classes.py:844*
@@ -976,7 +976,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `iter (this)`
 *PyFunc at classes.py:1155*
@@ -1055,7 +1055,7 @@
 #### `( (this_class, ...args)`
 *PyFunc at classes.py:997*
 
-> "(" binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
+> `(` binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
 
 #### `. (l, r)`
 *PyFunc at classes.py:844*
@@ -1139,7 +1139,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `iter (this)`
 *PyFunc at classes.py:1155*
@@ -1228,7 +1228,7 @@
 #### `( (this_class, ...args)`
 *PyFunc at classes.py:997*
 
-> "(" binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
+> `(` binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
 
 #### `. (l, r)`
 *PyFunc at classes.py:844*
@@ -1302,7 +1302,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `load_vmx (this, fname)`
 *PyFunc at classes.py:1984*
@@ -1361,7 +1361,7 @@
 #### `( (this_class, ...args)`
 *PyFunc at classes.py:997*
 
-> "(" binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
+> `(` binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
 
 #### `. (l, r)`
 *PyFunc at classes.py:844*
@@ -1425,7 +1425,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (this_class, ...args)`
 *Closure at bootstrap.xxl:56:38*
@@ -1489,7 +1489,7 @@
 #### `( (this_class, ...args)`
 *PyFunc at classes.py:997*
 
-> "(" binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
+> `(` binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
 
 #### `. (l, r)`
 *PyFunc at classes.py:844*
@@ -1553,7 +1553,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `props (this)`
 *PyFunc at classes.py:710*
@@ -1607,7 +1607,7 @@
 #### `( (this, ...args)`
 *PyFunc at classes.py:1725*
 
-> "(" method for `null` value (fatal error) commonly happens when a bad method name is used
+> `(` method for `null` value (fatal error) commonly happens when a bad method name is used
 
 #### `. (l, r)`
 *PyFunc at classes.py:844*
@@ -1671,7 +1671,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `props (this)`
 *PyFunc at classes.py:710*
@@ -1755,7 +1755,7 @@
 #### `( (l, ...args)`
 *PyFunc at classes.py:915*
 
-> default Object '(' binop (fatal error)
+> default Object `(` binop (fatal error)
 
 #### `* (l, r)`
 *PyFunc at classes.py:1382*
@@ -1859,7 +1859,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `props (this)`
 *PyFunc at classes.py:710*
@@ -1913,7 +1913,7 @@
 #### `( (l, ...args)`
 *PyFunc at classes.py:915*
 
-> default Object '(' binop (fatal error)
+> default Object `(` binop (fatal error)
 
 #### `. (l, r)`
 *PyFunc at classes.py:844*
@@ -1977,7 +1977,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (this_class, ...args)`
 *Closure at bootstrap.xxl:56:38*
@@ -2041,7 +2041,7 @@
 #### `( (this_class, ...args)`
 *PyFunc at classes.py:997*
 
-> "(" binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
+> `(` binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
 
 #### `. (l, r)`
 *PyFunc at classes.py:844*
@@ -2105,7 +2105,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `props (this)`
 *PyFunc at classes.py:710*
@@ -2159,7 +2159,7 @@
 #### `( (l, ...args)`
 *PyFunc at classes.py:915*
 
-> default Object '(' binop (fatal error)
+> default Object `(` binop (fatal error)
 
 #### `. (l, r)`
 *PyFunc at classes.py:844*
@@ -2223,7 +2223,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (this_class, ...args)`
 *Closure at bootstrap.xxl:56:38*
@@ -2287,7 +2287,7 @@
 #### `( (this_class, ...args)`
 *PyFunc at classes.py:997*
 
-> "(" binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
+> `(` binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
 
 #### `. (l, r)`
 *PyFunc at classes.py:844*
@@ -2361,7 +2361,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `iter (this)`
 *PyFunc at classes.py:1155*
@@ -2440,7 +2440,7 @@
 #### `( (this_class, ...args)`
 *PyFunc at classes.py:997*
 
-> "(" binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
+> `(` binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
 
 #### `. (l, r)`
 *PyFunc at classes.py:844*
@@ -2499,7 +2499,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `iter (this)`
 *PyFunc at classes.py:1840*
@@ -2563,7 +2563,7 @@
 #### `( (this_class, ...args)`
 *PyFunc at classes.py:997*
 
-> "(" binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
+> `(` binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
 
 #### `. (l, r)`
 *PyFunc at classes.py:844*
@@ -2622,7 +2622,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `props (this)`
 *PyFunc at classes.py:710*
@@ -2745,7 +2745,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (this_class, ...args)`
 *Closure at bootstrap.xxl:56:38*
@@ -2809,7 +2809,7 @@
 #### `( (this_class, ...args)`
 *PyFunc at classes.py:997*
 
-> "(" binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
+> `(` binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
 
 #### `. (l, r)`
 *PyFunc at classes.py:844*
@@ -2888,7 +2888,7 @@
 #### `instance_of (this, c)`
 *PyFunc at classes.py:923*
 
-> return `true` if Object `l` is an instance of Class (or List of Classes) `c`
+> return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `iter (this)`
 *PyFunc at classes.py:1155*
@@ -3017,7 +3017,7 @@
 #### `( (this_class, ...args)`
 *PyFunc at classes.py:997*
 
-> "(" binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
+> `(` binop for Class -- fatal error (but common mistake if you have Python fingers) tells you to use .new method!!
 
 #### `+ (x, y)`
 *PyFunc at classes.py:1549*

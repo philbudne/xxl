@@ -915,7 +915,7 @@ def obj_setclass(this, klass):
 @pyfunc
 def obj_call(l, *args):
     """
-    default Object '(' binop
+    default Object `(` binop
     (fatal error)
     """
     raise UError("%s does not have '(' binop" % l.classname())
@@ -923,7 +923,7 @@ def obj_call(l, *args):
 @pyfunc
 def obj_instance_of(this, c):
     """
-    return `true` if Object `l` is an instance of
+    return `true` if Object `this` is an instance of
     Class (or List of Classes) `c`
     """
     if subclass_of(c.getclass(), [List]):
@@ -997,7 +997,7 @@ def class_init(this_class, props):
 @pyfunc
 def class_call(this_class, *args):
     """
-    "(" binop for Class -- fatal error
+    `(` binop for Class -- fatal error
     (but common mistake if you have Python fingers)
     tells you to use .new method!!
     """
@@ -1725,7 +1725,7 @@ def null_str(this):
 @pyfunc
 def null_call(this, *args):
     """
-    "(" method for `null` value (fatal error)
+    `(` method for `null` value (fatal error)
     commonly happens when a bad method name is used
     """
     raise UError("'null' called; bad method name?")
