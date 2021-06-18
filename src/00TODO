@@ -1,8 +1,6 @@
 FIX
 ===
-Make PLOR < PLAND??
-
-init methods:
+metaclasses:
 	BoolClass.new: return true, unless arg is falsey? call arg.to_bool()?
 	NullClass (Singleton)
 	StringClass.new: if Str, return; else call arg.to_str()
@@ -17,6 +15,8 @@ bootstrap.md -- describe adding operator;
 *** BUG: Only CPObjects can be used as Dict keys
 	(Dicts currently indexed by Python values,
 	 tho CPObject has proxy __hash__)
+
+accept trailing commas in list, hash constructors?
 
 * NOTE:
 	regression test depends on:
