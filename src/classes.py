@@ -808,6 +808,7 @@ def find_in_supers(l, rv):
         # NOTE!! doc.xxl also know that
         # properties take precedence over methods
         # (would be moot w/ descriptors)
+        # search for MRO
 
         if c.hasprop(rv):
             return c.getprop(rv) # never BoundMethod
