@@ -73,7 +73,7 @@ if (__modinfo.main) {		// once only
 	Return truthiness of `x` (as Bool)
 	NOTE!! A static method, not a (Meta)class method!!!
 	"""
-	return(x ? true : false); // XXX could invoke to_bool method?!
+	return(x ? true : false); // XXX could invoke to_bool method?! or "!(!x)"
     };
 
     ////////////////
