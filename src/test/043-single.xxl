@@ -1,0 +1,21 @@
+// -*-js-*-
+const classes = System.import("classes");
+
+const S1 = classes.SingletonClass.new({
+    name: "S1"
+});
+var a1 = S1.new();
+var b1 = S1.new();
+System.print(a1 === b1);
+
+const S2 = classes.SingletonClass.new({
+    name: "S2"
+});
+var a2 = S2.new();
+var b2 = S2.new();
+System.print(a2 === b2, a2 !== a1, b2 !== b1);
+
+System.print(classes.Null.new() === null);
+System.print(classes.Number.new('17') == 17);
+System.print(classes.Str.new(42) == '42');
+System.print(classes.Str.new(false) == 'false');
