@@ -194,14 +194,45 @@ if (__modinfo.main) {		// once only
     };
 
     ////////////////
+    // Null
+
+    classes.Null.new = function (x) { // static method!
+	"""
+	Return `null` value
+	NOTE!! A static method, not a (Meta)class method!!!
+	"""
+	return(null);
+    };
+
+    ////////////////
     // Number
 
-    classes.Number.new = function (x) {
+    classes.Number.new = function (x) { // static method!
 	"""
-	Return a `Number` object with value `x`
+	Convert `x` to a `Number`
 	NOTE!! A static method, not a (Meta)class method!!!
 	"""
 	return(x.to_number());
+    };
+
+    ////////////////
+    // SingletonClass
+
+    classes.SingletonClass.__methods = {};
+
+    classes.SingletonClass.__methods['new'] = function (this_class, ...args) {
+	"""
+	SingletonClass new method:
+	invoke to create a new class with a single value.
+	First time: calls `this_class.create` to create obj,
+	then calls obj.init(); After: returns previous value.
+	"""
+	var obj = this_class.__it; // see const.SINGLE
+	if (!obj) {		   // XXX check if === undef?
+	    obj = this_class.__it = this_class.create();
+	    obj.init(...args);
+	}
+	return(obj);
     };
 
     ////////////////
@@ -218,6 +249,13 @@ if (__modinfo.main) {		// once only
 	else {
 	    System.uerror(this.name + ".join needs Iterable");
 	}
+    };
+
+    classes.Str.new = function (arg) { // static method!
+	"""
+	Str Class new (static) method; calls arg.to_str method
+	"""
+	return(arg.to_str());
     };
 
 } // main / once only

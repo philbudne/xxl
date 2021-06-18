@@ -579,11 +579,18 @@ PClass = defclass(Class, 'PClass', [Class],
 PObject = defclass(PClass, 'PObject', [Object],
                    doc="Base class for Primitive/Python value Classes")
 
+# metaclass for Classes with singleton values
+# bootstrap.xxl sets __methods, defines static 'new' method
+SingletonClass = defclass(Class, 'SingletonClass', [Class],
+                          doc="Metaclass for Classes with singleton values")
+
+####
 # wrappers, with .value
 
-# XXX own metaclass to return singleton?
-Null = defclass(PClass, 'Null', [PObject],
-                doc="Built-on Class of `null` value") # XXX singleton
+# bootstrap.xxl sets __methods, defines static 'new' method
+Null = defclass(Class, 'Null', [PObject],
+                doc="Built-in Class of `null` value")
+
 # XXX own metaclass to return doubleton values? subclass into two singletons??
 Bool = defclass(PClass, 'Bool', [PObject],
                 doc="Built-in Class for `true` and `false` values")
