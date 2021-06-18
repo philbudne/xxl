@@ -20,12 +20,14 @@ var collect_class_ops = function (class, prop) {
     var q = [class];
     var visited = {};
     var visit = function (c) {
-	// XXX guard against revisit!!
+	// XXX guard against revisit w/ Sets!!
 	if (c !== classes.Object) { // XXX UGH! Stop The Looping!!!
 	    q.extend(c.__supers || []);
 	}
 
-	if (prop == '__methods') { // member (static) functions come first
+	// member (static) functions come first in MRO
+	// (see classes.py find_in_supers)
+	if (prop == '__methods') {
 	    c.props().for_each(
 		function (mprop) { // member property name
 		    if (!mprop.starts_with("_")) { // ignore private members
@@ -60,23 +62,40 @@ var collect_class_ops = function (class, prop) {
     return([funcs, props]);
 };
 
+var mudoc = function(mu, obj) {
+    """
+    format obj.__doc
+    """
+    var doc = obj.__doc;
+    if (!doc) {
+	return();
+    }
+    mu.p();
+    // split into lines,
+    // strip leading/trailing whitespace from lines,
+    // ignoring empty lines, rejoin
+    // XXX don't smoosh ```stuff```!!
+    var strip = function (x) { return(mu.quote(x.strip())); };
+    mu.blockquote(" ".join(doc.split("\n").map2(strip, "")));
+};
+
 var mufunc = function (mu, level, name, func) {
     """
     Markup a function/method.
-    `level` is header level, `name` is function name, `func` is Callable.
+    `level` is header level, `name` is opr/function name, `func` is Callable.
     """
     var args = func.__args() || "(?)";
-    mu.hn(level, mu.code(name, args));
+    mu.hn(level, mu.code(mu.quote(name), args));
     var defn = func.__defn() || "?";
     mu.nappend(mu.i(func.getclass().name, "at", defn));
-    mu.pdoc(func);
+    mudoc(mu, func);
 };
 
 var muvalue = function (mu, level, name, value) {
     mu.hn(level, mu.code(name));
     mu.p();
-    value = ADDR_RE.sub("", value.to_str());
-    mu.blockquote("Value:", mu.code(value));
+    value = ADDR_RE.sub("", value.to_str()); // remove " at 0xXXXX"
+    mu.blockquote("Value:", mu.code(mu.quote(value)));
 };
 
 var muclass = function (mu, class) {
@@ -85,7 +104,7 @@ var muclass = function (mu, class) {
     `class` is a Class (metaclass) to document
     """
 
-    mu.pdoc(class);
+    mudoc(mu, class);
 
     [
      ['__methods', 'Methods'],
