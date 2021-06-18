@@ -13,8 +13,8 @@ __modinfo.booting = true;
 
 System.import = function (name) {
     """
-    import a source file, VM instruction (.vmx) file, or internal module.
-    returns Module.
+    Import a source file, VM instruction (.vmx) file, or internal module.
+    Returns Module.
     """
     var rets = System._import(name);
     var mod  = rets[0];	// Module
@@ -44,7 +44,7 @@ if (__modinfo.main) {		// once only
     // default this.to_str() to this.repr():
     classes.Object.__methods['to_str'] = function (this) {
 	"""
-	default to_str method: calls this.repr
+	Default to_str method: calls this.repr().
 	"""
 	return(this.repr());
     };
@@ -55,10 +55,10 @@ if (__modinfo.main) {		// once only
     // default 'new' method!!
     classes.Class.__methods['new'] = function (this_class, ...args) {
 	"""
-	default metaclass (Class) new method
-	manually invoked as SomeClass.new
-	calls this_class.create to create obj
-	and then calls obj.init()
+	Default metaclass (Class) new method;
+	Manually invoked as SomeClass.new.
+	Calls this_class.create to create obj,
+	and then calls obj.init().
 	"""
 	var obj = this_class.create();
 	obj.init(...args);
@@ -70,10 +70,11 @@ if (__modinfo.main) {		// once only
 
     classes.Bool.new = function (x) { // static method!
 	"""
-	Return truthiness of `x` (as Bool)
+	Return truthiness of `x` (as Bool).
 	NOTE!! A static method, not a (Meta)class method!!!
 	"""
-	return(x ? true : false); // XXX could invoke to_bool method?! or "!(!x)"
+	// XXX could invoke to_bool method?! or "!(!x)"
+	return(x ? true : false);
     };
 
     ////////////////
@@ -83,7 +84,7 @@ if (__modinfo.main) {		// once only
 
     Iterable.__methods['for_each'] = function (this, func) {
 	"""
-	call `func` argument with each iterator item
+	Create Iterator from `this`, call `func` with each value.
 	"""
 	var iter = this.iter();
 	while (true) {
@@ -93,7 +94,8 @@ if (__modinfo.main) {		// once only
 
     Iterable.__methods['each_for'] = function (this, func) {
 	"""
-	call `func` argument with each reverse iterator item
+	Create reverse Iterator from `this`, call `func` with each value.
+	returns `null`
 	"""
 	var iter = this.reversed();
 	while (true) {
@@ -103,7 +105,8 @@ if (__modinfo.main) {		// once only
 
     Iterable.__methods['map'] = function (this, func) {
 	"""
-	return List of results of `func` passed each iterator item
+	Create Iterator from `this`;
+	Return List of results of `func` passed each iterator item.
 	"""
 	var iter = this.iter();
 	var ret = [];
@@ -117,8 +120,8 @@ if (__modinfo.main) {		// once only
     // ignore entries where func returns `ignore` value
     Iterable.__methods['map2'] = function (this, func, ignore) {
 	"""
-	return List of results of `func` passed each iterator item,
-	ignore any returns with value `ignore` (defaults to `null`)
+	Return List of results of `func` passed each iterator item,
+	ignores any returns with value `ignore` (defaults to `null`).
 	"""
 	var iter = this.iter();
 	var ret = [];
@@ -130,6 +133,22 @@ if (__modinfo.main) {		// once only
 	    }
 	}
 	return(ret);
+    };
+
+    classes.Iterable.__methods['reversed'] = function (this) {
+	"""
+	Creates List from `this`, returns reverse PyIterator.
+	"""
+	var l = classes.List.new(this);
+	return(l.reversed());
+    };
+
+    classes.Iterable.__methods['sorted'] = function (this) {
+	"""
+	Creates List from `this` and returns sorted List.
+	"""
+	var l = classes.List.new(this);
+	return(l.sorted());
     };
 
     ////////////////
@@ -191,17 +210,21 @@ if (__modinfo.main) {		// once only
     var repr = function (x) { return(x.repr()); };
     classes.List.__methods['repr'] = function (this) {
 	"""
-	return represtation of List
+	return representation of List
 	"""
 	return("[" + ", ".join(this.map(repr)) + "]");
     };
 
     classes.List.__methods['extend'] = function (this, iterable) {
+	"""
+	Create an iterator from `iterable`
+	and iterate appending values to `this`
+	returns `null`
+	"""
 	var iter = iterable.iter();
 	while (true) {
 	    this.append(iter.next(return));
 	}
-	// NOTE: modifies List: not chainable in Python
     };
 
     ////////////////

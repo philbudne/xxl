@@ -129,7 +129,7 @@ class CObject:
         # NOTE!! find_op does not return BoundMethod
         #       (called 99.999% of time from XxxOpInstrs)
         m = find_op(self, const.BINOPS, '(')
-        vm.args.insert(0, self)
+        vm.args.insert(0, self) # OK, another place where THIS is passed
         m.invoke(vm)
 
     def hasprop(self, prop):
@@ -204,8 +204,7 @@ class CContinuation(CCallable):
         self.fp = fp
 
     def __repr__(self):
-        i = self.fp.cb[self.fp.pc]
-        return "<Continuation: %s:%s>" % (i.fn, i.where)
+        return "<Continuation: %s>" % self.defn()
         
     def invoke(self, vm):
         vm.restore_frame(self.fp) # just like ReturnInstr
@@ -218,9 +217,17 @@ class CContinuation(CCallable):
             raise UError("Too many Continuation args %s" % len(vm.args))
 
     def args(self):
+        """
+        for __args method: return Python list of str argument names
+        """
         return ["value"]
 
     def defn(self):
+        """
+        return Python str for "definition" location
+        (in this case, it's where it will return to
+         the statement AFTER it was defined)
+        """
         return self.fp.cb[self.fp.pc].fn_where()
 
 class CClosure(CCallable):
@@ -294,9 +301,9 @@ class CBoundMethod(CCallable):
         return "<BoundMethod: %s %s>" % (repr(self.obj), self.method)
         
     def invoke(self, vm):
-        # *THIS* is the place "this" is explicitly passed!!!
+        # *this* is the place "THIS" is explicitly passed!!!
         vm.args.insert(0, self.obj) # prepend saved "this" to arguments
-        self.method.invoke(vm)      # return value in AC
+        self.method.invoke(vm)      # returns value in AC
 
     def args(self):
         return self.method.args()[1:] # omit "this" arg
@@ -304,10 +311,9 @@ class CBoundMethod(CCallable):
     def defn(self):
         return self.method.defn()
 
-# Calling Python functions (ie; primative class methods) was orignally
+# Calling Python functions (ie; primitive class methods) was orignally
 # implemented as a Closure with two VM instructions (pycall, return).
 # The CObject.invoke method avoids that.
-
 class CPyFunc(CCallable):
     """
     A Callable instance backed by a Python function
@@ -587,36 +593,36 @@ SingletonClass = defclass(Class, 'SingletonClass', [Class],
 ####
 # wrappers, with .value
 
-# bootstrap.xxl sets __methods, defines static 'new' method
+# bootstrap.xxl defines static 'new' method
 Null = defclass(Class, 'Null', [PObject],
                 doc="Built-in Class of `null` value")
 
-# XXX own metaclass to return doubleton values? subclass into two singletons??
+# bootstrap.xxl defines static 'new' method
 Bool = defclass(PClass, 'Bool', [PObject],
                 doc="Built-in Class for `true` and `false` values")
 
-# pure virtual base:
-Iterable = defclass(PClass, 'Iterable', [PObject],
-                    doc="Virtual base Class classes that can be iterated over")
+# Pure Mixin
+Iterable = defclass(Class, 'Iterable', [],
+                    doc="Mixin for Classes that can be iterated over")
 
-List = defclass(PClass, 'List', [Iterable],
+# created by mkiterable
+PyIterable = defclass(PClass, 'PyIterable', [PObject, Iterable],
+                      doc="""
+    Wrapper for Python 'iterable' Objects (Dict, List, Str);
+    Also returned by Dict.items(), Dict.keys(), Dict.values(),
+    Object.props(), static method PyIterable.range().
+    """)
+
+List = defclass(PClass, 'List', [PyIterable],
                 doc="Built-in mutable sequence Class")
-Str = defclass(PClass, 'Str', [Iterable],
+Str = defclass(PClass, 'Str', [PyIterable],
                doc="Built-in immutable Unicode string Class")
-Dict  = defclass(PClass, 'Dict', [Iterable],
+Dict  = defclass(PClass, 'Dict', [PyIterable],
                  doc="Built-in dictionary mapping Class")
 
 # non-iterable:
 Number = defclass(PClass, 'Number', [PObject],
                   doc="Built-in int/float wrapper Class")
-
-PyIterable = defclass(PClass, 'PyIterable', [Iterable],
-                      doc="""
-    Wrapper for Python 'iterable' Objects
-    (classes which can generate iterators)
-    returned by Dict.items(), Dict.keys(), Dict.values(),
-    Object.props(), PyIterable.range(),
-    """)
 
 ################
 # Str, List now exist:
@@ -658,7 +664,7 @@ PyVMFunc = defclass(Class, 'PyVMFunc', [Callable],
 
 
 # wrapper around a Python iterator (w/ next method)
-PyIterator = defclass(Class, 'PyIterator', [Object],
+PyIterator = defclass(Class, 'PyIterator', [Object, Iterable],
                       doc="Built-in Class for a wrapper around a Python iterator")
 
 ################
@@ -791,7 +797,8 @@ def obj_putprop(l, r, value):
 # XXX return (obj, value) to avoid generating BoundMethod?
 def find_in_supers(l, rv):
     """
-    breadth first search of superclass methods/properties
+    Breadth first search of superclass methods/properties;
+    `l` is CObject, `rv` is Python string for method/property name.
     """
     c = l.getclass()
 
@@ -800,23 +807,18 @@ def find_in_supers(l, rv):
     seen = set()
 
     while True:
-        if not supers or supers is null_value:
-            break
-
-        for s in supers.value:  # XXX check
-            q.append(s)
-            seen.add(s)
+        if supers and supers is not null_value:
+            for s in supers.value:  # XXX check
+                q.append(s)
+                seen.add(s)
 
         if not q:
             break
 
         c = q.pop(0)            # front of queue
 
-        # NOTE!! doc.xxl also know that
-        # properties take precedence over methods
-        # (would be moot w/ descriptors)
-        # search for MRO
-
+        # NOTE!! doc.xxl also know that properties take precedence
+        # over methods (would be moot w/ descriptors); search for MRO.
         if c.hasprop(rv):
             return c.getprop(rv) # never BoundMethod
 
@@ -1011,7 +1013,7 @@ def class_init(this_class, props):
 def class_call(this_class, *args):
     """
     `(` binop for Class -- fatal error
-    (but common mistake if you have Python fingers)
+    (but common mistake if you have Python fingers) --
     tells you to use .new method!!
     """
     raise UError("call %s.new!" % this_class.getprop(const.NAME).value)
@@ -1163,52 +1165,67 @@ Callable.setprop(const.METHODS, _mkdict({
     '__defn': callable__defn
 }))
 
-################ Iterable base class
-
-@pyfunc
-def iterable_iter(this):
-    """
-    return forward iterator
-    """
-    return pyiterator(iter(this.value))
-
-@pyfunc
-def iterable_reversed(this):
-    """
-    return reverse iterator
-    """
-    # XXX handle TypeError for "not reversible"
-    return pyiterator(reversed(this.value))
-
-@pyfunc
-def iterable_sorted(this):
-    """
-    return sorted list values (or keys)
-    """
-    return wrap(sorted(this.value))
+################ Iterable
 
 # for_each, each_for, map, map2 in bootstrap.xxl
 Iterable.setprop(const.METHODS, _mkdict({
-    'iter': iterable_iter,
-    'reversed': iterable_reversed,
-    'sorted': iterable_sorted
+}))
+
+################ List
+
+# init, repr, extend in bootstrap.xxl
+List.setprop(const.METHODS, _mkdict({
 }))
 
 ################ PyIterable
 
-# subclass of Iterable for mkiterable callers: Dict.{key,value,item}s()
+# subclass of Iterable, PObject
+# superclass of List, Dict, Str!
+# also created by mkiterable, used in:
+#       Dict.{item,key,value}s()
+#       Object.props()
+#       PyIterable.range()
+
+@pyfunc
+def pyiterable_iter(this):
+    """
+    Return forward iterator.
+    """
+    return pyiterator(iter(this.value))
+
+@pyfunc
+def pyiterable_reversed(this):
+    """
+    Return reverse iterator.
+    """
+    # XXX handle TypeError for "not reversible" (dict pre Python 3.8)?
+    # XXX XXX make list, and reverse that??
+    return pyiterator(reversed(this.value))
+
+@pyfunc
+def pyiterable_sorted(this):
+    """
+    Return sorted List of iterator values.
+    """
+    return wrap(sorted(this.value))
+
 PyIterable.setprop(const.METHODS, _mkdict({
-    'to_str': pobj_reprx
+    'iter': pyiterable_iter,
+    'reversed': pyiterable_reversed,
+    'sorted': pyiterable_sorted
+#   'to_str': pobj_reprx
 }))
+
 
 @pyfunc
 def pyiterable_range(*args):
     """
-    return an Iterable for an integer range
-    (an Iterable can be iterated over any number of times)
+    Static method:
+    returns PyIterable for an integer range;
+    iter() method generates fresh Iterators.
 
-    range(10): returns Iterable for 0..9
-    range(1,10): returns Iterable for 1..9
+    range(10): returns Iterable for 0..9;
+    range(1,10): returns Iterable for 1..9;
     range(1,10,2): returns Iterable for odd numbers 1..9
     """
     if len(args) == 1:
@@ -1229,7 +1246,7 @@ PyIterable.setprop('range', pyiterable_range) # static method
 @pyfunc
 def dict_put(l, r, value):
     """
-    put `value` into Dict `l` index `r`
+    `l[r] = value`
     """
     entry = r.value             # XXX
     l.value[entry] = value
@@ -1238,7 +1255,7 @@ def dict_put(l, r, value):
 @pyfunc
 def dict_get(l, r):
     """
-    get entry `r` Dict from dict `l`
+    `l[r]`
     """
     entry = r.value             # XXX
     ret = l.value.get(entry, null_value)
@@ -1247,37 +1264,37 @@ def dict_get(l, r):
 @pyfunc
 def dict__init0(obj):
     """
-    called by Dict.init (in bootstrap.xxl)
-    Dodges needing private metaclass for Dict
+    Called by Dict.init (in bootstrap.xxl).
+    Dodges needing private metaclass for Dict.
     """
     obj.value = {}
     return null_value
 
 @pyfunc
-def dict_pop(obj, arg):
+def dict_pop(obj, key):
     """
-    remove Dict with specified key
+    Remove Dict item with specified `key`.
     """
-    return obj.value.pop(arg.value) # XXX check arg has value!!!
+    return obj.value.pop(key.value) # XXX check arg has value!!!
 
 @pyfunc
 def dict_items(this):
     """
-    return Iterable for [key, value] value pairs
+    Return PyIterable for [key, value] value pairs.
     """
     return mkiterable(this.value.items())
 
 @pyfunc
 def dict_keys(this):
     """
-    return Iterable for Dict keys
+    Return PyIterable for Dict keys.
     """
     return mkiterable(this.value.keys())
 
 @pyfunc
 def dict_values(this):
     """
-    return Iterable for Dict values
+    Return PyIterable for Dict values.
     """
     return mkiterable(this.value.values())
 
@@ -1310,7 +1327,7 @@ def list__init0(l):
 @pyfunc
 def list_append(this, item):
     """
-    append `item` to `this` List
+    append `item`.
     """
     this.value.append(item)
     return null_value
@@ -1318,16 +1335,16 @@ def list_append(this, item):
 @pyfunc
 def list_pop(l, index=None):
     """
-    Remove and return List item at `index` (default last)
+    Remove and return item at `index` (default last).
     """
     if index is None:
         return l.value.pop()
-    return l.value.pop(index.value) # XXX check if Number
+    return l.value.pop(index.value) # XXX getnum
 
 @pyfunc
 def list_get(l, r):
     """
-    Return List item at index `r`
+    `l[r]`
     """
     # XXX check if integer
     return l.value[r.value]
@@ -1335,13 +1352,13 @@ def list_get(l, r):
 @pyfunc
 def list_put(l, r, value):
     """
-    Set List item at index `r` to `value`
+    `l[r] = value`
     """
     # XXX check if integer
     l.value[r.value] = value
     return value		# lhsop MUST return value
 
-# str, repr, for_each, each_for, map, map2 in bootstrap.xxl
+# str, repr, for_each, each_for, map, map2 from Iterable (in bootstrap.xxl)
 List.setprop(const.METHODS, _mkdict({
     'append': list_append,
     'len': pobj_len,
@@ -1395,7 +1412,7 @@ def sub(l, r):
 @pyfunc
 def mul(l, r):
     """
-    multiple `l` and `r`
+    multiply `l` and `r`
     """
     lv = l.value
     rv = r.value
@@ -1408,7 +1425,7 @@ def mul(l, r):
 @pyfunc
 def div(l, r):
     """
-    divide `l` by `r`
+    Divide `l` by `r`; always creates float.
     """
     lv = l.value
     rv = r.value
@@ -1739,7 +1756,8 @@ def null_str(this):
 def null_call(this, *args):
     """
     `(` method for `null` value (fatal error)
-    commonly happens when a bad method name is used
+    commonly happens when a bad method name is used,
+    so output a "helpful" message.
     """
     raise UError("'null' called; bad method name?")
 
@@ -1807,7 +1825,7 @@ def unwrap(x):
 @pyfunc
 def pyobj_getprop(l, r):
     """
-    PyObject "." binop -- proxies to Python object getattr
+    PyObject `.` binop -- proxies to Python object getattr
     """
     # XXX r must be Str
     #   for access to Object properties?
@@ -1822,9 +1840,16 @@ def pyobj_getprop(l, r):
     return wrap(v)
 
 @pyfunc
+def pyobj_props(this):
+    """
+    return dir() of wrapped Python object
+    """
+    return wrap(dir(this.value))
+
+@pyfunc
 def pyobj_getitem(l, r):
     """
-    PyObject "[" binop
+    PyObject `[` binop
     """
     v = l.value[r.value]        # XXX unwrap(r)??
     return wrap(v)
@@ -1835,9 +1860,10 @@ def pyobj_call(this, *args):
     ret = this.value(*a2)
     return wrap(ret) # may create another PyObject!
 
+# searched AFTER wrapped Python object attrs
 PyObject.setprop(const.METHODS, _mkdict({
-    const.INIT: pobj_init
-    # NOTE!! pyobj_getprop doesn't search here!!!
+    const.INIT: pobj_init,
+    'props': pyobj_props
 }))
 
 PyObject.setprop(const.BINOPS, _mkdict({
@@ -1992,6 +2018,10 @@ def new_module(fname, main=False, argv=[], parser_vmx=None):
 # *BUT* load_vm_json has to exist to load the bootstrap anyway!
 @pyfunc
 def modinfo_load_vmx(this, fname):
+    """
+    Load compiled `.vmx` file;
+    Returns Closure in __modinfo.module top level scope.
+    """
     mod = this.getprop(const.MODINFO_MODULE) # XXX check return
     code = vmx.load_vm_json(fname.value, mod.scope) # XXX getstr
     return CClosure(code, mod.scope)
@@ -1999,9 +2029,10 @@ def modinfo_load_vmx(this, fname):
 @pyfunc
 def modinfo_assemble(this, tree, srcfile):
     """
-    `tree`: List of Lists of VM code
-    `srcfile`: source of code
-    returns Closure in __modinfo.module initial scope
+    Assemble List of Lists representing VM code.
+    `tree`: List of Lists.
+    `srcfile`: source of code (for output only).
+    Returns Closure in __modinfo.module top level scope.
     """
     mod = this.getprop(const.MODINFO_MODULE) # XXX check
     code = vmx.assemble(mod.scope, tree, srcfile)
@@ -2009,8 +2040,6 @@ def modinfo_assemble(this, tree, srcfile):
     # turn into Closure in scope
     #   (any variables created are globals):
     return CClosure(code, mod.scope)
-
-    return system.assemble(mod.scope, tree, srcfile)
 
 ModInfo.setprop(const.METHODS, _mkdict({
     'load_vmx': modinfo_load_vmx, # create Closure from .vmx file
@@ -2090,8 +2119,10 @@ def classes_init():
     classes_module.scope = classes_scope # XXX YUK
     # NOTE: below crushes __modinfo!!!??? (do we care???)
     classes_module.props = classes_scope.vars # XXX XXX DOUBLY SO
-    defmodule('classes', classes_module)
+    defmodule('classes', classes_module)      # XXX __classes?
 
+# called only from new_module.
+# XXX move Class to __xxl?
 def init_scope(iscope):
     """
     copy a limited set of types/values to each Module initial Scope `iscope`
@@ -2101,7 +2132,7 @@ def init_scope(iscope):
     for x in ['true', 'false', 'null', 'Class']:
         iscope.defvar(x, classes_scope.lookup(x))
 
-# earlier?!!
+# earlier?!!!!!
 __initialized = True        # don't allow _mkXXX any more
 
 classes_scope.defvar(const.DOC, mkstr("Built-in Classes for XXL"))

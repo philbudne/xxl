@@ -1,0 +1,78 @@
+// -*-js-*-
+
+const classes = System.import("classes");
+
+// Str is a PyIterable:
+System.print(",".join("54321".sorted()));
+System.print(",".join("54312".reversed()));
+var r = "54312".reversed();
+
+System.print("================");
+const MyIterator = Class.new({
+    name: "MyIterator",
+    doc: "a very simple iterator",
+    supers: [classes.Iterable, classes.Object], // Iterable is Mixin
+    methods: {
+	init: function (this, list) {
+	    this.list = list;
+	    this.i = 0;
+	    this.len = list.len();
+	},
+	iter: function (this) {
+	    return(this);
+	},
+	next: function (this, done) {
+	    if (this.i < this.len) {
+		var ret = this.list[this.i];
+		this.i += 1;
+		return(ret);
+	    }
+	    else {
+		done();
+	    }
+	}
+    }
+});
+
+const MyIterable = Class.new({
+    name: "MyIterator",
+    supers: [classes.Iterable, classes.Object],
+    methods: {
+	init: function (this, list) {
+	    this.l = list;
+	},
+	iter: function (this) {
+	    System.print("MyIterable.iter");
+	    return(MyIterator.new(this.l));
+	}
+    }
+});
+
+const iterable = MyIterable.new(['1','2','3']);
+
+System.print("==== while");
+var iterator = iterable.iter();
+break: while (true) {
+    System.print(iterator.next(break));
+}
+
+System.print("==== iterable.iter()");
+iterable.iter().for_each(System.print);
+System.print(",".join(iterable.iter()));
+
+System.print("==== iterable");
+iterable.for_each(System.print);
+System.print(",".join(iterable));
+
+////////////////
+
+System.print("====");
+// native Iterable (not PyIterable)
+// native methods convert to List first:
+
+var ii = MyIterable.new(['1','3','2']);
+
+System.print("ii.reversed");
+System.print(",".join(ii.reversed()));
+System.print("ii.sorted");
+System.print(",".join(ii.sorted()));

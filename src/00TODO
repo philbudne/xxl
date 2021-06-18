@@ -1,5 +1,9 @@
 FIX
 ===
+rename "classes" to "__classes"
+rename "System" to "__xxl"
+put "Class" in __xxl??
+
 bootstrap.md -- describe adding operator;
 	add to VM or bootstrap first.
 	recompile bootstrap (if needed)
@@ -28,10 +32,10 @@ xxl.py: w/o filename run read/eval/print loop
 
 TEST
 ====
+test PyObject.props()
 str & repr methods (& Str.join)
 	Callables
 __extend_parser
-Iterable.sorted()
 
 CLEANUP
 =======
@@ -156,4 +160,6 @@ parser:
     "end" flag on Symbols? add "accept" method??
 
 ** add .git/pre-commit check?
+
+.sorted(): take reverse flag?
 
