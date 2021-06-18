@@ -673,9 +673,8 @@ class ArgsInstr(VMInstr1):
 
     def step(self, vm):
         if len(vm.args) > len(self.value):
-            raise classes.UError(
-                "%s: too many arguments. got %d, expected %d" % \
-                (self.where, len(vm.args), len(self.value)))
+            raise classes.UError("too many arguments. got %d, expected %d" %
+                                 (len(vm.args), len(self.value)))
         # NOTE: scope.func_scope() creates a cactus stack of scopes;
         #       defines 'return' as a Continuation to prev frame
         vm.scope = vm.scope.func_scope(vm.fp)
