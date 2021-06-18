@@ -7,8 +7,6 @@ Can lexer operator/name dichotomy be eliminated????
 	things that start w/ operator ASCII terminated by letter or space?
 	things that contain non-ASCII need to be terminated by space or non-operator
 
-doc.xxl: Show Class supers
-
 Makefile:
 	ignore metadata line in bootstrap.vmx
 

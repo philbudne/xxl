@@ -1,6 +1,10 @@
 // -*-js-*-
 
-var classes = System.import("classes");
+const classes = System.import("classes");
+
+const re = System.pyimport("re");
+
+const ADDR_RE = re.compile(" at 0x[0-9a-z]*");
 
 // XXX need general iterator for class and all supers
 
@@ -68,6 +72,13 @@ var mufunc = function (mu, level, name, func) {
     mu.pdoc(func);
 };
 
+var muvalue = function (mu, level, name, value) {
+    mu.hn(level, mu.code(name));
+    mu.p();
+    value = ADDR_RE.sub("", value.to_str());
+    mu.blockquote("Value:", mu.code(value));
+};
+
 var muclass = function (mu, class) {
     """
     `mu` is a MarkUp instance,
@@ -105,9 +116,7 @@ var muclass = function (mu, class) {
 		     function (ditem) { // ditem => [member_name, value]
 			 var name = ditem[0]; // method name or operator string
 			 var value = ditem[1];
-			 mu.h3(mu.code(name));
-			 mu.p();
-			 mu.blockquote("Value:", mu.code(value.to_str()));
+			 muvalue(mu, 4, name, value);
 		     } // function (ditem)
 		 ); // for_each member
 	     }
@@ -133,7 +142,8 @@ var mumodule = function (mu, module_name) {
 	    }
 	    var x = mod.getprop(name);
 	    if (x.instance_of(classes.Class)) {
-		mu.h2("Class", mu.code(name));
+		var supers = ",".join(x.__supers.map(function (c) { return(c.name); }));
+		mu.h2("Class", mu.code(name), "subclass of", mu.code(supers));
 		mu.p();
 		muclass(mu, x);
 	    }
@@ -151,9 +161,7 @@ var mumodule = function (mu, module_name) {
 		mufunc(mu, 3, name, x);
 	    }
 	    else {
-		mu.h3(mu.code(name));
-		mu.p();
-		mu.blockquote("Value:", mu.code(x.to_str()));
+		muvalue(mu, 3, name, x);
 	    }
 	    mu.p();
 	}

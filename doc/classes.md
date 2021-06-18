@@ -1,6 +1,6 @@
 # Module `classes`
 
-## Class `Bool`
+## Class `Bool` subclass of `PObject`
 
 
 > Built-in Class for `true` and `false` values
@@ -64,7 +64,7 @@
 
 ### Members
 
-### `name`
+#### `name`
 
 > Value: `Bool`
 
@@ -119,7 +119,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
-## Class `BoundMethod`
+## Class `BoundMethod` subclass of `Callable`
 
 
 > Built-in Class for a method bound to an Object
@@ -198,7 +198,7 @@
 
 ### Members
 
-### `name`
+#### `name`
 
 > Value: `BoundMethod`
 
@@ -253,7 +253,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
-## Class `Callable`
+## Class `Callable` subclass of `Object`
 
 
 > Virtual base Class for built-in callable classes (BoundMethod, Continuation, PyFunc, PyVMFunc)
@@ -317,7 +317,7 @@
 
 ### Members
 
-### `name`
+#### `name`
 
 > Value: `Callable`
 
@@ -372,7 +372,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
-## Class `Class`
+## Class `Class` subclass of `Object`
 
 
 > Base Metaclass, home of the default 'new' method
@@ -451,7 +451,7 @@
 
 ### Members
 
-### `name`
+#### `name`
 
 > Value: `Class`
 
@@ -506,7 +506,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
-## Class `Closure`
+## Class `Closure` subclass of `Callable`
 
 
 > Built-in Class for a native function bound to a scope
@@ -585,7 +585,7 @@
 
 ### Members
 
-### `name`
+#### `name`
 
 > Value: `Closure`
 
@@ -640,7 +640,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
-## Class `Continuation`
+## Class `Continuation` subclass of `Callable`
 
 
 > Built-in Class for a Continuation
@@ -719,7 +719,7 @@
 
 ### Members
 
-### `name`
+#### `name`
 
 > Value: `Continuation`
 
@@ -774,7 +774,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
-## Class `Dict`
+## Class `Dict` subclass of `Iterable`
 
 
 > Built-in dictionary mapping Class
@@ -898,7 +898,7 @@
 
 ### Members
 
-### `name`
+#### `name`
 
 > Value: `Dict`
 
@@ -963,7 +963,7 @@
 
 > put `value` into Dict `l` index `r`
 
-## Class `Iterable`
+## Class `Iterable` subclass of `PObject`
 
 
 > Virtual base Class classes that can be iterated over
@@ -1062,7 +1062,7 @@
 
 ### Members
 
-### `name`
+#### `name`
 
 > Value: `Iterable`
 
@@ -1117,7 +1117,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
-## Class `List`
+## Class `List` subclass of `Iterable`
 
 
 > Built-in mutable sequence Class
@@ -1236,7 +1236,7 @@
 
 ### Members
 
-### `name`
+#### `name`
 
 > Value: `List`
 
@@ -1301,7 +1301,7 @@
 
 > Set List item at index `r` to `value`
 
-## Class `ModInfo`
+## Class `ModInfo` subclass of `Object`
 
 
 > Built-in Class for __modinfo Objects (inside Modules)
@@ -1375,7 +1375,7 @@
 
 ### Members
 
-### `name`
+#### `name`
 
 > Value: `ModInfo`
 
@@ -1430,7 +1430,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
-## Class `Module`
+## Class `Module` subclass of `Object`
 
 
 > Built-in class for a Module (from import function)
@@ -1509,11 +1509,11 @@
 
 ### Members
 
-### `modules`
+#### `modules`
 
-> Value: `{'classes': <Module at 0x7ff9c5af3440>, 'doc.xxl': <Module at 0x7ff9c5af3480>, 'parser.vmx': <Module at 0x7ff9c5aa4a80>, 'markup.xxl': <Module at 0x7ff9c5824940>}`
+> Value: `{'classes': <Module>, 'doc.xxl': <Module>, 'parser.vmx': <Module>, 'markup.xxl': <Module>}`
 
-### `name`
+#### `name`
 
 > Value: `Module`
 
@@ -1568,7 +1568,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
-## Class `Null`
+## Class `Null` subclass of `PObject`
 
 
 > Built-on Class of `null` value
@@ -1632,7 +1632,7 @@
 
 ### Members
 
-### `name`
+#### `name`
 
 > Value: `Null`
 
@@ -1687,7 +1687,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
-## Class `Number`
+## Class `Number` subclass of `PObject`
 
 
 > Built-in int/float wrapper Class
@@ -1771,7 +1771,7 @@
 
 ### Members
 
-### `name`
+#### `name`
 
 > Value: `Number`
 
@@ -1886,7 +1886,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
-## Class `Object`
+## Class `Object` subclass of `Object`
 
 
 > Base Class
@@ -1950,7 +1950,7 @@
 
 ### Members
 
-### `name`
+#### `name`
 
 > Value: `Object`
 
@@ -2005,7 +2005,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
-## Class `PClass`
+## Class `PClass` subclass of `Class`
 
 
 > Metaclass for Primitive/Python value Classes
@@ -2084,7 +2084,7 @@
 
 ### Members
 
-### `name`
+#### `name`
 
 > Value: `PClass`
 
@@ -2139,7 +2139,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
-## Class `PObject`
+## Class `PObject` subclass of `Object`
 
 
 > Base class for Primitive/Python value Classes
@@ -2203,7 +2203,7 @@
 
 ### Members
 
-### `name`
+#### `name`
 
 > Value: `PObject`
 
@@ -2258,7 +2258,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
-## Class `PyFunc`
+## Class `PyFunc` subclass of `Callable`
 
 
 > Built-in Class for function implemented in Python
@@ -2337,7 +2337,7 @@
 
 ### Members
 
-### `name`
+#### `name`
 
 > Value: `PyFunc`
 
@@ -2392,7 +2392,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
-## Class `PyIterable`
+## Class `PyIterable` subclass of `Iterable`
 
 
 > Wrapper for Python 'iterable' Objects (classes which can generate iterators) returned by Dict.items(), Dict.keys(), Dict.values(), Object.props(), PyIterable.range(),
@@ -2496,7 +2496,7 @@
 
 ### Members
 
-### `name`
+#### `name`
 
 > Value: `PyIterable`
 
@@ -2551,7 +2551,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
-## Class `PyIterator`
+## Class `PyIterator` subclass of `Object`
 
 
 > Built-in Class for a wrapper around a Python iterator
@@ -2625,7 +2625,7 @@
 
 ### Members
 
-### `name`
+#### `name`
 
 > Value: `PyIterator`
 
@@ -2680,7 +2680,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
-## Class `PyObject`
+## Class `PyObject` subclass of `Object`
 
 
 > Built-in Class for a wrapper around an arbitrary Python Object (returned by pyimport, or operations on PyObjects)
@@ -2744,7 +2744,7 @@
 
 ### Members
 
-### `name`
+#### `name`
 
 > Value: `PyObject`
 
@@ -2804,7 +2804,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
-## Class `PyVMFunc`
+## Class `PyVMFunc` subclass of `Callable`
 
 
 > Built-in Class for function implemented in Python with access to VM internals
@@ -2883,7 +2883,7 @@
 
 ### Members
 
-### `name`
+#### `name`
 
 > Value: `PyVMFunc`
 
@@ -2938,7 +2938,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
-## Class `Str`
+## Class `Str` subclass of `Iterable`
 
 
 > Built-in immutable Unicode string Class
@@ -3097,7 +3097,7 @@
 
 ### Members
 
-### `name`
+#### `name`
 
 > Value: `Str`
 
