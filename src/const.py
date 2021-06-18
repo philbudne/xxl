@@ -29,6 +29,7 @@ BINOPS = '__binops'     # Dict
 UNOPS = '__unops'       # Dict
 LHSOPS = '__lhsops'     # Dict
 SUPERS = '__supers'     # List of Class instances
+SINGLE = '__it'         # singleton instance (set by SingletonClass.new)
 
 # map Class.new argument dict keys to internal property names
 CLASS_PROPS = {
