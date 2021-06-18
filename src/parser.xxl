@@ -374,14 +374,14 @@ var PrattParser = Class.new({
 	},
 	define: function (this, sym, read_only) {
 	    // sym is a Parser Symbol instance
-	    // declare as a Name in the current scope.
+	    // declare as a Name/ReadOnly in the current scope.
 
 	    // had a call to scope.find_definition to get "prev" here.
 	    // sym.defn _seems_ like the right thing!
 
-	    var class = read_only ? this.ReadOnly : this.Name; // also in defname method
+	    var class = read_only ? this.ReadOnly : this.Name; // also in defname
 
-	    // give fatal error for duplicate first!
+	    // give fatal error for duplicate (in same scope) first!
 	    this.scope._define(class.new(sym.where, sym.value, sym.arity));
 	    if (sym.defn) {
 		sym.warning("shadows previous definition at " + sym.defn.where);
@@ -978,7 +978,7 @@ var Parser = Class.new({
 			var a = [];
 			if (!p.check("]")) {
 			  leave_while:
-			    while (true) {
+			    while (true) { // XXX while (!p.check("]")) ???
 				a.append(p.expression(0));
 				if (!p.check(",")) {
 				    leave_while();
@@ -1214,7 +1214,7 @@ var Parser = Class.new({
 			var v;
 			if (!p.check("}")) {
 			  leave_while:
-			    while (true) {
+			    while (true) { // XXX !p.check("}")??
 				n = p.token;
 				if (n.arity != "name"
 				    && n.arity != "literal") {
@@ -1272,7 +1272,7 @@ var Parser = Class.new({
 				}
 			    ); // for_each
 			    vmcode.emit_pop_temp(this);
-			}
+			} // unary
 		    } // gen
 		} // methods
 	    }); // LBrace
