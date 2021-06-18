@@ -87,10 +87,10 @@ var MarkDown = Class.new({
 	// (un)ordered_list (take list)??
 
 	// NOTE!! the following RETURN strings:
-	bold: function (this, ...words) { // cannot be combined w/ i??
+	bold: function (this, ...words) {
 	    return(this.lwrap("**", words, "**"));
 	},
-	i: function (this, ...words) { // cannot be combined w/ bold?!
+	i: function (this, ...words) {
 	    return(this.lwrap("*", words, "*"));
 	},
 	code: function (this, ...words) {
@@ -138,10 +138,10 @@ var HTML = Class.new({
 	// (un)ordered_list (take list)??
 
 	// NOTE!! the following RETURN strings:
-	bold: function (this, ...words) { // cannot be combined w/ i??
+	bold: function (this, ...words) {
 	    return(this._twrap("b", words));
 	},
-	i: function (this, ...words) { // cannot be combined w/ bold?!
+	i: function (this, ...words) {
 	    return(this._twrap("i", words));
 	},
 	code: function (this, ...words) {
