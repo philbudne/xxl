@@ -711,7 +711,7 @@ var Parser = Class.new({
 	    p.PTERN = p.PASS + 10;	// ternary
 
 	    p.PLOR = p.PTERN + 10;	// logical or (||)
-	    p.PLAND = p.PLOR;		// logical and (&&) higher than PLOR?!
+	    p.PLAND = p.PLOR + 10;	// logical and (&&)
 
 	    p.PCOMP = p.PLAND + 10;	// comparison
 
@@ -1540,13 +1540,34 @@ var gen = function (stmts) {	// tree is list of top level stmts/exprs
     return(vmcode.finish(null));
 }; // gen()
 
+var dump_parser = function (p) {
+    p.symbol_classes.items().for_each(
+	function (pair) {
+	    var c = pair[1];
+	    var i = c.new("foo", "bar", "baz");
+	    System.print(pair[0], // dict key
+			 c.name,  // Symbol class name
+			 i.lbp,
+			 // won't see inherited methods;
+			 // looking at Instance sees Symbol.nud
+			 (c.__methods['nud'] && "value") || "-",
+			 (i.std && "stmt") || "-"
+			);
+	}
+    );
+    System.exit(1);
+};
+
 var compile = function (fname) {
     var p = Parser.new();
 
+    // XXX take argument to dump parser table and quit.
+
     // get list of abstract syntax trees (of Symbols)
     // (one per statement)
-    // XXX take option to just dump ASTs?
     var asts = p.parse(fname);
+
+    // XXX take option to just dump ASTs?
 
     // generate VM code (as List of instruction Lists)
     var code = gen(asts);
