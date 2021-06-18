@@ -91,7 +91,7 @@ XXXop opcodes do not consume vm.args
 create wrapper Class for CObjects with real invoke method,
 	with a "(" binop that calls invoke??
 
-bring back is_true?????
+bring back to_bool?
 
 Helper to declare PyFunc wrappers for methods???
 	take string of argument types to expect/translate
