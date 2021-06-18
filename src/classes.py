@@ -2103,3 +2103,5 @@ def init_scope(iscope):
 
 # earlier?!!
 __initialized = True        # don't allow _mkXXX any more
+
+classes_scope.defvar(const.DOC, mkstr("Built-in Classes for XXL"))

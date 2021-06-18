@@ -1,5 +1,7 @@
 // -*-js-*-
 
+const __doc = "Program to extract and markup documentation from an XXL Module";
+
 const classes = System.import("classes");
 
 const re = System.pyimport("re");
@@ -148,11 +150,13 @@ var mumodule = function (mu, module_name) {
     Import and up a module.
     `module_name` is name to import.
     """
+    var mod = System.import(module_name);
+
     mu.h1("Module", mu.code(module_name));
     mu.p();
+    mudoc(mu, mod);
 
     // iterate over sorted names in Module
-    var mod = System.import(module_name);
     var vars = [];
     mod..props().sorted().for_each(
 	function (name) {

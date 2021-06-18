@@ -1,5 +1,7 @@
 // -*-js-*-
 
+const __doc = "Classes for marking up machine generated documentation.";
+
 var MarkUp = Class.new({
     name: "MarkUp",
     doc: "base class for marking up text",

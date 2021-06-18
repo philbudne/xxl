@@ -52,6 +52,8 @@
 
 // XXX split up??
 
+var __doc = "Extensible Parser/Compiler for XXL.";
+
 // XXX move to vmcode.xxl?
 var VMCode = Class.new({
     name: "VMCode",

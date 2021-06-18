@@ -1,5 +1,8 @@
 # Module `classes`
 
+
+> Built-in Classes for XXL
+
 ## Class `Bool` subclass of `PObject`
 
 
