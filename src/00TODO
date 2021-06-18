@@ -1,11 +1,21 @@
 FIX
 ===
+line:char twice w/ "too many arguments" error
+
 Can lexer operator/name dichotomy be eliminated????
 	would lose "Unknown operator" error.
 	(to allow unicode to start either operator or name)
 	things that start w/ letter terminated by operator or space
 	things that start w/ operator ASCII terminated by letter or space?
 	things that contain non-ASCII need to be terminated by space or non-operator
+
+doc.xxl
+    HTML markup:
+	replace HTML entities!!!!!
+	at low (append?) level:
+		use re's to change `thing` in docstrings to <code></code>
+    detect ```stuff``` and DON'T smush together???
+	change ```stuff``` to HTML <pre>stuff</pre>
 
 Makefile:
 	ignore metadata line in bootstrap.vmx
