@@ -2,3 +2,5 @@ var a = [1,2,3];
 System.print(a);
 System.print(a[1]);
 System.print(a[-1]);
+
+System.print([1], [1,], [1,2], [1,2,]);

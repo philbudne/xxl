@@ -978,13 +978,10 @@ var Parser = Class.new({
 		    },
 		    nud: function (this) {
 			var a = [];
-			if (!p.check("]")) {
-			  leave_while:
-			    while (true) { // XXX while (!p.check("]")) ???
-				a.append(p.expression(0));
-				if (!p.check(",")) {
-				    leave_while();
-				}
+		      leave_while:
+			while (!p.check("]")) {
+			    a.append(p.expression(0));
+			    if (!p.check("]")) {
 				p.advance(",");
 			    }
 			}
@@ -1214,23 +1211,21 @@ var Parser = Class.new({
 			var a = [];
 			var n;
 			var v;
-			if (!p.check("}")) {
-			  leave_while:
-			    while (true) { // XXX !p.check("}")??
-				n = p.token;
-				if (n.arity != "name"
-				    && n.arity != "literal") {
-				    p.token.error("Bad Dict key.");
-				}
-				p.advance();
-				p.advance(":");
-				n.first = p.expression(0);
-				a.append(n);
-				if (!p.check(",")) {
-				    leave_while();
-				}
-				p.advance(",");
+		      leave_while:
+			while (!p.check("}")) {
+			    n = p.token;
+			    if (n.arity != "name"
+				&& n.arity != "literal") {
+				p.token.error("Dict key must be name or number");
 			    }
+			    p.advance();
+			    p.advance(":");
+			    n.first = p.expression(0);
+			    a.append(n);
+			    if (p.check("}")) {
+				leave_while();
+			    }
+			    p.advance(",");
 			}
 			p.advance("}");
 			this.first = a;

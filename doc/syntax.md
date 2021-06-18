@@ -42,8 +42,8 @@ BLOCK:  [NAME «:»] «{» STMT … «}»
 EXPR:   NAME |
         NUMBER |
         STRING |
-        «[» [ EXPR [«,» EXPR]… ] «]» |
-        «{» [ KEY: EXPR [«,» KEY:EXPR ]… ] «}» |
+        «[» [ EXPR [«,» EXPR]… ] [«,»] «]» |
+        «{» [ KEY: EXPR [«,» KEY:EXPR ]… ] [«,»] «}» |
         «(» EXPR «)» |
         EXPR «.» NAME |                 (precedence 110)
         EXPR «..» NAME |                (precedence 110)
@@ -142,9 +142,7 @@ STRING: «'» [ANYTHING_EXCEPT_NEWLINE_OR_SINGLE_QUOTE]… «'» |
 
 * All compile errors are fatal.
 
-* Extra ";" are not accepted.
-
-* Trailing "," in [] and {} are not accepted.
+* Extra ";" are not accepted (and none are optional).
 
 * "return" is *NOT* a statement, it's a variable containing a
         continuation (EVERY call is a "call with current continuation"),

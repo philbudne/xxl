@@ -10,8 +10,6 @@ bootstrap.md -- describe adding operator;
 	(Dicts currently indexed by Python values,
 	 tho CPObject has proxy __hash__)
 
-accept trailing commas in list, hash constructors?
-
 * NOTE:
 	regression test depends on:
 		ordered dicts (Python 3.6)

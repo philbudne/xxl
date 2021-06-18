@@ -4,3 +4,5 @@ d[123] = 321;
 
 System.print(d["hello"]);
 System.print(d[123]);
+
+System.print({1:2}, {1:2,}, {1:2, 3:4}, {1:2, 3:4,});
