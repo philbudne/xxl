@@ -1,55 +1,12 @@
 FIX
 ===
-line:char twice w/ "too many arguments" error
-
-Can lexer operator/name dichotomy be eliminated????
-	would lose "Unknown operator" error.
-	(to allow unicode to start either operator or name)
-	things that start w/ letter terminated by operator or space
-	things that start w/ operator ASCII terminated by letter or space?
-	things that contain non-ASCII need to be terminated by space or non-operator
-
-doc.xxl
-    HTML markup:
-	replace HTML entities!!!!!
-	at low (append?) level:
-		use re's to change `thing` in docstrings to <code></code>
-    detect ```stuff``` and DON'T smush together???
-	change ```stuff``` to HTML <pre>stuff</pre>
-
-Makefile:
-	ignore metadata line in bootstrap.vmx
-
 Make PLOR < PLAND??
 
-parser:
-    "end" flag on Symbols? add "accept" method??
-
-import:
-	Make Module.new() do importing?
-	Module.create replaces System._import?
-	Native Module.init() would call Module.create
-	    could call __modinfo.load_vmx(bootstrap)
-		*BUT* would need to do it "manually" for "main"
-	    optional args (dict?)
-		optional parser_vmx file (set __modinfo.parser)
-		    default parser in __xxl.parser?
-		optional bootstrap_vmx file
-		option to ignore __extend_parser
-	_COULD_ define native code __modinfo.load_vmx (using .assemble)
-	    BUT still need to load bootstrap!!!
-
-init methods for String, Bool, Null
-	BoolClass, NullClass?
-	StringClass & NumberClass metaclasses (to return self)?
-
-replace parser.vmx at end of tests?
-	save .bak file??
-
-build/replace bootstrap.vmx in normal Makefile
-	all outputs depend on $(BOOTSTRAP_VMX)?
-	recurse setting BOOTSTRAP_VMX to bootstrap.vmx.tmp to test before replacing
-	don't replace (mv) if no change
+init methods:
+	BoolClass.new: return true, unless arg is falsey? call arg.to_bool()?
+	NullClass (Singleton)
+	StringClass.new: if Str, return; else call arg.to_str()
+	NumberClass.new: if Number, return; else call arg.to_number()
 
 bootstrap.md -- describe adding operator;
 	add to VM or bootstrap first.
@@ -61,23 +18,17 @@ bootstrap.md -- describe adding operator;
 	(Dicts currently indexed by Python values,
 	 tho CPObject has proxy __hash__)
 
-** add .git/pre-commit check?
+* NOTE:
+	regression test depends on:
+		ordered dicts (Python 3.6)
+		reverse() on iterables??
 
-* regression test depends on ordered dicts (Python 3.6)
-	remove first line (and add back compile time?!)
+	need PYTHONIOENCODING=utf8 w/ pypy3 7.3.1 to pass test #41
 
 type wrapping:
 	classes.py pyfuncs do not invoke Class init methods!
-	revisit wrapping return values in CPyFunc.invoke???
-
-true/null/false are writable!!!??? (bug or feature?)
-	add "const" statement (subclass "Var")??
-		add '.const' flag to Scope table entry?
-			Subclass Name??
-			copy in _gtok (after c.new??)
-			check like .lvalue?
-		use .setclass on Name objects to Const??  Lit????
-	have while/if detect const values
+		revisit wrapping return values in CPyFunc.invoke
+			(tail calls to "new")
 
 xxl.py: w/o filename run read/eval/print loop
 	need to change statement() and std() methods
@@ -169,3 +120,49 @@ Parser doc formatter;
     format table for symbol_classes?
 
 Complain about unused/unread variables (when exiting scope?)
+
+Can lexer operator/name dichotomy be eliminated????
+	would lose "Unknown operator" error.
+	(to allow unicode to start either operator or name)
+	things that start w/ letter terminated by operator or space
+	things that start w/ operator ASCII terminated by letter or space?
+	things that contain non-ASCII need to be terminated by space or non-operator
+
+doc.xxl
+    HTML markup:
+	replace HTML entities!!!!!
+	at low (append?) level:
+		use re's to change `thing` in docstrings to <code></code>
+    detect ```stuff``` and DON'T smush together???
+	change ```stuff``` to HTML <pre>stuff</pre>
+
+Makefile:
+	bootstrap.vmx:
+		ignore metadata line?
+		all outputs depend on $(BOOTSTRAP_VMX)????
+		recurse setting BOOTSTRAP_VMX to bootstrap.vmx.tmp to test??
+		don't replace (mv) if no change
+
+	replace parser.vmx at end of tests?
+		save .bak file??
+
+
+import:
+	Make Module.new() do importing?
+	Module.create replaces System._import?
+	Native Module.init() would call Module.create
+	    could call __modinfo.load_vmx(bootstrap)
+		*BUT* would need to do it "manually" for "main"
+	    optional args (dict?)
+		optional parser_vmx file (set __modinfo.parser)
+		    default parser in __xxl.parser?
+		optional bootstrap_vmx file
+		option to ignore __extend_parser
+	_COULD_ define native code __modinfo.load_vmx (using .assemble)
+	    BUT still need to load bootstrap!!!
+
+parser:
+    "end" flag on Symbols? add "accept" method??
+
+** add .git/pre-commit check?
+
