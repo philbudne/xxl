@@ -225,23 +225,20 @@ def obj2python_json(x):
         """
         if classes.instance_of(x, value_classes):
             return x.value
+
         if classes.instance_of(x, iterable_classes):
             return [clean1(z) for z in x.value]
 
-        if not classes.instance_of(x, [classes.Dict]):
-            raise classes.UError(
-                "obj2python only handles ASTs, code/JSON, got %s" %
-                x.classname())
-
         # here with AST "Symbol" node; turn into JSON list
         r = []
+        print(x)
         for attr in ['where', 'arity', 'value']:
             r.append(clean1(x.getprop(attr)))
-            for attr in ['first', 'second', 'third']:
-                if attr not in x.props:
-                    break
-                r.append(clean1(x.getprop(attr)))
-            return r
+        for attr in ['first', 'second', 'third']:
+            if attr not in x.props:
+                break
+            r.append(clean1(x.getprop(attr)))
+        return r
 
     return clean1(x)
 
