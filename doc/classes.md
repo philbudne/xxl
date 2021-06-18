@@ -32,6 +32,11 @@
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
+#### `new (x)`
+*Closure at bootstrap.xxl:71:24*
+
+> Return truthiness of `x` (as Bool) NOTE!! A static method, not a (Meta)class method!!!
+
 #### `props (this)`
 *PyFunc at classes.py:717*
 
@@ -787,12 +792,12 @@
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `each_for (this, func)`
-*Closure at bootstrap.xxl:83:38*
+*Closure at bootstrap.xxl:94:38*
 
 > call `func` argument with each reverse iterator item
 
 #### `for_each (this, func)`
-*Closure at bootstrap.xxl:73:38*
+*Closure at bootstrap.xxl:84:38*
 
 > call `func` argument with each iterator item
 
@@ -807,7 +812,7 @@
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (this, arg)`
-*Closure at bootstrap.xxl:127:38*
+*Closure at bootstrap.xxl:138:38*
 
 > init method for Dict: takes Iterable returning two-item lists, OR an Iterable returning keys, and implementing '['
 
@@ -837,12 +842,12 @@
 > returns length (of String, List or Dict)
 
 #### `map (this, func)`
-*Closure at bootstrap.xxl:93:33*
+*Closure at bootstrap.xxl:104:33*
 
 > return List of results of `func` passed each iterator item
 
 #### `map2 (this, func, ignore)`
-*Closure at bootstrap.xxl:107:34*
+*Closure at bootstrap.xxl:118:34*
 
 > return List of results of `func` passed each iterator item, ignore any returns with value `ignore` (defaults to `null`)
 
@@ -862,7 +867,7 @@
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*Closure at bootstrap.xxl:153:38*
+*Closure at bootstrap.xxl:164:38*
 
 > return representation of Dict
 
@@ -976,12 +981,12 @@
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `each_for (this, func)`
-*Closure at bootstrap.xxl:83:38*
+*Closure at bootstrap.xxl:94:38*
 
 > call `func` argument with each reverse iterator item
 
 #### `for_each (this, func)`
-*Closure at bootstrap.xxl:73:38*
+*Closure at bootstrap.xxl:84:38*
 
 > call `func` argument with each iterator item
 
@@ -1011,12 +1016,12 @@
 > return forward iterator
 
 #### `map (this, func)`
-*Closure at bootstrap.xxl:93:33*
+*Closure at bootstrap.xxl:104:33*
 
 > return List of results of `func` passed each iterator item
 
 #### `map2 (this, func, ignore)`
-*Closure at bootstrap.xxl:107:34*
+*Closure at bootstrap.xxl:118:34*
 
 > return List of results of `func` passed each iterator item, ignore any returns with value `ignore` (defaults to `null`)
 
@@ -1135,17 +1140,17 @@
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `each_for (this, func)`
-*Closure at bootstrap.xxl:83:38*
+*Closure at bootstrap.xxl:94:38*
 
 > call `func` argument with each reverse iterator item
 
 #### `extend (this, iterable)`
-*Closure at bootstrap.xxl:188:40*
+*Closure at bootstrap.xxl:199:40*
 
 > 
 
 #### `for_each (this, func)`
-*Closure at bootstrap.xxl:73:38*
+*Closure at bootstrap.xxl:84:38*
 
 > call `func` argument with each iterator item
 
@@ -1160,7 +1165,7 @@
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (this, arg)`
-*Closure at bootstrap.xxl:169:38*
+*Closure at bootstrap.xxl:180:38*
 
 > init method for List: takes Iterable
 
@@ -1180,12 +1185,12 @@
 > returns length (of String, List or Dict)
 
 #### `map (this, func)`
-*Closure at bootstrap.xxl:93:33*
+*Closure at bootstrap.xxl:104:33*
 
 > return List of results of `func` passed each iterator item
 
 #### `map2 (this, func, ignore)`
-*Closure at bootstrap.xxl:107:34*
+*Closure at bootstrap.xxl:118:34*
 
 > return List of results of `func` passed each iterator item, ignore any returns with value `ignore` (defaults to `null`)
 
@@ -1205,7 +1210,7 @@
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*Closure at bootstrap.xxl:181:38*
+*Closure at bootstrap.xxl:192:38*
 
 > return represtation of List
 
@@ -1601,7 +1606,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (x)`
-*Closure at bootstrap.xxl:199:24*
+*Closure at bootstrap.xxl:210:24*
 
 > Return `null` value NOTE!! A static method, not a (Meta)class method!!!
 
@@ -1725,7 +1730,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (x)`
-*Closure at bootstrap.xxl:210:26*
+*Closure at bootstrap.xxl:221:26*
 
 > Convert `x` to a `Number` NOTE!! A static method, not a (Meta)class method!!!
 
@@ -2410,12 +2415,12 @@
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `each_for (this, func)`
-*Closure at bootstrap.xxl:83:38*
+*Closure at bootstrap.xxl:94:38*
 
 > call `func` argument with each reverse iterator item
 
 #### `for_each (this, func)`
-*Closure at bootstrap.xxl:73:38*
+*Closure at bootstrap.xxl:84:38*
 
 > call `func` argument with each iterator item
 
@@ -2445,12 +2450,12 @@
 > return forward iterator
 
 #### `map (this, func)`
-*Closure at bootstrap.xxl:93:33*
+*Closure at bootstrap.xxl:104:33*
 
 > return List of results of `func` passed each iterator item
 
 #### `map2 (this, func, ignore)`
-*Closure at bootstrap.xxl:107:34*
+*Closure at bootstrap.xxl:118:34*
 
 > return List of results of `func` passed each iterator item, ignore any returns with value `ignore` (defaults to `null`)
 
@@ -2981,7 +2986,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (this_class, ...args)`
-*Closure at bootstrap.xxl:223:47*
+*Closure at bootstrap.xxl:234:47*
 
 > SingletonClass new method: invoke to create a new class with a single value. First time: calls `this_class.create` to create obj, then calls obj.init(); After: returns previous value.
 
@@ -3095,7 +3100,7 @@
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `each_for (this, func)`
-*Closure at bootstrap.xxl:83:38*
+*Closure at bootstrap.xxl:94:38*
 
 > call `func` argument with each reverse iterator item
 
@@ -3105,7 +3110,7 @@
 > Return `true` if `this` ends with the suffix `suff`, `false` otherwise.
 
 #### `for_each (this, func)`
-*Closure at bootstrap.xxl:73:38*
+*Closure at bootstrap.xxl:84:38*
 
 > call `func` argument with each iterator item
 
@@ -3135,7 +3140,7 @@
 > return forward iterator
 
 #### `join (this, iterable)`
-*Closure at bootstrap.xxl:241:37*
+*Closure at bootstrap.xxl:252:37*
 
 > 
 
@@ -3145,17 +3150,17 @@
 > returns length (of String, List or Dict)
 
 #### `map (this, func)`
-*Closure at bootstrap.xxl:93:33*
+*Closure at bootstrap.xxl:104:33*
 
 > return List of results of `func` passed each iterator item
 
 #### `map2 (this, func, ignore)`
-*Closure at bootstrap.xxl:107:34*
+*Closure at bootstrap.xxl:118:34*
 
 > return List of results of `func` passed each iterator item, ignore any returns with value `ignore` (defaults to `null`)
 
 #### `new (arg)`
-*Closure at bootstrap.xxl:254:23*
+*Closure at bootstrap.xxl:265:23*
 
 > Str Class new (static) method; calls arg.to_str method
 

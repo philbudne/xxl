@@ -15,6 +15,13 @@ var a2 = S2.new();
 var b2 = S2.new();
 System.print(a2 === b2, a2 !== a1, b2 !== b1);
 
+System.print(classes.Bool.new(null) === false,
+	     classes.Bool.new(false) === false,
+	     classes.Bool.new(0) === false,
+	     classes.Bool.new({}) === true,
+	     classes.Bool.new(true) === true,
+	     classes.Bool.new(1) === true);
+
 System.print(classes.Null.new() === null);
 System.print(classes.Number.new('17') == 17);
 System.print(classes.Str.new(42) == '42');
