@@ -844,7 +844,9 @@ def convert_instrs(il, fn):
 def load_vm_json(fname, iscope):
     with open(fname) as f:
         l = f.readline()
-        if l and l[0:1] == '#!': # hash bang?
+
+        # allow "#!/usr/bin/env ..../xxl.py" to work (w/ .vmx files)
+        if l and l[0:2] == '#!':
             l = f.readline()     # discard
 
         # parse metadata
