@@ -1,11 +1,5 @@
 FIX
 ===
-metaclasses:
-	BoolClass.new: return true, unless arg is falsey? call arg.to_bool()?
-	NullClass (Singleton)
-	StringClass.new: if Str, return; else call arg.to_str()
-	NumberClass.new: if Number, return; else call arg.to_number()
-
 bootstrap.md -- describe adding operator;
 	add to VM or bootstrap first.
 	recompile bootstrap (if needed)
@@ -21,7 +15,6 @@ accept trailing commas in list, hash constructors?
 * NOTE:
 	regression test depends on:
 		ordered dicts (Python 3.6)
-		reverse() on iterables??
 
 	need PYTHONIOENCODING=utf8 w/ pypy3 7.3.1 to pass test #41
 
