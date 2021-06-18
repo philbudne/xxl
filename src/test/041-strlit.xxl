@@ -9,7 +9,8 @@ System.print('''
 	world
 ''');
 
-
+// requires "export PYTHONIOENCODING=utf8" w/ pypy3 7.3.1
+// (sys.stdout defaults to ascii)
 System.print("\xBf");	// upside down question mark
 System.print("\u01Ff");	// lower case o w/ slash and accent
 System.print("\u2135"); // mathematics aleph
