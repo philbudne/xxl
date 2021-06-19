@@ -1,13 +1,8 @@
 FIX
 ===
 rename "classes" to "__classes"
-put "Class" in __xxl??
 
-bootstrap.md -- describe adding operator;
-	add to VM or bootstrap first.
-	recompile bootstrap (if needed)
-	write test; add to test directory
-	use in parser.xxl
+put "Class" in __xxl??
 
 *** BUG: Only CPObjects can be used as Dict keys
 	(Dicts currently indexed by Python values,
@@ -16,8 +11,11 @@ bootstrap.md -- describe adding operator;
 * NOTE:
 	regression test depends on:
 		ordered dicts (Python 3.6)
-
 	need PYTHONIOENCODING=utf8 w/ pypy3 7.3.1 to pass test #41
+
+wrap:
+	PyObject: test if Python object is Itera{ble,tor};
+		if so, return PyItera{ble,tor}Object???
 
 type wrapping:
 	classes.py pyfuncs do not invoke Class init methods!
@@ -160,5 +158,8 @@ parser:
 
 ** add .git/pre-commit check?
 
-.sorted(): take reverse flag?
-
+bootstrap.md -- describe adding operator;
+	add to VM or bootstrap first.
+	recompile bootstrap (if needed)
+	write test; add to test directory
+	use in parser.xxl

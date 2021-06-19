@@ -1,5 +1,6 @@
 1,2,3,4,5
 2,1,3,4,5
+5,4,3,2,1
 ================
 ==== while
 MyIterable.iter
@@ -27,3 +28,6 @@ MyIterable.iter
 ii.sorted
 MyIterable.iter
 1,2,3
+ii.sorted(true)
+MyIterable.iter
+3,2,1

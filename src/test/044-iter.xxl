@@ -5,6 +5,7 @@ const classes = __xxl.import("classes");
 // Str is a PyIterable:
 __xxl.print(",".join("54321".sorted()));
 __xxl.print(",".join("54312".reversed()));
+__xxl.print(",".join("54312".sorted(true)));
 var r = "54312".reversed();
 
 __xxl.print("================");
@@ -76,3 +77,5 @@ __xxl.print("ii.reversed");
 __xxl.print(",".join(ii.reversed()));
 __xxl.print("ii.sorted");
 __xxl.print(",".join(ii.sorted()));
+__xxl.print("ii.sorted(true)");
+__xxl.print(",".join(ii.sorted(true)));

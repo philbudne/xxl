@@ -143,12 +143,13 @@ if (__modinfo.main) {		// once only
 	return(l.reversed());
     };
 
-    classes.Iterable.__methods['sorted'] = function (this) {
+    classes.Iterable.__methods['sorted'] = function (this, reverse) {
 	"""
-	Creates List from `this` and returns sorted List.
+	Return sorted List of values from iterator (creates List first).
+	`reverse` is Bool to sort in reverse order (defaults to `false`).
 	"""
 	var l = classes.List.new(this);
-	return(l.sorted());
+	return(l.sorted(reverse));
     };
 
     ////////////////

@@ -1203,11 +1203,12 @@ def pyiterable_reversed(this):
     return pyiterator(reversed(this.value))
 
 @pyfunc
-def pyiterable_sorted(this):
+def pyiterable_sorted(this, reverse=false_val):
     """
     Return sorted List of iterator values.
+    `reverse` is Bool to sort in reverse order (defaults to `false`).
     """
-    return wrap(sorted(this.value))
+    return wrap(sorted(this.value, reverse=is_true(reverse)))
 
 PyIterable.setprop(const.METHODS, _mkdict({
     'iter': pyiterable_iter,
