@@ -33,7 +33,7 @@ IDENTICAL2=.identical.parser-c
 
 DOCS= ../doc/classes.md
 
-all:	$(TESTED) $(IDENTICAL) $(IDENTICAL2) $(DOCS)
+all:	$(TESTED) $(IDENTICAL) $(IDENTICAL2) $(DOCS) $(PARSER_VMX)
 
 $(TESTED): $(B) $(C)
 	cmp $(B) $(C)
