@@ -1,10 +1,10 @@
 var a = "hello" + "  " + "world";
-System.print(a);
+__xxl.print(a);
 
 var as = a.to_str();
-System.print(a, as, a === as, a == as);
-System.print(a.starts_with("hello"), a.ends_with("world"));
+__xxl.print(a, as, a === as, a == as);
+__xxl.print(a.starts_with("hello"), a.ends_with("world"));
 
-System.print(a.split());
-System.print(a.split(' '));
-System.print(a.split(' ', 1));
+__xxl.print(a.split());
+__xxl.print(a.split(' '));
+__xxl.print(a.split(' ', 1));

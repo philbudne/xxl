@@ -10,17 +10,17 @@ var halt = false;		// continuation
 //	to the Continuation (always null in this case).
 var current_continuation = function () { return(return); };
 
-var TRACE = System.argv.len() > 0;
+var TRACE = __xxl.argv.len() > 0;
 var trace = function (a, b, c) { // XXX use ...args
     if (TRACE) {
 	if (c) {
-	    System.print(a, b, c);
+	    __xxl.print(a, b, c);
 	}
 	else if (b) {
-	    System.print(a, b);
+	    __xxl.print(a, b);
 	}
 	else {
-	    System.print(a);
+	    __xxl.print(a);
 	}
     }
 };
@@ -45,7 +45,7 @@ var spawn = function (thunk) {
     }
     else {
 	thunk();
-	System.print("thunk returned, calling quit");
+	__xxl.print("thunk returned, calling quit");
 	quit();
     }
 };
@@ -95,7 +95,7 @@ var make_worker = function (name) {
 		trace("thread", name, "calling quit");
 		quit();
 	    }
-	    System.print("thread", name, "counter", counter);
+	    __xxl.print("thread", name, "counter", counter);
 	    counter -= 1;
 	    trace("thread", name, "calling yield");
 	    yield();

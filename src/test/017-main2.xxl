@@ -1,1 +1,1 @@
-System.import("test/016-main.xxl");
+__xxl.import("test/016-main.xxl");

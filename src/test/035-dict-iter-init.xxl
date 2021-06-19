@@ -5,12 +5,12 @@
 var d = {1:2, hello: "world"};
 
 var p = function (what, iterable) {
-    System.print("================", what);
+    __xxl.print("================", what);
     var iter = iterable.iter();
-//  System.print("iterable", iterable);
-//  System.print("iter", iter);
+//  __xxl.print("iterable", iterable);
+//  __xxl.print("iter", iter);
     while (true) {
-	System.print(iter.next(return));
+	__xxl.print(iter.next(return));
     }
 };
 
@@ -21,6 +21,6 @@ p("keys()", d.keys());
 // requires Python 3.8?
 //p("reversed()", d.reversed());
 
-var classes = System.import("classes");
+var classes = __xxl.import("classes");
 var e = classes.Dict.new(d);
 p("e.items()", e.items());

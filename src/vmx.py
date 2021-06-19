@@ -30,11 +30,11 @@ import time
 import collections
 
 import classes
-import system
+import xxlobj
 import const
 import jslex                    # LexError
 
-# opcodes where inst[2] is code list, used in system.py:
+# opcodes where inst[2] is code list, used in xxlobj.py:
 INST2CODE = ('close', 'bccall')
 
 instr_class_by_name = {}        # Instr classes by name
@@ -166,7 +166,8 @@ class VM:
         for op in instr_class_by_name.keys():
             self.op_count[op] = self.op_time[op] = 0
         trace = self.trace
-        # XXX inside try, to catch SystemExit??
+        # XXX inside try, to catch SystemExit???
+        # (so __xxl.exit() doesn't bypass stats)
         while self.run:
             self.ir = ir = self.cb[self.pc] # instruction register
             self.pc += 1        # jumps will overwrite
@@ -873,8 +874,8 @@ def assemble(scope, tree, srcfile):
     List of Lists `tree` of instructions to assemble
     str `srcfile` source file name for trimming "where" fields
     """
-    js = system.obj2python_json(tree) # get Python list of lists
-    system.trim_where(js, srcfile.value) # XXX getstr?
+    js = xxlobj.obj2python_json(tree) # get Python list of lists
+    xxlobj.trim_where(js, srcfile.value) # XXX getstr?
 
     # convert into Python list of Instrs (scope for type name lookup):
     return convert_instrs(js, srcfile)

@@ -1,7 +1,7 @@
 var l = ['a', 'b', 'c'];
 var f = function (...args) {
-    System.print(args);
-    System.print("hello", ...args, ...l, "world");
+    __xxl.print(args);
+    __xxl.print("hello", ...args, ...l, "world");
 };
 
 f();

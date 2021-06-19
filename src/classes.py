@@ -67,7 +67,7 @@ import os
 
 # XXL:
 import scopes
-import system
+import xxlobj
 import const
 import vmx
 
@@ -457,14 +457,14 @@ def _mkstr(s):
 
 def _mkobj(props):
     """
-    used to create System object, lexer tokens
+    used to create __xxl object, lexer tokens
     """
     #assert(not __initialized)
     o = CObject(Object)
     o.props.update(props)
     return o
 
-################ use once System.types initialized
+################ use once __xxl.types initialized
 
 def class_by_name(name):
     """
@@ -1799,7 +1799,7 @@ def mkbool(val):
 
 ################ PyObject
 
-# PyObjects are created by System.pyimport("python_module")
+# PyObjects are created by __xxl.pyimport("python_module")
 # and are proxy wrappers around generic/naive Python objects
 
 PyObject = defclass(PClass, const.PYOBJECT, [Object],
@@ -1964,7 +1964,7 @@ def new_modinfo(main, module, fname, parser_vmx=None):
 # "where Modules come from"
 # called by:
 #       xxl.py (startup)
-#       sys__import (System._import function)
+#       xxl__import (__xxl._import function)
 # XXX should be moduleclass_new?!!
 # XXX take optional bootstrap_vmx arg??
 def new_module(fname, main=False, argv=[], parser_vmx=None):
@@ -1990,7 +1990,7 @@ def new_module(fname, main=False, argv=[], parser_vmx=None):
     init_scope(scope)           # populate scope w/ true/false/...
 
     if fname:
-        system.create_sys_object(scope, argv) # new System object XXX TEMP
+        xxlobj.create_xxl_object(scope, argv) # new __xxl object XXX TEMP
 
         # XXX Dict indexed by Python str
         md.value[fname] = mod   # save as previously loaded

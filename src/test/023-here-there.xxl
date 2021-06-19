@@ -7,7 +7,7 @@ var current_continuation = function () {
 if (true) {	// inside block/closure (top level executes on stmt at a time)
     var i = 0;
     var there = current_continuation();
-    System.print("here");
+    __xxl.print("here");
     i += 1;
     if (i < 5) {
 	there(there);

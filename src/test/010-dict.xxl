@@ -2,7 +2,7 @@ var d = {};
 d["hello"] = "world";
 d[123] = 321;
 
-System.print(d["hello"]);
-System.print(d[123]);
+__xxl.print(d["hello"]);
+__xxl.print(d[123]);
 
-System.print({1:2}, {1:2,}, {1:2, 3:4}, {1:2, 3:4,});
+__xxl.print({1:2}, {1:2,}, {1:2, 3:4}, {1:2, 3:4,});

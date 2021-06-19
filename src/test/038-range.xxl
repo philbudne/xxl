@@ -1,6 +1,6 @@
-var classes = System.import("classes");
-System.print(classes.List.new(classes.PyIterable.range(10)));
-System.print(classes.List.new(classes.PyIterable.range(1,11)));
-System.print(classes.List.new(classes.PyIterable.range(0,11,2)));
-classes.PyIterable.range(3).for_each(System.print);
-classes.PyIterable.range(3).each_for(System.print);
+var classes = __xxl.import("classes");
+__xxl.print(classes.List.new(classes.PyIterable.range(10)));
+__xxl.print(classes.List.new(classes.PyIterable.range(1,11)));
+__xxl.print(classes.List.new(classes.PyIterable.range(0,11,2)));
+classes.PyIterable.range(3).for_each(__xxl.print);
+classes.PyIterable.range(3).each_for(__xxl.print);

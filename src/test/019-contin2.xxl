@@ -14,10 +14,10 @@ var f1 = function () {
 		start = cc;
 	    }
 	);
-	System.print("here");
+	__xxl.print("here");
     }
 
-    System.print("invoking start");
+    __xxl.print("invoking start");
     i += 1;
     if (i == 5) {
 	return(0);

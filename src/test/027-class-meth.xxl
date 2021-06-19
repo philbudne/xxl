@@ -2,7 +2,7 @@ var c = Class.new({
     name: "c",
     methods: {
 	m: function (this) {
-	    System.print(this.a);
+	    __xxl.print(this.a);
 	}
     }
 });

@@ -32,24 +32,24 @@ p.add_symbol_class("do", Do);
 
 var i = 4;
 do {
-    System.print(i);
+    __xxl.print(i);
     i -= 1;
 } while (i > 0);
 
-System.print("continue test");
+__xxl.print("continue test");
 i = 4;
 do continue: {
-    System.print(i);
+    __xxl.print(i);
     i -= 1;
     continue();
-    System.print("here");
+    __xxl.print("here");
 } while (i > 0);
 
-System.print("break test");
+__xxl.print("break test");
 i = 4;
 break:
 do {
-    System.print(i);
+    __xxl.print(i);
     i -= 1;
     break();
 } while (i > 0);

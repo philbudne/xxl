@@ -1,10 +1,10 @@
 // -*-js-*-
-var classes = System.import("classes");
+var classes = __xxl.import("classes");
 var t = function(x) {
     var n1 = classes.Number.new(x); // string arg
     var n2 = classes.Number.new(n1); // Number arg
 
-    System.print(x,
+    __xxl.print(x,
 		 n1, n1.getclass().name,
 		 n2, n2.getclass().name,
 		 n1 == n2,

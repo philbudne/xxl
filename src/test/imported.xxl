@@ -1,5 +1,5 @@
-System.print("hello world");
+__xxl.print("hello world");
 
 var a = 1;
 
-var func = function () { System.print("foo.func"); };
+var func = function () { __xxl.print("foo.func"); };

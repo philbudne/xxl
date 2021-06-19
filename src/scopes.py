@@ -67,7 +67,7 @@ class Scope:
             if name in s.vars:
                 return s.vars[name]
             s = s.parent
-        raise UError("Unknown variable %s" % name) # SNH
+        raise classes.UError("Unknown variable %s" % name) # SNH
 
     # see note above "lookup" (compiler could tell us stuff)
     def store(self, name, val):
@@ -81,7 +81,7 @@ class Scope:
                 s.vars[name] = val
                 return val
             s = s.parent
-        raise UError("Unknown variable %s" % name)
+        raise classes.UError("Unknown variable %s" % name)
 
     def get_vars(self):         # UGH! used by new_module
         return self.vars

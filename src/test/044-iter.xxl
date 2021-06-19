@@ -1,13 +1,13 @@
 // -*-js-*-
 
-const classes = System.import("classes");
+const classes = __xxl.import("classes");
 
 // Str is a PyIterable:
-System.print(",".join("54321".sorted()));
-System.print(",".join("54312".reversed()));
+__xxl.print(",".join("54321".sorted()));
+__xxl.print(",".join("54312".reversed()));
 var r = "54312".reversed();
 
-System.print("================");
+__xxl.print("================");
 const MyIterator = Class.new({
     name: "MyIterator",
     doc: "a very simple iterator",
@@ -42,7 +42,7 @@ const MyIterable = Class.new({
 	    this.l = list;
 	},
 	iter: function (this) {
-	    System.print("MyIterable.iter");
+	    __xxl.print("MyIterable.iter");
 	    return(MyIterator.new(this.l));
 	}
     }
@@ -50,29 +50,29 @@ const MyIterable = Class.new({
 
 const iterable = MyIterable.new(['1','2','3']);
 
-System.print("==== while");
+__xxl.print("==== while");
 var iterator = iterable.iter();
 break: while (true) {
-    System.print(iterator.next(break));
+    __xxl.print(iterator.next(break));
 }
 
-System.print("==== iterable.iter()");
-iterable.iter().for_each(System.print);
-System.print(",".join(iterable.iter()));
+__xxl.print("==== iterable.iter()");
+iterable.iter().for_each(__xxl.print);
+__xxl.print(",".join(iterable.iter()));
 
-System.print("==== iterable");
-iterable.for_each(System.print);
-System.print(",".join(iterable));
+__xxl.print("==== iterable");
+iterable.for_each(__xxl.print);
+__xxl.print(",".join(iterable));
 
 ////////////////
 
-System.print("====");
+__xxl.print("====");
 // native Iterable (not PyIterable)
 // native methods convert to List first:
 
 var ii = MyIterable.new(['1','3','2']);
 
-System.print("ii.reversed");
-System.print(",".join(ii.reversed()));
-System.print("ii.sorted");
-System.print(",".join(ii.sorted()));
+__xxl.print("ii.reversed");
+__xxl.print(",".join(ii.reversed()));
+__xxl.print("ii.sorted");
+__xxl.print(",".join(ii.sorted()));

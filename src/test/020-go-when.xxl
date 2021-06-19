@@ -17,7 +17,7 @@ var go_when = function (then) {
 if (true) {
     var i = 0;
     var the_beginning = right_now();
-    System.print("Hello, world!");
+    __xxl.print("Hello, world!");
     if ((i += 1) < 4) {
 	go_when(the_beginning);
     }

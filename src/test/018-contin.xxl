@@ -4,12 +4,12 @@ var cwcc = function (f) { // call w/ current continuation (scheme call/cc)
     f(return);		  // call f with our return continuation!
 };
 
-System.print(
+__xxl.print(
     cwcc(
 	function (cc) {
-	    System.print("I got here.");
+	    __xxl.print("I got here.");
 	    cc("This string was passed to the continuation.");
-	    System.print("But not here.\n");
+	    __xxl.print("But not here.\n");
 	}
     )
 );

@@ -1,4 +1,4 @@
-var sys = System.pyimport("sys");
+var sys = __xxl.pyimport("sys");
 var w = sys.stdout.write;
 w("hello world\n");
 

@@ -1,6 +1,6 @@
 // -*-js-*-
-var classes = System.import("classes");
-System.print(classes.List.new([1,2,3]));
-System.print(classes.List.new({1:2, hello: "world"}));
+var classes = __xxl.import("classes");
+__xxl.print(classes.List.new([1,2,3]));
+__xxl.print(classes.List.new({1:2, hello: "world"}));
 
 

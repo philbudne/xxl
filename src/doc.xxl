@@ -2,9 +2,9 @@
 
 const __doc = "Program to extract and markup documentation from an XXL Module";
 
-const classes = System.import("classes");
+const classes = __xxl.import("classes");
 
-const re = System.pyimport("re");
+const re = __xxl.pyimport("re");
 
 const ADDR_RE = re.compile(" at 0x[0-9a-z]*");
 
@@ -150,7 +150,7 @@ var mumodule = function (mu, module_name) {
     Import and up a module.
     `module_name` is name to import.
     """
-    var mod = System.import(module_name);
+    var mod = __xxl.import(module_name);
 
     mu.h1("Module", mu.code(module_name));
     mu.p();
@@ -194,24 +194,24 @@ var mumodule = function (mu, module_name) {
 };
 
 if (__modinfo.main) {
-    var markup = System.import("markup.xxl");
+    var markup = __xxl.import("markup.xxl");
     var markup_class = markup.MarkDown;
     var i = 0;
-    if (System.argv.len() > i && System.argv[i] == "--html") {
+    if (__xxl.argv.len() > i && __xxl.argv[i] == "--html") {
 	markup_class = markup.HTML;
 	i += 1;
     }
-    var module_name = System.argv.len() > i ? System.argv[i] : "classes";
+    var module_name = __xxl.argv.len() > i ? __xxl.argv[i] : "classes";
 
     var mu = markup_class.new();
 
     mumodule(mu, module_name);
 
     mu.hr();
-    var time = System.pyimport("time");
+    var time = __xxl.pyimport("time");
     mu.nappend("formatted by doc.xxl on",
 	       time.strftime("%Y-%m-%d")); // XXX want UTC
 
     // The very very very end.
-    System.print(mu.render());	// output results
+    __xxl.print(mu.render());	// output results
 }

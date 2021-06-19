@@ -3,9 +3,9 @@
 var ll = [1,2,3];
 
 ll.for_each(function (item) {
-    System.print(item);
+    __xxl.print(item);
 });
 
 ll.each_for(function (item) {
-    System.print(item);
+    __xxl.print(item);
 });

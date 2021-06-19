@@ -1,10 +1,10 @@
 var a = 1;
-System.print(a);
+__xxl.print(a);
 a += 1;
-System.print(a);
+__xxl.print(a);
 a -= 2;
-System.print(a);
+__xxl.print(a);
 
 var arr = [4];
 arr[0] += 1;
-System.print(arr[0]);
+__xxl.print(arr[0]);

@@ -1,17 +1,17 @@
-System.print('');
-System.print('a');
-System.print('hello\nworld'); // no escaping
-System.print("hello\nworld"); // w/ escaping
-System.print("\"\'"); // w/ escaping
+__xxl.print('');
+__xxl.print('a');
+__xxl.print('hello\nworld'); // no escaping
+__xxl.print("hello\nworld"); // w/ escaping
+__xxl.print("\"\'"); // w/ escaping
 
-System.print('''
+__xxl.print('''
 	hello
 	world
 ''');
 
 // requires "export PYTHONIOENCODING=utf8" w/ pypy3 7.3.1
 // (sys.stdout defaults to ascii)
-System.print("\xBf");	// upside down question mark
-System.print("\u01Ff");	// lower case o w/ slash and accent
-System.print("\u2135"); // mathematics aleph
-System.print("\U0001f643"); // upside down smiley
+__xxl.print("\xBf");	// upside down question mark
+__xxl.print("\u01Ff");	// lower case o w/ slash and accent
+__xxl.print("\u2135"); // mathematics aleph
+__xxl.print("\U0001f643"); // upside down smiley

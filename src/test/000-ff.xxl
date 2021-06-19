@@ -6,5 +6,5 @@ var fact = function (x) {
 	return(x * fact(x-1));
     }
 };
-System.print(fact(6));
+__xxl.print(fact(6));
 

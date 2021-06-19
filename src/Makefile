@@ -8,7 +8,7 @@ PARSER= parser
 
 PARSER_SRC=$(PARSER).xxl
 
-# VM code for parser preloaded into System.parser
+# precompiled VM code for parser
 PARSER_VMX=$(PARSER).vmx
 
 # note: using $(PARSER_VMX).[abc] looks like a (suffix) rule?!
@@ -18,7 +18,7 @@ C=	c.vmx
 
 # VM sources:
 XXL=	xxl.py
-VM=	$(XXL) vmx.py classes.py const.py jslex.py system.py scopes.py
+VM=	$(XXL) vmx.py classes.py const.py jslex.py xxlobj.py scopes.py
 
 # XXX XXX XXX run ./test.sh test suite?? when (using $(B))??
 

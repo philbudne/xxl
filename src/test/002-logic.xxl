@@ -3,4 +3,4 @@ var b = 0 || 2;
 var c = !0;
 var d = true;
 
-System.print(a, b, c, d);
+__xxl.print(a, b, c, d);

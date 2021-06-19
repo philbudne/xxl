@@ -1,7 +1,6 @@
 FIX
 ===
 rename "classes" to "__classes"
-rename "System" to "__xxl"
 put "Class" in __xxl??
 
 bootstrap.md -- describe adding operator;

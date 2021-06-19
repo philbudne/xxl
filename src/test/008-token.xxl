@@ -1,5 +1,5 @@
 // tokenize this file!!!
-var token = System.tokenizer("test/008-token.xxl", '=<>!+-*&|/%^', '=<>&|'); // returns generator
+var token = __xxl.tokenizer("test/008-token.xxl", '=<>!+-*&|/%^', '=<>&|'); // returns generator
 
 leave_while:
 while (true) {
@@ -7,5 +7,5 @@ while (true) {
     if (!t) {
 	leave_while();
     }
-    System.print(t.where, t.type, t.value);
+    __xxl.print(t.where, t.type, t.value);
 }

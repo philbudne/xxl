@@ -1,4 +1,4 @@
 // -*-js-*-
 
 var d = {1: 2, hello: "world"};
-System.print(d);
+__xxl.print(d);

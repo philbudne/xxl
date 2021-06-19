@@ -1,6 +1,6 @@
-System.print("here");
-var foo = System.import("test/imported.xxl");
-System.print("foo.a", foo.a);
+__xxl.print("here");
+var foo = __xxl.import("test/imported.xxl");
+__xxl.print("foo.a", foo.a);
 foo.func();
-var bar = System.import("test/imported.xxl");
-System.print(foo === bar);
+var bar = __xxl.import("test/imported.xxl");
+__xxl.print(foo === bar);

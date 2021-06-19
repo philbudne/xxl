@@ -1,4 +1,4 @@
-System.print("hello"[0]);
-System.print("hello".slice(2));
-System.print("hello".slice(2,3));
+__xxl.print("hello"[0]);
+__xxl.print("hello".slice(2));
+__xxl.print("hello".slice(2,3));
 

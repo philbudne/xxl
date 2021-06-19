@@ -1,9 +1,9 @@
 var i = 0;
-System.print(i);
+__xxl.print(i);
 i = i | 1;
-System.print(i);
+__xxl.print(i);
 i |= 2;
-System.print(i);
-System.print(i & 1);
-System.print(i & 2);
-System.print(i & 3);
+__xxl.print(i);
+__xxl.print(i & 1);
+__xxl.print(i & 2);
+__xxl.print(i & 3);

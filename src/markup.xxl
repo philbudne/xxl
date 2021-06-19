@@ -107,7 +107,7 @@ var HTML = Class.new({
     supers: [MarkUp],
     methods: {
 	init: function (this) {
-	    var html = System.pyimport("html");
+	    var html = __xxl.pyimport("html");
 	    this..init();
 	    // quick crock!
 	    // Should replace `thing` with <code>thing</code> AFTER!!

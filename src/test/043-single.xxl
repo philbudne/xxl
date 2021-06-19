@@ -1,28 +1,28 @@
 // -*-js-*-
-const classes = System.import("classes");
+const classes = __xxl.import("classes");
 
 const S1 = classes.SingletonClass.new({
     name: "S1"
 });
 var a1 = S1.new();
 var b1 = S1.new();
-System.print(a1 === b1);
+__xxl.print(a1 === b1);
 
 const S2 = classes.SingletonClass.new({
     name: "S2"
 });
 var a2 = S2.new();
 var b2 = S2.new();
-System.print(a2 === b2, a2 !== a1, b2 !== b1);
+__xxl.print(a2 === b2, a2 !== a1, b2 !== b1);
 
-System.print(classes.Bool.new(null) === false,
+__xxl.print(classes.Bool.new(null) === false,
 	     classes.Bool.new(false) === false,
 	     classes.Bool.new(0) === false,
 	     classes.Bool.new({}) === true,
 	     classes.Bool.new(true) === true,
 	     classes.Bool.new(1) === true);
 
-System.print(classes.Null.new() === null);
-System.print(classes.Number.new('17') == 17);
-System.print(classes.Str.new(42) == '42');
-System.print(classes.Str.new(false) == 'false');
+__xxl.print(classes.Null.new() === null);
+__xxl.print(classes.Number.new('17') == 17);
+__xxl.print(classes.Str.new(42) == '42');
+__xxl.print(classes.Str.new(false) == 'false');

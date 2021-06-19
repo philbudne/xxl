@@ -7,16 +7,16 @@
 // parser extensions are available as soon as they are added!!
 
 if (__modinfo.booting) {
-    System.uerror("bootstrap: already running!");
+    __xxl.uerror("bootstrap: already running!");
 }
 __modinfo.booting = true;
 
-System.import = function (name) {
+__xxl.import = function (name) {
     """
     Import a source file, VM instruction (.vmx) file, or internal module.
     Returns Module.
     """
-    var rets = System._import(name);
+    var rets = __xxl._import(name);
     var mod  = rets[0];	// Module
     var boot = rets[1];	// Closure for bootstrap.vmx (first time only)
 
@@ -36,7 +36,7 @@ if (__modinfo.main) {		// once only
     ////////////////////////////////////////////////////////////////
     // native code methods for built-in Classes
 
-    var classes = System.import("classes");
+    var classes = __xxl.import("classes");
 
     ////////////////
     // Object
@@ -161,7 +161,7 @@ if (__modinfo.main) {		// once only
 	"""
 	this.__init0();
 	if (!arg.instance_of(classes.Iterable)) {
-	    System.uerror(this.name + ".init needs iterable");
+	    __xxl.uerror(this.name + ".init needs iterable");
 	}
 	var iter = arg.iter();
 	while (true) {
@@ -170,7 +170,7 @@ if (__modinfo.main) {		// once only
 	    // make sure all following items of same size/shape
 	    if (item.instance_of(classes.List)) {
 		if (item.len() != 2) {
-		    System.uerror(this.name + ".init got List w/ len != 2");
+		    __xxl.uerror(this.name + ".init got List w/ len != 2");
 		}
 		this[item[0]] = item[1];
 	    }
@@ -202,7 +202,7 @@ if (__modinfo.main) {		// once only
 	"""
 	this.__init0();
 	if (!arg.instance_of(classes.Iterable) && !arg.iter) {
-	    System.uerror(this.name + ".init needs Iterable");
+	    __xxl.uerror(this.name + ".init needs Iterable");
 	}
 	this.extend(arg);
     };
@@ -281,7 +281,7 @@ if (__modinfo.main) {		// once only
 	    return(this.__join(list));
 	}
 	else {
-	    System.uerror(this.name + ".join needs Iterable");
+	    __xxl.uerror(this.name + ".join needs Iterable");
 	}
     };
 
@@ -297,7 +297,7 @@ if (__modinfo.main) {		// once only
 if (true) {			// all modules-- hide temp variables
     ////////////////
     // print
-    var py_sys = System.pyimport("sys");
+    var py_sys = __xxl.pyimport("sys");
 
     var str = function (x) {
 	return(x.to_str());
@@ -307,28 +307,26 @@ if (true) {			// all modules-- hide temp variables
 	file.write(" ".join(l.map(str)) + "\n");
     };
 
-    var pr = function (...args) {
+    __xxl.print = function (...args) {
 	"""
 	print args (as strings) to stdout
 	"""
 	__print(py_sys.stdout, args);
     };
-    System.print = pr;
 
-    var er = function (...args) {
+    __xxl.error = function (...args) {
 	"""
 	print args (as strings) to stderr
 	"""
 	__print(py_sys.stderr, args);
-	py_sys.stderr.flush();
+	py_sys.stderr.flush();	// needed under PyPy3 7.3.1??
     };
-    System.error = er;
 }
 
 if (__modinfo.debug_bootstrap) { // from environment XXL_DEBUG_BOOTSTRAP
-    System.error("bootstrap __modinfo.module", __modinfo.module);
-    System.error("bootstrap __modinfo.main", __modinfo.main);
-    System.error("bootstrap __modinfo.file", __modinfo.file);
+    __xxl.error("bootstrap __modinfo.module", __modinfo.module);
+    __xxl.error("bootstrap __modinfo.main", __modinfo.main);
+    __xxl.error("bootstrap __modinfo.file", __modinfo.file);
 }
 
 if (__modinfo.file) {
@@ -336,15 +334,15 @@ if (__modinfo.file) {
     if (file.ends_with(".vmx")) {
 	__modinfo.load_vmx(file)(); // load vmx as Closure and invoke
 	if (__modinfo.debug_bootstrap) {
-	    System.error("bootstrap vmxfile", file, "finished");
+	    __xxl.error("bootstrap vmxfile", file, "finished");
 	}
     } // .vmx
     else {
 	var parser_vmx = __modinfo.parser_vmx; // for import
 	if (__modinfo.debug_bootstrap) {
-	    System.error("bootstrap parser_vmx", parser_vmx);
+	    __xxl.error("bootstrap parser_vmx", parser_vmx);
 	}
-	var pm = System.import(parser_vmx); // parser module
+	var pm = __xxl.import(parser_vmx); // parser module
 	var p = pm.Parser.new();	// Parser instance
 	__modinfo.parser = p;	// make visible to parser extensions
 
@@ -364,6 +362,6 @@ if (__modinfo.file) {
     } // not .vmx
 } // if (__modinfo.file)
 else {
-    System.uerror("bootstrap: no file to load");
+    __xxl.uerror("bootstrap: no file to load");
 }
 __modinfo.booting = false;

@@ -1,24 +1,24 @@
 var i = 1;
 while (i <= 5) {
-    System.print(i);
+    __xxl.print(i);
     i += 1;
 }
 
-System.print("break");
+__xxl.print("break");
 leave_while:
 while (true) {
     i -= 1;
-    System.print(i);
+    __xxl.print(i);
     if (i == 0) {
 	leave_while();
     }
 }
 
-System.print("continue");
+__xxl.print("continue");
 i = 0;
 while (i < 5) continue: {
     i += 1;
-    System.print(i);
+    __xxl.print(i);
     continue();
-    System.print("here");
+    __xxl.print("here");
 }

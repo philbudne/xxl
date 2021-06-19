@@ -1,9 +1,9 @@
 //-*-js-*-
 
 var l = [1, 2.0, true, "hi", null];
-System.print(l);
-System.print(l.repr());
+__xxl.print(l);
+__xxl.print(l.repr());
 
 l = [[1,2], [3,4]];
-System.print(l);
-System.print(l.repr());
+__xxl.print(l);
+__xxl.print(l.repr());

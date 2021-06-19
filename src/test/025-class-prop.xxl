@@ -6,6 +6,6 @@ var C = Class.new({
 });
 
 var i = C.new();
-System.print(C.foo);
-System.print(i.foo);
+__xxl.print(C.foo);
+__xxl.print(i.foo);
 

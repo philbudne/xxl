@@ -80,11 +80,11 @@ var VMCode = Class.new({
 		var n = 0;
 		this.code.for_each(
 		    function (inst) {
-			System.print(n, inst[0], inst[1], inst[2]);
+			__xxl.print(n, inst[0], inst[1], inst[2]);
 			n += 1;
 		    }
 		);
-		System.print("===");
+		__xxl.print("===");
 	    }
 	    return(this.code);
 	},
@@ -117,7 +117,7 @@ var VMCode = Class.new({
 		if ((p[1] == "store" || p[1] == "load") &&
 		    (op[1] == "load" || op[1] == "store") &&
 		    op[2] == p[2]) {
-		    //System.error("dropping", op, "after", p);
+		    //__xxl.error("dropping", op, "after", p);
 		    return();
 		}
 		// XXX delete "load x" if followed by "load y"
@@ -126,7 +126,7 @@ var VMCode = Class.new({
 		// (inst after jrst should always be a branch target
 		//  so this is unlikely to fire!)
 		if (p[1] == "jrst" || p[1] == "return") {
-		    //System.error("dropping", op, "after", p);
+		    //__xxl.error("dropping", op, "after", p);
 		    return();
 		}
 	    }
@@ -285,12 +285,12 @@ var VMCode = Class.new({
 		}
 	    );
 	    this.forward_refs.pop(label); // discard entry
-	    //System.error("discarding peep", this.peep);
+	    //__xxl.error("discarding peep", this.peep);
 	    this.peep = null;
 	},
 	get_off: function (this) {
 	    // return offset of next inst for backwards jump (loop) labels
-	    //System.error("discarding peep", this.peep);
+	    //__xxl.error("discarding peep", this.peep);
 	    this.peep = null;
 	    return(this.code.len());
 	}
@@ -314,8 +314,8 @@ var PrattParser = Class.new({
 		return(this.End.new("EOF", this.END, null));
 	    }
 	    var t_error = function (msg) {
-		System.error(t.where, "ERROR: ", msg);
-		System.exit(1);
+		__xxl.error(t.where, "ERROR: ", msg);
+		__xxl.exit(1);
 	    };
 	    var v = t.value;
 	    var a = t.type;		// arity (name,number,string,operator)
@@ -565,12 +565,12 @@ var PrattParser = Class.new({
 		    },
 		    error: function (this, msg) {
 			// XXX wrap this.value in quotes??
-			System.error(this.where, "ERROR: symbol", this.value,
+			__xxl.error(this.where, "ERROR: symbol", this.value,
 				     "--", msg);
-			System.exit(1);
+			__xxl.exit(1);
 		    },
 		    warning: function (this, msg) {
-			System.error(this.where, "WARNING: symbol", this.value,
+			__xxl.error(this.where, "WARNING: symbol", this.value,
 				     "--", msg);
 		    },
 		    gen: function (this, vmcode) {
@@ -682,7 +682,7 @@ var PrattParser = Class.new({
 // subclass PrattParser for XXL/0
 // (smallest possible eXperimental/eXtensible Language)
 // "jokes":
-// * PL/1 was IBM's "One Language to Rule Them All" for System/360
+// * PL/1 was IBM's "One Language to Rule Them All" for __xxl/360
 //	(the one computer architecture anyone would ever need).
 //	PL/1 was meant to replace both FORTRAN for scientific code
 //	 and COBOL for business applications; it was a large
@@ -1484,11 +1484,11 @@ var Parser = Class.new({
 	    // Objects  w/ type, value & where properties, and then null
 	    var oprs = '!@#$%^&*-=+<>\|:,./?~';
 	    // was: '=<>!+-*&|/%^.', '=<>&|.'
-	    this.get_token = System.tokenizer(fname, oprs, oprs);
+	    this.get_token = __xxl.tokenizer(fname, oprs, oprs);
 	    this.token = null;	// current Symbol object
 
 	    this.predef("Class");
-	    this.predef("System");
+	    this.predef("__xxl");
 	    this.predef("false", true); // read-only
 	    this.predef("null", true);	// read-only
 	    this.predef("true", true);	// read-only
@@ -1529,7 +1529,7 @@ var Parser = Class.new({
 //
 //	And makes it easier to set breakpoints in the VM
 //	(again, since the compiler isn't being invoked)
-//	although you can always call System.break in your program.
+//	although you can always call __xxl.break in your program.
 
 var gen = function (stmts) {	// tree is list of top level stmts/exprs
     var vmcode = VMCode.new();
@@ -1542,7 +1542,7 @@ var dump_parser = function (p) {
 	function (pair) {
 	    var c = pair[1];
 	    var i = c.new("foo", "bar", "baz");
-	    System.print(pair[0], // dict key
+	    __xxl.print(pair[0], // dict key
 			 c.name,  // Symbol class name
 			 i.lbp,
 			 // won't see inherited methods;
@@ -1552,7 +1552,7 @@ var dump_parser = function (p) {
 			);
 	}
     );
-    System.exit(1);
+    __xxl.exit(1);
 };
 
 var compile = function (fname) {
@@ -1570,8 +1570,8 @@ var compile = function (fname) {
     var code = gen(asts);
 
     // create metadata line:
-    var py_os = System.pyimport("os");
-    var py_json = System.pyimport("json");
+    var py_os = __xxl.pyimport("os");
+    var py_json = __xxl.pyimport("json");
     var stat = py_os.stat(fname);
     // wanted "at" & compilation time, but breaks regression test!
     //	XXX maybe they should ignore first line?
@@ -1585,7 +1585,7 @@ var compile = function (fname) {
     // get code as JSON string
     // XXX maybe option to serialize in a format
     //	that loads faster than JSON????
-    var code_json = System.vtree(code, fname);
+    var code_json = __xxl.vtree(code, fname);
 
     return(meta_json + code_json); // return as List??
 }; // compile
@@ -1593,12 +1593,12 @@ var compile = function (fname) {
 if (__modinfo.main) {
     // here when run as: ./xxl.py parser.xxl sourcefile
     // OR: ./xxl.py -x parser.vmx sourcefile
-    if (System.argv.len() < 1) {
-	System.error("Usage: parser SOURCEFILE");
-	System.exit(1);
+    if (__xxl.argv.len() < 1) {
+	__xxl.error("Usage: parser SOURCEFILE");
+	__xxl.exit(1);
     }
     else {
-	System.print(compile(System.argv[0]));
-	// no System.exit, so stats visible w/o catching SystemExit
+	__xxl.print(compile(__xxl.argv[0]));
+	// no __xxl.exit, so stats visible w/o catching SystemExit Exception
     }
 }

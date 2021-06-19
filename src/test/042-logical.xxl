@@ -1,4 +1,4 @@
-System.print(
+__xxl.print(
 	(false && false) || true, // true: && higher
 	false && (false || true),  // false: equal + right assoc (or || higher)
 	false && false || true // test case

@@ -2,7 +2,7 @@
 
 // test defining a binary operator
 
-var math = System.pyimport("math");
+var math = __xxl.pyimport("math");
 
 var p = __modinfo.parser;	// active Parser object
 
@@ -10,7 +10,7 @@ var p = __modinfo.parser;	// active Parser object
 p.add_infix("Exp", "^", true, p.PMUL + 4);
 
 // Subclass Number, adding operator, and use from here on out:
-var classes = System.import("classes");
+var classes = __xxl.import("classes");
 classes.Number = Class.new({
     name: "MyNumber",
     supers: [classes.Number],
@@ -20,15 +20,15 @@ classes.Number = Class.new({
 });
 
 // first test:
-System.print(2^3);
+__xxl.print(2^3);
 
 // higher precedence than division:
-System.print(2^3/2);
-System.print((2^3)/2);		// right
-System.print(2 ^ (3/2));	// wrong
+__xxl.print(2^3/2);
+__xxl.print((2^3)/2);		// right
+__xxl.print(2 ^ (3/2));	// wrong
 
 // right associative:
-System.print(2^2^3);
-System.print(2 ^ (2^3));	// right
-System.print((2^2)^3);		// wrong
+__xxl.print(2^2^3);
+__xxl.print(2 ^ (2^3));	// right
+__xxl.print((2^2)^3);		// wrong
 

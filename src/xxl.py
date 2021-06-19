@@ -33,7 +33,7 @@ a small file, hopefully it stays that way!
 import sys
 
 # XXL:
-import system                   # before classes
+import xxlobj                   # before classes
 import classes                  # new_module
 import vmx
 

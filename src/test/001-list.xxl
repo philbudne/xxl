@@ -1,6 +1,6 @@
 var a = [1,2,3];
-System.print(a);
-System.print(a[1]);
-System.print(a[-1]);
+__xxl.print(a);
+__xxl.print(a[1]);
+__xxl.print(a[-1]);
 
-System.print([1], [1,], [1,2], [1,2,]);
+__xxl.print([1], [1,], [1,2], [1,2,]);

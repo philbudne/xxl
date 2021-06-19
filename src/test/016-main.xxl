@@ -1,1 +1,1 @@
-System.print("__modinfo.main is", __modinfo.main);
+__xxl.print("__modinfo.main is", __modinfo.main);

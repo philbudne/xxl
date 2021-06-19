@@ -5,9 +5,9 @@ var MyClass = Class.new({
 	    this.x = x;
 	},
 	method: function (this, a, b) {
-	    System.print(a);
-	    System.print(b);
-	    System.print(this.x);
+	    __xxl.print(a);
+	    __xxl.print(b);
+	    __xxl.print(this.x);
 	}
     }
 });

@@ -1,7 +1,7 @@
 var a = {'x': 1};
 a[1] = true;
 a.x = 2;
-System.print(a['x']);
-System.print(a[1]);
-System.print(a.x);
+__xxl.print(a['x']);
+__xxl.print(a[1]);
+__xxl.print(a.x);
 
