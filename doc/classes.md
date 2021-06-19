@@ -3,6 +3,7 @@
 
 > Built-in Classes for XXL
 
+---
 ## Class `Bool` subclass of `PObject`
 
 
@@ -127,6 +128,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
+---
 ## Class `BoundMethod` subclass of `Callable`
 
 
@@ -261,6 +263,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
+---
 ## Class `Callable` subclass of `Object`
 
 
@@ -380,6 +383,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
+---
 ## Class `Class` subclass of `Object`
 
 
@@ -514,6 +518,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
+---
 ## Class `Closure` subclass of `Callable`
 
 
@@ -648,6 +653,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
+---
 ## Class `Continuation` subclass of `Callable`
 
 
@@ -782,6 +788,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
+---
 ## Class `Dict` subclass of `PyIterable`
 
 
@@ -976,6 +983,7 @@
 
 > `l[r] = value`
 
+---
 ## Class `Iterable` subclass of `Object`
 
 
@@ -1125,6 +1133,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
+---
 ## Class `List` subclass of `PyIterable`
 
 
@@ -1314,6 +1323,7 @@
 
 > `l[r] = value`
 
+---
 ## Class `ModInfo` subclass of `Object`
 
 
@@ -1443,6 +1453,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
+---
 ## Class `Module` subclass of `Object`
 
 
@@ -1581,6 +1592,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
+---
 ## Class `Null` subclass of `PObject`
 
 
@@ -1705,6 +1717,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
+---
 ## Class `Number` subclass of `PObject`
 
 
@@ -1904,6 +1917,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
+---
 ## Class `Object` subclass of `Object`
 
 
@@ -2023,6 +2037,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
+---
 ## Class `PClass` subclass of `Class`
 
 
@@ -2157,6 +2172,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
+---
 ## Class `PObject` subclass of `Object`
 
 
@@ -2276,6 +2292,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
+---
 ## Class `PyFunc` subclass of `Callable`
 
 
@@ -2410,6 +2427,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
+---
 ## Class `PyIterable` subclass of `PObject,Iterable`
 
 
@@ -2569,6 +2587,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
+---
 ## Class `PyIterator` subclass of `Object,Iterable`
 
 
@@ -2728,6 +2747,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
+---
 ## Class `PyObject` subclass of `Object`
 
 
@@ -2852,6 +2872,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
+---
 ## Class `PyVMFunc` subclass of `Callable`
 
 
@@ -2986,6 +3007,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
+---
 ## Class `SingletonClass` subclass of `Class`
 
 
@@ -3120,6 +3142,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
+---
 ## Class `Str` subclass of `PyIterable`
 
 
@@ -3374,6 +3397,7 @@
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
+---
 ## Variables
 
 ### `false`

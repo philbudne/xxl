@@ -166,6 +166,7 @@ var mumodule = function (mu, module_name) {
 	    var x = mod.getprop(name);
 	    if (x.instance_of(classes.Class)) {
 		var supers = ",".join(x.__supers.map(function (c) { return(c.name); }));
+		mu.hr();
 		mu.h2("Class", mu.code(name), "subclass of", mu.code(supers));
 		mu.p();
 		muclass(mu, x);
@@ -175,6 +176,7 @@ var mumodule = function (mu, module_name) {
 	    }
 	}
     );
+    mu.hr();
     mu.h2("Variables");
     mu.p();
     vars.for_each(
