@@ -27,7 +27,7 @@ until further notice!!!*
 
 * [Classes](doc/classes.md) -- built in classes (machine generated docs)
 
-* [Creating a Class](doc/create-class.md.md) -- how to create a new Class
+* [Creating a Class](doc/create-class.md) -- how to create a new Class
 
 * [Adding a statement](doc/adding-statement.md) -- example of adding new statement syntax
 
