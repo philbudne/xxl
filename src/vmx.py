@@ -123,7 +123,7 @@ class VM:
             rows, cols = struct.unpack(
                 'hh', fcntl.ioctl(f.fileno(), termios.TIOCGWINSZ, "\000"*8)[0:4]
             )
-            print("cols", cols, "rows", rows)
+            #print("cols", cols, "rows", rows)
             return cols
         except:
             pass
@@ -139,9 +139,10 @@ class VM:
     def _start_trace(self):
         cols = self._getcols()
         sep = ' | '
+        #print("cols", cols)
         if cols > 20:
             acwid = int(cols * 3/8) - len(sep)
-            irwid = max(cols - acwid - len(sep), 100)
+            irwid = min(cols - acwid - len(sep), 100)
             print(cols, acwid, irwid)
             format = "%%%d.%ds%s%%.%ds" % (-irwid, irwid, sep, acwid)
         else:
@@ -154,7 +155,7 @@ class VM:
             self.pc += 1        # jumps will overwrite
             ir.step(self)       # execute instruction
             irstr = str(ir)[1:-1] # remove []'s -- XXX remove quotes too???
-            print(format % (irstr, repr(self.ac)))
+            print(format % (irstr, str(self.ac)))
 
     def _start_stats(self):
         # stats
