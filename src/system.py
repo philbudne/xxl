@@ -19,7 +19,8 @@
 # SOFTWARE.
 
 """
-"System" object
+"__xxl" object
+(was once named "System")
 """
 
 import os                       # os.environ
@@ -33,11 +34,11 @@ import scopes
 import const
 import vmx
 
-SYSTEM = 'System'               # maybe __xxl??
+XXLOBJ = '__xxl'               # maybe __xxl??
 
 DEBUG_IMPORT = False
 
-# should be used ONLY to create items to set up "System" object
+# should be used ONLY to create items to set up "__xxl" object
 # ALSO used for:
 #       tokenizer returns -- should return Token??
 def __obj_create(props):        # TEMP??
@@ -57,7 +58,7 @@ def isstr(x):                   # XXX TEMP
 ################ debug:
 
 @classes.pyfunc
-def sys_break(x=None):
+def xxl_break(x=None):
     """
     break to python debugger to debug VM
     argument (if any) available as `x`
@@ -66,7 +67,7 @@ def sys_break(x=None):
     return classes.null_value
 
 @classes.pyvmfunc
-def sys_backtrace(vm):
+def xxl_backtrace(vm):
     """
     print VM backtrace to stderr
     """
@@ -76,7 +77,7 @@ def sys_backtrace(vm):
 ################
 
 @classes.pyfunc
-def sys_uerror(msg):
+def xxl_uerror(msg):
     raise classes.UError(msg)
 
 ################
@@ -85,7 +86,7 @@ def sys_uerror(msg):
 # (need file I/O; use pyimport??)
 
 @classes.pyfunc
-def sys_tokenizer(filename, prefix, suffix):
+def xxl_tokenizer(filename, prefix, suffix):
     """
     returns a token generator:
     returns Objects, and then null
@@ -93,7 +94,7 @@ def sys_tokenizer(filename, prefix, suffix):
     import jslex
     # XXX assert(isinstance(filename, classes.CPObject))??
     if isstr(filename): # XXX XXX here from parser.xxl?
-        print("XXX TEMP sys_tokenizer got str", filename)
+        print("XXX TEMP xxl_tokenizer got str", filename)
         fnstr = filename
     else:
         fnstr = filename.value # XXX getstr()?
@@ -129,14 +130,14 @@ def sys_tokenizer(filename, prefix, suffix):
 ################
 
 @classes.pyfunc
-def sys_exit(value=0):
+def xxl_exit(value=0):
     # XXX check if VCObject?!
     sys.exit(value.value)       # XXX to_int??
 
 ################
 
 @classes.pyfunc
-def sys_tree(t):
+def xxl_tree(t):
     """
     format JSON (returns Str) from AST of Symbols
     """
@@ -147,7 +148,7 @@ def sys_tree(t):
 
 def format_instr(instr, indent=''):
     """
-    helper for sys_vtree
+    helper for xxl_vtree
     format one instruction (Python list)
     """
     op = instr[1]
@@ -168,7 +169,7 @@ def format_instr(instr, indent=''):
 
 def format_code(code, indent=''):
     """
-    helper for sys_vtree
+    helper for xxl_vtree
     takes Python list of instructions (Python lists)
     """
     sep = ",\n" + indent + " "
@@ -178,7 +179,7 @@ def format_code(code, indent=''):
 
 def trim_where(code, fname):
     """
-    helper for sys_vtree, assemble
+    helper for xxl_vtree, assemble
     `code` is Python list of lists: MODIFIED IN PLACE!!!
     trim `fname` from all Python instruction list "where" fields
     """
@@ -194,7 +195,7 @@ def trim_where(code, fname):
     helper(code)
 
 @classes.pyfunc
-def sys_vtree(t, fname=classes.null_value):
+def xxl_vtree(t, fname=classes.null_value):
     """
     pretty print a VM code tree (List of List) `t`; returns Str
     """
@@ -207,8 +208,8 @@ def sys_vtree(t, fname=classes.null_value):
     return classes.mkstr(format_code(t2))
 
 # used in:
-# System.tree (above) XXX replace with a Symbol.json method??
-# System.vtree (above)
+# __xxl.tree (above) XXX replace with a Symbol.json method??
+# __xxl.vtree (above)
 # ModInfo.assemble (via vmx.assemble)
 def obj2python_json(x):
     """
@@ -247,7 +248,7 @@ def obj2python_json(x):
 ################ "pyimport" returns a PyObject wrapper around a Python module
 
 @classes.pyfunc
-def sys_pyimport(module):
+def xxl_pyimport(module):
     m = importlib.import_module(module.value) # XXX getstr?
     return classes.wrap(m)         # make PyObject
 
@@ -256,14 +257,14 @@ def sys_pyimport(module):
 DEBUG_IMPORT = False
 
 @classes.pyfunc
-def sys__import(filename):
+def xxl__import(filename):
     """
-    worker function for System.import()
+    worker function for __xxl.import()
     (defined in bootstrap.xxl)
     """
     fname = filename.value      # XXX getstr???
     if DEBUG_IMPORT:
-        print("sys__import", fname, file=sys.stderr)
+        print("xxl__import", fname, file=sys.stderr)
 
     # returns (mod,boot) tuple:
     mod_boot = classes.new_module(fname=fname)
@@ -274,29 +275,29 @@ def sys__import(filename):
 
 ################################################################
 
-# called only from classes.new_module: create SYSTEM Object
+# called only from classes.new_module: create XXLOBJ Object
 # XXX move to internal "xxl" module??
-def create_sys_object(iscope, argv):
-    sys_obj = __obj_create({})
-    iscope.defvar(SYSTEM, sys_obj)
+def create_xxl_object(iscope, argv):
+    xxl_obj = __obj_create({})
+    iscope.defvar(XXLOBJ, xxl_obj)
 
-    sys_obj.setprop('uerror', sys_uerror) # fatal error w/ backtrace
+    xxl_obj.setprop('uerror', xxl_uerror) # fatal error w/ backtrace
 
     # debug functions (TEMP?!)
-    sys_obj.setprop('break', sys_break) # break to PDB
-    sys_obj.setprop('backtrace', sys_backtrace) # output backtrace to stderr
+    xxl_obj.setprop('break', xxl_break) # break to PDB
+    xxl_obj.setprop('backtrace', xxl_backtrace) # output backtrace to stderr
 
     # command line args, and exit:
-    sys_obj.setprop('argv',  classes.wrap(argv)) # move to ModInfo??
-    sys_obj.setprop('exit', sys_exit)            # move to ModInfo??
+    xxl_obj.setprop('argv',  classes.wrap(argv)) # move to ModInfo??
+    xxl_obj.setprop('exit', xxl_exit)            # move to ModInfo??
 
     # functions for parser & bootstrap:
-    sys_obj.setprop('tokenizer', sys_tokenizer) # TEMP creates token generator
-    sys_obj.setprop('tree', sys_tree) # TEMP!!!
-    sys_obj.setprop('vtree', sys_vtree) # TEMP!!!
+    xxl_obj.setprop('tokenizer', xxl_tokenizer) # TEMP creates token generator
+    xxl_obj.setprop('tree', xxl_tree) # TEMP!!!
+    xxl_obj.setprop('vtree', xxl_vtree) # TEMP!!!
 
     # external modules:
-    sys_obj.setprop('_import', sys__import) # import source module
-    sys_obj.setprop('pyimport', sys_pyimport) # import Python module
+    xxl_obj.setprop('_import', xxl__import) # import source module
+    xxl_obj.setprop('pyimport', xxl_pyimport) # import Python module
 
-    return sys_obj
+    return xxl_obj
