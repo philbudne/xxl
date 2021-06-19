@@ -110,25 +110,16 @@ var VMCode = Class.new({
 	_emit: function (this, op) { // worker method
 	    var p = this.peep;	     // one instruction peephole
 	    if (p) {
-		// omit "load x" after "store x"
-		// omit "load x" after "load x"
-		// omit "store x" after "store x"
-		// omit "store x" after "load x"
-		if ((p[1] == "store" || p[1] == "load") &&
-		    (op[1] == "load" || op[1] == "store") &&
-		    op[2] == p[2]) {
+		// omit "load x" after "store x"	(use after defn)
+		if (p[1] == "store" && op[1] == "load" && op[2] == p[2]) {
 		    //__xxl.error("dropping", op, "after", p);
 		    return();
 		}
-		// XXX delete "load x" if followed by "load y"
-
-		// omit any instruction after "jrst" or "return"
-		// (inst after jrst should always be a branch target
-		//  so this is unlikely to fire!)
-		if (p[1] == "jrst" || p[1] == "return") {
-		    //__xxl.error("dropping", op, "after", p);
-		    return();
-		}
+		// omit "store x" after "store x"	(x = x = y)
+		// omit "store x" after "load x"	(x = x)
+		// omit "load x" after "load x" (if store after load eliminated)
+		// replace "load x" if followed by "load y" (unlikely)
+		// drop anything after jrst or return (requires const prop)
 	    }
 	    this.code.append(op);
 	    this.peep = op;
