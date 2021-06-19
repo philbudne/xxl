@@ -1,5 +1,12 @@
 FIX
 ===
+lib dir
+	XXL_LIB_PATH
+	markup.xxl
+	thread-chan.xxl
+	do-while.xxl
+	nullish
+
 rename "classes" to "__classes"
 
 put "Class" in __xxl??
