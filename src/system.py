@@ -229,7 +229,9 @@ def obj2python_json(x):
         if classes.instance_of(x, iterable_classes):
             return [clean1(z) for z in x.value]
 
-        # here with AST "Symbol" node; turn into JSON list
+        # NOTE!! Does not handle Dict!!!
+
+        # assume here with AST "Symbol" node; turn into JSON list
         r = []
         print(x)
         for attr in ['where', 'arity', 'value']:
