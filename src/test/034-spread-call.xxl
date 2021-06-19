@@ -8,3 +8,22 @@ f();
 f(1);
 f(1,2);
 f(1,2,3);
+
+__xxl.print("================ f2");
+var f2 = function (a1, ...args) {
+    __xxl.print(a1, "hello", ...args, ...l, "world");
+};
+f2();
+f2(4);
+f2(4,5);
+f2(4,5,6);
+
+__xxl.print("================ f3");
+// found/fixed 2020-06-19 (writing CoCall class), was getting:
+// Error @ 034-spread-call.xxl:25:13: 'NoneType' object is not iterable
+var f3 = function (...args) {
+    __xxl.print(null, ...args);
+};
+f3();
+f3("hello");
+f3("hello", "world");

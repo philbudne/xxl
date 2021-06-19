@@ -1,4 +1,4 @@
-{"v": 1.0, "fn": "parser.xxl", "mt": 1624117818.1208348, "sz": 45647}
+{"v": 1.0, "fn": "parser.xxl", "mt": 1624141963.1847756, "sz": 45647}
 [["55:1", "var", "__doc"],
  ["55:13", "lit", "Extensible Parser/Compiler for XXL."],
  ["55:1", "store", "__doc"],
@@ -3916,7 +3916,7 @@
        ["1068:5", "push"],
        ["1067:8", "load", "this"],
        ["1067:12", "binop_lit", ".", "second"],
-       ["1067:19", "binop_lit", ".", "each_for"],
+       ["1067:19", "binop_lit", ".", "for_each"],
        ["1067:28", "call", 1],
        ["1077:26", "load", "this"],
        ["1077:26", "push"],

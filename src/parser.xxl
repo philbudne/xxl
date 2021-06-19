@@ -1064,7 +1064,7 @@ var Parser = Class.new({
 
 			    // create vm.args list bit at a time...
 			    vmcode.emit_clargs(this);
-			    this.second.each_for(
+			    this.second.for_each(
 				function (actual) {
 				    if (actual.check("...")) {
 					vmcode.emit_sprarg(this);

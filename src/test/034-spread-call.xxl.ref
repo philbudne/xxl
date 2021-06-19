@@ -6,3 +6,12 @@ hello 1 a b c world
 hello 1 2 a b c world
 [1, 2, 3]
 hello 1 2 3 a b c world
+================ f2
+null hello a b c world
+4 hello a b c world
+4 hello 5 a b c world
+4 hello 5 6 a b c world
+================ f3
+null
+null hello
+null hello world
