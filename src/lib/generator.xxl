@@ -1,0 +1,138 @@
+// -*-js-*-
+
+// Phil Budne
+// 2021-06-19 (first National Juneteenth!)
+
+const __doc = """
+Generator (coroutine based Itera{ble,tor}s)
+""";
+
+var current_continuation = function () { return(return); };
+
+var classes = __xxl.import("classes");
+
+var GenIterator = Class.new({
+    name: "GenIterator",
+    supers: [classes.Object, classes.Iterable],
+    doc : """
+	An Iterator backed by a generator coroutine.
+	""",
+    methods: {
+	init: function (this, gfunc, ...args) {
+	    """
+	    `gfunc` is a generator, passed `gen` and `...args`
+	    It can return values via `gen.yield`, and end iteration
+	    via `return()` or `gen.stop()`.
+	    """
+	    this._gfunc = gfunc;
+	    this._args = args;
+	    this._continue = this._stop = function () { __xxl.uerror("SNH"); };
+	    this._first = true;
+	},
+
+	// Iterator interface methods:
+	next: function (this, stop) {
+	    """
+	    Iterator interface `next` method
+	    """
+	    var r = current_continuation();
+	    if (r.instance_of(classes.Continuation)) {
+		this._yield = r;
+		this._stop = stop;
+		if (this._first) {
+		    this._first = false;
+		    (this._gfunc)(this, ...this._args);
+		    this.stop(); // here if _gfunc returns
+		}
+		else {
+		    (this._continue)();
+		    __xxl.uerror("_continue Continuation returned");
+		}
+	    } // current_continuation called
+	    else {		// this._yield called
+		return(r);	// return yielded value
+	    }
+	}, // next
+	iter: function (this) {
+	    return(this);
+	},
+
+	// generator routine methods:
+	// [COULD be methods on ANOTHER Class passed ONLY to "gfunc"]
+	yield: function (this, value) {
+	    var r = current_continuation();
+	    if (r.instance_of(classes.Continuation)) {
+		this._continue = r;
+		(this._yield)(value);
+		__xxl.uerror("_yield returned");
+	    }
+	    else {		// from next() via _continue
+		return();	// return from yield to co-routine
+	    }
+	}, // yield
+	stop: function (this) {
+	    this._stop();
+	    __xxl.uerror("_stop returned");
+	}
+    } // methods
+});
+
+var GenIterable = Class.new({
+    name: "GenIterable",
+    supers: [classes.Object, classes.Iterable],
+    doc : """
+	An Iterable (Iterator factory) backed by a generator co-routine.
+	""",
+    methods: {
+	init: function (this, gfunc, ...args) {
+	    """
+	    `gfunc` is a generator, passed `gen` and `...args`
+	    It can return values via `gen.yield`, and end iteration
+	    via `return()` or `gen.stop()`.
+	    """
+	    this._gfunc = gfunc;
+	    this._args = args;
+	},
+
+	iter: function (this) {
+	    """
+	    Iterator factory method
+	    """
+	    return(GenIterator.new(this._gfunc, ...this._args));
+	    return(this);
+	}
+    } // methods
+});
+
+if (__modinfo.main) {		// test/demo
+    const gfunc = function (gen, max) {
+	var n = 1;
+	var fact = 1;
+	while (true) {
+	    gen.yield(fact);
+	    n += 1;
+	    fact = fact * n;
+	    if (fact > max) {
+		gen.stop();	// or "return();"
+	    }
+	}
+    };
+
+    __xxl.print("GenIterator for_each");
+    var g = GenIterator.new(gfunc, 1000);
+    g.for_each(__xxl.print);
+    g.for_each(__xxl.print);
+
+    __xxl.print("GenIterator each_for (reversed)");
+    g = GenIterator.new(gfunc, 1000);
+    g.each_for(__xxl.print);
+
+    __xxl.print("GenIterator reverse sort");
+    g = GenIterator.new(gfunc, 1000);
+    g.sorted(true).for_each(__xxl.print);
+
+    __xxl.print("GenIterable for_each");
+    g = GenIterable.new(gfunc, 7000);
+    g.for_each(__xxl.print);
+    g.for_each(__xxl.print);
+} // main
