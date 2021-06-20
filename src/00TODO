@@ -1,5 +1,11 @@
 FIX
 ===
+Makefile:
+	generate classes.md, but don't replace? just complain if out of date??
+	ditto for bootstrap.vmx!!!
+
+create SingletonClass in bootstrap.xxl?
+
 lib dir
 	generate .md files
 	run as tests, generate index.md file?
