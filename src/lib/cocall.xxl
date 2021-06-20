@@ -1,0 +1,146 @@
+// -*-js-*-
+
+// Phil Budne
+// 2021-06-19 (first National Juneteenth!)
+
+const __doc = """
+Coroutine utility Class
+""";
+
+var current_continuation = function () { return(return); };
+
+var classes = __xxl.import("classes");
+
+
+var CoCall = Class.new({
+    name: "CoCall",
+    doc : """
+	CoRoutine caller Class.
+
+	Expects an an "exit" Continuation
+	(typ. "return" from the caller of CoCall.new?)
+	""",
+    methods: {
+	init: function (this, debug) {
+	    this._state = 0;
+	    this._debug = debug;
+	},
+	co_start: function (this, exit, func, ...args) {
+	    """
+	    Call `func` as a coroutine with `this` and `args` as arguments.
+	    `exit` is a function (Continuation) called when the co-routine
+	    is finished.
+
+	    `func` yields a first value back to caller of co_start
+	    by calling the CoCall object `co_yield` with a return value.
+
+	    The caller can then call co_call, with an optional value
+	    any number of times, which will appear as the return value
+	    of the co_yield method.
+
+	    The co-routine can declare it is done by return()ing
+	    the "exit" Continuation will be invoked
+	    (with the return value, if any)
+	    """
+
+	    // no state check: allow reuse at any time
+	    this._state = 1;
+	    this._exit = exit;
+	    if (this._debug) {
+		__xxl.print("co_start STATE", this._state, ...args);
+	    }
+	    this.resume_caller = return;
+	    var r = (func)(this, ...args);
+	    this.co_return(r);
+	},
+	co_call: function (this, value) {
+	    if (this._debug) {
+		__xxl.print("co_call STATE", this._state, value);
+	    }
+	    if (this._state != 2) {
+		__xxl.uerror("co_call out of turn");
+	    }
+	    this._state = 1;
+	    var r = current_continuation();
+	    if (r.instance_of(classes.Continuation)) {
+		this.resume_caller = r;
+		r = (this.resume_coroutine)(value);
+		__xxl.uerror("co_call: continuation returned?!");
+	    }
+	    else {		// resume_caller continuation called
+		if (this._debug) {
+		    __xxl.print("co_call returning", r);
+		}
+		return(r);
+	    }
+	},
+	co_yield: function (this, value) {
+	    """
+	    Call from coroutine to return a new value,
+	    any value passed by the next co_call will be returned
+	    by co_yield
+	    """
+	    if (this._debug) {
+		__xxl.print("co_yield STATE", this._state, value);
+	    }
+	    if (this._state != 1) {
+		__xxl.uerror("co_yield out of turn");
+	    }
+	    this._state = 2;
+	    var r = current_continuation();
+	    if (r.instance_of(classes.Continuation)) {
+		this.resume_coroutine = r;
+		(this.resume_caller)(value);
+		__xxl.uerror("co_yield: continuation returned");
+	    }
+	    else {		// resume_coroutine continuation called
+		if (this._debug) {
+		    __xxl.print("co_yield returning", r);
+		}
+		return(r);
+	    }
+	},
+	co_return: function (this, value) {
+	    __xxl.break();
+	    if (this._debug) {
+		__xxl.print("co_return STATE", this._state, value);
+	    }
+	    if (this._state != 1) {
+		__xxl.uerror("co_return out of turn");
+	    }
+	    this._state = 0;
+	    this._exit(value);
+	}
+    } // methods
+});
+
+if (__modinfo.main) {		// test/demo
+    var test = function () {
+	var coroutine = function (co, arg) {
+	    """
+	    This is a co-routine called via CoCall.start;
+	    to yield a value back to caller, call co.co_yield,
+	    which will return a value (if any) they pass to the
+	    next co_call.  To terminate this co-routine, "return",
+	    and the "exit" handler register with co_start will
+	    be called with the returned value.
+	    """
+	    __xxl.print("in coroutine. value:", arg);
+	    __xxl.print("co_yield(1) returns", co.co_yield(1));
+	    __xxl.print("co_yield(2) returns", co.co_yield(2));
+	    __xxl.print("co_yield(3) returns", co.co_yield(3));
+	    __xxl.print("co_return(4)");
+	    co.co_return(4); // or return(4);
+	};
+
+	// see CoCall doc string on why not to call from top level,
+	// OR outside a function!!!
+	var co = CoCall.new();
+	__xxl.print("co_start returns", co.co_start(return, coroutine, "hello"));
+	__xxl.print("co_call(10) returns", co.co_call(10));
+	__xxl.print("co_call(11) returns", co.co_call(11));
+	__xxl.print("co_call(12) returns", co.co_call(12));
+	__xxl.print("reached end of test");
+    };
+    __xxl.print("test returned", test()); // co-routine final return value.
+} // main
