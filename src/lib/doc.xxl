@@ -76,6 +76,7 @@ var mudoc = function(mu, obj) {
     // split into lines,
     // strip leading/trailing whitespace from lines,
     // ignoring empty lines, rejoin
+    // XXX honor blank lines as paragraph breaks!!!!
     // XXX don't smoosh ```stuff```!!
     var strip = function (x) { return(mu.quote(x.strip())); };
     mu.blockquote(" ".join(doc.split("\n").map2(strip, "")));
