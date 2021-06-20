@@ -1535,7 +1535,7 @@
 
 #### `modules`
 
-> Value: `{'classes': <Module>, 'doc.xxl': <Module>, 'parser.vmx': <Module>, 'markup.xxl': <Module>}`
+> Value: `{'classes': <Module>, 'lib/doc.xxl': <Module>, 'parser.vmx': <Module>, 'lib/markup.xxl': <Module>}`
 
 #### `name`
 
