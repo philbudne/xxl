@@ -4,14 +4,10 @@ Makefile:
 	generate classes.md, but don't replace? just complain if out of date??
 	ditto for bootstrap.vmx!!!
 
-create SingletonClass in bootstrap.xxl?
-
 lib dir
 	generate .md files
 	run as tests, generate index.md file?
 	XXL_LIB_PATH
-	markup.xxl
-	thread-chan.xxl
 	do-while.xxl
 	nullish.xxl?
 
@@ -85,6 +81,7 @@ exceptions (using Continuations?)
 	silently pass "raise" variable?
 
 "in" operator for iterables?
+	"has" method???
 
 port VM to rpython?!
 
