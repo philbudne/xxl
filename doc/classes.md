@@ -3089,7 +3089,7 @@
 
 #### `name`
 
-> Value: `SC`
+> Value: `SingletonClass`
 
 ### Unary operators
 

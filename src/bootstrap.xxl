@@ -254,7 +254,7 @@ if (__modinfo.main) {		// once only
     // SingletonClass
 
     classes.SingletonClass = Class.new({
-	name: "SC",
+	name: "SingletonClass",
 	supers: [Class],	// a metaclass!
 	doc: """
 	    Metaclass for Classes with singleton values.

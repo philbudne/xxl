@@ -1,4 +1,4 @@
-{"v": 1.0, "fn": "bootstrap.xxl", "mt": 1624163303.6656206, "sz": 9100}
+{"v": 1.0, "fn": "bootstrap.xxl", "mt": 1624173344.494456, "sz": 9112}
 [["9:5", "load", "__modinfo"],
  ["9:14", "binop_lit", ".", "booting"],
  ["9:1", "jumpe", 4],
@@ -634,7 +634,7 @@
    ["245:12", "binop_lit", ".", "Number"],
    ["245:19", "lhsop", "."],
    ["256:40", "new", "Dict"],
-   ["257:8", "push_lit", "SC"],
+   ["257:8", "push_lit", "SingletonClass"],
    ["256:40", "push_lit", "name"],
    ["256:40", "temp"],
    ["256:40", "lhsop", "["],
