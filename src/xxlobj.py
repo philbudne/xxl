@@ -34,7 +34,7 @@ import scopes
 import const
 import vmx
 
-XXLOBJ = '__xxl'               # maybe __xxl??
+XXLOBJ = '__xxl'
 
 DEBUG_IMPORT = False
 
@@ -271,7 +271,7 @@ def xxl__import(filename):
     if DEBUG_IMPORT:
         print("mod_boot", mod_boot, file=sys.stderr)
 
-    return classes.wrap(mod_boot) # turns into List
+    return classes.wrap(mod_boot) # turns 2-tuple into List
 
 ################################################################
 
