@@ -76,16 +76,6 @@ var VMCode = Class.new({
 		// call their "return" continuation) *AND* blocks.
 		this.emit_return(sym);
 	    }
-	    if (false) {
-		var n = 0;
-		this.code.for_each(
-		    function (inst) {
-			__xxl.print(n, inst[0], inst[1], inst[2]);
-			n += 1;
-		    }
-		);
-		__xxl.print("===");
-	    }
 	    return(this.code);
 	},
 	gen_push: function (this, symbol) {
@@ -783,7 +773,6 @@ var Parser = Class.new({
 	    };
 	    p.add_assignop("AssignPlus",  "+=", "+");
 	    p.add_assignop("AssignMinus", "-=", "-");
-	    p.add_assignop("AssignOr", "|=", "|");
 
 	    p.Ternary = Class.new({
 		name: "Ternary",
@@ -1545,16 +1534,17 @@ var dump_parser = function (p) {
     __xxl.exit(1);
 };
 
-var compile = function (fname) {
+var compile = function (fname, output) {
     var p = Parser.new();
-
-    // XXX take argument to dump parser table and quit.
 
     // get list of abstract syntax trees (of Symbols)
     // (one per statement)
     var asts = p.parse(fname);
 
-    // XXX take option to just dump ASTs?
+    if (output == "ast") {
+	var j = __xxl.tree(asts); // returns big JSON string
+	return(j);
+    }
 
     // generate VM code (as List of instruction Lists)
     var code = gen(asts);
@@ -1582,13 +1572,33 @@ var compile = function (fname) {
 
 if (__modinfo.main) {
     // here when run as: ./xxl.py parser.xxl sourcefile
-    // OR: ./xxl.py -x parser.vmx sourcefile
-    if (__xxl.argv.len() < 1) {
-	__xxl.error("Usage: parser SOURCEFILE");
+    // OR: ./xxl.py parser.vmx sourcefile
+    var output = "vmx";
+    var i = 0;
+    var usage = function () {
+	__xxl.error("Usage: parser [--ast] SOURCEFILE");
 	__xxl.exit(1);
+    };
+
+    var argc = __xxl.argv.len();
+    while (i < argc && __xxl.argv[i].starts_with('-')) {
+	var option = __xxl.argv[i];
+	if (option == "--ast") {
+	    output = "ast";
+	}
+	else if (option == "--dump") {
+	    var p = Parser.new();
+	    dump_parser(p);
+	    __xxl.exit(0);
+	}
+	else {
+	    usage();
+	}
+	i += 1;
     }
-    else {
-	__xxl.print(compile(__xxl.argv[0]));
-	// no __xxl.exit, so stats visible w/o catching SystemExit Exception
+    if (i == argc) {
+	usage();
     }
-}
+    __xxl.print(compile(__xxl.argv[i], output));
+    // no __xxl.exit, so stats visible w/o catching SystemExit Exception
+} // main
