@@ -1,12 +1,18 @@
 FIX
 ===
+XXX don't automatically generate "bclose_call" for blocks
+	(do it in the Stmt.gen method)???
+
 print module??
 	__xxl.print => print.out
 	__xxl.error => print.err
 
+Make a single, global __xxl object (a Module??)
 put "Class" in __xxl??
 
 Makefile:
+	check generated files (.vmx .md) into "dist" directory (for easy pull)
+		copy .vmx from dist directory (to lib directory????)
 	generate classes.md, but don't replace? just complain if out of date??
 	ditto for bootstrap.vmx!!!
 
@@ -25,6 +31,9 @@ rename "classes" Module to "__classes"??
 
 	Class method/op dicts in classes.py all use str as key.
 		(all via _mkdict)
+
+*** BUG: can overwrite "const" values in a Module!!!
+	need descriptors (slots) ??
 
 * NOTE:
 	regression test depends on:
@@ -145,6 +154,7 @@ Can lexer operator/name dichotomy be eliminated????
 
 doc.xxl
     HTML markup:
+	output name anchors
 	replace HTML entities!!!!!
 	at low (append?) level:
 		use re's to change `thing` in docstrings to <code></code>
@@ -182,3 +192,7 @@ bootstrap.md -- describe adding operator;
 	recompile bootstrap (if needed)
 	write test; add to test directory
 	use in parser.xxl
+
+straighten out .py file dependency graph?
+
+default Iterable.iter method w/ uerror (not overridden)
