@@ -1978,6 +1978,7 @@ def new_module(fname, main=False, argv=[], parser_vmx=None):
 
     # XXX Dict indexed by Python str
     if fname and fname in md.value: # previously loaded?
+        # XXX Dict indexed by Python str
         return md.value[fname], None # yes; return it, no bootstrap needed
 
     scope = scopes.Scope(None)  # create root scope for module
@@ -2099,6 +2100,7 @@ def defmodule(name, mod):
     """
     assert(isinstance(mod, CModule))
     md = Module.getprop('modules') # module Dict
+    # XXX indexed by Python str:
     md.value[name] = mod
 
 classes_module = None           # XXX TEMP?
@@ -2118,14 +2120,11 @@ def classes_init():
     defmodule('classes', classes_module)      # XXX __classes?
 
 # called only from new_module.
-# XXX move Class to __xxl?
 def init_scope(iscope):
     """
     copy a limited set of types/values to each Module initial Scope `iscope`
-    NOTE: they all end up writable!!!
-    (if compiler gets "const" stmt, pre-declare them as "const"?)
     """
-    for x in ['true', 'false', 'null', 'Class']:
+    for x in ['true', 'false', 'null', 'Class']: # XXX move Class to __xxl?
         iscope.defvar(x, classes_scope.lookup(x))
 
 # earlier?!!!!!
