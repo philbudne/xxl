@@ -1,5 +1,11 @@
 FIX
 ===
+print module??
+	__xxl.print => print.out
+	__xxl.error => print.err
+
+put "Class" in __xxl??
+
 Makefile:
 	generate classes.md, but don't replace? just complain if out of date??
 	ditto for bootstrap.vmx!!!
@@ -11,13 +17,14 @@ lib dir
 	do-while.xxl
 	nullish.xxl?
 
-rename "classes" to "__classes"??
-
-put "Class" in __xxl??
+rename "classes" Module to "__classes"??
 
 *** BUG: Only CPObjects can be used as Dict keys
 	(Dicts currently indexed by Python values,
 	 tho CPObject has proxy __hash__)
+
+	Class method/op dicts in classes.py all use str as key.
+		(all via _mkdict)
 
 * NOTE:
 	regression test depends on:
@@ -37,6 +44,10 @@ xxl.py: w/o filename run read/eval/print loop
 	need to change statement() and std() methods
 		to "check" @ end (w/o advance) -- ie; check("}")
 		and re-prime (at top of statement()?)
+
+Block labels don't give "shadow" warnings
+	(defined via "defname")
+	put block label into a "normal" property (first/second/third)???
 
 TEST
 ====
@@ -145,11 +156,6 @@ Makefile:
 		ignore metadata line?
 		all outputs depend on $(BOOTSTRAP_VMX)????
 		recurse setting BOOTSTRAP_VMX to bootstrap.vmx.tmp to test??
-		don't replace (mv) if no change
-
-	replace parser.vmx at end of tests?
-		save .bak file??
-
 
 import:
 	Make Module.new() do importing?
@@ -166,7 +172,8 @@ import:
 	    BUT still need to load bootstrap!!!
 
 parser:
-    "end" flag on Symbols? add "accept" method??
+    "end" flag on Symbols (rather than hard-wired in p.end())
+    add "accept" method??
 
 ** add .git/pre-commit check?
 
