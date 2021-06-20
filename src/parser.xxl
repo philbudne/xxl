@@ -1114,7 +1114,7 @@ var Parser = Class.new({
 			    //  to allow bare "function" outside of expression.
 			    //  (would be moot point in pure expression language)
 			    this.name = p.token.value;
-			    p.define(p.token); // define function name
+			    p.define(p.token, true); // define function name R/O
 			    p.advance();
 			}
 			p.advance("(");
@@ -1224,12 +1224,11 @@ var Parser = Class.new({
 			return(this);
 		    }, // nud
 		    std: function (this) { // { block }
-			p.scope = p.Scope.new(p.scope);
-			if (this.label) {
-			    // XXX use p.define for shadowing warnings???!!!
-			    p.defname(this.where, this.label, true); // read-only!?
+			p.scope = p.Scope.new(p.scope);	 // before label defined
+			if (this.second) { // label?
+			    p.define(this.second, true); // read-only!
 			}
-			p.advance("{"); // AFTER label defined!
+			p.advance("{"); // must be AFTER label defined!
 			this.first = p.statements();
 			p.scope = p.scope.pop();
 			p.advance("}");
@@ -1239,7 +1238,7 @@ var Parser = Class.new({
 		    gen: function (this, vmcode) {
 			if (this.arity == "statement") { // { block }
 			    var bcode = VMCode.new(); // block closure code
-			    bcode.emit_scope(this.label, this);
+			    bcode.emit_scope(this.second.value, this);
 			    bcode.gen_stmts(this.first);
 			    // create block closure & invoke
 			    vmcode.emit_bclose_call(bcode, this);
@@ -1394,8 +1393,8 @@ var Parser = Class.new({
 		    },
 		    gen: function (this, vmcode) { // gen
 			// generate closure for body, w/ leave label, if any
-			var leave_label = (this.second.label ?
-					   this.second.label.value : null);
+			var leave_label = (this.second.second ?
+					   this.second.second.value : null);
 			var wcode = VMCode.new(); // start cody for body closure
 			wcode.emit_scope(leave_label, this);
 			var top_branch_label = wcode.get_off();
@@ -1455,7 +1454,7 @@ var Parser = Class.new({
 	    var label;
 	    var t = this.token;
 	    if (t.arity == "name") { // label name?
-		label = t.value;     // get label name (Str)
+		label = t;	     // save it
 		this.advance();
 		this.advance(":");
 		t = this.token;
@@ -1465,7 +1464,7 @@ var Parser = Class.new({
 	    // (and if it was a reference to the label on the block,
 	    // it would come up undefined), so advance moved to LBrace.std
 	    this.check("{");
-	    t.label = label;	// attach label (if any) to LBrace
+	    t.second = label;	// attach label (if any) to LBrace
 	    return(t.std());
 	},
 	start_parse: function (this, fname) { // get ready to parse

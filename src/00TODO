@@ -54,10 +54,6 @@ xxl.py: w/o filename run read/eval/print loop
 		to "check" @ end (w/o advance) -- ie; check("}")
 		and re-prime (at top of statement()?)
 
-Block labels don't give "shadow" warnings
-	(defined via "defname")
-	put block label into a "normal" property (first/second/third)???
-
 TEST
 ====
 test PyObject.props()
@@ -196,3 +192,6 @@ bootstrap.md -- describe adding operator;
 straighten out .py file dependency graph?
 
 default Iterable.iter method w/ uerror (not overridden)
+
+AST missing new properties (exp_stmt, others?)
+
