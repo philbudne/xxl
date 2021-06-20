@@ -12,27 +12,27 @@
 ### Methods
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (l, value)`
-*PyFunc at classes.py:1093*
+*PyFunc at classes.py:1088*
 
 > default PObject init method (fatal error)
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
@@ -42,27 +42,27 @@
 > Return truthiness of `x` (as Bool). NOTE!! A static method, not a (Meta)class method!!!
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:1775*
+*PyFunc at classes.py:1770*
 
 > return Str representation: "true" or "false"
 
 #### `reprx (this)`
-*PyFunc at classes.py:1086*
+*PyFunc at classes.py:1081*
 
 > for debug: show Class name, and Python repr
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
@@ -80,51 +80,51 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:1120*
+*PyFunc at classes.py:1115*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 #### `!== (l, r)`
-*PyFunc at classes.py:1120*
+*PyFunc at classes.py:1115*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1012*
+*PyFunc at classes.py:1007*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
-*PyFunc at classes.py:1109*
+*PyFunc at classes.py:1104*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 #### `=== (l, r)`
-*PyFunc at classes.py:1109*
+*PyFunc at classes.py:1104*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
@@ -137,32 +137,32 @@
 ### Methods
 
 #### `create (this_class, ...args)`
-*PyFunc at classes.py:697*
+*PyFunc at classes.py:692*
 
 > default create method for Object (and therefore Class) makes an instance of this_class (called from default Object.new)
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (this_class, props)`
-*PyFunc at classes.py:981*
+*PyFunc at classes.py:976*
 
 > init method for meta-class "Class" -- used to create new Classes `props` is Dict holding properties (see const.CLASS_PROPS)
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
@@ -172,32 +172,32 @@
 > Default metaclass (Class) new method; Manually invoked as SomeClass.new. Calls this_class.create to create obj, and then calls obj.init().
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:731*
+*PyFunc at classes.py:726*
 
 > Default Object string representation method (calls Python repr(this))
 
 #### `reprx (l)`
-*PyFunc at classes.py:739*
+*PyFunc at classes.py:734*
 
 > for debug: show Class, and Python value (which may include id?)
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
 #### `subclass_of (this, c)`
-*PyFunc at classes.py:1021*
+*PyFunc at classes.py:1016*
 
 > return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
@@ -215,51 +215,51 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `!== (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1012*
+*PyFunc at classes.py:1007*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 #### `=== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
@@ -272,52 +272,52 @@
 ### Methods
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (this_obj, ...args)`
-*PyFunc at classes.py:705*
+*PyFunc at classes.py:700*
 
 > default init method for Object class a fatal error if any arguments given
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:731*
+*PyFunc at classes.py:726*
 
 > Default Object string representation method (calls Python repr(this))
 
 #### `reprx (l)`
-*PyFunc at classes.py:739*
+*PyFunc at classes.py:734*
 
 > for debug: show Class, and Python value (which may include id?)
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
@@ -335,51 +335,51 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `!== (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1012*
+*PyFunc at classes.py:1007*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 #### `=== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
@@ -392,32 +392,32 @@
 ### Methods
 
 #### `create (this_class, ...args)`
-*PyFunc at classes.py:697*
+*PyFunc at classes.py:692*
 
 > default create method for Object (and therefore Class) makes an instance of this_class (called from default Object.new)
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (this_class, props)`
-*PyFunc at classes.py:981*
+*PyFunc at classes.py:976*
 
 > init method for meta-class "Class" -- used to create new Classes `props` is Dict holding properties (see const.CLASS_PROPS)
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
@@ -427,32 +427,32 @@
 > Default metaclass (Class) new method; Manually invoked as SomeClass.new. Calls this_class.create to create obj, and then calls obj.init().
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:731*
+*PyFunc at classes.py:726*
 
 > Default Object string representation method (calls Python repr(this))
 
 #### `reprx (l)`
-*PyFunc at classes.py:739*
+*PyFunc at classes.py:734*
 
 > for debug: show Class, and Python value (which may include id?)
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
 #### `subclass_of (this, c)`
-*PyFunc at classes.py:1021*
+*PyFunc at classes.py:1016*
 
 > return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
@@ -470,51 +470,51 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `!== (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1012*
+*PyFunc at classes.py:1007*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 #### `=== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
@@ -527,32 +527,32 @@
 ### Methods
 
 #### `create (this_class, ...args)`
-*PyFunc at classes.py:697*
+*PyFunc at classes.py:692*
 
 > default create method for Object (and therefore Class) makes an instance of this_class (called from default Object.new)
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (this_class, props)`
-*PyFunc at classes.py:981*
+*PyFunc at classes.py:976*
 
 > init method for meta-class "Class" -- used to create new Classes `props` is Dict holding properties (see const.CLASS_PROPS)
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
@@ -562,32 +562,32 @@
 > Default metaclass (Class) new method; Manually invoked as SomeClass.new. Calls this_class.create to create obj, and then calls obj.init().
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:731*
+*PyFunc at classes.py:726*
 
 > Default Object string representation method (calls Python repr(this))
 
 #### `reprx (l)`
-*PyFunc at classes.py:739*
+*PyFunc at classes.py:734*
 
 > for debug: show Class, and Python value (which may include id?)
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
 #### `subclass_of (this, c)`
-*PyFunc at classes.py:1021*
+*PyFunc at classes.py:1016*
 
 > return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
@@ -605,51 +605,51 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `!== (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1012*
+*PyFunc at classes.py:1007*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 #### `=== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
@@ -662,32 +662,32 @@
 ### Methods
 
 #### `create (this_class, ...args)`
-*PyFunc at classes.py:697*
+*PyFunc at classes.py:692*
 
 > default create method for Object (and therefore Class) makes an instance of this_class (called from default Object.new)
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (this_class, props)`
-*PyFunc at classes.py:981*
+*PyFunc at classes.py:976*
 
 > init method for meta-class "Class" -- used to create new Classes `props` is Dict holding properties (see const.CLASS_PROPS)
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
@@ -697,32 +697,32 @@
 > Default metaclass (Class) new method; Manually invoked as SomeClass.new. Calls this_class.create to create obj, and then calls obj.init().
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:731*
+*PyFunc at classes.py:726*
 
 > Default Object string representation method (calls Python repr(this))
 
 #### `reprx (l)`
-*PyFunc at classes.py:739*
+*PyFunc at classes.py:734*
 
 > for debug: show Class, and Python value (which may include id?)
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
 #### `subclass_of (this, c)`
-*PyFunc at classes.py:1021*
+*PyFunc at classes.py:1016*
 
 > return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
@@ -740,51 +740,51 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `!== (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1012*
+*PyFunc at classes.py:1007*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 #### `=== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
@@ -797,7 +797,7 @@
 ### Methods
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
@@ -812,12 +812,12 @@
 > Create Iterator from `this`, call `func` with each value.
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
@@ -827,27 +827,27 @@
 > init method for Dict: takes Iterable returning two-item lists, OR an Iterable returning keys, and implementing '['
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `items (this)`
-*PyFunc at classes.py:1281*
+*PyFunc at classes.py:1276*
 
 > Return PyIterable for [key, value] value pairs.
 
 #### `iter (this)`
-*PyFunc at classes.py:1189*
+*PyFunc at classes.py:1184*
 
 > Return forward iterator.
 
 #### `keys (this)`
-*PyFunc at classes.py:1288*
+*PyFunc at classes.py:1283*
 
 > Return PyIterable for Dict keys.
 
 #### `len (this)`
-*PyFunc at classes.py:1063*
+*PyFunc at classes.py:1058*
 
 > returns length (of String, List or Dict)
 
@@ -862,22 +862,22 @@
 > Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).
 
 #### `pop (obj, key)`
-*PyFunc at classes.py:1274*
+*PyFunc at classes.py:1269*
 
 > Remove Dict item with specified `key`.
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `range (...args)`
-*PyFunc at classes.py:1221*
+*PyFunc at classes.py:1216*
 
 > Static method: returns PyIterable for an integer range; iter() method generates fresh Iterators. range(10): returns Iterable for 0..9; range(1,10): returns Iterable for 1..9; range(1,10,2): returns Iterable for odd numbers 1..9
 
@@ -887,22 +887,22 @@
 > return representation of Dict
 
 #### `reprx (this)`
-*PyFunc at classes.py:1086*
+*PyFunc at classes.py:1081*
 
 > for debug: show Class name, and Python repr
 
 #### `reversed (this)`
-*PyFunc at classes.py:1196*
+*PyFunc at classes.py:1191*
 
 > Return reverse iterator.
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
 #### `sorted (this, reverse)`
-*PyFunc at classes.py:1205*
+*PyFunc at classes.py:1200*
 
 > Return sorted List of iterator values. `reverse` is Bool to sort in reverse order (defaults to `false`).
 
@@ -912,7 +912,7 @@
 > Default to_str method: calls this.repr().
 
 #### `values (this)`
-*PyFunc at classes.py:1295*
+*PyFunc at classes.py:1290*
 
 > Return PyIterable for Dict values.
 
@@ -925,61 +925,61 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:1120*
+*PyFunc at classes.py:1115*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 #### `!== (l, r)`
-*PyFunc at classes.py:1120*
+*PyFunc at classes.py:1115*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1012*
+*PyFunc at classes.py:1007*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
-*PyFunc at classes.py:1109*
+*PyFunc at classes.py:1104*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 #### `=== (l, r)`
-*PyFunc at classes.py:1109*
+*PyFunc at classes.py:1104*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 #### `[ (l, r)`
-*PyFunc at classes.py:1256*
+*PyFunc at classes.py:1251*
 
 > `l[r]`
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `[ (l, r, value)`
-*PyFunc at classes.py:1247*
+*PyFunc at classes.py:1242*
 
 > `l[r] = value`
 
@@ -992,7 +992,7 @@
 ### Methods
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
@@ -1007,22 +1007,22 @@
 > Create Iterator from `this`, call `func` with each value.
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (this_obj, ...args)`
-*PyFunc at classes.py:705*
+*PyFunc at classes.py:700*
 
 > default init method for Object class a fatal error if any arguments given
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
@@ -1037,22 +1037,22 @@
 > Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:731*
+*PyFunc at classes.py:726*
 
 > Default Object string representation method (calls Python repr(this))
 
 #### `reprx (l)`
-*PyFunc at classes.py:739*
+*PyFunc at classes.py:734*
 
 > for debug: show Class, and Python value (which may include id?)
 
@@ -1062,7 +1062,7 @@
 > Creates List from `this`, returns reverse PyIterator.
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
@@ -1085,51 +1085,51 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `!== (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1012*
+*PyFunc at classes.py:1007*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 #### `=== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
@@ -1142,12 +1142,12 @@
 ### Methods
 
 #### `append (this, item)`
-*PyFunc at classes.py:1328*
+*PyFunc at classes.py:1323*
 
 > append `item`.
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
@@ -1167,12 +1167,12 @@
 > Create Iterator from `this`, call `func` with each value.
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
@@ -1182,17 +1182,17 @@
 > init method for List: takes Iterable
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `iter (this)`
-*PyFunc at classes.py:1189*
+*PyFunc at classes.py:1184*
 
 > Return forward iterator.
 
 #### `len (this)`
-*PyFunc at classes.py:1063*
+*PyFunc at classes.py:1058*
 
 > returns length (of String, List or Dict)
 
@@ -1207,22 +1207,22 @@
 > Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).
 
 #### `pop (l, index)`
-*PyFunc at classes.py:1336*
+*PyFunc at classes.py:1331*
 
 > Remove and return item at `index` (default last).
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `range (...args)`
-*PyFunc at classes.py:1221*
+*PyFunc at classes.py:1216*
 
 > Static method: returns PyIterable for an integer range; iter() method generates fresh Iterators. range(10): returns Iterable for 0..9; range(1,10): returns Iterable for 1..9; range(1,10,2): returns Iterable for odd numbers 1..9
 
@@ -1232,22 +1232,22 @@
 > return representation of List
 
 #### `reprx (this)`
-*PyFunc at classes.py:1086*
+*PyFunc at classes.py:1081*
 
 > for debug: show Class name, and Python repr
 
 #### `reversed (this)`
-*PyFunc at classes.py:1196*
+*PyFunc at classes.py:1191*
 
 > Return reverse iterator.
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
 #### `sorted (this, reverse)`
-*PyFunc at classes.py:1205*
+*PyFunc at classes.py:1200*
 
 > Return sorted List of iterator values. `reverse` is Bool to sort in reverse order (defaults to `false`).
 
@@ -1265,61 +1265,61 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:1120*
+*PyFunc at classes.py:1115*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 #### `!== (l, r)`
-*PyFunc at classes.py:1120*
+*PyFunc at classes.py:1115*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1012*
+*PyFunc at classes.py:1007*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
-*PyFunc at classes.py:1109*
+*PyFunc at classes.py:1104*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 #### `=== (l, r)`
-*PyFunc at classes.py:1109*
+*PyFunc at classes.py:1104*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 #### `[ (l, r)`
-*PyFunc at classes.py:1345*
+*PyFunc at classes.py:1340*
 
 > `l[r]`
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `[ (l, r, value)`
-*PyFunc at classes.py:1353*
+*PyFunc at classes.py:1348*
 
 > `l[r] = value`
 
@@ -1332,62 +1332,62 @@
 ### Methods
 
 #### `assemble (this, tree, srcfile)`
-*PyFunc at classes.py:2030*
+*PyFunc at classes.py:2025*
 
 > Assemble List of Lists representing VM code. `tree`: List of Lists. `srcfile`: source of code (for output only). Returns Closure in __modinfo.module top level scope.
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (this_obj, ...args)`
-*PyFunc at classes.py:705*
+*PyFunc at classes.py:700*
 
 > default init method for Object class a fatal error if any arguments given
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `load_vmx (this, fname)`
-*PyFunc at classes.py:2020*
+*PyFunc at classes.py:2015*
 
 > Load compiled `.vmx` file; Returns Closure in __modinfo.module top level scope.
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:731*
+*PyFunc at classes.py:726*
 
 > Default Object string representation method (calls Python repr(this))
 
 #### `reprx (l)`
-*PyFunc at classes.py:739*
+*PyFunc at classes.py:734*
 
 > for debug: show Class, and Python value (which may include id?)
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
@@ -1405,51 +1405,51 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `!== (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1012*
+*PyFunc at classes.py:1007*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 #### `=== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
@@ -1462,32 +1462,32 @@
 ### Methods
 
 #### `create (this_class, ...args)`
-*PyFunc at classes.py:697*
+*PyFunc at classes.py:692*
 
 > default create method for Object (and therefore Class) makes an instance of this_class (called from default Object.new)
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (this_class, props)`
-*PyFunc at classes.py:981*
+*PyFunc at classes.py:976*
 
 > init method for meta-class "Class" -- used to create new Classes `props` is Dict holding properties (see const.CLASS_PROPS)
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
@@ -1497,32 +1497,32 @@
 > Default metaclass (Class) new method; Manually invoked as SomeClass.new. Calls this_class.create to create obj, and then calls obj.init().
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:731*
+*PyFunc at classes.py:726*
 
 > Default Object string representation method (calls Python repr(this))
 
 #### `reprx (l)`
-*PyFunc at classes.py:739*
+*PyFunc at classes.py:734*
 
 > for debug: show Class, and Python value (which may include id?)
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
 #### `subclass_of (this, c)`
-*PyFunc at classes.py:1021*
+*PyFunc at classes.py:1016*
 
 > return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
@@ -1544,51 +1544,51 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `!== (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1012*
+*PyFunc at classes.py:1007*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 #### `=== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
@@ -1601,27 +1601,27 @@
 ### Methods
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (l, value)`
-*PyFunc at classes.py:1093*
+*PyFunc at classes.py:1088*
 
 > default PObject init method (fatal error)
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
@@ -1631,27 +1631,27 @@
 > Return `null` value NOTE!! A static method, not a (Meta)class method!!!
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:1749*
+*PyFunc at classes.py:1744*
 
 > to_string/repr method for Null Class: returns "null"
 
 #### `reprx (this)`
-*PyFunc at classes.py:1086*
+*PyFunc at classes.py:1081*
 
 > for debug: show Class name, and Python repr
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
@@ -1669,51 +1669,51 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:1120*
+*PyFunc at classes.py:1115*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 #### `!== (l, r)`
-*PyFunc at classes.py:1120*
+*PyFunc at classes.py:1115*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 #### `( (this, ...args)`
-*PyFunc at classes.py:1756*
+*PyFunc at classes.py:1751*
 
 > `(` method for `null` value (fatal error) commonly happens when a bad method name is used, so output a "helpful" message.
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
-*PyFunc at classes.py:1109*
+*PyFunc at classes.py:1104*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 #### `=== (l, r)`
-*PyFunc at classes.py:1109*
+*PyFunc at classes.py:1104*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
@@ -1726,27 +1726,27 @@
 ### Methods
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (l, value)`
-*PyFunc at classes.py:1093*
+*PyFunc at classes.py:1088*
 
 > default PObject init method (fatal error)
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
@@ -1756,42 +1756,42 @@
 > Convert `x` to a `Number` NOTE!! A static method, not a (Meta)class method!!!
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:1078*
+*PyFunc at classes.py:1073*
 
 > return less human-friendly string representation of `this` (use Python repr function on value)
 
 #### `reprx (this)`
-*PyFunc at classes.py:1086*
+*PyFunc at classes.py:1081*
 
 > for debug: show Class name, and Python repr
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
 #### `to_float (this)`
-*PyFunc at classes.py:1525*
+*PyFunc at classes.py:1520*
 
 > If value is a float, return `this` If value is an int, return a new Number object
 
 #### `to_int (this)`
-*PyFunc at classes.py:1535*
+*PyFunc at classes.py:1530*
 
 > If value is an int, return `this` If value is a float, return a new Number object
 
 #### `to_number (this)`
-*PyFunc at classes.py:1545*
+*PyFunc at classes.py:1540*
 
 > identity method; returns `this`
 
@@ -1809,111 +1809,111 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 #### `- (x)`
-*PyFunc at classes.py:1382*
+*PyFunc at classes.py:1377*
 
 > Return negative of `x`
 
 #### `~ (this)`
-*PyFunc at classes.py:1518*
+*PyFunc at classes.py:1513*
 
 > return bitwise (binary) "not" (complement) of `this`
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:1451*
+*PyFunc at classes.py:1446*
 
 > return `true` if value of `l` is different from the value of `r`
 
 #### `!== (l, r)`
-*PyFunc at classes.py:1120*
+*PyFunc at classes.py:1115*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 #### `& (l, r)`
-*PyFunc at classes.py:1492*
+*PyFunc at classes.py:1487*
 
 > return bitwise (binary) "and" (conjunction) of `l` and `r`
 
 #### `( (l, ...args)`
-*PyFunc at classes.py:930*
+*PyFunc at classes.py:925*
 
 > default Object `(` binop (fatal error)
 
 #### `* (l, r)`
-*PyFunc at classes.py:1413*
+*PyFunc at classes.py:1408*
 
 > multiply `l` and `r`
 
 #### `+ (l, r)`
-*PyFunc at classes.py:1389*
+*PyFunc at classes.py:1384*
 
 > add `l` and `r`
 
 #### `- (l, r)`
-*PyFunc at classes.py:1402*
+*PyFunc at classes.py:1397*
 
 > subtract `r` from `l`
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `/ (l, r)`
-*PyFunc at classes.py:1426*
+*PyFunc at classes.py:1421*
 
 > Divide `l` by `r`; always creates float.
 
 #### `< (l, r)`
-*PyFunc at classes.py:1468*
+*PyFunc at classes.py:1463*
 
 > return `true` if value of `l` is < the value of `r`
 
 #### `<= (l, r)`
-*PyFunc at classes.py:1478*
+*PyFunc at classes.py:1473*
 
 > return `true` if value of `l` is <= the value of `r`
 
 #### `== (l, r)`
-*PyFunc at classes.py:1444*
+*PyFunc at classes.py:1439*
 
 > return `true` if value of `l` is the same as value of `r`
 
 #### `=== (l, r)`
-*PyFunc at classes.py:1109*
+*PyFunc at classes.py:1104*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 #### `> (l, r)`
-*PyFunc at classes.py:1485*
+*PyFunc at classes.py:1480*
 
 > return `true` if value of `l` is > the value of `r`
 
 #### `>= (l, r)`
-*PyFunc at classes.py:1461*
+*PyFunc at classes.py:1456*
 
 > return `true` if value of `l` is >= the value of `r`
 
 #### `| (l, r)`
-*PyFunc at classes.py:1505*
+*PyFunc at classes.py:1500*
 
 > return bitwise (binary) "or" (union) of `l` and `r`
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
@@ -1926,52 +1926,52 @@
 ### Methods
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (this_obj, ...args)`
-*PyFunc at classes.py:705*
+*PyFunc at classes.py:700*
 
 > default init method for Object class a fatal error if any arguments given
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:731*
+*PyFunc at classes.py:726*
 
 > Default Object string representation method (calls Python repr(this))
 
 #### `reprx (l)`
-*PyFunc at classes.py:739*
+*PyFunc at classes.py:734*
 
 > for debug: show Class, and Python value (which may include id?)
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
@@ -1989,51 +1989,51 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `!== (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `( (l, ...args)`
-*PyFunc at classes.py:930*
+*PyFunc at classes.py:925*
 
 > default Object `(` binop (fatal error)
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 #### `=== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
@@ -2046,32 +2046,32 @@
 ### Methods
 
 #### `create (this_class)`
-*PyFunc at classes.py:1048*
+*PyFunc at classes.py:1043*
 
 > 'create' method for PClass metaclass makes an instance of this_class backed by a CPObject used to create PClass subclass objects (Number, List, Dict, Bool, Null)
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (this_class, props)`
-*PyFunc at classes.py:981*
+*PyFunc at classes.py:976*
 
 > init method for meta-class "Class" -- used to create new Classes `props` is Dict holding properties (see const.CLASS_PROPS)
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
@@ -2081,32 +2081,32 @@
 > Default metaclass (Class) new method; Manually invoked as SomeClass.new. Calls this_class.create to create obj, and then calls obj.init().
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:731*
+*PyFunc at classes.py:726*
 
 > Default Object string representation method (calls Python repr(this))
 
 #### `reprx (l)`
-*PyFunc at classes.py:739*
+*PyFunc at classes.py:734*
 
 > for debug: show Class, and Python value (which may include id?)
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
 #### `subclass_of (this, c)`
-*PyFunc at classes.py:1021*
+*PyFunc at classes.py:1016*
 
 > return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
@@ -2124,51 +2124,51 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `!== (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1012*
+*PyFunc at classes.py:1007*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 #### `=== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
@@ -2181,52 +2181,52 @@
 ### Methods
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (l, value)`
-*PyFunc at classes.py:1093*
+*PyFunc at classes.py:1088*
 
 > default PObject init method (fatal error)
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:1078*
+*PyFunc at classes.py:1073*
 
 > return less human-friendly string representation of `this` (use Python repr function on value)
 
 #### `reprx (this)`
-*PyFunc at classes.py:1086*
+*PyFunc at classes.py:1081*
 
 > for debug: show Class name, and Python repr
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
@@ -2244,51 +2244,51 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:1120*
+*PyFunc at classes.py:1115*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 #### `!== (l, r)`
-*PyFunc at classes.py:1120*
+*PyFunc at classes.py:1115*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 #### `( (l, ...args)`
-*PyFunc at classes.py:930*
+*PyFunc at classes.py:925*
 
 > default Object `(` binop (fatal error)
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
-*PyFunc at classes.py:1109*
+*PyFunc at classes.py:1104*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 #### `=== (l, r)`
-*PyFunc at classes.py:1109*
+*PyFunc at classes.py:1104*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
@@ -2301,32 +2301,32 @@
 ### Methods
 
 #### `create (this_class, ...args)`
-*PyFunc at classes.py:697*
+*PyFunc at classes.py:692*
 
 > default create method for Object (and therefore Class) makes an instance of this_class (called from default Object.new)
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (this_class, props)`
-*PyFunc at classes.py:981*
+*PyFunc at classes.py:976*
 
 > init method for meta-class "Class" -- used to create new Classes `props` is Dict holding properties (see const.CLASS_PROPS)
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
@@ -2336,32 +2336,32 @@
 > Default metaclass (Class) new method; Manually invoked as SomeClass.new. Calls this_class.create to create obj, and then calls obj.init().
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:731*
+*PyFunc at classes.py:726*
 
 > Default Object string representation method (calls Python repr(this))
 
 #### `reprx (l)`
-*PyFunc at classes.py:739*
+*PyFunc at classes.py:734*
 
 > for debug: show Class, and Python value (which may include id?)
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
 #### `subclass_of (this, c)`
-*PyFunc at classes.py:1021*
+*PyFunc at classes.py:1016*
 
 > return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
@@ -2379,51 +2379,51 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `!== (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1012*
+*PyFunc at classes.py:1007*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 #### `=== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
@@ -2436,7 +2436,7 @@
 ### Methods
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
@@ -2451,27 +2451,27 @@
 > Create Iterator from `this`, call `func` with each value.
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (l, value)`
-*PyFunc at classes.py:1093*
+*PyFunc at classes.py:1088*
 
 > default PObject init method (fatal error)
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `iter (this)`
-*PyFunc at classes.py:1189*
+*PyFunc at classes.py:1184*
 
 > Return forward iterator.
 
@@ -2486,42 +2486,42 @@
 > Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `range (...args)`
-*PyFunc at classes.py:1221*
+*PyFunc at classes.py:1216*
 
 > Static method: returns PyIterable for an integer range; iter() method generates fresh Iterators. range(10): returns Iterable for 0..9; range(1,10): returns Iterable for 1..9; range(1,10,2): returns Iterable for odd numbers 1..9
 
 #### `repr (this)`
-*PyFunc at classes.py:1078*
+*PyFunc at classes.py:1073*
 
 > return less human-friendly string representation of `this` (use Python repr function on value)
 
 #### `reprx (this)`
-*PyFunc at classes.py:1086*
+*PyFunc at classes.py:1081*
 
 > for debug: show Class name, and Python repr
 
 #### `reversed (this)`
-*PyFunc at classes.py:1196*
+*PyFunc at classes.py:1191*
 
 > Return reverse iterator.
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
 #### `sorted (this, reverse)`
-*PyFunc at classes.py:1205*
+*PyFunc at classes.py:1200*
 
 > Return sorted List of iterator values. `reverse` is Bool to sort in reverse order (defaults to `false`).
 
@@ -2539,51 +2539,51 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:1120*
+*PyFunc at classes.py:1115*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 #### `!== (l, r)`
-*PyFunc at classes.py:1120*
+*PyFunc at classes.py:1115*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1012*
+*PyFunc at classes.py:1007*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
-*PyFunc at classes.py:1109*
+*PyFunc at classes.py:1104*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 #### `=== (l, r)`
-*PyFunc at classes.py:1109*
+*PyFunc at classes.py:1104*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
@@ -2596,7 +2596,7 @@
 ### Methods
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
@@ -2611,27 +2611,27 @@
 > Create Iterator from `this`, call `func` with each value.
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (this_obj, ...args)`
-*PyFunc at classes.py:705*
+*PyFunc at classes.py:700*
 
 > default init method for Object class a fatal error if any arguments given
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `iter (this)`
-*PyFunc at classes.py:1880*
+*PyFunc at classes.py:1875*
 
 > Returns `this.` https://docs.python.org/3/library/stdtypes.html#typeiter says an iterator should have an __iter__ method.
 
@@ -2646,27 +2646,27 @@
 > Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).
 
 #### `next (this, finished_continuation)`
-*PyFunc at classes.py:1890*
+*PyFunc at classes.py:1885*
 
 > `finished` should be a CContinuation (eg; block leave label or "return") to call when iterator exhausted
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:731*
+*PyFunc at classes.py:726*
 
 > Default Object string representation method (calls Python repr(this))
 
 #### `reprx (l)`
-*PyFunc at classes.py:739*
+*PyFunc at classes.py:734*
 
 > for debug: show Class, and Python value (which may include id?)
 
@@ -2676,7 +2676,7 @@
 > Creates List from `this`, returns reverse PyIterator.
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
@@ -2699,51 +2699,51 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `!== (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1012*
+*PyFunc at classes.py:1007*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 #### `=== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
@@ -2756,52 +2756,52 @@
 ### Methods
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (l, value)`
-*PyFunc at classes.py:1093*
+*PyFunc at classes.py:1088*
 
 > default PObject init method (fatal error)
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `props (this)`
-*PyFunc at classes.py:1843*
+*PyFunc at classes.py:1838*
 
 > return dir() of wrapped Python object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:731*
+*PyFunc at classes.py:726*
 
 > Default Object string representation method (calls Python repr(this))
 
 #### `reprx (l)`
-*PyFunc at classes.py:739*
+*PyFunc at classes.py:734*
 
 > for debug: show Class, and Python value (which may include id?)
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
@@ -2819,56 +2819,56 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `!== (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `( (this, ...args)`
-*PyFunc at classes.py:1858*
+*PyFunc at classes.py:1853*
 
 > 
 
 #### `. (l, r)`
-*PyFunc at classes.py:1826*
+*PyFunc at classes.py:1821*
 
 > PyObject `.` binop -- proxies to Python object getattr
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 #### `=== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 #### `[ (l, r)`
-*PyFunc at classes.py:1850*
+*PyFunc at classes.py:1845*
 
 > PyObject `[` binop
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
@@ -2881,32 +2881,32 @@
 ### Methods
 
 #### `create (this_class, ...args)`
-*PyFunc at classes.py:697*
+*PyFunc at classes.py:692*
 
 > default create method for Object (and therefore Class) makes an instance of this_class (called from default Object.new)
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (this_class, props)`
-*PyFunc at classes.py:981*
+*PyFunc at classes.py:976*
 
 > init method for meta-class "Class" -- used to create new Classes `props` is Dict holding properties (see const.CLASS_PROPS)
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
@@ -2916,32 +2916,32 @@
 > Default metaclass (Class) new method; Manually invoked as SomeClass.new. Calls this_class.create to create obj, and then calls obj.init().
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:731*
+*PyFunc at classes.py:726*
 
 > Default Object string representation method (calls Python repr(this))
 
 #### `reprx (l)`
-*PyFunc at classes.py:739*
+*PyFunc at classes.py:734*
 
 > for debug: show Class, and Python value (which may include id?)
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
 #### `subclass_of (this, c)`
-*PyFunc at classes.py:1021*
+*PyFunc at classes.py:1016*
 
 > return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
@@ -2959,51 +2959,51 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `!== (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1012*
+*PyFunc at classes.py:1007*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 #### `=== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
@@ -3011,72 +3011,72 @@
 ## Class `SingletonClass` subclass of `Class`
 
 
-> Metaclass for Classes with singleton values
+> Metaclass for Classes with singleton values. Invoke classes.SingletonClass.new instead of Class.new.
 
 ### Methods
 
 #### `create (this_class, ...args)`
-*PyFunc at classes.py:697*
+*PyFunc at classes.py:692*
 
 > default create method for Object (and therefore Class) makes an instance of this_class (called from default Object.new)
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (this_class, props)`
-*PyFunc at classes.py:981*
+*PyFunc at classes.py:976*
 
 > init method for meta-class "Class" -- used to create new Classes `props` is Dict holding properties (see const.CLASS_PROPS)
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (this_class, ...args)`
-*Closure at bootstrap.xxl:258:47*
+*Closure at bootstrap.xxl:264:11*
 
 > SingletonClass new method: invoke to create a new class with a single value. First time: calls `this_class.create` to create obj, then calls obj.init(); After: returns previous value.
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:731*
+*PyFunc at classes.py:726*
 
 > Default Object string representation method (calls Python repr(this))
 
 #### `reprx (l)`
-*PyFunc at classes.py:739*
+*PyFunc at classes.py:734*
 
 > for debug: show Class, and Python value (which may include id?)
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
 #### `subclass_of (this, c)`
-*PyFunc at classes.py:1021*
+*PyFunc at classes.py:1016*
 
 > return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
@@ -3089,56 +3089,56 @@
 
 #### `name`
 
-> Value: `SingletonClass`
+> Value: `SC`
 
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `!== (l, r)`
-*PyFunc at classes.py:753*
+*PyFunc at classes.py:748*
 
 > Test if `l` and `r` refer to different Objects
 
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1012*
+*PyFunc at classes.py:1007*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 #### `=== (l, r)`
-*PyFunc at classes.py:746*
+*PyFunc at classes.py:741*
 
 > Test if `l` and `r` refer to the same Object
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
@@ -3151,12 +3151,12 @@
 ### Methods
 
 #### `chr (i)`
-*PyFunc at classes.py:1712*
+*PyFunc at classes.py:1707*
 
 > Return a Unicode string of one character with ordinal i; 0 <= i <= 0x10ffff
 
 #### `delprop (this, name)`
-*PyFunc at classes.py:776*
+*PyFunc at classes.py:771*
 
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
@@ -3166,7 +3166,7 @@
 > Create reverse Iterator from `this`, call `func` with each value. returns `null`
 
 #### `ends_with (this, suff)`
-*PyFunc at classes.py:1631*
+*PyFunc at classes.py:1626*
 
 > Return `true` if `this` ends with the suffix `suff`, `false` otherwise.
 
@@ -3176,37 +3176,37 @@
 > Create Iterator from `this`, call `func` with each value.
 
 #### `getclass (this)`
-*PyFunc at classes.py:916*
+*PyFunc at classes.py:911*
 
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (l, value)`
-*PyFunc at classes.py:1093*
+*PyFunc at classes.py:1088*
 
 > default PObject init method (fatal error)
 
 #### `instance_of (this, c)`
-*PyFunc at classes.py:938*
+*PyFunc at classes.py:933*
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `iter (this)`
-*PyFunc at classes.py:1189*
+*PyFunc at classes.py:1184*
 
 > Return forward iterator.
 
 #### `join (this, iterable)`
-*Closure at bootstrap.xxl:276:37*
+*Closure at bootstrap.xxl:284:37*
 
 > 
 
 #### `len (this)`
-*PyFunc at classes.py:1063*
+*PyFunc at classes.py:1058*
 
 > returns length (of String, List or Dict)
 
@@ -3221,92 +3221,92 @@
 > Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).
 
 #### `new (arg)`
-*Closure at bootstrap.xxl:289:23*
+*Closure at bootstrap.xxl:297:23*
 
 > Str Class new (static) method; calls arg.to_str method
 
 #### `ord (this)`
-*PyFunc at classes.py:1651*
+*PyFunc at classes.py:1646*
 
 > Return the Unicode code point for a one-character string `this`
 
 #### `props (this)`
-*PyFunc at classes.py:723*
+*PyFunc at classes.py:718*
 
 > returns an Iterable for (String) property names of `this` Object
 
 #### `putprop (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `range (...args)`
-*PyFunc at classes.py:1221*
+*PyFunc at classes.py:1216*
 
 > Static method: returns PyIterable for an integer range; iter() method generates fresh Iterators. range(10): returns Iterable for 0..9; range(1,10): returns Iterable for 1..9; range(1,10,2): returns Iterable for odd numbers 1..9
 
 #### `repr (this)`
-*PyFunc at classes.py:1078*
+*PyFunc at classes.py:1073*
 
 > return less human-friendly string representation of `this` (use Python repr function on value)
 
 #### `reprx (this)`
-*PyFunc at classes.py:1086*
+*PyFunc at classes.py:1081*
 
 > for debug: show Class name, and Python repr
 
 #### `reversed (this)`
-*PyFunc at classes.py:1196*
+*PyFunc at classes.py:1191*
 
 > Return reverse iterator.
 
 #### `setclass (this, klass)`
-*PyFunc at classes.py:923*
+*PyFunc at classes.py:918*
 
 > set Class for `this`!!
 
 #### `slice (this, start, end)`
-*PyFunc at classes.py:1602*
+*PyFunc at classes.py:1597*
 
 > return a substring (slice) of `this` starting at position `start` ending at position `end` (defaults to rest of string
 
 #### `sorted (this, reverse)`
-*PyFunc at classes.py:1205*
+*PyFunc at classes.py:1200*
 
 > Return sorted List of iterator values. `reverse` is Bool to sort in reverse order (defaults to `false`).
 
 #### `split (this, sep, limit)`
-*PyFunc at classes.py:1617*
+*PyFunc at classes.py:1612*
 
 > Return a List of the words in the string, using sep as the delimiter string (default to `null` -- any whitespace). Limit to `limit` return values (defaults to -1 -- no limit)
 
 #### `starts_with (this, pref)`
-*PyFunc at classes.py:1661*
+*PyFunc at classes.py:1656*
 
 > Return `true` if `this` starts with prefix `pref, `false` otherwise.
 
 #### `strip (this)`
-*PyFunc at classes.py:1675*
+*PyFunc at classes.py:1670*
 
 > Return a copy of the string with leading and trailing whitespace removed.
 
 #### `to_float (this)`
-*PyFunc at classes.py:1682*
+*PyFunc at classes.py:1677*
 
 > Convert string to a floating point Number
 
 #### `to_int (this, base)`
-*PyFunc at classes.py:1689*
+*PyFunc at classes.py:1684*
 
 > Convert string to integer Number `base` defaults to zero (accept 0xXXX for base 16)
 
 #### `to_number (this)`
-*PyFunc at classes.py:1701*
+*PyFunc at classes.py:1696*
 
 > Convert string to a Number
 
 #### `to_str (this)`
-*PyFunc at classes.py:1668*
+*PyFunc at classes.py:1663*
 
 > Identity method
 
@@ -3319,81 +3319,81 @@
 ### Unary operators
 
 #### `! (x)`
-*PyFunc at classes.py:768*
+*PyFunc at classes.py:763*
 
 > Object unary logical "not" operator; returns `true` if `x` is "falsey" (false, null, or zero)
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:1451*
+*PyFunc at classes.py:1446*
 
 > return `true` if value of `l` is different from the value of `r`
 
 #### `!== (l, r)`
-*PyFunc at classes.py:1120*
+*PyFunc at classes.py:1115*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1012*
+*PyFunc at classes.py:1007*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
 #### `+ (x, y)`
-*PyFunc at classes.py:1580*
+*PyFunc at classes.py:1575*
 
 > String concatenation
 
 #### `. (l, r)`
-*PyFunc at classes.py:859*
+*PyFunc at classes.py:854*
 
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `.. (this, prop)`
-*PyFunc at classes.py:906*
+*PyFunc at classes.py:901*
 
 > Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `< (l, r)`
-*PyFunc at classes.py:1468*
+*PyFunc at classes.py:1463*
 
 > return `true` if value of `l` is < the value of `r`
 
 #### `<= (l, r)`
-*PyFunc at classes.py:1478*
+*PyFunc at classes.py:1473*
 
 > return `true` if value of `l` is <= the value of `r`
 
 #### `== (l, r)`
-*PyFunc at classes.py:1444*
+*PyFunc at classes.py:1439*
 
 > return `true` if value of `l` is the same as value of `r`
 
 #### `=== (l, r)`
-*PyFunc at classes.py:1109*
+*PyFunc at classes.py:1104*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 #### `> (l, r)`
-*PyFunc at classes.py:1485*
+*PyFunc at classes.py:1480*
 
 > return `true` if value of `l` is > the value of `r`
 
 #### `>= (l, r)`
-*PyFunc at classes.py:1461*
+*PyFunc at classes.py:1456*
 
 > return `true` if value of `l` is >= the value of `r`
 
 #### `[ (l, r)`
-*PyFunc at classes.py:1593*
+*PyFunc at classes.py:1588*
 
 > Str l[r] return `r`'th character of Str `l`
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:785*
+*PyFunc at classes.py:780*
 
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
@@ -3416,4 +3416,4 @@
 
 
 ---
-formatted by doc.xxl on 2021-06-19
+formatted by doc.xxl on 2021-06-20

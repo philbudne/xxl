@@ -585,11 +585,6 @@ PClass = defclass(Class, 'PClass', [Class],
 PObject = defclass(PClass, 'PObject', [Object],
                    doc="Base class for Primitive/Python value Classes")
 
-# metaclass for Classes with singleton values
-# bootstrap.xxl sets __methods, defines static 'new' method
-SingletonClass = defclass(Class, 'SingletonClass', [Class],
-                          doc="Metaclass for Classes with singleton values")
-
 ####
 # wrappers, with .value
 

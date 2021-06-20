@@ -253,22 +253,30 @@ if (__modinfo.main) {		// once only
     ////////////////
     // SingletonClass
 
-    classes.SingletonClass.__methods = {};
-
-    classes.SingletonClass.__methods['new'] = function (this_class, ...args) {
-	"""
-	SingletonClass new method:
-	invoke to create a new class with a single value.
-	First time: calls `this_class.create` to create obj,
-	then calls obj.init(); After: returns previous value.
-	"""
-	var obj = this_class.__it; // see const.SINGLE
-	if (!obj) {		   // XXX check if === undef?
-	    obj = this_class.__it = this_class.create();
-	    obj.init(...args);
+    classes.SingletonClass = Class.new({
+	name: "SC",
+	supers: [Class],	// a metaclass!
+	doc: """
+	    Metaclass for Classes with singleton values.
+	    Invoke classes.SingletonClass.new instead of Class.new.
+	    """,
+	methods: {
+	    new: function (this_class, ...args) {
+		"""
+		SingletonClass new method:
+		invoke to create a new class with a single value.
+		First time: calls `this_class.create` to create obj,
+		then calls obj.init(); After: returns previous value.
+		"""
+		var obj = this_class.__it; // see const.SINGLE
+		if (!obj) {		   // XXX check if === undef?
+		    obj = this_class.__it = this_class.create();
+		    obj.init(...args);
+		}
+		return(obj);
+	    }
 	}
-	return(obj);
-    };
+    });
 
     ////////////////
     // Str
