@@ -1,13 +1,15 @@
 FIX
 ===
 lib dir
+	generate .md files
+	run as tests, generate index.md file?
 	XXL_LIB_PATH
 	markup.xxl
 	thread-chan.xxl
 	do-while.xxl
-	nullish
+	nullish.xxl?
 
-rename "classes" to "__classes"
+rename "classes" to "__classes"??
 
 put "Class" in __xxl??
 
