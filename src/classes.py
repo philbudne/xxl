@@ -224,11 +224,18 @@ class CContinuation(CCallable):
 
     def defn(self):
         """
-        return Python str for "definition" location
-        (in this case, it's where it will return to
-         the statement AFTER it was defined)
+        Return Python str for "definition" location.
+
+        (in this case, it's where it will return to,
+         which may be the statement after, if return value not used)
         """
-        return self.fp.cb[self.fp.pc].fn_where()
+        return vmx.fp_where(self.fp)
+
+    def backtrace(self):
+        """
+        Return Python list of str
+        """
+        return vmx.fp_backtrace_list(self.fp)
 
 class CClosure(CCallable):
     """
@@ -242,7 +249,7 @@ class CClosure(CCallable):
         self.setprop(const.DOC, mkstr(doc or ""))
 
     def __repr__(self):
-        return "<Closure: %s>" % self.code[0].fn_where()
+        return "<Closure: %s>" % self.defn()
         
     def invoke(self, vm):
         vm.save_frame(True)     # show=True
@@ -257,7 +264,7 @@ class CClosure(CCallable):
         return self.code[0].args() # ask first VM Instr about args!!
 
     def defn(self):
-        return self.code[0].fn_where()
+        return self.code[0].fn_where() # ask first VM Instr about location!
 
 class CBClosure(CClosure):
     """
@@ -267,8 +274,7 @@ class CBClosure(CClosure):
     (unless flow control implemented by passing block closure pointers)
     """
     def __repr__(self):
-        i = self.code[0]
-        return "<CBClosure: %s:%s>" % (i.fn, i.where)
+        return "<CBClosure: %s>" % self.defn()
         
     def invoke(self, vm):
         vm.save_frame(False)    # show=False
@@ -301,7 +307,7 @@ class CBoundMethod(CCallable):
         return "<BoundMethod: %s %s>" % (repr(self.obj), self.method)
         
     def invoke(self, vm):
-        # *this* is the place "THIS" is explicitly passed!!!
+        # *this* is the main place "THIS" is explicitly passed!!!
         vm.args.insert(0, self.obj) # prepend saved "this" to arguments
         self.method.invoke(vm)      # returns value in AC
 
@@ -329,7 +335,8 @@ class CPyFunc(CCallable):
         self.setprop(const.DOC, _mkstr(func.__doc__ or ""))
 
     def __repr__(self):
-        return "<PyFunc: %s>" % self.func.__name__
+        # was self.func.__name___
+        return "<PyFunc: %s>" % self.defn()
         
     def invoke(self, vm):
         vm.ac = self.func(*vm.args)
@@ -352,11 +359,15 @@ class CPyFunc(CCallable):
         return args
 
     def defn(self):
+        """
+        For documentation: NOT in "usual" format (includes name)
+        (have separate "name" method??)
+        """
         co = self.func.__code__
         fname = co.co_filename
-        if fname.startswith(CWD_SEP):
+        if fname.startswith(CWD_SEP): # trim CWD/ from file name
             fname = fname[len(CWD_SEP):]
-        return "%s:%s" % (fname, co.co_firstlineno)
+        return "%s:%s (%s)" % (fname, co.co_firstlineno, self.func.__name__)
 
 def pyfunc(func):
     """
@@ -632,9 +643,9 @@ for klass, supers in _saved_supers.items():
 for klass, doc in _saved_docs.items():
     klass.setprop(const.DOC, _mkstr(doc))
 
-# internal object w/ direct invoke methods
+# wrapper around CCallable: internal object w/ direct invoke methods
 #       (avoids binop lookup and List construction on each call)
-
+#       w/ __args and __defn methods
 Callable = defclass(Class, 'Callable', [Object],
                     doc="""
     Virtual base Class for built-in callable classes
@@ -1158,6 +1169,20 @@ def callable__defn(this):
 Callable.setprop(const.METHODS, _mkdict({
     '__args': callable__args,
     '__defn': callable__defn
+}))
+
+################ Continuation
+
+@pyfunc
+def continuation__backtrace_list(this):
+    """
+    return List of return locations on Continuation stack.
+    """
+    return wrap(this.backtrace())
+
+Continuation.setprop(const.METHODS, _mkdict({
+    '__backtrace_list': continuation__backtrace_list
+    # XXX have a visible method to print? replace xxl_backtrace??
 }))
 
 ################ Iterable

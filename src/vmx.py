@@ -52,6 +52,27 @@ class VMError(Exception):
 # XXX save vm.args for backtrace?
 Frame = collections.namedtuple('Frame', 'cb,pc,scope,fp,fn,where,show')
 
+# called from fp_backtrace (below), CContinuation.defn
+def fp_where(fp):
+    """
+    return "filename:line:col" for return frame
+
+    (calls Instr fn_where method)
+    """
+    return fp.cb[fp.pc].fn_where()
+
+# called from VM.backtrace, CContinuation.backtrace
+def fp_backtrace_list(fp):
+    """
+    return Python list of str of return locations in fp stack
+    """
+    ret = []
+    while fp:
+        if fp.show:
+            ret.append(fp_where(fp))
+        fp = fp.fp
+    return ret
+
 class VM:
     """
     VM state
@@ -240,18 +261,18 @@ class VM:
         )
 
     def backtrace(self):        # XXX take file to write to?
-        fp = self.fp
-        while fp:
-            if fp.show:
-                sys.stderr.write(" called from {}:{}\n".format(
-                    fp.fn, fp.where))
-            fp = fp.fp
+        """
+        Write return stack to stderr.
+        """
+        for return_location in fp_backtrace_list(self.fp):
+            sys.stderr.write(" return to %s\n" % return_location)
 
     # helper (inline once settled?)
     # make method of OpInstr parent class??
     def call_op(self, optype, inst):
         """
-        invoke a method for an operator
+        Invoke a method for an operator.
+
         caller (Instr) has set up self.args (Python list in forward order)
         `optype` Python string, one of UNOPS, BINOPS, LHSOPS
         `inst.value` Python string for operator to look up
