@@ -1075,7 +1075,7 @@ var Parser = Class.new({
 				}
 			    );
 			    vmcode.emit_call0(this);
-			}
+			} // ...args present
 			else {
 			    // generate code for actuals, placing them on stack
 			    this.second.each_for(
@@ -1086,7 +1086,7 @@ var Parser = Class.new({
 
 			    this.first.gen(vmcode); // function expression
 			    vmcode.emit_call(this.second.len(), this);
-			}
+			} // no ...args
 		    } // gen
 		} // methods
 	    }); // LParen
@@ -1394,17 +1394,17 @@ var Parser = Class.new({
 		    },
 		    gen: function (this, vmcode) { // gen
 			// generate closure for body, w/ leave label, if any
-			var label = (this.second.label ?
-				     this.second.label.value : null);
-			var wcode = VMCode.new();
-			wcode.emit_scope(label, this);
-			var top_label = wcode.get_off();
+			var leave_label = (this.second.label ?
+					   this.second.label.value : null);
+			var wcode = VMCode.new(); // start cody for body closure
+			wcode.emit_scope(leave_label, this);
+			var top_branch_label = wcode.get_off();
 			this.first.gen(wcode); // condition
-			var done_label = wcode.def_fwd_label();
-			wcode.emit_ifnot(done_label, this);
+			var done_branch_label = wcode.def_fwd_label();
+			wcode.emit_ifnot(done_branch_label, this);
 			this.second.gen(wcode);
-			wcode.emit_jrst(top_label, this);
-			wcode.drop_fwd_label(done_label);
+			wcode.emit_jrst(top_branch_label, this);
+			wcode.drop_fwd_label(done_branch_label);
 
 			// create closure around entire while stmt and invoke
 			vmcode.emit_bclose_call(wcode, this);
