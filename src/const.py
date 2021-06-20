@@ -18,6 +18,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+"""
+string constants (property, class names) for XXL
+"""
+
 # Object properties
 DOC = '__doc'           # currently in Class, Closure, Py[VM]Func
 DEFN = '__defn'         # currently in Closure, Py[VM]Func
@@ -54,7 +58,7 @@ NEW = 'new'
 CREATE = 'create'
 INIT = 'init'
 
-# XXX Object methods (str/len/repr)?
+# XXX Object methods (iter/len/str/repr/to_{str,int,float})?
 
 # Class names
 # XXX more here??
