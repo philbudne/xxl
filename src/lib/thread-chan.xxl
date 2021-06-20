@@ -1,0 +1,286 @@
+// -*-js-*-
+
+// Phil Budne
+// c. May 12, 2021
+
+var __doc = """
+Tiny POSIX-like thread and condition variable implementation,
+plus Go inspired Channels
+""";
+
+// inspired by
+// http://matt.might.net/articles/programming-with-continuations--exceptions-backtracking-search-threads-generators-coroutines/coop-threads.scm
+
+// returns Continuation when first invoked
+// when Continuation invoked, returns value passed to Continuation
+var current_continuation = function () { return(return); };
+
+// always used as argument to Continuation to resume thread:
+var RESUME = "resume";
+
+var TRACE = false;
+var trace = function (...args) {
+    if (TRACE) {
+	__xxl.print(...args);
+    }
+};
+
+////////////////////////////////////////////////////////////////
+// POSIX threadish API
+
+var halt = false;		// set to continuation in run_threads
+var runq = [];
+
+var thread_exit = function () {
+    """
+    Called when start_routine returns; thread may call at any time.
+    """
+    if (runq.len() > 0) {
+	trace("thread_exit; queue len =", runq.len());
+	var next_thread = runq.pop(0);
+	next_thread(RESUME);
+    }
+    trace("thread_exit, queue empty");
+    halt();			// must be called w/ null
+};
+
+var thread_create = function (start_routine) {
+    """
+    Call to create new thread.
+    """
+    var cc = current_continuation();
+    trace("thread_create", cc);
+    if (cc != RESUME) {
+	runq.append(cc);
+    }
+    else {
+	start_routine();
+	thread_exit();
+    }
+};
+
+var run_threads = function () {
+    """
+    Call to run threads; returns when no threads active
+    """
+
+    var cc = current_continuation();
+    trace("run_threads", cc);
+    if (cc) {
+	halt = function () {
+	    trace("halting");
+	    cc(false);
+	};
+	if (runq.len() > 0) {
+	    var next_thread = runq.pop(0);
+	    next_thread(RESUME);
+	}
+    }
+};
+
+////////////////////////////////////////////////////////////////
+
+var CondVar = Class.new({
+    name: "CondVar",
+    doc: """
+	Condition Variable, based on pthread condition variables,
+	(which are based on traditional Unix kernel sleep/wakeup)
+	""",
+    methods: {
+	init: function (this, name) {
+	    """
+	    `name` used for trace output and debug
+	    """
+	    trace("CondVar init", name);
+	    this.threads = [];
+	    this.name = name;	// XXX || error?
+	},
+	wakeup1: function (this) {
+	    """
+	    Wake up one thread currently sleeping on this CV.
+	    Does not yield CPU.
+	    Other threads may run before the newly woken thread.
+	    """
+	    if (this.threads.len() > 0) {
+		runq.append(this.threads.pop(0));
+	    }
+	}, // wakeup1
+	broadcast: function (this) {
+	    """
+	    Broadcast wakeup to all threads currently sleeping on this CV.
+	    Does not yield CPU.
+	    Other threads may run before the newly woken threads.
+	    """
+	    while (this.threads.len() > 0) {
+		runq.append(this.threads.pop());
+	    }
+	}, // broadcast
+	sleep: function (this) {
+	    """
+	    Put the calling thread to sleep on this CV, until woken.
+	    """
+	    trace("CondVar sleep", this.name);
+	    var cc = current_continuation();
+	    trace("CondVar sleep cc", cc, runq);
+	    if (cc != RESUME) {
+		this.threads.append(cc);
+		if (runq.len() > 0) {
+		    var next = runq.pop(0);
+		    trace("CondVar sleep resuming", next);
+		    next(RESUME);
+		}
+		else {
+		    __xxl.error(this.name, "sleep; runq empty");
+		}
+	    }
+	} // wakeup1
+    } // methods
+}); // CondVar
+
+////////////////////////////////////////////////////////////////
+// Goroutines like Channels
+
+var Channel = Class.new({
+    name: "Channel",
+    methods: {
+	init: function (this, name, maxq) {
+	    this.name = name;
+	    this.maxq = maxq || 1;
+	    this.values = [];
+	    this.open = true;
+	    this.get_cv = CondVar.new("chan " + name + " get");
+	    this.put_cv = CondVar.new("chan " + name + " put");
+	},
+	put: function (this, value) {
+	    trace("put", this.name, value);
+	    while (this.open && this.values.len() >= this.maxq) {
+		trace("put_cv.sleep");
+		this.put_cv.sleep();
+	    }
+	    if (!this.open) {
+		trace("put", this.name, "closed");
+		return(false);
+	    }
+	    trace("put appending", value);
+	    this.values.append(value);
+	    trace("put get_cv.wakeup1");
+	    this.get_cv.wakeup1();
+	    return(true);
+	},
+	get: function (this) {
+	    trace("get", this.name);
+	    while (this.open && this.values.len() == 0) {
+		trace("get_cv.sleep");
+		this.get_cv.sleep();
+		trace("get", this.values);
+	    }
+	    if (!this.open && this.values.len() == 0) {
+		return(null);
+	    }
+	    var ret = this.values.pop(0);
+	    trace("get, got", ret, "put_cv wakeup1");
+	    this.put_cv.wakeup1();
+	    return(ret);
+	},
+	close: function (this) {
+	    this.open = false;
+	    this.put_cv.broadcast();
+	    this.get_cv.broadcast(); // ??
+	}
+    }
+});
+
+
+////////////////
+
+if (__modinfo.main) {
+    var test = "chan";
+    var qlen = 1;
+
+    if (__xxl.argv.len() > 0) {
+	__xxl.argv[0].for_each(
+	    function (c) {
+		if (c == 'h')		{ test = "chan"; }
+		else if (c == 'n')	{ test = "count"; }
+		else if (c == 't')	{ TRACE = true; }
+		else if (c == '2')	{ qlen = 2; }
+		else if (c == '3')	{ qlen = 3; }
+	    }
+	); // for_each
+    }
+
+    if (test == "chan") {
+	var ch = Channel.new("ch", qlen);
+
+	// launch producers
+	thread_create(
+	    function () {	// producer
+		__xxl.print("in producer");
+		var p = function (item) {
+		    if (ch.put(item)) {
+			__xxl.print("put", item);
+		    }
+		    else {
+			__xxl.print("put", item, "failed");
+		    }
+		};
+		// XXX want [....].for_each()
+		//		but current for_each bites!
+		p("A");
+		p("B");
+		p("C");
+		p("D");
+		p("E");
+		__xxl.print("producer closing");
+		ch.close();
+	    } // producer
+	); // thread _create
+
+	// launch consumer
+	thread_create(
+	    function () {	// consumer
+		__xxl.print("in consumer");
+		var val;
+		while ((val = ch.get())) {
+		    __xxl.print("got", val);
+		    // test get/put on closed chan:
+		    //ch.close();
+		}
+		__xxl.print("consumer done");
+	    } // consumer 
+	); // thread_create
+
+    }
+    else {				// counter demo
+	var counter = 10;
+	var cv = CondVar.new("cv");
+
+	var demo = function (names) {
+	    names.for_each(
+		function (name) {
+		    thread_create(
+			function () {	// thread body
+			    while (true) {
+				if (counter < 0) {
+				    trace("thread", name, "returning");
+				    return();
+				}
+				__xxl.print("thread", name, "counter", counter);
+				counter -= 1;
+				trace("thread", name, "calling wakeup1");
+				cv.wakeup1();
+				trace("thread", name, "calling sleep");
+				cv.sleep();
+				trace("thread", name, "back from sleep");
+			    } // while
+			} // thunk
+		    ); // thread_create
+		} // for_each function
+	    ); // for_each
+	}; // demo
+
+	demo(["a", "b", "c"]);
+    } // counter demo
+
+    run_threads();
+} // main
