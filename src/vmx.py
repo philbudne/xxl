@@ -233,6 +233,7 @@ class VM:
         #       would need to call restore_frame inside all .invoke methods??
         #       would allow Python callees to use same VM???
         # called from CBClosure.invoke w/ show=False
+        # XXX save self.args for backtraces??
         self.fp = Frame(cb=self.cb, pc=self.pc, scope=self.scope, fp=self.fp,
                         where=self.ir.where, fn=self.ir.fn, # for backtrace
                         show=show
@@ -431,6 +432,7 @@ class LoadInstr(VMInstr1):
 class BinOpInstr(VMInstr1):
     """
     execute (RHS) binary operator for object in AC
+
     pops RHS operand from stack
     sets VM args to [AC, operand]
     inst.value is Python string for operator
@@ -568,7 +570,9 @@ class CallInstr(VMInstr1):
 class ClearArgsInstr(VMInstr0):
     """
     clear vm.args
-    used for calls with spread arguments (...array)
+
+    first instruction for calls with spread arguments (...array)
+    because not all .invoke methods clear vm.args.
     """
     name = "clargs"
 
@@ -689,7 +693,7 @@ class ArgsInstr(VMInstr1):
 
     def args(self):
         """
-        return string for arguments, for docs
+        return list of str for arguments, for docs
         """
         return self.value
 
@@ -704,7 +708,7 @@ class Args2Instr(VMInstr2):
     * for each formal (argument name):
      * pops an actual from vm.args and creates variable
      * creates variable with null value if no actuals remain
-    * creates a List with anything remaining in vm.args
+    * creates a variable w/ List of remaining args (if any) in vm.args
     """
     name = "args2"
 
@@ -724,7 +728,7 @@ class Args2Instr(VMInstr2):
 
     def args(self):
         """
-        return string for arguments, for docs
+        return list of str for arguments, for docs
         """
         return self.v1 + ["..." + self.v2]
 
