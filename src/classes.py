@@ -79,7 +79,9 @@ XXL_DEBUG_BOOTSTRAP = os.getenv('XXL_DEBUG_BOOTSTRAP', None)
 CWD = os.getcwd();              # current working directory
 CWD_SEP = CWD + os.sep
 
-classes_scope = scopes.Scope()  # scope for "classes" internal Module
+root_scope = scopes.Scope()
+
+classes_scope = scopes.Scope(root_scope) # scope for "classes" internal Module
 
 __initialized = False
 
@@ -252,7 +254,8 @@ class CClosure(CCallable):
         super().__init__(Closure)
         self.code = code
         self.scope = scope
-        self.setprop(const.DOC, mkstr(doc or ""))
+        # PLB: I _HATE_ the Python ternary
+        self.setprop(const.DOC, doc and mkstr(doc) or null_value)
 
     def __repr__(self):
         return "<Closure: %s>" % self.defn()
@@ -1984,22 +1987,18 @@ def new_modinfo(main, module, fname, parser_vmx=None):
     if fname is not None:
         mi.setprop(const.MODINFO_FILE, mkstr(fname))
 
-    if not parser_vmx:
-        # XXX _COULD_ choose parser based on source file name!!!
-        #  (could have a file with SUFFIX => VMXFILE mappings)
-        parser_vmx = os.environ.get('XXL_PARSER', 'parser.vmx')
-
-    mi.setprop(const.MODINFO_PARSER_VMX, mkstr(parser_vmx))
+    if parser_vmx:              # bootstrap defaults to __xxl.parser_vmx
+        mi.setprop(const.MODINFO_PARSER_VMX, mkstr(parser_vmx))
 
     return mi
 
 # "where Modules come from"
 # called by:
 #       xxl.py (startup)
-#       xxl__import (__xxl._import function)
+#       xxlobj.py xxl__import (__xxl._import function)
 # XXX should be moduleclass_new?!!
 # XXX take optional bootstrap_vmx arg??
-def new_module(fname, main=False, argv=[], parser_vmx=None):
+def new_module(fname, main=False, parser_vmx=None):
     """
     `fname` is Python str (or None for internal Module)
     `main` is Python True for main program (from command line)
@@ -2017,14 +2016,12 @@ def new_module(fname, main=False, argv=[], parser_vmx=None):
         # XXX Dict indexed by Python str
         return md.value[fname], None # yes; return it, no bootstrap needed
 
-    scope = scopes.Scope(None)  # create root scope for module
+    scope = scopes.Scope(root_scope) # create base scope for module
     mod = CModule(scope)
 
-    init_scope(scope)           # populate scope w/ true/false/...
+    scope.defvar(const.DOC, null_value)
 
     if fname:
-        xxlobj.create_xxl_object(scope, argv) # new __xxl object XXX TEMP
-
         # XXX Dict indexed by Python str
         md.value[fname] = mod   # save as previously loaded
 
@@ -2141,10 +2138,19 @@ def defmodule(name, mod):
 
 classes_module = None           # XXX TEMP?
 
-def classes_init():
+def classes_init(argv, parser_vmx):
     """
-    call once on startup
+    call once on startup; initializae "root" scope, including __xxl object
     """
+
+    # init root_scope
+    for x in ['true', 'false', 'null', 'Class']:
+        root_scope.defvar(x, classes_scope.lookup(x))
+
+    # create __xxl object
+    xxlobj.create_xxl_object(root_scope, argv=argv, parser_vmx=parser_vmx)
+
+
     # UTTERLY VILE: either hide in a "make_internal_module"
     #   or do it more cleanly!!!!
     #   declare classes_module up top???????????
@@ -2154,14 +2160,6 @@ def classes_init():
     # NOTE: below crushes __modinfo!!!??? (do we care???)
     classes_module.props = classes_scope.vars # XXX XXX DOUBLY SO
     defmodule('classes', classes_module)      # XXX __classes?
-
-# called only from new_module.
-def init_scope(iscope):
-    """
-    copy a limited set of types/values to each Module initial Scope `iscope`
-    """
-    for x in ['true', 'false', 'null', 'Class']: # XXX move Class to __xxl?
-        iscope.defvar(x, classes_scope.lookup(x))
 
 # earlier?!!!!!
 __initialized = True        # don't allow _mkXXX any more

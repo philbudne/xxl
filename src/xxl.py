@@ -30,6 +30,7 @@ a small file, hopefully it stays that way!
 
 
 # python libraries:
+import os
 import sys
 
 # XXL:
@@ -87,9 +88,13 @@ file can be .xxl (source) or .vmx (VM code)
 
 fname = argv.pop(0)
 
-classes.classes_init()
+if not parser:
+        # _COULD_ choose parser based on source file name!!!
+        #  (bootstrap could read a file with SUFFIX => VMXFILE mappings)
+        parser = os.environ.get('XXL_PARSER', 'parser.vmx') # XXX lib dir
 
-mod, boot = classes.new_module(fname=fname, argv=argv, main=True,
-                               parser_vmx=parser)
+classes.classes_init(argv=argv, parser_vmx=parser)
+
+mod, boot = classes.new_module(fname=fname, main=True)
 
 vmx.run(boot=boot, scope=mod.scope, stats=stats, trace=trace, xcept=xcept)

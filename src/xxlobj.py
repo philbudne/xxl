@@ -276,7 +276,7 @@ def xxl__import(filename):
 
 # called only from classes.new_module: create XXLOBJ Object
 # XXX move to internal "xxl" module??
-def create_xxl_object(iscope, argv):
+def create_xxl_object(iscope, argv, parser_vmx):
     xxl_obj = __obj_create({})
     iscope.defvar(XXLOBJ, xxl_obj)
 
@@ -291,6 +291,7 @@ def create_xxl_object(iscope, argv):
     xxl_obj.setprop('exit', xxl_exit)            # move to ModInfo??
 
     # functions for parser & bootstrap:
+    xxl_obj.setprop('parser_vmx', classes.mkstr(parser_vmx))
     xxl_obj.setprop('tokenizer', xxl_tokenizer) # TEMP creates token generator
     xxl_obj.setprop('tree', xxl_tree) # TEMP!!!
     xxl_obj.setprop('vtree', xxl_vtree) # TEMP!!!

@@ -1,16 +1,11 @@
 FIX
 ===
-Have LBrace.gen[_closure] return code / call bclose_call in if/then/while stmt??
+Have LBrace.gen[_closure] return List of code
+	call bclose_call in {If,While}.gen
 
 print module??
 	__xxl.print => print.out
 	__xxl.error => print.err
-
-Make a single, global __xxl object (a Module??)
-
-put "Class" in __xxl (avoid clutter in doc.xxl output)
-
-	put Class/true/false/null in a global, super Scope??
 
 Makefile:
 	check generated files (.vmx .md) into "dist" directory (for easy pull)
@@ -66,8 +61,7 @@ __extend_parser
 CLEANUP
 =======
 "make update_parser"?  Have PARSER_VMX out of date message tell you to run it???
-Object "getstr()" method for PyFuncs, or utility function????
-rename System to xxl? __xxl??
+CPObject.getstr() method for PyFuncs, or utility function????
 split Number into Float and Int
 	Have Int initializer take optional radix
 test if implementing VM as chain of if's (on ints)
@@ -166,6 +160,9 @@ Makefile:
 		recurse setting BOOTSTRAP_VMX to bootstrap.vmx.tmp to test??
 
 import:
+	optional bootstrap_vmx file
+	option to ignore __extend_parser
+
 	Make Module.new() do importing?
 	Module.create replaces System._import?
 	Native Module.init() would call Module.create
@@ -174,8 +171,6 @@ import:
 	    optional args (dict?)
 		optional parser_vmx file (set __modinfo.parser)
 		    default parser in __xxl.parser?
-		optional bootstrap_vmx file
-		option to ignore __extend_parser
 	_COULD_ define native code __modinfo.load_vmx (using .assemble)
 	    BUT still need to load bootstrap!!!
 
