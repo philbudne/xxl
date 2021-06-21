@@ -45,7 +45,6 @@ var CoCall = Class.new({
 
 	    // no state check: allow reuse at any time
 	    this._state = 1;
-	    this._exit = exit;
 	    if (this._debug) {
 		__xxl.print("co_start STATE", this._state, ...args);
 	    }
@@ -53,7 +52,13 @@ var CoCall = Class.new({
 	    var r = (func)(this, ...args);
 	    this.co_return(r);
 	},
-	co_call: function (this, value) {
+	co_call: function (this, exit, value) {
+	    """
+	    `value` is returned to the coroutine as the return value of co_yield.
+	    `exit` is a function (Continuation) called when the coroutine
+	    is finished.
+	    """
+	    this._exit = exit;
 	    if (this._debug) {
 		__xxl.print("co_call STATE", this._state, value);
 	    }
@@ -101,7 +106,6 @@ var CoCall = Class.new({
 	    }
 	},
 	co_return: function (this, value) {
-	    __xxl.break();
 	    if (this._debug) {
 		__xxl.print("co_return STATE", this._state, value);
 	    }
@@ -137,9 +141,9 @@ if (__modinfo.main) {		// test/demo
 	// OR outside a function!!!
 	var co = CoCall.new();
 	__xxl.print("co_start returns", co.co_start(return, coroutine, "hello"));
-	__xxl.print("co_call(10) returns", co.co_call(10));
-	__xxl.print("co_call(11) returns", co.co_call(11));
-	__xxl.print("co_call(12) returns", co.co_call(12));
+	__xxl.print("co_call(10) returns", co.co_call(return, 10));
+	__xxl.print("co_call(11) returns", co.co_call(return, 11));
+	__xxl.print("co_call(12) returns", co.co_call(return, 12));
 	__xxl.print("reached end of test");
     };
     __xxl.print("test returned", test()); // co-routine final return value.
