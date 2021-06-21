@@ -2,8 +2,6 @@ var i = 0;
 __xxl.print(i);
 i = i | 1;
 __xxl.print(i);
-i |= 2;
-__xxl.print(i);
 __xxl.print(i & 1);
 __xxl.print(i & 2);
 __xxl.print(i & 3);
