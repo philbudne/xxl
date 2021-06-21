@@ -66,7 +66,7 @@ var collect_class_ops = function (class, prop) {
 
 var mudoc = function(mu, obj) {
     """
-    format obj.__doc
+    mark up obj.__doc
     """
     var doc = obj.__doc;
     mu.p();
@@ -76,6 +76,7 @@ var mudoc = function(mu, obj) {
     // split into lines,
     // strip leading/trailing whitespace from lines,
     // ignoring empty lines, rejoin
+    // apply quoting (eg for HTML entities)
     // XXX honor blank lines as paragraph breaks!!!!
     // XXX don't smoosh ```stuff```!!
     var strip = function (x) { return(mu.quote(x.strip())); };
@@ -87,18 +88,21 @@ var mufunc = function (mu, level, name, func) {
     Markup a function/method.
     `level` is header level, `name` is opr/function name, `func` is Callable.
     """
-    var args = func.__args() || "(?)";
+    var args = func.__args() || "(?)"; // get string for argument names
+    // apply (HTML entity) quoting for operators
     mu.hn(level, mu.code(mu.quote(name), args));
-    var defn = func.__defn() || "?";
+    var defn = func.__defn() || "?"; // get class and definition location
     mu.nappend(mu.i(func.getclass().name, "at", defn));
     mudoc(mu, func);
 };
 
 var muvalue = function (mu, level, name, value) {
+    """
+    mark up a variable with a non-callable value
+    """
     mu.hn(level, mu.code(name));
     mu.nappend(mu.i(value.getclass().name));
     var vstr = ADDR_RE.sub("", value.repr()); // remove " at 0xXXXX"
-    mu.p();
     mu.blockquote(mu.code(mu.quote(vstr)));
 };
 

@@ -75,7 +75,6 @@
 
 #### `name`
 *Str*
-
 > `'Bool'`
 
 ### Unary operators
@@ -211,7 +210,6 @@
 
 #### `name`
 *Str*
-
 > `'BoundMethod'`
 
 ### Unary operators
@@ -332,7 +330,6 @@
 
 #### `name`
 *Str*
-
 > `'Callable'`
 
 ### Unary operators
@@ -468,7 +465,6 @@
 
 #### `name`
 *Str*
-
 > `'Class'`
 
 ### Unary operators
@@ -604,7 +600,6 @@
 
 #### `name`
 *Str*
-
 > `'Closure'`
 
 ### Unary operators
@@ -725,7 +720,6 @@
 
 #### `name`
 *Str*
-
 > `'Continuation'`
 
 ### Unary operators
@@ -911,7 +905,6 @@
 
 #### `name`
 *Str*
-
 > `'Dict'`
 
 ### Unary operators
@@ -1072,7 +1065,6 @@
 
 #### `name`
 *Str*
-
 > `'Iterable'`
 
 ### Unary operators
@@ -1253,7 +1245,6 @@
 
 #### `name`
 *Str*
-
 > `'List'`
 
 ### Unary operators
@@ -1394,7 +1385,6 @@
 
 #### `name`
 *Str*
-
 > `'ModInfo'`
 
 ### Unary operators
@@ -1530,12 +1520,10 @@
 
 #### `modules`
 *Dict*
-
 > `{'classes': <Module>, 'lib/doc.xxl': <Module>, 'parser.vmx': <Module>, 'lib/markup.xxl': <Module>}`
 
 #### `name`
 *Str*
-
 > `'Module'`
 
 ### Unary operators
@@ -1661,7 +1649,6 @@
 
 #### `name`
 *Str*
-
 > `'Null'`
 
 ### Unary operators
@@ -1802,7 +1789,6 @@
 
 #### `name`
 *Str*
-
 > `'Number'`
 
 ### Unary operators
@@ -1983,7 +1969,6 @@
 
 #### `name`
 *Str*
-
 > `'Object'`
 
 ### Unary operators
@@ -2119,7 +2104,6 @@
 
 #### `name`
 *Str*
-
 > `'PClass'`
 
 ### Unary operators
@@ -2240,7 +2224,6 @@
 
 #### `name`
 *Str*
-
 > `'PObject'`
 
 ### Unary operators
@@ -2376,7 +2359,6 @@
 
 #### `name`
 *Str*
-
 > `'PyFunc'`
 
 ### Unary operators
@@ -2537,7 +2519,6 @@
 
 #### `name`
 *Str*
-
 > `'PyIterable'`
 
 ### Unary operators
@@ -2698,7 +2679,6 @@
 
 #### `name`
 *Str*
-
 > `'PyIterator'`
 
 ### Unary operators
@@ -2819,7 +2799,6 @@
 
 #### `name`
 *Str*
-
 > `'PyObject'`
 
 ### Unary operators
@@ -2960,7 +2939,6 @@
 
 #### `name`
 *Str*
-
 > `'PyVMFunc'`
 
 ### Unary operators
@@ -3096,7 +3074,6 @@
 
 #### `name`
 *Str*
-
 > `'SingletonClass'`
 
 ### Unary operators
@@ -3320,7 +3297,6 @@
 
 #### `name`
 *Str*
-
 > `'Str'`
 
 ### Unary operators
@@ -3409,19 +3385,16 @@
 
 ### `false`
 *Bool*
-
 > `false`
 
 
 ### `null`
 *Null*
-
 > `null`
 
 
 ### `true`
 *Bool*
-
 > `true`
 
 

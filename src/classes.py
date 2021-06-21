@@ -1171,7 +1171,7 @@ PObject.setprop(const.BINOPS, _mkdict({
 def callable__args(this):
     """
     currently private/hidden (to create docs)
-    returns formatted string for args (as if a native function)
+    returns formatted string for args (as if a native function) with parens
     """
     return mkstr("(%s)" % ", ".join(this.args()))
 
