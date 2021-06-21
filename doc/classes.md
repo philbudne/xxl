@@ -75,7 +75,7 @@
 
 #### `name`
 
-> Value: `Bool`
+> Str: `Bool`
 
 ### Unary operators
 
@@ -210,7 +210,7 @@
 
 #### `name`
 
-> Value: `BoundMethod`
+> Str: `BoundMethod`
 
 ### Unary operators
 
@@ -330,7 +330,7 @@
 
 #### `name`
 
-> Value: `Callable`
+> Str: `Callable`
 
 ### Unary operators
 
@@ -465,7 +465,7 @@
 
 #### `name`
 
-> Value: `Class`
+> Str: `Class`
 
 ### Unary operators
 
@@ -600,7 +600,7 @@
 
 #### `name`
 
-> Value: `Closure`
+> Str: `Closure`
 
 ### Unary operators
 
@@ -720,7 +720,7 @@
 
 #### `name`
 
-> Value: `Continuation`
+> Str: `Continuation`
 
 ### Unary operators
 
@@ -905,7 +905,7 @@
 
 #### `name`
 
-> Value: `Dict`
+> Str: `Dict`
 
 ### Unary operators
 
@@ -1065,7 +1065,7 @@
 
 #### `name`
 
-> Value: `Iterable`
+> Str: `Iterable`
 
 ### Unary operators
 
@@ -1245,7 +1245,7 @@
 
 #### `name`
 
-> Value: `List`
+> Str: `List`
 
 ### Unary operators
 
@@ -1385,7 +1385,7 @@
 
 #### `name`
 
-> Value: `ModInfo`
+> Str: `ModInfo`
 
 ### Unary operators
 
@@ -1520,11 +1520,11 @@
 
 #### `modules`
 
-> Value: `{'classes': <Module>, 'lib/doc.xxl': <Module>, 'parser.vmx': <Module>, 'lib/markup.xxl': <Module>}`
+> Str: `{'classes': <Module>, 'lib/doc.xxl': <Module>, 'parser.vmx': <Module>, 'lib/markup.xxl': <Module>}`
 
 #### `name`
 
-> Value: `Module`
+> Str: `Module`
 
 ### Unary operators
 
@@ -1649,7 +1649,7 @@
 
 #### `name`
 
-> Value: `Null`
+> Str: `Null`
 
 ### Unary operators
 
@@ -1789,7 +1789,7 @@
 
 #### `name`
 
-> Value: `Number`
+> Str: `Number`
 
 ### Unary operators
 
@@ -1969,7 +1969,7 @@
 
 #### `name`
 
-> Value: `Object`
+> Str: `Object`
 
 ### Unary operators
 
@@ -2104,7 +2104,7 @@
 
 #### `name`
 
-> Value: `PClass`
+> Str: `PClass`
 
 ### Unary operators
 
@@ -2224,7 +2224,7 @@
 
 #### `name`
 
-> Value: `PObject`
+> Str: `PObject`
 
 ### Unary operators
 
@@ -2359,7 +2359,7 @@
 
 #### `name`
 
-> Value: `PyFunc`
+> Str: `PyFunc`
 
 ### Unary operators
 
@@ -2519,7 +2519,7 @@
 
 #### `name`
 
-> Value: `PyIterable`
+> Str: `PyIterable`
 
 ### Unary operators
 
@@ -2679,7 +2679,7 @@
 
 #### `name`
 
-> Value: `PyIterator`
+> Str: `PyIterator`
 
 ### Unary operators
 
@@ -2799,7 +2799,7 @@
 
 #### `name`
 
-> Value: `PyObject`
+> Str: `PyObject`
 
 ### Unary operators
 
@@ -2939,7 +2939,7 @@
 
 #### `name`
 
-> Value: `PyVMFunc`
+> Str: `PyVMFunc`
 
 ### Unary operators
 
@@ -3074,7 +3074,7 @@
 
 #### `name`
 
-> Value: `SingletonClass`
+> Str: `SingletonClass`
 
 ### Unary operators
 
@@ -3187,6 +3187,7 @@
 
 #### `join (this, iterable)`
 *Closure at bootstrap.xxl:284:37*
+
 #### `len (this)`
 *PyFunc at classes.py:1081 (pobj_len)*
 
@@ -3296,7 +3297,7 @@
 
 #### `name`
 
-> Value: `Str`
+> Str: `Str`
 
 ### Unary operators
 
@@ -3384,17 +3385,17 @@
 
 ### `false`
 
-> Value: `false`
+> Str: `false`
 
 
 ### `null`
 
-> Value: `null`
+> Str: `null`
 
 
 ### `true`
 
-> Value: `true`
+> Str: `true`
 
 
 ---

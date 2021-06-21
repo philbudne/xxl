@@ -69,10 +69,10 @@ var mudoc = function(mu, obj) {
     format obj.__doc
     """
     var doc = obj.__doc;
+    mu.p();
     if (!doc) {
 	return();
     }
-    mu.p();
     // split into lines,
     // strip leading/trailing whitespace from lines,
     // ignoring empty lines, rejoin
@@ -98,7 +98,8 @@ var muvalue = function (mu, level, name, value) {
     mu.hn(level, mu.code(name));
     mu.p();
     value = ADDR_RE.sub("", value.to_str()); // remove " at 0xXXXX"
-    mu.blockquote("Value:", mu.code(mu.quote(value)));
+    var cname = value.getclass().name || "Value";
+    mu.blockquote(cname + ":", mu.code(mu.quote(value)));
 };
 
 var muclass = function (mu, class) {
