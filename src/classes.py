@@ -924,7 +924,7 @@ def find_op(obj, optype, op):
 @pyfunc
 def obj_get_in_supers(this, prop):
     """
-    Object ".." operator; for calling superclass methods
+    Object `..` operator; for calling superclass methods
     looks for `prop` as property or method of superclasses of `this`
     """
     return find_in_supers(this, prop.value) # XXX check for CPObject
