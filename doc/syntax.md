@@ -2,6 +2,7 @@
 
 * Largely adopted wholesale from Doug Crockford's original parser:
         http://crockford.com/javascript/tdop/tdop.html
+	(a subset of the "good parts" of JavaScript).
 
 * ALL flow control statements should take a { block },
         except "else", which can take another "if"
@@ -195,18 +196,27 @@ New instances of a class are created with MyClass.new(....),
                 with the new instance (typ. named "this" as the first arg)
         the superclass init method can be called with "this..init(....)"
 
-The Object "System" (which is not a class) contains the following members:
-        types: an object with all predefined classes as properties
-        parser: contains a preloaded copy the (compiled) parser
+The Object "__xxl" contains the following members:
         import: a function to import another file (namespace returned as Object)
         pyimport: a function to import a Python module as a PyObj
                 "." returns a wrapped value (Bool, Str, Number)
                 or another PyObj.  PyObj's are callable.
-        temporary(?) debug functions: break, print, error, print_repr
         exit: a function, takes an int
         argv: a list of strings
+        uerror: a function, takes a string, causes fatal error
+        temporary(?) debug functions:
+                break: break to Python debugger
+                print: convert arguments to Str, concatenate and print to stdout
+                error: convert arguments to Str, concatenate and print to stderr
+                backtrace: print xxl return stack to stderr
+        (plus a few more undocumented functions, for internal use)
+
+Base classes are available via `var classes = import("classes");`
 
 All "{" STMT... "}" code blocks have their own variable scope
         and are implemented as closures.
 
-Variables MUST be declared using "var", or as function arguments.
+Variables MUST be declared using "var", "const", or as function arguments.
+
+NOTE! Enforcement of "const" is currently implemented only in the parser,
+        and const values in other Modules can be changed!!

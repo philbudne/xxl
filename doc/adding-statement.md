@@ -45,7 +45,7 @@ Example defining a C-style "do-while" statement to XXL:
 
     var i = 4;
     do {
-        System.print(i);
+        __xxl.print(i);
         i -= 1;
     } while (i > 0);
 ```

@@ -1,24 +1,46 @@
 ## Adding an operator
 
-Example defining an infix operator:
+Example defining an infix operator by subclassing:
 
 ```
-    var math = System.pyimport("math");
+    var math = __xxl.pyimport("math");
+    var classes = __xxl.import("classes");
 
     var p = __modinfo.parser;	// Parser object
 
-    // add operator, at precedence higher than * and /
-    p.add_infix("Exp", "^", true, 65);
+    // add infix operator, right associative, precedence higher than * and /
+    p.add_infix("Exp", "^", true, p.PMUL + 4);
 
-    // add binary operator method to Number type:
-    System.types.Number.__binops["^"] = math.pow;
+    // Subclass Number, adding operator, and use from here on out
+    // (previously created values/results will NOT get new defn):
+    classes.Number = Class.new({
+	name: "MyNumber",
+	supers: [classes.Number],
+	binops: {
+	    "^": math.pow
+	}
+    });
 
     // first test:
-    System.print(2^3);
+    __xxl.print(2^3);
 
     // higher precedence than division:
-    System.print(2^3/2);
+    __xxl.print(2^3/2);
 
     // right associative:
-    System.print(2^2^3);
+    __xxl.print(2^2^3);
 ```
+
+A somewhat blunter approach is to modify the existing `Number` class,
+adding the new binary operator:
+
+```
+    ...
+    // add binary operator method to Number type:
+   classes.Number.__binops["^"] = math.pow;
+   ...
+```
+
+NOTE!  The parser uses `precedence-1` as right binding power for right
+associative binary operators, so even `add_infix` precedence values
+are advised!

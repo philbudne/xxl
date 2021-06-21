@@ -3,8 +3,8 @@
 Example of importing Python modules:
 
 ```
-    var io = System.pyimport("io");
-    var sys = System.pyimport("sys");
+    var io = __xxl.pyimport("io");
+    var sys = __xxl.pyimport("sys");
     var f = io.open('something.txt');
 
     var line;
