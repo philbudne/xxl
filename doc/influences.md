@@ -26,6 +26,7 @@ original misfeatures.
 * explicit "self" argument (no mystery about where value came from)
 * bound methods (no magic regarding how methods are called)
 * full unicode characters (no UTF-16 surrogacy)
+* self-documenting (with "docstrings")
 
 ### Dislikes about Python:
 * yes, spacing IS sufficent,
