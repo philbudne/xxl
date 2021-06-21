@@ -1,12 +1,5 @@
 FIX
 ===
-Have LBrace.gen[_closure] return List of code
-	call bclose_call in {If,While}.gen
-
-print module??
-	__xxl.print => print.out
-	__xxl.error => print.err
-
 Makefile:
 	check generated files (.vmx .md) into "dist" directory (for easy pull)
 		copy .vmx from dist directory (to lib directory????)
@@ -189,3 +182,10 @@ bootstrap.md -- describe adding operator;
 straighten out .py file dependency graph?
 
 default Iterable.iter method w/ uerror (not overridden)
+
+Have LBrace.gen[_closure] return List of code
+	call bclose_call in {If,While}.gen
+
+print module??
+	__xxl.print => print.out
+	__xxl.error => print.err
