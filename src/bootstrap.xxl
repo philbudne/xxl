@@ -11,7 +11,7 @@ if (__modinfo.booting) {
 }
 __modinfo.booting = true;
 
-__xxl.import = function (name) {
+__xxl.import = function (name) { // XXX take optional args (as Dict?)
     """
     Import a source file, VM instruction (.vmx) file, or internal module.
     Returns Module.
@@ -333,9 +333,8 @@ if (true) {			// all modules-- hide temp variables
 }
 
 if (__modinfo.debug_bootstrap) { // from environment XXL_DEBUG_BOOTSTRAP
-    __xxl.error("bootstrap __modinfo.module", __modinfo.module);
-    __xxl.error("bootstrap __modinfo.main", __modinfo.main);
-    __xxl.error("bootstrap __modinfo.file", __modinfo.file);
+    __xxl.error("bootstrap", __modinfo.file, "__modinfo.module", __modinfo.module);
+    __xxl.error("bootstrap", __modinfo.file, "__modinfo.main", __modinfo.main);
 }
 
 if (__modinfo.file) {
@@ -343,16 +342,18 @@ if (__modinfo.file) {
     if (file.ends_with(".vmx")) {
 	__modinfo.load_vmx(file)(); // load vmx as Closure and invoke
 	if (__modinfo.debug_bootstrap) {
-	    __xxl.error("bootstrap vmxfile", file, "finished");
+	    __xxl.error("bootstrap", file, "load_vmx finished");
 	}
     } // .vmx
     else {
-	var parser_vmx = __modinfo.parser_vmx; // for import
+	var parser_vmx = __modinfo.parser_vmx || __xxl.parser_vmx;
 	if (__modinfo.debug_bootstrap) {
-	    __xxl.error("bootstrap parser_vmx", parser_vmx);
+	    __xxl.error("bootstrap", file, "__modinfo.parser_vmx", __modinfo.parser_vmx);
+	    __xxl.error("bootstrap", file, "__xxl.parser_vmx", __xxl.parser_vmx);
+	    __xxl.error("bootstrap", file, "parser_vmx", parser_vmx);
 	}
 	var pm = __xxl.import(parser_vmx); // parser module
-	var p = pm.Parser.new();	// Parser instance
+	var p = pm.Parser.new();	// make new Parser instance
 	__modinfo.parser = p;	// make visible to parser extensions
 
 	p.start_parse(file);
@@ -367,6 +368,9 @@ if (__modinfo.file) {
 
 	    // generate Closure in module initial scope and invoke
 	    __modinfo.assemble(insts, file)();
+	}
+	if (__modinfo.debug_bootstrap) {
+	    __xxl.error("bootstrap", file, "parse/execute finished");
 	}
     } // not .vmx
 } // if (__modinfo.file)
