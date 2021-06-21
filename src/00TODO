@@ -1,14 +1,16 @@
 FIX
 ===
-XXX don't automatically generate "bclose_call" for blocks
-	(do it in the Stmt.gen method)???
+Have LBrace.gen[_closure] return code / call bclose_call in if/then/while stmt??
 
 print module??
 	__xxl.print => print.out
 	__xxl.error => print.err
 
 Make a single, global __xxl object (a Module??)
-put "Class" in __xxl??
+
+put "Class" in __xxl (avoid clutter in doc.xxl output)
+
+	put Class/true/false/null in a global, super Scope??
 
 Makefile:
 	check generated files (.vmx .md) into "dist" directory (for easy pull)
