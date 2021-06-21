@@ -234,7 +234,6 @@ def obj2python_json(x):
 
         # assume here with AST "Symbol" node; turn into JSON list
         r = []
-        print(x)
         for attr in ['where', 'arity', 'value']:
             r.append(clean1(x.getprop(attr)))
         for attr in ['first', 'second', 'third']:
