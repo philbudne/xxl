@@ -2032,8 +2032,8 @@ def new_module(fname, main=False, parser_vmx=None):
     if fname is None:           # internal module?
         return mod, None
 
-    # XXX take as optional argument??
-    bootstrap_vmx = os.environ.get('XXL_BOOTSTRAP', 'bootstrap.vmx')
+    bootstrap_vmx = xxlobj.find_in_lib_path(os.environ.get('XXL_BOOTSTRAP',
+                                                           'bootstrap.vmx'))
 
     # XXX handle Exceptions for I/O, bad JSON, bad instructions
     code = vmx.load_vm_json(bootstrap_vmx, mod.scope)

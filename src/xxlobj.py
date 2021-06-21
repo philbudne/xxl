@@ -23,7 +23,7 @@
 (was once named "System")
 """
 
-import os                       # os.environ
+import os                       # os.getenv, os.path
 import sys                      # sys.exit
 import json
 import importlib                # for pyimport
@@ -37,12 +37,6 @@ import vmx
 XXLOBJ = '__xxl'
 
 DEBUG_IMPORT = False
-
-# should be used ONLY to create items to set up "__xxl" object
-# ALSO used for:
-#       tokenizer returns -- should return Token??
-def __obj_create(props):        # TEMP??
-    return classes._mkobj(props)
 
 ################################################################
 # functions
@@ -82,8 +76,58 @@ def xxl_uerror(msg):
 
 ################
 
-# XXX replace with native code
-# (need file I/O; use pyimport??)
+XXL_LIB_PATH = os.getenv('XXL_LIB_PATH',  const.XXL_LIB_PATH)\
+                 .split(os.path.pathsep)
+
+DEBUG_LIB_PATH = False
+
+if DEBUG_LIB_PATH:
+    print('XXL_LIB_PATH', XXL_LIB_PATH)
+
+def find_in_lib_path(fname, suffixes=[]):
+    def trydir(dir):
+        if dir:
+            path = os.path.join(dir,fname)
+        else:
+            path = fname
+        if DEBUG_LIB_PATH:
+            print('try', path)
+        if os.path.exists(path):
+            if DEBUG_LIB_PATH:
+                print('found', path)
+            return path
+        for suffix in suffixes:
+            p2 = path + suffix
+            if DEBUG_LIB_PATH:
+                print('try', p2)
+            if os.path.exits(p2):
+                if DEBUG_LIB_PATH:
+                    print('found', p2)
+                return p2
+        return None
+
+    p = trydir(None)
+    for dir in XXL_LIB_PATH:
+        p = trydir(dir)
+        if p:
+            return p
+
+    return fname                # fail on open attempt
+
+@classes.pyfunc
+def xxl__find_in_lib_path(fname, suffixes=None):
+    """
+    return full path of file in current dir, or in XXL_LIB_PATH
+    """
+    if suffixes:
+        suff2 = [x.value for x in suffixes.value] # XXX unwrap?
+    else:
+        suff2 = []
+    return classes.mkstr(find_in_lib_path(fname.value, suff2))
+
+################
+
+# PLB: wrote a native replacement, but it's slooooow
 
 @classes.pyfunc
 def xxl_tokenizer(filename, prefix, suffix):
@@ -92,12 +136,7 @@ def xxl_tokenizer(filename, prefix, suffix):
     returns Objects, and then null
     """
     import jslex
-    # XXX assert(isinstance(filename, classes.CPObject))??
-    if isstr(filename): # XXX XXX here from parser.xxl?
-        print("XXX TEMP xxl_tokenizer got str", filename)
-        fnstr = filename
-    else:
-        fnstr = filename.value # XXX getstr()?
+    fnstr = filename.value # XXX getstr()?
     pstr = prefix.value    # XXX getstr()?
     sstr = suffix.value    # XXX getstr()?
     generator = jslex.tokenize(open(fnstr), pstr, sstr)
@@ -117,7 +156,7 @@ def xxl_tokenizer(filename, prefix, suffix):
                 v = classes.mknumber(t.value)
             else:
                 v = classes.mkstr(t.value)
-            return __obj_create({ # XXX create a Token
+            return classes._mkobj({ # XXX create a Token
                 'type': classes.mkstr(t.type_),
                 'value': v,
                 'where': classes.mkstr(where)
@@ -193,6 +232,8 @@ def trim_where(code, fname):
             if instr[1] in vmx.INST2CODE:
                 helper(instr[2])
     helper(code)
+
+################
 
 @classes.pyfunc
 def xxl_vtree(t, fname=classes.null_value):
@@ -277,7 +318,7 @@ def xxl__import(filename):
 # called only from classes.new_module: create XXLOBJ Object
 # XXX move to internal "xxl" module??
 def create_xxl_object(iscope, argv, parser_vmx):
-    xxl_obj = __obj_create({})
+    xxl_obj = classes._mkobj({}) # XXX
     iscope.defvar(XXLOBJ, xxl_obj)
 
     xxl_obj.setprop('uerror', xxl_uerror) # fatal error w/ backtrace
@@ -295,6 +336,7 @@ def create_xxl_object(iscope, argv, parser_vmx):
     xxl_obj.setprop('tokenizer', xxl_tokenizer) # TEMP creates token generator
     xxl_obj.setprop('tree', xxl_tree) # TEMP!!!
     xxl_obj.setprop('vtree', xxl_vtree) # TEMP!!!
+    xxl_obj.setprop('_find_in_lib_path', xxl__find_in_lib_path)
 
     # external modules:
     xxl_obj.setprop('_import', xxl__import) # import source module

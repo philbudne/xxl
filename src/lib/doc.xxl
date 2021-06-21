@@ -200,7 +200,7 @@ var mumodule = function (mu, module_name) {
 };
 
 if (__modinfo.main) {
-    var markup = __xxl.import("lib/markup.xxl"); // XXX need search path!
+    var markup = __xxl.import("markup.xxl");
     var markup_class = markup.MarkDown;
     var i = 0;
     if (__xxl.argv.len() > i && __xxl.argv[i] == "--html") {

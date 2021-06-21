@@ -16,7 +16,8 @@ __xxl.import = function (name) { // XXX take optional args (as Dict?)
     Import a source file, VM instruction (.vmx) file, or internal module.
     Returns Module.
     """
-    var rets = __xxl._import(name);
+    // _find_in_lib_path takes optional list of suffixes to try
+    var rets = __xxl._import(__xxl._find_in_lib_path(name));
     var mod  = rets[0];	// Module
     var boot = rets[1];	// Closure for bootstrap.vmx (first time only)
 
@@ -345,7 +346,9 @@ if (__modinfo.debug_bootstrap) { // from environment XXL_DEBUG_BOOTSTRAP
 }
 
 if (__modinfo.file) {
+    // import should have already called __xxl._find_in_lib_path
     var file = __modinfo.file;
+
     if (file.ends_with(".vmx")) {
 	__modinfo.load_vmx(file)(); // load vmx as Closure and invoke
 	if (__modinfo.debug_bootstrap) {

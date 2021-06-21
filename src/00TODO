@@ -7,9 +7,8 @@ Makefile:
 	ditto for bootstrap.vmx!!!
 
 lib dir
-	generate .md files
-	run as tests, generate index.md file?
-	XXL_LIB_PATH
+	generate .md files, index.md file??
+	run as tests??
 	do-while.xxl
 	nullish.xxl?
 
