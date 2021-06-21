@@ -79,3 +79,15 @@ __xxl.print("ii.sorted");
 __xxl.print(",".join(ii.sorted()));
 __xxl.print("ii.sorted(true)");
 __xxl.print(",".join(ii.sorted(true)));
+
+////////////////
+
+__xxl.print("====");
+var j = function (i) {
+    // test __join (requires PyIterable), and List constructor
+    __xxl.print(",".__join(i), classes.List.new(i));
+};
+
+j(["l", "i", "s", "t"]);
+j({"d":1, "i":2, "c":3, "t":4}); // depends on ordered dict
+j("str");

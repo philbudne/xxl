@@ -31,3 +31,7 @@ MyIterable.iter
 ii.sorted(true)
 MyIterable.iter
 3,2,1
+====
+l,i,s,t ['l', 'i', 's', 't']
+d,i,c,t ['d', 'i', 'c', 't']
+s,t,r ['s', 't', 'r']

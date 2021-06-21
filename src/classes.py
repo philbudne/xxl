@@ -1663,10 +1663,8 @@ def str__join(this, arg):
     The string whose method is called is inserted in between each given string.
     The result is returned as a new string.
     """
-    # XXX check arg is List (or Dict) of Str!
-    # XXX XXX should allow an Iterable
     return _new_pobj(this.getclass(),
-                     this.value.join([x.value for x in arg.value]))
+                     this.value.join(unwrap(arg)))
 
 @pyfunc
 def str_ord(this):
@@ -1838,7 +1836,7 @@ def unwrap(x):
         if isinstance(x, list): # XXX handle any iterable?
             return [unwrap(y) for y in x]
         elif isinstance(x, dict): # XXX handle any mapping?
-            return {key: unwrap(val) for key, val in x.items()}
+            return {key: unwrap(val) for key, val in x.items()} # keys Python
         return x
     # XXX complain??!!!
     return x
