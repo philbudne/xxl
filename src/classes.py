@@ -188,6 +188,12 @@ class CPObject(CObject):
 ################
 
 class CCallable(CObject):
+    """
+    Base class for directly callable CObjects.
+    """
+    def invoke(self, vm):
+        raise Exception("invoke not overridden")
+
     def args(self):
         return ["<FIXME1>"]     # XXX
 
@@ -274,7 +280,7 @@ class CBClosure(CClosure):
     (unless flow control implemented by passing block closure pointers)
     """
     def __repr__(self):
-        return "<CBClosure: %s>" % self.defn()
+        return "<BClosure: %s>" % self.defn()
         
     def invoke(self, vm):
         vm.save_frame(False)    # show=False
@@ -351,6 +357,9 @@ class CPyFunc(CCallable):
         raise Exception("Attempt to call %s" % self)
 
     def args(self):
+        """
+        For documentation: return Python list of str of arg names
+        """
         import inspect
         fas = inspect.getfullargspec(self.func)
         args = list(fas.args)
@@ -1134,11 +1143,16 @@ def pobj_differ(l, r):
     rv = r.value
     return mkbool(lv is not rv)
 
+@pyfunc
+def pobj__format(this, fmt):
+    return mkstr(format(this.value, fmt.value)) # XXX fmt.getstr()
+
 PObject.setprop(const.METHODS, _mkdict({
     'repr': pobj_repr,
     'reprx': pobj_reprx,
     const.INIT: pobj_init,
-    '__init0': pobj__init0
+    '__init0': pobj__init0,
+    '__format': pobj__format
 }))
 
 PObject.setprop(const.BINOPS, _mkdict({
@@ -1234,7 +1248,6 @@ PyIterable.setprop(const.METHODS, _mkdict({
     'iter': pyiterable_iter,
     'reversed': pyiterable_reversed,
     'sorted': pyiterable_sorted
-#   'to_str': pobj_reprx
 }))
 
 
