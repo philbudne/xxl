@@ -74,8 +74,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `Bool`
+> `'Bool'`
 
 ### Unary operators
 
@@ -209,8 +210,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `BoundMethod`
+> `'BoundMethod'`
 
 ### Unary operators
 
@@ -329,8 +331,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `Callable`
+> `'Callable'`
 
 ### Unary operators
 
@@ -464,8 +467,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `Class`
+> `'Class'`
 
 ### Unary operators
 
@@ -599,8 +603,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `Closure`
+> `'Closure'`
 
 ### Unary operators
 
@@ -719,8 +724,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `Continuation`
+> `'Continuation'`
 
 ### Unary operators
 
@@ -904,8 +910,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `Dict`
+> `'Dict'`
 
 ### Unary operators
 
@@ -1064,8 +1071,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `Iterable`
+> `'Iterable'`
 
 ### Unary operators
 
@@ -1244,8 +1252,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `List`
+> `'List'`
 
 ### Unary operators
 
@@ -1384,8 +1393,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `ModInfo`
+> `'ModInfo'`
 
 ### Unary operators
 
@@ -1519,12 +1529,14 @@
 ### Members
 
 #### `modules`
+*Dict*
 
-> Str: `{'classes': <Module>, 'lib/doc.xxl': <Module>, 'parser.vmx': <Module>, 'lib/markup.xxl': <Module>}`
+> `{'classes': <Module>, 'lib/doc.xxl': <Module>, 'parser.vmx': <Module>, 'lib/markup.xxl': <Module>}`
 
 #### `name`
+*Str*
 
-> Str: `Module`
+> `'Module'`
 
 ### Unary operators
 
@@ -1648,8 +1660,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `Null`
+> `'Null'`
 
 ### Unary operators
 
@@ -1788,8 +1801,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `Number`
+> `'Number'`
 
 ### Unary operators
 
@@ -1968,8 +1982,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `Object`
+> `'Object'`
 
 ### Unary operators
 
@@ -2103,8 +2118,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `PClass`
+> `'PClass'`
 
 ### Unary operators
 
@@ -2223,8 +2239,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `PObject`
+> `'PObject'`
 
 ### Unary operators
 
@@ -2358,8 +2375,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `PyFunc`
+> `'PyFunc'`
 
 ### Unary operators
 
@@ -2518,8 +2536,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `PyIterable`
+> `'PyIterable'`
 
 ### Unary operators
 
@@ -2678,8 +2697,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `PyIterator`
+> `'PyIterator'`
 
 ### Unary operators
 
@@ -2798,8 +2818,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `PyObject`
+> `'PyObject'`
 
 ### Unary operators
 
@@ -2938,8 +2959,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `PyVMFunc`
+> `'PyVMFunc'`
 
 ### Unary operators
 
@@ -3073,8 +3095,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `SingletonClass`
+> `'SingletonClass'`
 
 ### Unary operators
 
@@ -3296,8 +3319,9 @@
 ### Members
 
 #### `name`
+*Str*
 
-> Str: `Str`
+> `'Str'`
 
 ### Unary operators
 
@@ -3384,18 +3408,21 @@
 ## Variables
 
 ### `false`
+*Bool*
 
-> Str: `false`
+> `false`
 
 
 ### `null`
+*Null*
 
-> Str: `null`
+> `null`
 
 
 ### `true`
+*Bool*
 
-> Str: `true`
+> `true`
 
 
 ---

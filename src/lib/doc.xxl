@@ -96,10 +96,10 @@ var mufunc = function (mu, level, name, func) {
 
 var muvalue = function (mu, level, name, value) {
     mu.hn(level, mu.code(name));
+    mu.nappend(mu.i(value.getclass().name));
+    var vstr = ADDR_RE.sub("", value.repr()); // remove " at 0xXXXX"
     mu.p();
-    value = ADDR_RE.sub("", value.to_str()); // remove " at 0xXXXX"
-    var cname = value.getclass().name || "Value";
-    mu.blockquote(cname + ":", mu.code(mu.quote(value)));
+    mu.blockquote(mu.code(mu.quote(vstr)));
 };
 
 var muclass = function (mu, class) {
