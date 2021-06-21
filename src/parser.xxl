@@ -1031,7 +1031,7 @@ var Parser = Class.new({
 			this.arity = "binary";
 			this.first = left;
 			this.second = a; // actuals
-			this.third = spread;
+			this.third = spread; // bool: spread args present
 			// removed check that function is a variable
 			return(this);
 		    }, // led
