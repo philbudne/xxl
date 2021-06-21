@@ -52,7 +52,7 @@
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:1795 (bool_str)*
+*PyFunc at classes.py:1793 (bool_str)*
 
 > return Str representation: "true" or "false"
 
@@ -1317,7 +1317,7 @@
 ### Methods
 
 #### `assemble (this, tree, srcfile)`
-*PyFunc at classes.py:2051 (modinfo_assemble)*
+*PyFunc at classes.py:2049 (modinfo_assemble)*
 
 > Assemble List of Lists representing VM code. `tree`: List of Lists. `srcfile`: source of code (for output only). Returns Closure in __modinfo.module top level scope.
 
@@ -1347,7 +1347,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `load_vmx (this, fname)`
-*PyFunc at classes.py:2041 (modinfo_load_vmx)*
+*PyFunc at classes.py:2039 (modinfo_load_vmx)*
 
 > Load compiled `.vmx` file; Returns Closure in __modinfo.module top level scope.
 
@@ -1626,7 +1626,7 @@
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:1769 (null_str)*
+*PyFunc at classes.py:1767 (null_str)*
 
 > to_string/repr method for Null Class: returns "null"
 
@@ -1671,7 +1671,7 @@
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 #### `( (this, ...args)`
-*PyFunc at classes.py:1776 (null_call)*
+*PyFunc at classes.py:1774 (null_call)*
 
 > `(` method for `null` value (fatal error) commonly happens when a bad method name is used, so output a "helpful" message.
 
@@ -2616,7 +2616,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `iter (this)`
-*PyFunc at classes.py:1900 (pyiterator_iter)*
+*PyFunc at classes.py:1898 (pyiterator_iter)*
 
 > Returns `this.` https://docs.python.org/3/library/stdtypes.html#typeiter says an iterator should have an __iter__ method.
 
@@ -2631,7 +2631,7 @@
 > Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).
 
 #### `next (this, finished_continuation)`
-*PyFunc at classes.py:1910 (pyiterator_next)*
+*PyFunc at classes.py:1908 (pyiterator_next)*
 
 > `finished` should be a CContinuation (eg; block leave label or "return") to call when iterator exhausted
 
@@ -2766,7 +2766,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `props (this)`
-*PyFunc at classes.py:1863 (pyobj_props)*
+*PyFunc at classes.py:1861 (pyobj_props)*
 
 > return dir() of wrapped Python object
 
@@ -2821,12 +2821,12 @@
 > Test if `l` and `r` refer to different Objects
 
 #### `( (this, ...args)`
-*PyFunc at classes.py:1878 (pyobj_call)*
+*PyFunc at classes.py:1876 (pyobj_call)*
 
 > 
 
 #### `. (l, r)`
-*PyFunc at classes.py:1846 (pyobj_getprop)*
+*PyFunc at classes.py:1844 (pyobj_getprop)*
 
 > PyObject `.` binop -- proxies to Python object getattr
 
@@ -2846,7 +2846,7 @@
 > Test if `l` and `r` refer to the same Object
 
 #### `[ (l, r)`
-*PyFunc at classes.py:1870 (pyobj_getitem)*
+*PyFunc at classes.py:1868 (pyobj_getitem)*
 
 > PyObject `[` binop
 
@@ -3136,7 +3136,7 @@
 ### Methods
 
 #### `chr (i)`
-*PyFunc at classes.py:1732 (str_chr)*
+*PyFunc at classes.py:1730 (str_chr)*
 
 > Return a Unicode string of one character with ordinal i; 0 <= i <= 0x10ffff
 
@@ -3211,7 +3211,7 @@
 > Str Class new (static) method; calls arg.to_str method
 
 #### `ord (this)`
-*PyFunc at classes.py:1671 (str_ord)*
+*PyFunc at classes.py:1669 (str_ord)*
 
 > Return the Unicode code point for a one-character string `this`
 
@@ -3266,32 +3266,32 @@
 > Return a List of the words in the string, using sep as the delimiter string (default to `null` -- any whitespace). Limit to `limit` return values (defaults to -1 -- no limit)
 
 #### `starts_with (this, pref)`
-*PyFunc at classes.py:1681 (str_starts_with)*
+*PyFunc at classes.py:1679 (str_starts_with)*
 
 > Return `true` if `this` starts with prefix `pref, `false` otherwise.
 
 #### `strip (this)`
-*PyFunc at classes.py:1695 (str_strip)*
+*PyFunc at classes.py:1693 (str_strip)*
 
 > Return a copy of the string with leading and trailing whitespace removed.
 
 #### `to_float (this)`
-*PyFunc at classes.py:1702 (str_to_float)*
+*PyFunc at classes.py:1700 (str_to_float)*
 
 > Convert string to a floating point Number
 
 #### `to_int (this, base)`
-*PyFunc at classes.py:1709 (str_to_int)*
+*PyFunc at classes.py:1707 (str_to_int)*
 
 > Convert string to integer Number `base` defaults to zero (accept 0xXXX for base 16)
 
 #### `to_number (this)`
-*PyFunc at classes.py:1721 (str_to_number)*
+*PyFunc at classes.py:1719 (str_to_number)*
 
 > Convert string to a Number
 
 #### `to_str (this)`
-*PyFunc at classes.py:1688 (str_str)*
+*PyFunc at classes.py:1686 (str_str)*
 
 > Identity method
 
