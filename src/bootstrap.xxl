@@ -107,7 +107,7 @@ if (__modinfo.main) {		// once only
 	"""
 	Default `iter` method for `Iterable` mixin; fatal error.
 	"""
-	__xxl.uerror(this.getclass().name + ".iter not overridden");
+	__xxl.uerror("Iterable.iter method not overridden");
     };
 
     Iterable.__methods['map'] = function (this, func) {
