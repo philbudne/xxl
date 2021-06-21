@@ -282,7 +282,7 @@ if (__modinfo.main) {		// once only
     // Str
 
     classes.Str.__methods['join'] = function (this, iterable) {
-	if (iterable.instance_of(classes.List)) {
+	if (iterable.instance_of(classes.PyIterable)) {
 	    return(this.__join(iterable));
 	}
 	else if (iterable.instance_of(classes.Iterable)) {
