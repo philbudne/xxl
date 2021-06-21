@@ -192,6 +192,3 @@ bootstrap.md -- describe adding operator;
 straighten out .py file dependency graph?
 
 default Iterable.iter method w/ uerror (not overridden)
-
-AST missing new properties (exp_stmt, others?)
-
