@@ -109,7 +109,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
 *PyFunc at classes.py:1127 (pobj_ident)*
@@ -244,7 +244,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
 *PyFunc at classes.py:764 (obj_ident)*
@@ -364,7 +364,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
 *PyFunc at classes.py:764 (obj_ident)*
@@ -499,7 +499,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
 *PyFunc at classes.py:764 (obj_ident)*
@@ -634,7 +634,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
 *PyFunc at classes.py:764 (obj_ident)*
@@ -754,7 +754,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
 *PyFunc at classes.py:764 (obj_ident)*
@@ -807,7 +807,7 @@
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (this, arg)`
-*Closure at bootstrap.xxl:158:38*
+*Closure at bootstrap.xxl:165:38*
 
 > init method for Dict: takes Iterable returning two-item lists, OR an Iterable returning keys, and implementing '['
 
@@ -837,12 +837,12 @@
 > returns length (of String, List or Dict)
 
 #### `map (this, func)`
-*Closure at bootstrap.xxl:106:33*
+*Closure at bootstrap.xxl:113:33*
 
 > Create Iterator from `this`; Return List of results of `func` passed each iterator item.
 
 #### `map2 (this, func, ignore)`
-*Closure at bootstrap.xxl:121:34*
+*Closure at bootstrap.xxl:128:34*
 
 > Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).
 
@@ -867,7 +867,7 @@
 > Static method: returns PyIterable for an integer range; iter() method generates fresh Iterators. range(10): returns Iterable for 0..9; range(1,10): returns Iterable for 1..9; range(1,10,2): returns Iterable for odd numbers 1..9
 
 #### `repr (this)`
-*Closure at bootstrap.xxl:184:38*
+*Closure at bootstrap.xxl:191:38*
 
 > return representation of Dict
 
@@ -939,7 +939,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
 *PyFunc at classes.py:1127 (pobj_ident)*
@@ -1011,13 +1011,18 @@
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
+#### `iter (this, func)`
+*Closure at bootstrap.xxl:106:34*
+
+> Default `iter` method for `Iterable` mixin; fatal error.
+
 #### `map (this, func)`
-*Closure at bootstrap.xxl:106:33*
+*Closure at bootstrap.xxl:113:33*
 
 > Create Iterator from `this`; Return List of results of `func` passed each iterator item.
 
 #### `map2 (this, func, ignore)`
-*Closure at bootstrap.xxl:121:34*
+*Closure at bootstrap.xxl:128:34*
 
 > Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).
 
@@ -1042,7 +1047,7 @@
 > for debug: show Class, and Python value (which may include id?)
 
 #### `reversed (this)`
-*Closure at bootstrap.xxl:138:46*
+*Closure at bootstrap.xxl:145:46*
 
 > Creates List from `this`, returns reverse PyIterator.
 
@@ -1052,7 +1057,7 @@
 > set Class for `this`!!
 
 #### `sorted (this, reverse)`
-*Closure at bootstrap.xxl:146:44*
+*Closure at bootstrap.xxl:153:44*
 
 > Return sorted List of values from iterator (creates List first). `reverse` is Bool to sort in reverse order (defaults to `false`).
 
@@ -1099,7 +1104,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
 *PyFunc at classes.py:764 (obj_ident)*
@@ -1142,7 +1147,7 @@
 > Create reverse Iterator from `this`, call `func` with each value. returns `null`
 
 #### `extend (this, iterable)`
-*Closure at bootstrap.xxl:219:40*
+*Closure at bootstrap.xxl:226:40*
 
 > Create an iterator from `iterable` and iterate appending values to `this` returns `null`
 
@@ -1162,7 +1167,7 @@
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (this, arg)`
-*Closure at bootstrap.xxl:200:38*
+*Closure at bootstrap.xxl:207:38*
 
 > init method for List: takes Iterable
 
@@ -1182,12 +1187,12 @@
 > returns length (of String, List or Dict)
 
 #### `map (this, func)`
-*Closure at bootstrap.xxl:106:33*
+*Closure at bootstrap.xxl:113:33*
 
 > Create Iterator from `this`; Return List of results of `func` passed each iterator item.
 
 #### `map2 (this, func, ignore)`
-*Closure at bootstrap.xxl:121:34*
+*Closure at bootstrap.xxl:128:34*
 
 > Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).
 
@@ -1212,7 +1217,7 @@
 > Static method: returns PyIterable for an integer range; iter() method generates fresh Iterators. range(10): returns Iterable for 0..9; range(1,10): returns Iterable for 1..9; range(1,10,2): returns Iterable for odd numbers 1..9
 
 #### `repr (this)`
-*Closure at bootstrap.xxl:212:38*
+*Closure at bootstrap.xxl:219:38*
 
 > return representation of List
 
@@ -1279,7 +1284,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
 *PyFunc at classes.py:1127 (pobj_ident)*
@@ -1419,7 +1424,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
 *PyFunc at classes.py:764 (obj_ident)*
@@ -1558,7 +1563,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
 *PyFunc at classes.py:764 (obj_ident)*
@@ -1611,7 +1616,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (x)`
-*Closure at bootstrap.xxl:234:24*
+*Closure at bootstrap.xxl:241:24*
 
 > Return `null` value NOTE!! A static method, not a (Meta)class method!!!
 
@@ -1683,7 +1688,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
 *PyFunc at classes.py:1127 (pobj_ident)*
@@ -1736,7 +1741,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (x)`
-*Closure at bootstrap.xxl:245:26*
+*Closure at bootstrap.xxl:252:26*
 
 > Convert `x` to a `Number` NOTE!! A static method, not a (Meta)class method!!!
 
@@ -1853,7 +1858,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `/ (l, r)`
 *PyFunc at classes.py:1462 (div)*
@@ -2003,7 +2008,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
 *PyFunc at classes.py:764 (obj_ident)*
@@ -2138,7 +2143,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
 *PyFunc at classes.py:764 (obj_ident)*
@@ -2258,7 +2263,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
 *PyFunc at classes.py:1127 (pobj_ident)*
@@ -2393,7 +2398,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
 *PyFunc at classes.py:764 (obj_ident)*
@@ -2461,12 +2466,12 @@
 > Return forward iterator.
 
 #### `map (this, func)`
-*Closure at bootstrap.xxl:106:33*
+*Closure at bootstrap.xxl:113:33*
 
 > Create Iterator from `this`; Return List of results of `func` passed each iterator item.
 
 #### `map2 (this, func, ignore)`
-*Closure at bootstrap.xxl:121:34*
+*Closure at bootstrap.xxl:128:34*
 
 > Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).
 
@@ -2553,7 +2558,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
 *PyFunc at classes.py:1127 (pobj_ident)*
@@ -2621,12 +2626,12 @@
 > Returns `this.` https://docs.python.org/3/library/stdtypes.html#typeiter says an iterator should have an __iter__ method.
 
 #### `map (this, func)`
-*Closure at bootstrap.xxl:106:33*
+*Closure at bootstrap.xxl:113:33*
 
 > Create Iterator from `this`; Return List of results of `func` passed each iterator item.
 
 #### `map2 (this, func, ignore)`
-*Closure at bootstrap.xxl:121:34*
+*Closure at bootstrap.xxl:128:34*
 
 > Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).
 
@@ -2656,7 +2661,7 @@
 > for debug: show Class, and Python value (which may include id?)
 
 #### `reversed (this)`
-*Closure at bootstrap.xxl:138:46*
+*Closure at bootstrap.xxl:145:46*
 
 > Creates List from `this`, returns reverse PyIterator.
 
@@ -2666,7 +2671,7 @@
 > set Class for `this`!!
 
 #### `sorted (this, reverse)`
-*Closure at bootstrap.xxl:146:44*
+*Closure at bootstrap.xxl:153:44*
 
 > Return sorted List of values from iterator (creates List first). `reverse` is Bool to sort in reverse order (defaults to `false`).
 
@@ -2713,7 +2718,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
 *PyFunc at classes.py:764 (obj_ident)*
@@ -2833,7 +2838,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
 *PyFunc at classes.py:764 (obj_ident)*
@@ -2973,7 +2978,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
 *PyFunc at classes.py:764 (obj_ident)*
@@ -3031,7 +3036,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (this_class, ...args)`
-*Closure at bootstrap.xxl:264:11*
+*Closure at bootstrap.xxl:271:11*
 
 > SingletonClass new method: invoke to create a new class with a single value. First time: calls `this_class.create` to create obj, then calls obj.init(); After: returns previous value.
 
@@ -3108,7 +3113,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `== (l, r)`
 *PyFunc at classes.py:764 (obj_ident)*
@@ -3186,7 +3191,7 @@
 > Return forward iterator.
 
 #### `join (this, iterable)`
-*Closure at bootstrap.xxl:284:37*
+*Closure at bootstrap.xxl:291:37*
 
 #### `len (this)`
 *PyFunc at classes.py:1081 (pobj_len)*
@@ -3194,17 +3199,17 @@
 > returns length (of String, List or Dict)
 
 #### `map (this, func)`
-*Closure at bootstrap.xxl:106:33*
+*Closure at bootstrap.xxl:113:33*
 
 > Create Iterator from `this`; Return List of results of `func` passed each iterator item.
 
 #### `map2 (this, func, ignore)`
-*Closure at bootstrap.xxl:121:34*
+*Closure at bootstrap.xxl:128:34*
 
 > Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).
 
 #### `new (arg)`
-*Closure at bootstrap.xxl:297:23*
+*Closure at bootstrap.xxl:304:23*
 
 > Str Class new (static) method; calls arg.to_str method
 
@@ -3336,7 +3341,7 @@
 #### `.. (this, prop)`
 *PyFunc at classes.py:924 (obj_get_in_supers)*
 
-> Object ".." operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
+> Object `..` operator; for calling superclass methods looks for `prop` as property or method of superclasses of `this`
 
 #### `< (l, r)`
 *PyFunc at classes.py:1504 (lt)*

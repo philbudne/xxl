@@ -103,6 +103,13 @@ if (__modinfo.main) {		// once only
 	}
     };
 
+    Iterable.__methods['iter'] = function (this, func) {
+	"""
+	Default `iter` method for `Iterable` mixin; fatal error.
+	"""
+	__xxl.uerror(this.getclass().name + ".iter not overridden");
+    };
+
     Iterable.__methods['map'] = function (this, func) {
 	"""
 	Create Iterator from `this`;

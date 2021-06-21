@@ -180,8 +180,7 @@ bootstrap.md -- describe adding operator;
 	use in parser.xxl
 
 straighten out .py file dependency graph?
-
-default Iterable.iter method w/ uerror (not overridden)
+	split up classes.py into classes/Classname.py??
 
 Have LBrace.gen[_closure] return List of code
 	call bclose_call in {If,While}.gen
