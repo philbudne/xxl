@@ -24,11 +24,15 @@ __xxl.print(2^3);
 
 // higher precedence than division:
 __xxl.print(2^3/2);
-__xxl.print((2^3)/2);		// right
-__xxl.print(2 ^ (3/2));	// wrong
+__xxl.print((2^3)/2);	// right
+var t = 2 ^ (3/2);	// wrong
+// w/o formatting str on
+// Python 3.8.5 on Ububtu 20.04.2 (glibc 2.31) returns 17 digits
+// Python 3.7.9 on FreeBSD 12 returns 15 digits
+__xxl.print(t.__format(".14g"));
 
 // right associative:
 __xxl.print(2^2^3);
 __xxl.print(2 ^ (2^3));	// right
-__xxl.print((2^2)^3);		// wrong
+__xxl.print((2^2)^3);	// wrong
 
