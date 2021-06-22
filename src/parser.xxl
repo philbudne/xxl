@@ -284,8 +284,13 @@ var VMCode = Class.new({
 var PrattParser = Class.new({
     name: "PrattParser",
     methods: {
-	add_symbol_class: function (this, id, klass) {
-	    this.symbol_classes[id] = klass;
+	add_symbol_class: function (this, str, symbol_class) {
+	    """
+	    Add an operator or statement Symbol class to parser.
+	    """
+	    // XXX assert symbol_class.instance_of(this.Symbol) ??
+	    // XXX assert str.instance_of("".getclass()) ????
+	    this.symbol_classes[str] = symbol_class;
 	},
 	_gtok: function (this) {
 	    var t = this.get_token();
