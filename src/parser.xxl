@@ -1463,7 +1463,7 @@ var Parser = Class.new({
 	    // Objects  w/ type, value & where properties, and then null
 	    var oprs = '!@#$%^&*-=+<>\|:,./?~';
 	    // was: '=<>!+-*&|/%^.', '=<>&|.'
-	    this.get_token = __xxl.tokenizer(fname, oprs, oprs);
+	    this.get_token = __xxl._tokenizer(fname, oprs, oprs);
 	    this.token = null;	// current Symbol object
 
 	    this.predef("Class");
@@ -1542,7 +1542,7 @@ var compile = function (fname, output) {
     var asts = p.parse(fname);
 
     if (output == "ast") {
-	var j = __xxl.tree(asts); // returns big JSON string
+	var j = __xxl._tree(asts); // returns big JSON string
 	return(j);
     }
 
@@ -1565,7 +1565,7 @@ var compile = function (fname, output) {
     // get code as JSON string
     // XXX maybe option to serialize in a format
     //	that loads faster than JSON????
-    var code_json = __xxl.vtree(code, fname);
+    var code_json = __xxl._vtree(code, fname);
 
     return(meta_json + code_json); // return as List??
 }; // compile

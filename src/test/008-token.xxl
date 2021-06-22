@@ -1,5 +1,5 @@
 // tokenize this file!!!
-var token = __xxl.tokenizer("test/008-token.xxl", '=<>!+-*&|/%^', '=<>&|'); // returns generator
+var token = __xxl._tokenizer("test/008-token.xxl", '=<>!+-*&|/%^', '=<>&|'); // returns generator
 
 leave_while:
 while (true) {

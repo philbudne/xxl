@@ -130,7 +130,7 @@ def xxl__find_in_lib_path(fname, suffixes=None):
 # PLB: wrote a native replacement, but it's slooooow
 
 @classes.pyfunc
-def xxl_tokenizer(filename, prefix, suffix):
+def xxl__tokenizer(filename, prefix, suffix):
     """
     returns a token generator:
     returns Objects, and then null
@@ -176,7 +176,7 @@ def xxl_exit(value=0):
 ################
 
 @classes.pyfunc
-def xxl_tree(t):
+def xxl__tree(t):
     """
     format JSON (returns Str) from AST of Symbols
     """
@@ -236,7 +236,7 @@ def trim_where(code, fname):
 ################
 
 @classes.pyfunc
-def xxl_vtree(t, fname=classes.null_value):
+def xxl__vtree(t, fname=classes.null_value):
     """
     pretty print a VM code tree (List of List) `t`; returns Str
     """
@@ -331,11 +331,12 @@ def create_xxl_object(iscope, argv, parser_vmx):
     xxl_obj.setprop('argv',  classes.wrap(argv)) # move to ModInfo??
     xxl_obj.setprop('exit', xxl_exit)            # move to ModInfo??
 
-    # functions for parser & bootstrap:
+    # for parser & bootstrap:
     xxl_obj.setprop('parser_vmx', classes.mkstr(parser_vmx))
-    xxl_obj.setprop('tokenizer', xxl_tokenizer) # TEMP creates token generator
-    xxl_obj.setprop('tree', xxl_tree) # TEMP!!!
-    xxl_obj.setprop('vtree', xxl_vtree) # TEMP!!!
+    # private, subject to change:
+    xxl_obj.setprop('_tokenizer', xxl__tokenizer) # creates token generator
+    xxl_obj.setprop('_tree', xxl__tree)
+    xxl_obj.setprop('_vtree', xxl__vtree)
     xxl_obj.setprop('_find_in_lib_path', xxl__find_in_lib_path)
 
     # external modules:
