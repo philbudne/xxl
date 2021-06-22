@@ -1,0 +1,103 @@
+// -*-js-*-
+
+var __doc = """
+EXTENSION: "do { ... } while (cond);" statement
+""";
+
+var __extend_parser = function (p) {
+    var Do = Class.new({
+	name: "Do",
+	supers: [p.Stmt],
+	methods: {
+	    std: function (this) {	// parse as statement
+		this.first = p.block();
+		if (p.check("while")) {
+		    this.third = true;
+		}
+		else if (p.check("until")) {
+		    this.third = false;
+		}
+		else {
+		    p.token.error("expecting 'while' or 'until'");
+		}
+		p.advance();
+		p.advance("(");
+		this.second = p.expression(0);
+		p.advance(")");
+		p.advance(";");
+		this.arity = "statement";
+		return(this);
+	    },
+	    gen: function (this, vmcode) { // gen
+		var top_label = vmcode.get_off();
+		this.first.gen(vmcode);  // block
+		this.second.gen(vmcode); // condition
+		if (this.third) {
+		    vmcode.emit_iftrue(top_label, this); // while
+		}
+		else {
+		    vmcode.emit_ifnot(top_label, this); // until
+		}
+	    }
+	}
+    });
+    p.add_symbol_class("do", Do);
+};
+
+__extend_parser(__modinfo.parser); // needed to parse test below
+
+if (__modinfo.main) {
+    var x;
+    var y;
+    var i;
+
+    __xxl.print("==== do ... while");
+    i = 4;
+    do {
+	__xxl.print(i);
+	i -= 1;
+    } while (i > 0);
+
+    __xxl.print("continue test");
+    i = 4;
+    do continue: {
+	__xxl.print(i);
+	i -= 1;
+	continue();
+	__xxl.print("here");
+    } while (i > 0);
+
+    __xxl.print("break test");
+    i = 4;
+    break:
+    do {
+	__xxl.print(i);
+	i -= 1;
+	break();
+    } while (i > 0);
+
+    __xxl.print("==== do ... until");
+    i = 4;
+    do {
+	__xxl.print(i);
+	i -= 1;
+    } until (i == 0);
+
+    __xxl.print("continue test");
+    i = 4;
+    do continue: {
+	__xxl.print(i);
+	i -= 1;
+	continue();
+	__xxl.print("here");
+    } until (i == 0);
+
+    __xxl.print("break test");
+    i = 4;
+    break:
+    do {
+	__xxl.print(i);
+	i -= 1;
+	break();
+    } until (i == 0);
+}
