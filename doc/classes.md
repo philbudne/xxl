@@ -3636,6 +3636,11 @@
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
+#### `new (x)`
+*Closure at bootstrap.xxl:328:29*
+
+> Return `undefined` value NOTE!! A static method, not a (Meta)class method!!!
+
 #### `props (this)`
 *PyFunc at classes.py:749 (obj_props)*
 

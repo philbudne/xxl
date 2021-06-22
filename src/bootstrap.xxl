@@ -322,6 +322,17 @@ if (__modinfo.main) {		// once only
 	return(arg.to_str());
     };
 
+    ////////////////
+    // Undefined
+
+    classes.Undefined.new = function (x) { // static method!
+	"""
+	Return `undefined` value
+	NOTE!! A static method, not a (Meta)class method!!!
+	"""
+	return(undefined);
+    };
+
 } // main / once only
 
 if (true) {			// all modules-- hide temp variables
