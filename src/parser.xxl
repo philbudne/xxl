@@ -397,7 +397,7 @@ var PrattParser = Class.new({
 		    }
 		    // create Label node: creates new scope & defines label var in it
 		    var nn = this.Label.new(n.where, n.value, "name");
-		    nn.std();	// call Label.std
+		    nn.std();	// call Label.std (which calls this function)
 		    return(nn);
 		} // peek == ":"
 	    } // name
@@ -407,13 +407,17 @@ var PrattParser = Class.new({
 		this.scope.reserve(n);
 		return(std());
 	    }
+	    return(this.expression_statement());
+	}, // statement
+
+	expression_statement: function (this) {
 	    var v = this.expression(0);
 	    if (!v.exp_stmt) {
 		v.error("Bad expression statement.");
 	    }
 	    this.advance(";");
 	    return(v);
-	}, // statement
+	}, // expression_statement
 
 	defname: function(this, where, name, read_only) {
 	    """
