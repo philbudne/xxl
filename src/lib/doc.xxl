@@ -173,8 +173,8 @@ var mumodule = function (mu, module_name) {
 	    if (x.instance_of(classes.Class)) {
 		var supers = ",".join(x.__supers.map(function (c) { return(c.name); }));
 		mu.hr();
-		mu.h2("Class", mu.code(name), "subclass of", mu.code(supers));
-		mu.nappend(mu.i(x.getclass().name)); // metaclass
+		var metaclass = x.getclass().name;
+		mu.h2(metaclass, mu.code(name), "subclass of", mu.code(supers));
 		mu.p();
 		muclass(mu, x);
 	    }

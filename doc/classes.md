@@ -4,8 +4,7 @@
 > Built-in Classes for XXL
 
 ---
-## Class `Bool` subclass of `PObject`
-*PClass*
+## PClass `Bool` subclass of `PObject`
 
 
 > Built-in Class for `true` and `false` values
@@ -131,7 +130,6 @@
 
 ---
 ## Class `BoundMethod` subclass of `Callable`
-*Class*
 
 
 > Built-in Class for a method bound to an Object
@@ -267,7 +265,6 @@
 
 ---
 ## Class `Callable` subclass of `Object`
-*Class*
 
 
 > Virtual base Class for built-in callable classes (BoundMethod, Continuation, PyFunc, PyVMFunc)
@@ -388,7 +385,6 @@
 
 ---
 ## Class `Class` subclass of `Object`
-*Class*
 
 
 > Base Metaclass, home of the default 'new' method
@@ -524,7 +520,6 @@
 
 ---
 ## Class `Closure` subclass of `Callable`
-*Class*
 
 
 > Built-in Class for a native function bound to a scope
@@ -660,7 +655,6 @@
 
 ---
 ## Class `Continuation` subclass of `Callable`
-*Class*
 
 
 > Built-in Class for a Continuation
@@ -780,8 +774,7 @@
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
-## Class `Dict` subclass of `PyIterable`
-*PClass*
+## PClass `Dict` subclass of `PyIterable`
 
 
 > Built-in dictionary mapping Class
@@ -977,7 +970,6 @@
 
 ---
 ## Class `Iterable` subclass of `Object`
-*Class*
 
 
 > Mixin for Classes that can be iterated over
@@ -1132,8 +1124,7 @@
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
-## Class `List` subclass of `PyIterable`
-*PClass*
+## PClass `List` subclass of `PyIterable`
 
 
 > Built-in mutable sequence Class
@@ -1324,7 +1315,6 @@
 
 ---
 ## Class `ModInfo` subclass of `Object`
-*Class*
 
 
 > Built-in Class for __modinfo Objects (inside Modules)
@@ -1455,7 +1445,6 @@
 
 ---
 ## Class `Module` subclass of `Object`
-*Class*
 
 
 > Built-in class for a Module (from import function)
@@ -1595,7 +1584,6 @@
 
 ---
 ## Class `Null` subclass of `PObject`
-*Class*
 
 
 > Built-in Class of `null` value
@@ -1720,8 +1708,7 @@
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
-## Class `Number` subclass of `PObject`
-*PClass*
+## PClass `Number` subclass of `PObject`
 
 
 > Built-in int/float wrapper Class
@@ -1922,7 +1909,6 @@
 
 ---
 ## Class `Object` subclass of `Object`
-*Class*
 
 
 > Base Class
@@ -2043,7 +2029,6 @@
 
 ---
 ## Class `PClass` subclass of `Class`
-*Class*
 
 
 > Metaclass for Primitive/Python value Classes
@@ -2178,8 +2163,7 @@
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
-## Class `PObject` subclass of `Object`
-*PClass*
+## PClass `PObject` subclass of `Object`
 
 
 > Base class for Primitive/Python value Classes
@@ -2300,7 +2284,6 @@
 
 ---
 ## Class `PyFunc` subclass of `Callable`
-*Class*
 
 
 > Built-in Class for function implemented in Python
@@ -2435,8 +2418,7 @@
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
-## Class `PyIterable` subclass of `PObject,Iterable`
-*PClass*
+## PClass `PyIterable` subclass of `PObject,Iterable`
 
 
 > Wrapper for Python 'iterable' Objects (Dict, List, Str); Also returned by Dict.items(), Dict.keys(), Dict.values(), Object.props(), static method PyIterable.range().
@@ -2597,7 +2579,6 @@
 
 ---
 ## Class `PyIterator` subclass of `Object,Iterable`
-*Class*
 
 
 > Built-in Class for a wrapper around a Python iterator
@@ -2757,8 +2738,7 @@
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
-## Class `PyObject` subclass of `Object`
-*PClass*
+## PClass `PyObject` subclass of `Object`
 
 
 > Built-in Class for a wrapper around an arbitrary Python Object (returned by pyimport, or operations on PyObjects)
@@ -2884,7 +2864,6 @@
 
 ---
 ## Class `PyVMFunc` subclass of `Callable`
-*Class*
 
 
 > Built-in Class for function implemented in Python with access to VM internals
@@ -3020,7 +2999,6 @@
 
 ---
 ## Class `SingletonClass` subclass of `Class`
-*Class*
 
 
 > Metaclass for Classes with singleton values. Invoke classes.SingletonClass.new instead of Class.new.
@@ -3155,8 +3133,7 @@
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
-## Class `Str` subclass of `PyIterable`
-*PClass*
+## PClass `Str` subclass of `PyIterable`
 
 
 > Built-in immutable Unicode string Class
