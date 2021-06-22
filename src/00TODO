@@ -87,10 +87,6 @@ exceptions (using Continuations?)
 
 port VM to rpython?!
 
-missing methods (lots!!!)
-    Str binop: full relops (require str lhs)
-    List slice method
-
 make function name () .... define name in local scope?????
 	close2 patches -- need to make "function foo() {}" a valid expr stmt
 	ALWAYS put name into CClosure for debug/trace???
@@ -178,9 +174,14 @@ bootstrap.md -- describe adding operator;
 
 straighten out .py file dependency graph?
 	split up classes.py into classes/Classname.py??
+	    missing methods (lots!!!)
+		Str binop: full relops (require str lhs)
+		List slice method
+	    add Bytes Class (subclass of CharSeq? ByteLike?)
 
 Have LBrace.gen[_closure] return List of code
 	call bclose_call in {If,While}.gen
+		(allow making/passing closures)
 
 print module??
 	__xxl.print => print.out
