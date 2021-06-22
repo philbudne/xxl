@@ -1,8 +1,10 @@
 // -*-js-*-
 
 var __doc = """
-Implement JavaScript "Nullish coalescing operator" (??) and
-Logical nullish assignment" (??=) in XXL.
+Implement JavaScript "Nullish coalescing operator" (??),
+Logical nullish assignment" (??=), and
+Optional chaining (?.) operators.
+in XXL.
 """;
 
 const _classes = __xxl.import("classes");
@@ -17,11 +19,26 @@ var __extend_parser = function (p) {
     p.add_symbol_class("??", p.Nullish);
 
     _classes.Object.__binops["??"] = function (l, r) {
-	return((l !== null) ? l : r);
+	return(l.is_nullish ? r : l); // see const.NULLISH
     };
 
     // NOTE!!! Always does assignment!
     p.add_assignop("AssignNullish",  "??=", "??");
+
+    p.NullishDot = Class.new({
+	name: "NullishDot",
+	supers: [p.Dot]
+    });
+    p.NullishDot.lvalue = false;
+    p.add_symbol_class("?.", p.NullishDot);
+
+    _classes.Object.__binops["?."] = function (l, r) {
+	"""
+	like `l.r`, but guards against nullish values
+	and returns `undefined`.
+	"""
+	return((l.is_nullish) ? undefined : l.getprop(r));
+    };
 }; // __extend_parser
 
 __extend_parser(__modinfo.parser); // required to parse test code below
@@ -30,11 +47,12 @@ if (__modinfo.main) {
     var try = function (x, y) {
 	__xxl.print(x ?? y);
 
-	x ??= y;
-	__xxl.print(x);
+	__xxl.print(x ??= y);	// should return value
+	__xxl.print(x);		// and set variable
     };
 
-    try(null, "null is null");
+    try(null, "null is nullish");
+    try(undefined, "undefined is nullish");
 
     // things that are normally "falsey"
     try(false, "ERROR");
@@ -43,4 +61,7 @@ if (__modinfo.main) {
     // things that always "truthy"
     try(true, "ERROR");
     try(1, "ERROR");
+
+    try(null?.zzz, "null?.something is nullish");
+    try(undefined?.zzz, "undefined?.something is nullish");
 }

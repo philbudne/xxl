@@ -76,7 +76,7 @@ NUM = (int, float)              # Python3
 # used to set MODINFO_DEBUG_BOOTSTRAP
 XXL_DEBUG_BOOTSTRAP = os.getenv('XXL_DEBUG_BOOTSTRAP', None)
 
-CWD = os.getcwd();              # current working directory
+CWD = os.getcwd()               # current working directory
 CWD_SEP = CWD + os.sep
 
 root_scope = scopes.Scope()
@@ -154,7 +154,7 @@ class CObject:
 
 class CPObject(CObject):
     """
-    Python backing class for Primative Object Classes
+    Python backing class for Primitive Object Classes
     (has a value property which contains a Python type)
     """
     __slots__ = ['value']
@@ -447,7 +447,7 @@ def pyiterator(iterator):
 def _new_pobj(this_class, arg):
     """
     FOR INTERNAL USE ONLY!!
-    creates an interpreter Primative Object of Class `this_class`
+    creates an interpreter Primitive Object of Class `this_class`
     wrapped around Python value `arg`
     does not run this_class 'init' method (which would want an Object)
     """
@@ -599,20 +599,26 @@ Class.setclass(Class)             # circular! Class.new creates a new Class!
 Object = defclass(Class, 'Object', [],
                   doc="Base Class") # root Class
 
-# metaclass for PObjects (creates Python CPObject)
-PClass = defclass(Class, 'PClass', [Class],
-                  doc="Metaclass for Primitive/Python value Classes")
+Nullish = defclass(Class, 'Nullish', [],
+                   doc="Mixin for nullish classes.")
 
-# Primative Object Base Class
-# superclass (with .value) of Classes that are wrappers around Python classes
-PObject = defclass(PClass, 'PObject', [Object],
-                   doc="Base class for Primitive/Python value Classes")
+Undefined = defclass(Class, 'Undefined', [Nullish, Object],
+                     doc="Class for undefined value.")
 
 ####
 # wrappers, with .value
 
+# metaclass for PObjects (creates Python CPObject)
+PClass = defclass(Class, 'PClass', [Class],
+                  doc="Metaclass for Primitive/Python value Classes")
+
+# Primitive Object Base Class
+# superclass (with .value) of Classes that are wrappers around Python classes
+PObject = defclass(PClass, 'PObject', [Object],
+                   doc="Base class for Primitive/Python value Classes")
+
 # bootstrap.xxl defines static 'new' method
-Null = defclass(Class, 'Null', [PObject],
+Null = defclass(Class, 'Null', [Nullish, PObject],
                 doc="Built-in Class of `null` value")
 
 # bootstrap.xxl defines static 'new' method
@@ -689,10 +695,12 @@ PyIterator = defclass(Class, 'PyIterator', [Object, Iterable],
 
 null_value = _new_pobj(Null, None)
 
+undef_value = CObject(Undefined)
+
 # create (only) instances of true/false (a doubleton)!
 # subclass Bool into True and False singleton Classes??
-true_val = _new_pobj(Bool, True)
-false_val = _new_pobj(Bool, False)
+true_value = _new_pobj(Bool, True)
+false_value = _new_pobj(Bool, False)
 
 ################
 
@@ -702,9 +710,9 @@ def is_true(obj):
     """
     return Python True/False for an object
     non-premature optimization:
-    only "null" and "false" objects, and zero are false
+    only "null", "false", "undefined" objects, and zero are false.
     """
-    if obj is false_val or obj is null_value:
+    if obj is false_value or obj is null_value or obj is undef_value:
         return False
     if hasattr(obj, 'value') and obj.value == 0: # faster than isinstance?
         return False
@@ -813,7 +821,7 @@ def obj_putprop(l, r, value):
 
 # NOTE! utility, not method
 # XXX return (obj, value) to avoid generating BoundMethod?
-def find_in_supers(l, rv):
+def find_in_supers(l, rv, default):
     """
     Breadth first search of superclass methods/properties;
     `l` is CObject, `rv` is Python string for method/property name.
@@ -848,11 +856,11 @@ def find_in_supers(l, rv):
 
         supers = c.getprop(const.SUPERS)
 
-    return null_value
+    return default
 
 # NOTE! utility, not method
 # XXX return (obj, value) to avoid generating BoundMethod?
-def find_in_class(l, rv):
+def find_in_class(l, rv, default):
     """
     `rv` is Python string
     may return BoundMethod
@@ -872,7 +880,7 @@ def find_in_class(l, rv):
         if m and m is not null_value:
             return CBoundMethod(l, m)
 
-    return find_in_supers(l, rv)
+    return find_in_supers(l, rv, default)
 
 @pyfunc
 def obj_getprop(l, r):
@@ -883,7 +891,7 @@ def obj_getprop(l, r):
     rv = r.value              # XXX must be Str
     if l.hasprop(rv):
         return l.getprop(rv)
-    return find_in_class(l, rv) # may return BoundMethod
+    return find_in_class(l, rv, undef_value) # may return BoundMethod
 
 def find_op(obj, optype, op):
     """
@@ -927,7 +935,7 @@ def obj_get_in_supers(this, prop):
     Object `..` operator; for calling superclass methods
     looks for `prop` as property or method of superclasses of `this`
     """
-    return find_in_supers(this, prop.value) # XXX check for CPObject
+    return find_in_supers(this, prop.value, undef_value) # XXX check for CPObject
 
 # once upon a time class was stored as '__class' property,
 # but it was messy when cloning.
@@ -993,6 +1001,7 @@ Object.setprop(const.UNOPS, _mkdict({
 Object.setprop(const.LHSOPS, _mkdict({
     '.': obj_putprop                # same as putprop!!
 }))
+Object.setprop(const.NULLISH, false_value)
 
 ################ Class -- base type for Classes (a MetaClass)
 
@@ -1240,7 +1249,7 @@ def pyiterable_reversed(this):
     return pyiterator(reversed(this.value))
 
 @pyfunc
-def pyiterable_sorted(this, reverse=false_val):
+def pyiterable_sorted(this, reverse=false_value):
     """
     Return sorted List of iterator values.
     `reverse` is Bool to sort in reverse order (defaults to `false`).
@@ -1799,9 +1808,37 @@ def null_call(this, *args):
 Null.setprop(const.METHODS, _mkdict({
     'repr': null_str
 }))
-
 Null.setprop(const.BINOPS, _mkdict({
     '(': null_call
+}))
+Null.setprop(const.NULLISH, true_value)
+
+################ Nullish
+
+@pyfunc
+def nullish_getprop(l, r):
+    """
+    `.` method for Nullish (null, undefined) values.
+    Fatal error if unknown property.
+
+    Allows all Object methods (JavaScript is stricter, Python is not).
+    """
+    rv = r.value              # XXX must be Str
+    if l.hasprop(rv):
+        return l.getprop(rv)
+
+    ILLEGAL_VALUE = nullish_getprop           # can NEVER be seen
+    val = find_in_class(l, rv, ILLEGAL_VALUE) # may return BoundMethod
+    if val is ILLEGAL_VALUE:
+        raise UError("unknown property '%s' of %s" % (rv, l.classname()))
+    return val
+
+# XXX setprop too!!!
+Nullish.setprop(const.METHODS, _mkdict({
+    'getprop': nullish_getprop
+}))
+Nullish.setprop(const.BINOPS, _mkdict({
+    '.': nullish_getprop
 }))
 
 ################ Bool
@@ -1828,9 +1865,9 @@ def mkbool(val):
     to language true or false Object
     """
     if val:
-        return true_val
+        return true_value
     else:
-        return false_val
+        return false_value
 
 ################ PyObject
 
@@ -1854,7 +1891,8 @@ def unwrap(x):
         elif isinstance(x, dict): # XXX handle any mapping?
             return {key: unwrap(val) for key, val in x.items()} # keys Python
         return x
-    # XXX complain??!!!
+    if x is undef_value:
+        return None
     return x
 
 @pyfunc
@@ -1871,7 +1909,7 @@ def pyobj_getprop(l, r):
         v = l.getprop(rv)
     else:
         # allow 'to_str' method so Object can be printed!!
-        v = find_in_class(l, rv) # may return BoundMethod
+        v = find_in_class(l, rv, undef_value) # may return BoundMethod
     return wrap(v)
 
 @pyfunc
@@ -1943,6 +1981,32 @@ PyIterator.setprop(const.METHODS, _mkdict({
     'next': pyiterator_next
 }))
 
+################ Undefined
+
+@pyfunc
+def undef_str(this):
+    """
+    to_string/repr method for Null Class: returns "null"
+    """
+    return mkstr("undefined")
+
+@pyfunc
+def undef_call(this, *args):
+    """
+    `(` method for `undefined` value (fatal error)
+    commonly happens when a bad method name is used,
+    so output a "helpful" message.
+    """
+    raise UError("'undefined' called; bad method name?")
+
+Undefined.setprop(const.METHODS, _mkdict({
+    'repr': undef_str
+}))
+Undefined.setprop(const.BINOPS, _mkdict({
+    '(': undef_call
+}))
+Undefined.setprop(const.NULLISH, true_value)
+
 ################################################################
 
 # Module is what "import" function returns
@@ -1980,7 +2044,7 @@ def new_modinfo(main, module, fname, parser_vmx=None):
     mi.setprop(const.MODINFO_MAIN, mkbool(main)) # is main program
     mi.setprop(const.MODINFO_MODULE, module)     # pointer to Module
     if XXL_DEBUG_BOOTSTRAP:
-        mi.setprop(const.MODINFO_DEBUG_BOOTSTRAP, true_val)
+        mi.setprop(const.MODINFO_DEBUG_BOOTSTRAP, true_value)
 
     scope = module.scope
 
@@ -2117,14 +2181,6 @@ def wrap(value):
 
 ################################################################
 
-def add_to_classes(name, value):
-    classes_scope.defvar(name, value)
-
-# NOT classes!
-add_to_classes('true', true_val)
-add_to_classes('false', false_val)
-add_to_classes('null', null_value)
-
 def defmodule(name, mod):
     """
     declare an internal Module by name
@@ -2144,8 +2200,11 @@ def classes_init(argv, parser_vmx):
     """
 
     # init root_scope
-    for x in ['true', 'false', 'null', 'Class']:
-        root_scope.defvar(x, classes_scope.lookup(x))
+    root_scope.defvar('true', true_value)
+    root_scope.defvar('false', false_value)
+    root_scope.defvar('null', null_value)
+    root_scope.defvar('undefined', undef_value)
+    root_scope.defvar('Class', Class)
 
     # create __xxl object
     xxlobj.create_xxl_object(root_scope, argv=argv, parser_vmx=parser_vmx)

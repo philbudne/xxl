@@ -1,5 +1,11 @@
 FIX
 ===
+Make Null.new and Undefined.new illegal!
+
+Add List, Dict [gs]etitem methods
+
+Undefined and null should raise error on attempt to fetch unknown properties!!
+
 Makefile:
 	move {bootstrap,parser}.{xxl,vmx} to lib/ ??
 	generate classes.md, but don't replace? just complain if out of date??
@@ -8,9 +14,9 @@ Makefile:
 
 lib dir
 	generate .md files, index.md file??
-	run as tests??
-	do-while.xxl
-	nullish.xxl?
+
+lib and ext/lib:
+	run all as tests??
 
 *** BUG: Only CPObjects can be used as Dict keys
 	(Dicts currently indexed by Python values,
@@ -113,10 +119,6 @@ tokenizer that takes string (any iterable?) for input
 
 pyimport => PyObject.new??
 
-Undefined Class / undef value
-    ?? (nullish or-if) operator
-    ?. (optional chaining)
-
 Parser doc formatter;
     walk symbol_classes, display docstrings, precedence
     format table for symbol_classes?
@@ -186,3 +188,9 @@ Have LBrace.gen[_closure] return List of code
 print module??
 	__xxl.print => print.out
 	__xxl.error => print.err
+
+Implement Object.freeze_object, Object.seal_object (methods)
+	freeze: smash setprop, delprop, setitem, pop, lhs [ (if any)
+	seal: smash delprop
+
+

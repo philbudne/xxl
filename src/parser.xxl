@@ -126,9 +126,9 @@ var VMCode = Class.new({
 	emit_args2: function (this, names, rest, sym) {
 	    this._emit([sym.where, "args2", names, rest]);
 	},
-	emit_scope: function (this, leave_name, sym) {
-	    if (leave_name) {
-		this._emit([sym.where, "lscope", leave_name]);
+	emit_scope: function (this, leave_sym, sym) {
+	    if (leave_sym) {
+		this._emit([sym.where, "lscope", leave_sym.value]);
 	    }
 	    else {
 		this._emit([sym.where, "uscope"]);
@@ -1147,8 +1147,12 @@ var Parser = Class.new({
 			p.advance(")");
 			p.advance("{");
 			if (p.token.arity == "literal") {
-			    this.doc = p.token.value; // XXX check if Str??
+			    // XXX check if Str??
+			    this.doc = p.token.value; // XXX not visible xxl__tree
 			    p.advance();
+			}
+			else {
+			    this.doc = null;
 			}
 			this.second = p.statements();
 			p.scope = p.scope.pop();
@@ -1236,7 +1240,7 @@ var Parser = Class.new({
 		    gen: function (this, vmcode) {
 			if (this.arity == "statement") { // { block }
 			    var bcode = VMCode.new(); // block closure code
-			    bcode.emit_scope(this.second.value, this);
+			    bcode.emit_scope(this.second, this);
 			    bcode.gen_stmts(this.first);
 			    // create block closure & invoke
 			    vmcode.emit_bclose_call(bcode, this);
@@ -1368,7 +1372,7 @@ var Parser = Class.new({
 		    gen: function (this, vmcode) { // gen
 			// wrap entire statement in a closure w/ leave label
 			var lcode = VMCode.new();
-			lcode.emit_scope(this.first.value, this);
+			lcode.emit_scope(this.first, this);
 			this.second.gen(lcode); // vmcode.gen_stmt?
 			// create block closure and invoke
 			vmcode.emit_bclose_call(lcode, this);
@@ -1391,10 +1395,9 @@ var Parser = Class.new({
 		    },
 		    gen: function (this, vmcode) { // gen
 			// generate closure for body, w/ leave label, if any
-			var leave_label = (this.second.second ?
-					   this.second.second.value : null);
+			var leave_sym = this.second.second;
 			var wcode = VMCode.new(); // start cody for body closure
-			wcode.emit_scope(leave_label, this);
+			wcode.emit_scope(leave_sym, this);
 			var top_branch_label = wcode.get_off();
 			this.first.gen(wcode); // condition
 			var done_branch_label = wcode.def_fwd_label();
@@ -1470,16 +1473,23 @@ var Parser = Class.new({
 
 	    // returns generator which returns:
 	    // Objects  w/ type, value & where properties, and then null
+
+	    // parens, brackets and braces are non-combining.
+	    // tempting to allow braces, but would require '{ }' for empty Dict!
 	    var oprs = '!@#$%^&*-=+<>\|:,./?~';
 	    // was: '=<>!+-*&|/%^.', '=<>&|.'
 	    this.get_token = __xxl._tokenizer(fname, oprs, oprs);
 	    this.token = null;	// current Symbol object
 
+	    // set in root_scope by classes.py classes_init()
 	    this.predef("Class");
 	    this.predef("__xxl");
-	    this.predef("false", true); // read-only
 	    this.predef("null", true);	// read-only
 	    this.predef("true", true);	// read-only
+	    this.predef("false", true); // read-only
+	    this.predef("undefined", true); // read-only
+
+	    // set by new_module in classes.py
 	    this.predef("__modinfo");
 				   
 	    this.advance();	// prime the pump (load this.token)

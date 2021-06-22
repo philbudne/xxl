@@ -300,6 +300,9 @@ if (__modinfo.main) {		// once only
     // Str
 
     classes.Str.__methods['join'] = function (this, iterable) {
+	"""
+	Concatenate strings from `iterable` using `this` as the separator.
+	"""
 	if (iterable.instance_of(classes.PyIterable)) {
 	    return(this.__join(iterable));
 	}

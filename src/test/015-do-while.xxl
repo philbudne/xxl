@@ -8,8 +8,6 @@ var Do = Class.new({
     methods: {
 	std: function (this) {	// parse as statement
 	    this.first = p.block();
-	    p.check("while");
-	    p.scope.reserve(this.token); // maybe?
 	    p.advance("while");
 	    p.advance("(");
 	    this.second = p.expression(0);
