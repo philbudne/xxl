@@ -37,7 +37,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (x)`
-*Closure at bootstrap.xxl:72:24*
+*Closure at bootstrap.xxl:82:24*
 
 > Return truthiness of `x` (as Bool). NOTE!! A static method, not a (Meta)class method!!!
 
@@ -67,7 +67,7 @@
 > set Class for `this`!!
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -167,7 +167,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (this_class, ...args)`
-*Closure at bootstrap.xxl:57:38*
+*Closure at bootstrap.xxl:67:38*
 
 > Default metaclass (Class) new method; Manually invoked as SomeClass.new. Calls this_class.create to create obj, and then calls obj.init().
 
@@ -202,7 +202,7 @@
 > return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -322,7 +322,7 @@
 > set Class for `this`!!
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -422,7 +422,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (this_class, ...args)`
-*Closure at bootstrap.xxl:57:38*
+*Closure at bootstrap.xxl:67:38*
 
 > Default metaclass (Class) new method; Manually invoked as SomeClass.new. Calls this_class.create to create obj, and then calls obj.init().
 
@@ -457,7 +457,7 @@
 > return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -557,7 +557,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (this_class, ...args)`
-*Closure at bootstrap.xxl:57:38*
+*Closure at bootstrap.xxl:67:38*
 
 > Default metaclass (Class) new method; Manually invoked as SomeClass.new. Calls this_class.create to create obj, and then calls obj.init().
 
@@ -592,7 +592,7 @@
 > return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -712,7 +712,7 @@
 > set Class for `this`!!
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -787,12 +787,12 @@
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `each_for (this, func)`
-*Closure at bootstrap.xxl:96:38*
+*Closure at bootstrap.xxl:106:38*
 
 > Create reverse Iterator from `this`, call `func` with each value. returns `null`
 
 #### `for_each (this, func)`
-*Closure at bootstrap.xxl:86:38*
+*Closure at bootstrap.xxl:96:38*
 
 > Create Iterator from `this`, call `func` with each value.
 
@@ -807,7 +807,7 @@
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (this, arg)`
-*Closure at bootstrap.xxl:166:38*
+*Closure at bootstrap.xxl:176:38*
 
 > init method for Dict: takes Iterable returning two-item lists, OR an Iterable returning keys, and implementing '['
 
@@ -837,12 +837,12 @@
 > returns length (of String, List or Dict)
 
 #### `map (this, func)`
-*Closure at bootstrap.xxl:114:33*
+*Closure at bootstrap.xxl:124:33*
 
 > Create Iterator from `this`; Return List of results of `func` passed each iterator item.
 
 #### `map2 (this, func, ignore)`
-*Closure at bootstrap.xxl:129:34*
+*Closure at bootstrap.xxl:139:34*
 
 > Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).
 
@@ -867,7 +867,7 @@
 > Static method: returns PyIterable for an integer range; iter() method generates fresh Iterators. range(10): returns Iterable for 0..9; range(1,10): returns Iterable for 1..9; range(1,10,2): returns Iterable for odd numbers 1..9
 
 #### `repr (this)`
-*Closure at bootstrap.xxl:192:38*
+*Closure at bootstrap.xxl:202:38*
 
 > return representation of Dict
 
@@ -892,7 +892,7 @@
 > Return sorted List of iterator values. `reverse` is Bool to sort in reverse order (defaults to `false`).
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -982,12 +982,12 @@
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `each_for (this, func)`
-*Closure at bootstrap.xxl:96:38*
+*Closure at bootstrap.xxl:106:38*
 
 > Create reverse Iterator from `this`, call `func` with each value. returns `null`
 
 #### `for_each (this, func)`
-*Closure at bootstrap.xxl:86:38*
+*Closure at bootstrap.xxl:96:38*
 
 > Create Iterator from `this`, call `func` with each value.
 
@@ -1012,17 +1012,17 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `iter (this, func)`
-*Closure at bootstrap.xxl:107:34*
+*Closure at bootstrap.xxl:117:34*
 
 > Default `iter` method for `Iterable` mixin; fatal error.
 
 #### `map (this, func)`
-*Closure at bootstrap.xxl:114:33*
+*Closure at bootstrap.xxl:124:33*
 
 > Create Iterator from `this`; Return List of results of `func` passed each iterator item.
 
 #### `map2 (this, func, ignore)`
-*Closure at bootstrap.xxl:129:34*
+*Closure at bootstrap.xxl:139:34*
 
 > Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).
 
@@ -1047,7 +1047,7 @@
 > for debug: show Class, and Python value (which may include id?)
 
 #### `reversed (this)`
-*Closure at bootstrap.xxl:146:46*
+*Closure at bootstrap.xxl:156:46*
 
 > Creates List from `this`, returns reverse PyIterator.
 
@@ -1057,12 +1057,12 @@
 > set Class for `this`!!
 
 #### `sorted (this, reverse)`
-*Closure at bootstrap.xxl:154:44*
+*Closure at bootstrap.xxl:164:44*
 
 > Return sorted List of values from iterator (creates List first). `reverse` is Bool to sort in reverse order (defaults to `false`).
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -1142,17 +1142,17 @@
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `each_for (this, func)`
-*Closure at bootstrap.xxl:96:38*
+*Closure at bootstrap.xxl:106:38*
 
 > Create reverse Iterator from `this`, call `func` with each value. returns `null`
 
 #### `extend (this, iterable)`
-*Closure at bootstrap.xxl:227:40*
+*Closure at bootstrap.xxl:237:40*
 
 > Create an iterator from `iterable` and iterate appending values to `this` returns `null`
 
 #### `for_each (this, func)`
-*Closure at bootstrap.xxl:86:38*
+*Closure at bootstrap.xxl:96:38*
 
 > Create Iterator from `this`, call `func` with each value.
 
@@ -1167,7 +1167,7 @@
 > Object getprop method/operator return `r` (String) property of object `l`
 
 #### `init (this, arg)`
-*Closure at bootstrap.xxl:208:38*
+*Closure at bootstrap.xxl:218:38*
 
 > init method for List: takes Iterable
 
@@ -1187,12 +1187,12 @@
 > returns length (of String, List or Dict)
 
 #### `map (this, func)`
-*Closure at bootstrap.xxl:114:33*
+*Closure at bootstrap.xxl:124:33*
 
 > Create Iterator from `this`; Return List of results of `func` passed each iterator item.
 
 #### `map2 (this, func, ignore)`
-*Closure at bootstrap.xxl:129:34*
+*Closure at bootstrap.xxl:139:34*
 
 > Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).
 
@@ -1217,7 +1217,7 @@
 > Static method: returns PyIterable for an integer range; iter() method generates fresh Iterators. range(10): returns Iterable for 0..9; range(1,10): returns Iterable for 1..9; range(1,10,2): returns Iterable for odd numbers 1..9
 
 #### `repr (this)`
-*Closure at bootstrap.xxl:220:38*
+*Closure at bootstrap.xxl:230:38*
 
 > return representation of List
 
@@ -1242,7 +1242,7 @@
 > Return sorted List of iterator values. `reverse` is Bool to sort in reverse order (defaults to `false`).
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -1382,7 +1382,7 @@
 > set Class for `this`!!
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -1482,7 +1482,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (this_class, ...args)`
-*Closure at bootstrap.xxl:57:38*
+*Closure at bootstrap.xxl:67:38*
 
 > Default metaclass (Class) new method; Manually invoked as SomeClass.new. Calls this_class.create to create obj, and then calls obj.init().
 
@@ -1517,7 +1517,7 @@
 > return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -1616,7 +1616,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (x)`
-*Closure at bootstrap.xxl:242:24*
+*Closure at bootstrap.xxl:252:24*
 
 > Return `null` value NOTE!! A static method, not a (Meta)class method!!!
 
@@ -1646,7 +1646,7 @@
 > set Class for `this`!!
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -1741,7 +1741,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (x)`
-*Closure at bootstrap.xxl:253:26*
+*Closure at bootstrap.xxl:263:26*
 
 > Convert `x` to a `Number` NOTE!! A static method, not a (Meta)class method!!!
 
@@ -1786,7 +1786,7 @@
 > identity method; returns `this`
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -1966,7 +1966,7 @@
 > set Class for `this`!!
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -2066,7 +2066,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (this_class, ...args)`
-*Closure at bootstrap.xxl:57:38*
+*Closure at bootstrap.xxl:67:38*
 
 > Default metaclass (Class) new method; Manually invoked as SomeClass.new. Calls this_class.create to create obj, and then calls obj.init().
 
@@ -2101,7 +2101,7 @@
 > return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -2221,7 +2221,7 @@
 > set Class for `this`!!
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -2321,7 +2321,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (this_class, ...args)`
-*Closure at bootstrap.xxl:57:38*
+*Closure at bootstrap.xxl:67:38*
 
 > Default metaclass (Class) new method; Manually invoked as SomeClass.new. Calls this_class.create to create obj, and then calls obj.init().
 
@@ -2356,7 +2356,7 @@
 > return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -2431,12 +2431,12 @@
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `each_for (this, func)`
-*Closure at bootstrap.xxl:96:38*
+*Closure at bootstrap.xxl:106:38*
 
 > Create reverse Iterator from `this`, call `func` with each value. returns `null`
 
 #### `for_each (this, func)`
-*Closure at bootstrap.xxl:86:38*
+*Closure at bootstrap.xxl:96:38*
 
 > Create Iterator from `this`, call `func` with each value.
 
@@ -2466,12 +2466,12 @@
 > Return forward iterator.
 
 #### `map (this, func)`
-*Closure at bootstrap.xxl:114:33*
+*Closure at bootstrap.xxl:124:33*
 
 > Create Iterator from `this`; Return List of results of `func` passed each iterator item.
 
 #### `map2 (this, func, ignore)`
-*Closure at bootstrap.xxl:129:34*
+*Closure at bootstrap.xxl:139:34*
 
 > Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).
 
@@ -2516,7 +2516,7 @@
 > Return sorted List of iterator values. `reverse` is Bool to sort in reverse order (defaults to `false`).
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -2591,12 +2591,12 @@
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `each_for (this, func)`
-*Closure at bootstrap.xxl:96:38*
+*Closure at bootstrap.xxl:106:38*
 
 > Create reverse Iterator from `this`, call `func` with each value. returns `null`
 
 #### `for_each (this, func)`
-*Closure at bootstrap.xxl:86:38*
+*Closure at bootstrap.xxl:96:38*
 
 > Create Iterator from `this`, call `func` with each value.
 
@@ -2626,12 +2626,12 @@
 > Returns `this.` https://docs.python.org/3/library/stdtypes.html#typeiter says an iterator should have an __iter__ method.
 
 #### `map (this, func)`
-*Closure at bootstrap.xxl:114:33*
+*Closure at bootstrap.xxl:124:33*
 
 > Create Iterator from `this`; Return List of results of `func` passed each iterator item.
 
 #### `map2 (this, func, ignore)`
-*Closure at bootstrap.xxl:129:34*
+*Closure at bootstrap.xxl:139:34*
 
 > Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).
 
@@ -2661,7 +2661,7 @@
 > for debug: show Class, and Python value (which may include id?)
 
 #### `reversed (this)`
-*Closure at bootstrap.xxl:146:46*
+*Closure at bootstrap.xxl:156:46*
 
 > Creates List from `this`, returns reverse PyIterator.
 
@@ -2671,12 +2671,12 @@
 > set Class for `this`!!
 
 #### `sorted (this, reverse)`
-*Closure at bootstrap.xxl:154:44*
+*Closure at bootstrap.xxl:164:44*
 
 > Return sorted List of values from iterator (creates List first). `reverse` is Bool to sort in reverse order (defaults to `false`).
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -2796,7 +2796,7 @@
 > set Class for `this`!!
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -2901,7 +2901,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (this_class, ...args)`
-*Closure at bootstrap.xxl:57:38*
+*Closure at bootstrap.xxl:67:38*
 
 > Default metaclass (Class) new method; Manually invoked as SomeClass.new. Calls this_class.create to create obj, and then calls obj.init().
 
@@ -2936,7 +2936,7 @@
 > return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -3036,7 +3036,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `new (this_class, ...args)`
-*Closure at bootstrap.xxl:272:11*
+*Closure at bootstrap.xxl:282:11*
 
 > SingletonClass new method: invoke to create a new class with a single value. First time: calls `this_class.create` to create obj, then calls obj.init(); After: returns previous value.
 
@@ -3071,7 +3071,7 @@
 > return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
 #### `to_str (this)`
-*Closure at bootstrap.xxl:46:42*
+*Closure at bootstrap.xxl:56:42*
 
 > Default to_str method: calls this.repr().
 
@@ -3151,7 +3151,7 @@
 > Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)
 
 #### `each_for (this, func)`
-*Closure at bootstrap.xxl:96:38*
+*Closure at bootstrap.xxl:106:38*
 
 > Create reverse Iterator from `this`, call `func` with each value. returns `null`
 
@@ -3161,7 +3161,7 @@
 > Return `true` if `this` ends with the suffix `suff`, `false` otherwise.
 
 #### `for_each (this, func)`
-*Closure at bootstrap.xxl:86:38*
+*Closure at bootstrap.xxl:96:38*
 
 > Create Iterator from `this`, call `func` with each value.
 
@@ -3191,7 +3191,7 @@
 > Return forward iterator.
 
 #### `join (this, iterable)`
-*Closure at bootstrap.xxl:292:37*
+*Closure at bootstrap.xxl:302:37*
 
 #### `len (this)`
 *PyFunc at classes.py:1081 (pobj_len)*
@@ -3199,17 +3199,17 @@
 > returns length (of String, List or Dict)
 
 #### `map (this, func)`
-*Closure at bootstrap.xxl:114:33*
+*Closure at bootstrap.xxl:124:33*
 
 > Create Iterator from `this`; Return List of results of `func` passed each iterator item.
 
 #### `map2 (this, func, ignore)`
-*Closure at bootstrap.xxl:129:34*
+*Closure at bootstrap.xxl:139:34*
 
 > Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).
 
 #### `new (arg)`
-*Closure at bootstrap.xxl:305:23*
+*Closure at bootstrap.xxl:315:23*
 
 > Str Class new (static) method; calls arg.to_str method
 
@@ -3404,4 +3404,4 @@
 
 
 ---
-formatted by doc.xxl on 2021-06-21
+formatted by doc.xxl on 2021-06-22

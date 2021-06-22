@@ -12,12 +12,11 @@ if (__modinfo.booting) {
 __modinfo.booting = true;
 
 if (__modinfo.main) {		// once only
-    // __xxl was once private per-module
-    // XXX take optional args (as Dict?)
-    __xxl.import = function (name) {
+    // __xxl was once private per-module (now defined in root scope)
+    __xxl.import = function (name) { // XXX take optional args (as Dict?)
 	"""
 	Import a source file, VM instruction (.vmx) file, or internal module.
-	Calls Module.__modinfo.__extend_parser, if present.
+	Calls Module.__modinfo.__extend_parser(importer_parser), if found.
 	Returns Module.
 	"""
 	return(__modinfo._import(name));
@@ -25,7 +24,8 @@ if (__modinfo.main) {		// once only
 
     __modinfo.__methods['_import'] = function (this, name) {
 	"""
-	helper for __xxl.import; needs access to importers __modinfo.parser
+	Helper for __xxl.import.
+	Method for access to importer's __modinfo.parser
 	"""
 	// _find_in_lib_path takes optional list of suffixes to try
 	var rets = __xxl._import(__xxl._find_in_lib_path(name));
