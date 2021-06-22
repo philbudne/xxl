@@ -1,18 +1,16 @@
 FIX
 ===
 Makefile:
-	check generated files (.vmx .md) into "dist" directory (for easy pull)
-		copy .vmx from dist directory (to lib directory????)
+	move {bootstrap,parser}.{xxl,vmx} to lib/ ??
 	generate classes.md, but don't replace? just complain if out of date??
-	ditto for bootstrap.vmx!!!
+	complain if bootstrap.vmx out of date?
+	"make install" install classes.md, bootstrap.vmx, parser.vmx?
 
 lib dir
 	generate .md files, index.md file??
 	run as tests??
 	do-while.xxl
 	nullish.xxl?
-
-rename "classes" Module to "__classes"??
 
 *** BUG: Only CPObjects can be used as Dict keys
 	(Dicts currently indexed by Python values,
@@ -38,7 +36,7 @@ type wrapping:
 		revisit wrapping return values in CPyFunc.invoke
 			(tail calls to "new")
 
-xxl.py: w/o filename run read/eval/print loop
+xxl.py: w/o filename run read/eval/PRINT loop
 	need to change statement() and std() methods
 		to "check" @ end (w/o advance) -- ie; check("}")
 		and re-prime (at top of statement()?)
