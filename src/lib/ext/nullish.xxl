@@ -1,0 +1,46 @@
+// -*-js-*-
+
+var __doc = """
+Implement JavaScript "Nullish coalescing operator" (??) and
+Logical nullish assignment" (??=) in XXL.
+""";
+
+const _classes = __xxl.import("classes");
+
+var __extend_parser = function (p) {
+    // "ordinary" infix operator (implemented by a method)
+    p.Nullish = Class.new({
+	name: "Nullish",
+	supers: [p.InfixR],
+    });
+    p.Nullish.lbp = p.PLOR;
+    p.add_symbol_class("??", p.Nullish);
+
+    _classes.Object.__binops["??"] = function (l, r) {
+	return((l !== null) ? l : r);
+    };
+
+    // NOTE!!! Always does assignment!
+    p.add_assignop("AssignNullish",  "??=", "??");
+}; // __extend_parser
+
+__extend_parser(__modinfo.parser); // required to parse test code below
+
+if (__modinfo.main) {
+    var try = function (x, y) {
+	__xxl.print(x ?? y);
+
+	x ??= y;
+	__xxl.print(x);
+    };
+
+    try(null, "null is null");
+
+    // things that are normally "falsey"
+    try(false, "ERROR");
+    try(0, "ERROR");
+
+    // things that always "truthy"
+    try(true, "ERROR");
+    try(1, "ERROR");
+}
