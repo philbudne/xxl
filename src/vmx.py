@@ -683,7 +683,7 @@ class VarInstr(VMInstr1):
     name = "var"
 
     def step(self, vm):
-        vm.scope.defvar(self.value, classes.null_value)
+        vm.scope.defvar(self.value, classes.undef_value)
 
 @reginstr
 class ArgsInstr(VMInstr1):
