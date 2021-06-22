@@ -183,6 +183,9 @@ var mumodule = function (mu, module_name) {
 	    }
 	}
     );
+    if (vars.len() == 0) {
+	return();
+    }
     mu.hr();
     mu.h2("Variables");
     mu.p();
