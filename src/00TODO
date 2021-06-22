@@ -188,3 +188,5 @@ Implement Object.freeze_object, Object.seal_object (methods)
 	seal: smash delprop
 
 Add List, Dict [gs]etitem methods??
+
+Keep cache of PyObjects, so not making new ones?
