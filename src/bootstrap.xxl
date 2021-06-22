@@ -11,29 +11,39 @@ if (__modinfo.booting) {
 }
 __modinfo.booting = true;
 
-__xxl.import = function (name) { // XXX take optional args (as Dict?)
-    """
-    Import a source file, VM instruction (.vmx) file, or internal module.
-    Returns Module.
-    """
-    // _find_in_lib_path takes optional list of suffixes to try
-    var rets = __xxl._import(__xxl._find_in_lib_path(name));
-    var mod  = rets[0];	// Module
-    var boot = rets[1];	// Closure for bootstrap.vmx (first time only)
-
-    if (boot) {
-	boot();
-    }
-
-    // check for parser extensions at "well known" name:
-    var xp = mod.__extend_parser;
-    if (xp) {			// XXX ignore if asked?
-	xp(__modinfo.parser);
-    }
-    return(mod);
-};
-
 if (__modinfo.main) {		// once only
+    // __xxl was once private per-module
+    // XXX take optional args (as Dict?)
+    __xxl.import = function (name) {
+	"""
+	Import a source file, VM instruction (.vmx) file, or internal module.
+	Calls Module.__modinfo.__extend_parser, if present.
+	Returns Module.
+	"""
+	return(__modinfo._import(name));
+    };
+
+    __modinfo.__methods['_import'] = function (this, name) {
+	"""
+	helper for __xxl.import; needs access to importers __modinfo.parser
+	"""
+	// _find_in_lib_path takes optional list of suffixes to try
+	var rets = __xxl._import(__xxl._find_in_lib_path(name));
+	var mod  = rets[0];	// Module
+	var boot = rets[1];	// Closure for bootstrap.vmx (first time only)
+
+	if (boot) {
+	    boot();
+	}
+
+	// check for parser extensions at "well known" name:
+	var xp = mod.__extend_parser;
+	if (xp) {			// XXX ignore if asked?
+	    xp(this.parser);
+	}
+	return(mod);
+    };
+
     ////////////////////////////////////////////////////////////////
     // native code methods for built-in Classes
 
@@ -363,7 +373,7 @@ if (__modinfo.file) {
 	    __xxl.error("bootstrap", file, "parser_vmx", parser_vmx);
 	}
 	var pm = __xxl.import(parser_vmx); // parser module
-	var p = pm.Parser.new();	// make new Parser instance
+	var p = pm.Parser.new();	   // make new Parser instance
 	__modinfo.parser = p;	// make visible to parser extensions
 
 	p.start_parse(file);
