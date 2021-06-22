@@ -1,15 +1,9 @@
 FIX
 ===
-Make Null.new and Undefined.new illegal!
-
-Add List, Dict [gs]etitem methods
-
-Undefined and null should raise error on attempt to fetch unknown properties!!
-
 Makefile:
-	move {bootstrap,parser}.{xxl,vmx} to lib/ ??
-	generate classes.md, but don't replace? just complain if out of date??
-	complain if bootstrap.vmx out of date?
+	move checked-in {bootstrap,parser}.{xxl,vmx} to lib/ ??
+	generate classes.md in src dir
+	complain if bootstrap.vmx, classes.md out of date?
 	"make install" install classes.md, bootstrap.vmx, parser.vmx?
 
 lib dir
@@ -193,4 +187,4 @@ Implement Object.freeze_object, Object.seal_object (methods)
 	freeze: smash setprop, delprop, setitem, pop, lhs [ (if any)
 	seal: smash delprop
 
-
+Add List, Dict [gs]etitem methods??
