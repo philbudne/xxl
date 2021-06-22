@@ -927,7 +927,7 @@ def run(boot, scope, stats, trace, xcept):
 
     user_errors = always_user_errors = (classes.UError,)
     if not xcept:
-        user_errors += (Exception,) # too many to list!
+        user_errors += (KeyboardInterrupt, Exception,) # too many to list!
 
     vm.ac = boot                # Closure
     b0 = [["0", "call0"],       # call Closure
@@ -938,7 +938,6 @@ def run(boot, scope, stats, trace, xcept):
     except SystemExit:          # from os.exit
         raise
     except (VMError, AssertionError) as e: # an internal error
-        # KeyboardInterrupt??
         # NOTE: displays VM Instr
         sys.stderr.write("VM Error @ {}: {}\n".format(vm.ir, e))
         # XXX dump VM registers?
