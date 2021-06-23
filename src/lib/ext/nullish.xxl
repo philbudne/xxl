@@ -1,9 +1,9 @@
 // -*-js-*-
 
 var __doc = """
-Implement JavaScript "Nullish coalescing operator" (??),
-Logical nullish assignment" (??=), and
-Optional chaining (?.) operators.
+Implement JavaScript "Nullish coalescing operator" `??`,
+Logical nullish assignment" `??=`, and
+"Optional chaining" `?.` operators
 in XXL.
 """;
 
