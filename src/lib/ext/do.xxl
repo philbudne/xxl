@@ -1,7 +1,8 @@
 // -*-js-*-
 
 var __doc = """
-EXTENSION: "do { ... } while (cond);" statement
+EXTENSION: `do { ... } while (cond);` and
+           `do { ... } until (cond);`
 """;
 
 var __extend_parser = function (p) {
