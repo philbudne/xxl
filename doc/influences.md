@@ -40,7 +40,7 @@ original misfeatures.
 * lack of explicit member declarations
 * painful scope rules
 * it keeps growing
-* can't override "new" -- painful to make a singleton
+* painful to make a singleton
 	(not that I'm a big fan of the Gang of Four,
 	 and singletons are the global variables, of the 1990's)
 
