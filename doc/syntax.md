@@ -109,6 +109,7 @@ STRING: «'» [ANYTHING_EXCEPT_NEWLINE_OR_SINGLE_QUOTE]… «'» |
         \n      ASCII Line Feed character (10 decimal)
         \r      ASCII Carriage Return character (13 decimal)
         \t      ASCII Horizontal Tab (9 decimal)
+        \v      ASCII Vertical Tab (11 decimal)
         \xXX    base-16 representation of an unsigned 8-bit Unicode code point
         \uXXXX  base-16 representation of an unsigned 16-bit Unicode code point
         \UXXXXXXXX base-16 representation of unsigned 32-bit Unicode code point
