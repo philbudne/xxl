@@ -95,6 +95,8 @@ class UError(Exception):
 # All such Python classes should start with the letter "C"
 #       (the variable ClassName should point to the Class object of that name)
 
+GETPROP_NONE = None
+
 class CObject:
     __slots__ = ['props', 'klass']
 
@@ -117,7 +119,7 @@ class CObject:
         return Python string for object class name
         """
         c = self.getclass()
-        if not c or c == null_value:
+        if not getprop_ok(c):
             return "Unknown!"
 
         n = c.getprop(const.NAME).value # XXX getstr
@@ -141,7 +143,7 @@ class CObject:
         self.props.pop(prop)
 
     def getprop(self, prop):
-        return self.props.get(prop, null_value)
+        return self.props.get(prop, GETPROP_NONE)
 
     def setprop(self, prop, value):
         self.props[prop] = value
@@ -702,6 +704,14 @@ undef_value = CObject(Undefined)
 true_value = _new_pobj(Bool, True)
 false_value = _new_pobj(Bool, False)
 
+GETPROP_NONE = null_value
+def getprop_ok(x):
+    """
+    check a getprop return value
+    """
+    assert(x is not None)
+    return x is not GETPROP_NONE  # see CObject.getprop
+
 ################
 
 # utility called by VM jumpn/jumpe: NOT a method/pyfunc
@@ -833,7 +843,7 @@ def find_in_supers(l, rv, default):
     seen = set()
 
     while True:
-        if supers and supers is not null_value:
+        if getprop_ok(supers):
             for s in supers.value:  # XXX check
                 q.append(s)
                 seen.add(s)
@@ -849,9 +859,9 @@ def find_in_supers(l, rv, default):
             return c.getprop(rv) # never BoundMethod
 
         methods = c.getprop(const.METHODS)
-        if methods and methods is not null_value:
-            m = methods.value.get(rv) # Dict
-            if m and m is not null_value:
+        if getprop_ok(methods):
+            m = methods.value.get(rv, GETPROP_NONE) # Dict
+            if getprop_ok(m):
                 return CBoundMethod(l, m)
 
         supers = c.getprop(const.SUPERS)
@@ -875,9 +885,9 @@ def find_in_class(l, rv, default):
         return c.getprop(rv)
 
     methods = c.getprop(const.METHODS)
-    if methods and methods is not null_value:
-        m = methods.value.get(rv) # Dict
-        if m and m is not null_value:
+    if getprop_ok(methods):
+        m = methods.value.get(rv, GETPROP_NONE) # Dict
+        if getprop_ok(m):
             return CBoundMethod(l, m)
 
     return find_in_supers(l, rv, default)
