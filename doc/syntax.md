@@ -2,7 +2,7 @@
 
 * Largely adopted wholesale from Doug Crockford's original parser:
         http://crockford.com/javascript/tdop/tdop.html
-	(a subset of the "good parts" of JavaScript).
+        (a subset of the "good parts" of JavaScript).
 
 * ALL flow control statements should take a { block },
         except "else", which can take another "if"
@@ -112,20 +112,24 @@ STRING: «'» [ANYTHING_EXCEPT_NEWLINE_OR_SINGLE_QUOTE]… «'» |
         \xXX    base-16 representation of an unsigned 8-bit Unicode code point
         \uXXXX  base-16 representation of an unsigned 16-bit Unicode code point
         \UXXXXXXXX base-16 representation of unsigned 32-bit Unicode code point
-                (NOTE: not all code point values are legal! Unicode limited
-                 to 21 bits)
+                (NOTE: not all code point values are legal!
+                 Unicode limited to 21 bits)
 
         single quoted strings do not interpret '\' escapes
 
-        Any string of characters from !@#$%^&*-=+<>\|:,./?~
+        // makes the rest of the line a comment
+
+        White space characters (CR, LF, TAB, FF) are ignored.
+
+        Any string of characters from !#$%&*+-./:;<=>?@\^|~
         or *ANY* non-ASCII Unicode code point may be defined
         as an operator!!
+
+        All other non alphanumeric printing ASCII characters are stand-alone
+        (operator) tokens: (),[]`{}
 ```
 
 ## lexical conventions:
-
-* spacing is ignored
-* `//` makes the rest of the line a comment
 
 ***NOTE***
 
@@ -198,18 +202,17 @@ New instances of a class are created with MyClass.new(....),
 
 The Object "__xxl" contains the following members:
         import: a function to import another file (namespace returned as Object)
-        pyimport: a function to import a Python module as a PyObj
+        pyimport: a function to import a Python module as a PyObject
                 "." returns a wrapped value (Bool, Str, Number)
                 or another PyObj.  PyObj's are callable.
-        exit: a function, takes an int
-        argv: a list of strings
+        exit: a function, takes an int, exit process with integer status value
+        argv: a list of strings of arguments following the program path
         uerror: a function, takes a string, causes fatal error
-        temporary(?) debug functions:
-                break: break to Python debugger
+        debug functions:
+                break: break to Python debugger, with optional value (available in pdb as x)
                 print: convert arguments to Str, concatenate and print to stdout
                 error: convert arguments to Str, concatenate and print to stderr
                 backtrace: print xxl return stack to stderr
-        (plus a few more undocumented functions, for internal use)
 
 Base classes are available via `var classes = import("classes");`
 
