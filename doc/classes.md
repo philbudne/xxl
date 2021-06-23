@@ -52,7 +52,7 @@
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:1846 (bool_str)*
+*PyFunc at classes.py:1844 (bool_str)*
 
 > return Str representation: "true" or "false"
 
@@ -1358,7 +1358,7 @@
 ### Methods
 
 #### `assemble (this, tree, srcfile)`
-*PyFunc at classes.py:2123 (modinfo_assemble)*
+*PyFunc at classes.py:2121 (modinfo_assemble)*
 
 > Assemble List of Lists representing VM code. `tree`: List of Lists. `srcfile`: source of code (for output only). Returns Closure in __modinfo.module top level scope.
 
@@ -1388,7 +1388,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `load_vmx (this, fname)`
-*PyFunc at classes.py:2113 (modinfo_load_vmx)*
+*PyFunc at classes.py:2111 (modinfo_load_vmx)*
 
 > Load compiled `.vmx` file; Returns Closure in __modinfo.module top level scope.
 
@@ -1645,7 +1645,7 @@
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:1818 (nullish_getprop)*
+*PyFunc at classes.py:1816 (nullish_getprop)*
 
 > `.` method for Nullish (null, undefined) values. Fatal error if unknown property. Allows all Object methods (JavaScript is stricter, Python is not).
 
@@ -1726,10 +1726,10 @@
 #### `( (this, ...args)`
 *PyFunc at classes.py:1799 (null_call)*
 
-> `(` method for `null` value (fatal error) commonly happens when a bad method name is used, so output a "helpful" message.
+> `(` method for `null` value (fatal error)
 
 #### `. (l, r)`
-*PyFunc at classes.py:1818 (nullish_getprop)*
+*PyFunc at classes.py:1816 (nullish_getprop)*
 
 > `.` method for Nullish (null, undefined) values. Fatal error if unknown property. Allows all Object methods (JavaScript is stricter, Python is not).
 
@@ -1774,7 +1774,7 @@
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:1818 (nullish_getprop)*
+*PyFunc at classes.py:1816 (nullish_getprop)*
 
 > `.` method for Nullish (null, undefined) values. Fatal error if unknown property. Allows all Object methods (JavaScript is stricter, Python is not).
 
@@ -1853,7 +1853,7 @@
 > default Object `(` binop (fatal error)
 
 #### `. (l, r)`
-*PyFunc at classes.py:1818 (nullish_getprop)*
+*PyFunc at classes.py:1816 (nullish_getprop)*
 
 > `.` method for Nullish (null, undefined) values. Fatal error if unknown property. Allows all Object methods (JavaScript is stricter, Python is not).
 
@@ -2817,7 +2817,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `iter (this)`
-*PyFunc at classes.py:1952 (pyiterator_iter)*
+*PyFunc at classes.py:1950 (pyiterator_iter)*
 
 > Returns `this.` https://docs.python.org/3/library/stdtypes.html#typeiter says an iterator should have an __iter__ method.
 
@@ -2832,7 +2832,7 @@
 > Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).
 
 #### `next (this, finished_continuation)`
-*PyFunc at classes.py:1962 (pyiterator_next)*
+*PyFunc at classes.py:1960 (pyiterator_next)*
 
 > `finished` should be a CContinuation (eg; block leave label or "return") to call when iterator exhausted
 
@@ -2971,7 +2971,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `props (this)`
-*PyFunc at classes.py:1915 (pyobj_props)*
+*PyFunc at classes.py:1913 (pyobj_props)*
 
 > return dir() of wrapped Python object
 
@@ -3030,12 +3030,12 @@
 > Test if `l` and `r` refer to different Objects
 
 #### `( (this, ...args)`
-*PyFunc at classes.py:1930 (pyobj_call)*
+*PyFunc at classes.py:1928 (pyobj_call)*
 
 > 
 
 #### `. (l, r)`
-*PyFunc at classes.py:1898 (pyobj_getprop)*
+*PyFunc at classes.py:1896 (pyobj_getprop)*
 
 > PyObject `.` binop -- proxies to Python object getattr
 
@@ -3055,7 +3055,7 @@
 > Test if `l` and `r` refer to the same Object
 
 #### `[ (l, r)`
-*PyFunc at classes.py:1922 (pyobj_getitem)*
+*PyFunc at classes.py:1920 (pyobj_getitem)*
 
 > PyObject `[` binop
 
@@ -3622,7 +3622,7 @@
 > return Class for `this`
 
 #### `getprop (l, r)`
-*PyFunc at classes.py:1818 (nullish_getprop)*
+*PyFunc at classes.py:1816 (nullish_getprop)*
 
 > `.` method for Nullish (null, undefined) values. Fatal error if unknown property. Allows all Object methods (JavaScript is stricter, Python is not).
 
@@ -3652,9 +3652,9 @@
 > Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
-*PyFunc at classes.py:1986 (undef_str)*
+*PyFunc at classes.py:1984 (undef_str)*
 
-> to_string/repr method for Null Class: returns "null"
+> to_string/repr method for Undefined Class: returns `"undefined"`
 
 #### `reprx (l)`
 *PyFunc at classes.py:765 (obj_reprx)*
@@ -3701,12 +3701,12 @@
 > Test if `l` and `r` refer to different Objects
 
 #### `( (this, ...args)`
-*PyFunc at classes.py:1993 (undef_call)*
+*PyFunc at classes.py:1991 (undef_call)*
 
-> `(` method for `undefined` value (fatal error) commonly happens when a bad method name is used, so output a "helpful" message.
+> `(` method for `undefined` value (fatal error). commonly happens when a bad method name is used, so output a "helpful" message.
 
 #### `. (l, r)`
-*PyFunc at classes.py:1818 (nullish_getprop)*
+*PyFunc at classes.py:1816 (nullish_getprop)*
 
 > `.` method for Nullish (null, undefined) values. Fatal error if unknown property. Allows all Object methods (JavaScript is stricter, Python is not).
 

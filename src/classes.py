@@ -1800,10 +1800,8 @@ def null_str(this):
 def null_call(this, *args):
     """
     `(` method for `null` value (fatal error)
-    commonly happens when a bad method name is used,
-    so output a "helpful" message.
     """
-    raise UError("'null' called; bad method name?")
+    raise UError("'null' called")
 
 Null.setprop(const.METHODS, _mkdict({
     'repr': null_str
@@ -1986,14 +1984,14 @@ PyIterator.setprop(const.METHODS, _mkdict({
 @pyfunc
 def undef_str(this):
     """
-    to_string/repr method for Null Class: returns "null"
+    to_string/repr method for Undefined Class: returns `"undefined"`
     """
     return mkstr("undefined")
 
 @pyfunc
 def undef_call(this, *args):
     """
-    `(` method for `undefined` value (fatal error)
+    `(` method for `undefined` value (fatal error).
     commonly happens when a bad method name is used,
     so output a "helpful" message.
     """
