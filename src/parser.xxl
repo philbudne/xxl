@@ -331,22 +331,33 @@ var PrattParser = Class.new({
 	    s.defn = d;	    // PLB 2021-06-17 (try to avoid repeating)
 	    return(s);
 	}, // _gtok
+
+	ctoken: function (this) {
+	    """
+	    Check if deferred advance needed
+	    (was originally "check_advance", vs "cash_advance?!);
+	    advance no longer reads next token;
+	     just marks new token is needed,
+	     so interactive REPL doesn't hang at end of stmt.
+	    returns current token
+	    """
+	    if (this.need_advance) {
+		this.advance();
+	    }
+	    return(this._token);
+	}, // ctoken
+
 	check: function (this, id) {
 	    """
-	    Check if Str `id` matches current token
-	    (handles deferred advance)
+	    Return `true` if Str `id` matches current token
+	    (handles deferred advance).
 	    """
 	    return(this.ctoken().check(id));
-	},
-	expect: function (this, id, final) {
-	    if (!this.check(id)) {
-		this._token.error("Expected '" + id + "'");
-	    }
-	    this.need_advance = final;
-	},
+	}, // check
+
 	advance: function (this, id) {
-	    if (id) {
-		this.expect(id); // may recurse w/ null id
+	    if (id && !this.check(id)) { // may recurse w/ null id
+		this._token.error("Expected '" + id + "'");
 	    }
 	    if (!this.need_advance) {
 		this.need_advance = true; // defer, defer!!
@@ -394,20 +405,6 @@ var PrattParser = Class.new({
 	    return(left);
 	}, // expression
 
-	ctoken: function (this) {
-	    """
-	    Check if deferred advance needed
-	    (was originally "check_advance", vs "cash_advance?!);
-	    advance no longer reads next token;
-	     just marks new token is needed,
-	     so interactive REPL doesn't hang at end of stmt.
-	    returns current token
-	    """
-	    if (this.need_advance) {
-		this.advance();
-	    }
-	    return(this._token);
-	},
 
 	check_advance_end: function (this) {
 	    // here from bootstrap.xxl & statements loop.
@@ -450,7 +447,7 @@ var PrattParser = Class.new({
 	    if (!v.exp_stmt) { // XXX don't check if interactive (& top level?)!!
 		v.error("Bad expression statement.");
 	    }
-	    this.expect(";", true);
+	    this.advance(";");
 	    return(v);
 	}, // expression_statement
 
@@ -1283,7 +1280,7 @@ var Parser = Class.new({
 			p.advance("{"); // must be AFTER label defined!
 			this.first = p.statements();
 			p.scope = p.scope.pop();
-			p.expect("}", true);
+			p.advance("}");
 			this.arity = "statement";
 			return(this); // no longer discards LBrace stmt node!
 		    },
@@ -1339,7 +1336,7 @@ var Parser = Class.new({
 			    p.advance("=");
 			    this.second = p.expression(0);
 			}
-			p.expect(";", true);
+			p.advance(";");
 			return(this);
 		    },
 		    gen: function (this, vmcode) {

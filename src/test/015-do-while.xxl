@@ -12,7 +12,7 @@ var Do = Class.new({
 	    p.advance("(");
 	    this.second = p.expression(0);
 	    p.advance(")");
-	    p.expect(";", true);
+	    p.advance(";");
 	    this.arity = "statement";
 	    return(this);
 	},
