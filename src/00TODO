@@ -1,5 +1,7 @@
 FIX
 ===
+xxl.py: w/o filename run read/eval/PRINT loop
+
 Makefile:
 	move checked-in {bootstrap,parser}.{xxl,vmx} to dist??
 	generate classes.md in src dir
@@ -35,11 +37,6 @@ type wrapping:
 	classes.py pyfuncs do not invoke Class init methods!
 		revisit wrapping return values in CPyFunc.invoke
 			(tail calls to "new")
-
-xxl.py: w/o filename run read/eval/PRINT loop
-	need to change statement() and std() methods
-		to "check" @ end (w/o advance) -- ie; check("}")
-		and re-prime (at top of statement()?)
 
 TEST
 ====
@@ -179,7 +176,8 @@ straighten out .py file dependency graph?
 		List slice method
 	    add Bytes Class (subclass of CharSeq? ByteLike?)
 
-Have LBrace.gen[_closure] return List of code
+Have {LBrace,Label}.gen_code return List of code
+		  (.gen_closure generate "close" instr??)
 	call bclose_call in {If,While}.gen
 		(allow making/passing closures)
 
@@ -194,3 +192,6 @@ Add List, Dict [gs]etitem methods??
 Keep cache of PyObjects, so not making new ones?
 
 for symmetry define a '(' binop for Callable: r.invoke(r, *l.value) ??
+
+Implement JS ...spread in List and Dict lits?
+	just means calling extend or update??
