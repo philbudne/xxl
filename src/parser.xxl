@@ -16,23 +16,21 @@
 //  "This program makes frequent use of 'this' because I wrote it when I was young and foolish."
 ////////////////
 
+// Changes Copyright © 2021 Philip L. Budne
+
 // PLB: NOTE!
 
 // I've compounded the 'thissyness' by making the parser into a
 // class, not SO much because one might want to have multiple
-// active parsers in the same namespace, but to make it easier to
-// override parser pieces (thru subclassing) without wholesale
-// copying (not like it was SO big to begin with!).
+// active parsers in the same namespace, but to (try) to make it
+// easier to override parser pieces (thru subclassing) without
+// wholesale copying.  Further work is needed to make that a
+// reality (isolating the creation of each Symbol class into
+// a separate method??).
 
-// I've also converted it from the JavaScript "everything is an
-// object" model to uses Classes (breaking the feature that any
-// name can be used as an identifier unless it's seen as a
-// statement keyword first), to clearly indicate how an AST node
-// came into being, due to the hobgoblins of my small mind.
-// Classifying increased the source lines by 32%
-
-// But the largest growth was due to adding VM code generation
-//	which almost doubled the number of sources lines.
+// Converted to conform to narrow Class/instance data model; the
+// hobgoblins of my small mind can't cope with the duality of
+// "instances" being used as prototypes.
 
 // The individual Symbol classes could probably be declared at
 // top level *IF* the nud/led/std parsing methods were passed
@@ -40,15 +38,16 @@
 // improvement in clarity, but would mean more arg passing,
 // and chances of making a mistake.
 
-// The XXL language passes "this" as an explicit first argument
-// (like Python) to make it clear where the value is coming from.
-// At least *I* think it's a feature.
+// "this" is always passed as explicit first argument (like
+// Python) to make it clear where the value is coming from.  At
+// least *I* think it's a feature.
 
-// I've (so far) refrained from placing any licensing
-// terms on this file, in keeping with the spirit of the
-// original author.  But it's more than slightly likely
-// that you would be better served by using the original
-// as the starting point for some new project!!
+// I've refrained from placing any licensing terms on this file,
+// in keeping with the spirit of the original author placement of
+// the code into the public domain.
+
+// It's more than slightly likely that you would be better served
+// by using the original as the starting point for some new project!!
 
 // XXX split up??
 
@@ -564,25 +563,37 @@ var PrattParser = Class.new({
 			// EXCEPT was "(literal)" for literals
 			// COULD be reinstated
 			// (with optional 4th arg to Symbol.init)
-			// *IF* someone needs check/advance(p.LIT)
+			// *IFF* someone needs check/advance(p.LIT)
 			return(this.arity != "literal" &&
 			       this.value == value);
 		    },
-		    // "null denotation": invoked by parser at the start
-		    // of an expression.
-		    nud: function (this) { this.error("Undefined."); },
-		    // "left denotation": invoked by parser when there is
-		    //  context to the left of this symbol.
+		    nud: function (this) {
+			"""
+			"null denotation" -- invoked by parser at the start of an expression.
+			"""
+			this.error("Undefined.");
+		    },
 		    led: function (this, ignore) {
+			"""
+			"left denotation" -- invoked by parser when there is
+			context to the left of this symbol, honoring
+			`.lbp` (left binding power) property.
+			"""
 			this.error("Missing operator.");
 		    },
 		    error: function (this, msg) {
+			"""
+			Output a fatal error displaying token location and value .
+			"""
 			// XXX wrap this.value in quotes??
 			__xxl.error(this.where, "ERROR: symbol", this.value,
 				     "--", msg);
 			__xxl.exit(1);
 		    },
 		    warning: function (this, msg) {
+			"""
+			Output a warning displaying token location and value .
+			"""
 			__xxl.error(this.where, "WARNING: symbol", this.value,
 				     "--", msg);
 		    },
@@ -590,7 +601,6 @@ var PrattParser = Class.new({
 			// XXX call gen_XXX based on this.arity???
 			this.error("No gen function.");
 		    }
-		    // XXX reserved = True?
 		} // methods
 	    }); // Symbol
 	    p.Symbol.lbp = 0;	// Class member
@@ -650,6 +660,7 @@ var PrattParser = Class.new({
 	    p.END = "(end)";	// .value for End Symbol
 
 	    // value MUST be this.END (for advance/check calls)
+	    // (only still used in "parse" method)
 	    p.EOF = p.End.new("EOF", p.END, null);
 
 	    //////////////// operator Symbol base classes
