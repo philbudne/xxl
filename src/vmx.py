@@ -683,7 +683,10 @@ class VarInstr(VMInstr1):
     name = "var"
 
     def step(self, vm):
-        vm.scope.defvar(self.value, classes.undef_value)
+        # XXX maybe explicitly generate "load undefined",
+        #       and remove assignment w/ initializer?
+        vm.ac = classes.undef_value
+        vm.scope.defvar(self.value, vm.ac)
 
 @reginstr
 class ArgsInstr(VMInstr1):
