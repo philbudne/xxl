@@ -291,14 +291,18 @@ var PrattParser = Class.new({
 	    // XXX assert str.instance_of("".getclass()) ????
 	    this.symbol_classes[str] = symbol_class;
 	},
+	_error: function (this, where, token, msg) {
+	    __xxl.error(where, "ERROR: saw", token, "--", msg);
+	    __xxl.exit(1);	// XXX throw to a continuation!!!
+	},
 	_gtok: function (this) {
 	    var t = this.get_token();
 	    if (!t) {
 		return(this.EOF);
 	    }
 	    var t_error = function (msg) {
-		__xxl.error(t.where, "ERROR: ", msg);
-		__xxl.exit(1);
+		this._error(t.where, t.value, msg);
+		// NOTREACHED
 	    };
 	    var v = t.value;
 	    var a = t.type;		// arity (name,number,string,operator)
@@ -316,7 +320,7 @@ var PrattParser = Class.new({
 	    else if (a == "operator") {
 		c = this.symbol_classes[v];
 		if (!c) {
-		    t_error("Unknown operator " + v);
+		    t_error("Unknown operator.");
 		}
 	    }
 	    else if (a == "string" || a == "number") {
@@ -325,7 +329,7 @@ var PrattParser = Class.new({
 		// id = this.LIT;
 	    }
 	    else {
-		t_error("Unexpected token " + v);
+		t_error("Unexpected token.");
 	    }
 	    var s = c.new(t.where, v, a); // Symbol
 	    s.defn = d;	    // PLB 2021-06-17 (try to avoid repeating)
@@ -578,11 +582,12 @@ var PrattParser = Class.new({
 			"""
 			"null denotation" -- invoked by parser at the start of an expression.
 			"""
-			this.error("Undefined.");
+			this.error(this.arity == "name" ?
+				   "Undefined symbol." : "Unexpected token.");
 		    },
 		    led: function (this, ignore) {
 			"""
-			"left denotation" -- invoked by parser when there is
+			"left denotation" -- invoked by expression when there is
 			context to the left of this symbol, honoring
 			`.lbp` (left binding power) property.
 			"""
@@ -590,17 +595,17 @@ var PrattParser = Class.new({
 		    },
 		    error: function (this, msg) {
 			"""
-			Output a fatal error displaying token location and value .
+			Output a fatal error displaying token location and value.
 			"""
-			// XXX wrap this.value in quotes??
-			__xxl.error(this.where, "ERROR: saw", this.value,
-				     "--", msg);
-			__xxl.exit(1);
+			p._error(this.where, this.value, msg);
+			// NOTREACHED
 		    },
 		    warning: function (this, msg) {
 			"""
 			Output a warning displaying token location and value .
 			"""
+			// NOTE! output format matched Parser._error
+			// XXX call a p._warning function?
 			__xxl.error(this.where, "WARNING: symbol", this.value,
 				     "--", msg);
 		    },
@@ -770,12 +775,23 @@ var Parser = Class.new({
 	    p.PIDX = p.PDOT;		// exp[index]
 	    p.PFUN = p.PDOT;		// exp(args)
 
+	    p.Balanced = Class.new({
+		doc: "Class for terminal symbols that are the right side of matched pairs.",
+		supers: [p.Symbol],
+		name: "Balanced",
+		methods: {
+		    nud: function (this) {
+			this.error("Unmatched.");
+		    }
+		}
+	    });
+
 	    p.add_terminal("Colon",  ":");
 	    p.add_terminal("Comma",  ",");
 	    p.add_terminal("Semi",   ";");
-	    p.add_terminal("RParen", ")");
-	    p.add_terminal("RBrack", "]");
-	    p.add_terminal("RBrace", "}").end_block = true;
+	    p.add_terminal("RParen", ")", p.Balanced);
+	    p.add_terminal("RBrack", "]", p.Balanced);
+	    p.add_terminal("RBrace", "}", p.Balanced).end_block = true;
 	    p.add_terminal("Else",   "else");
 
 	    p.Assign = Class.new({
@@ -1469,10 +1485,10 @@ var Parser = Class.new({
 	}, // Parser.init()
 
 	// XXX move to PrattParser?
-	add_terminal: function (this_parser, name, id) {
+	add_terminal: function (this_parser, name, id, super) {
 	    var c = Class.new({
 		name: name,
-		supers: [this_parser.Symbol]
+		supers: [super || this_parser.Symbol]
 	    });
 	    this_parser.add_symbol_class(id, c);
 	    return(c);
