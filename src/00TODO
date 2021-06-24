@@ -1,5 +1,7 @@
 FIX
 ===
+try moving "need_advance" to p.token property!
+
 xxl.py: w/o filename run read/eval/PRINT loop
 
 Makefile:
@@ -191,3 +193,6 @@ for symmetry define a '(' binop for Callable: r.invoke(r, *l.value) ??
 
 Implement JS ...spread in List and Dict lits?
 	just means calling extend or update??
+
+BUG: "var else;" doesn't stop "if .... else" ?!
+
