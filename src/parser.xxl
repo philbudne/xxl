@@ -407,11 +407,17 @@ var PrattParser = Class.new({
 
 
 	check_advance_end: function (this) {
-	    // here from bootstrap.xxl & statements loop.
-	    // avoids reading a token ahead for REPL
+	    return(this.check_end());
+	},
+
+	check_end: function (this) {
+	    """
+	    Check for end of block or EOF using Symbol "end" property.
+	    Called from bootstrap.xxl & statements loop.
+	    """
 	    __xxl._reset_prompt();
 
-	    return(this.ctoken().end); // handle deferred advance
+	    return(this.ctoken().end); // handle deferred advance check
 	},
 
 	statement: function (this, labeled) {
@@ -1496,13 +1502,18 @@ var Parser = Class.new({
 	},
 
 	statements: function (this) {
+	    """
+	    Parse a series of statements, returning List.
+	    Called for function body, block, whole file compile.
+	    """
 	    var a = [];
 	    // get new token if deferred (prev stmt), check if end of block or EOF
-	    while (!this.check_advance_end()) {
+	    while (!this.check_end()) {
 		a.append(this.statement());
 	    }
 	    return(a);
 	}, // statements
+
 	block: function (this) { // [LABEL ":"] "{" STATEMENTS "}"
 	    var label;
 	    var t = this.ctoken();

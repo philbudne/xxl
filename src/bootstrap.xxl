@@ -391,7 +391,7 @@ if (__modinfo.file) {
 	__modinfo.parser = p;	// make visible to parser extensions
 
 	p.start_parse(file);
-	while (!p.check_advance_end()) {
+	while (!p.check_end()) {
 	    // parse one statement into abstact syntax tree of Symbols
 	    var ast = p.statement();
 
