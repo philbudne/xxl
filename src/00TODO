@@ -1,7 +1,5 @@
 FIX
 ===
-try to eliminate expect??
-
 "else" handling:
 	eliminate peek?
 	eliminate explicit "}" toss!
