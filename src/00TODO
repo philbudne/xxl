@@ -1,5 +1,7 @@
 FIX
 ===
+BUG: unbalanced "}" treated as EOF!
+
 xxl.py: w/o filename run read/eval/PRINT loop
 
 Makefile:
@@ -32,11 +34,6 @@ lib & ext/lib:
 wrap:
 	PyObject: test if Python object is Itera{ble,tor};
 		if so, return PyItera{ble,tor}Object???
-
-type wrapping:
-	classes.py pyfuncs do not invoke Class init methods!
-		revisit wrapping return values in CPyFunc.invoke
-			(tail calls to "new")
 
 TEST
 ====
@@ -200,4 +197,7 @@ Accept "props" key in Class.new Dict to initialize
 Always create a FooClass metaclass when creating Class Foo?
 	populate with "class_methods" for methods????
 
-try moving "need_advance" to p.token property!?
+type wrapping:
+	classes.py pyfuncs do not invoke Class init methods!
+		revisit wrapping return values in CPyFunc.invoke
+			(tail calls to "new")
