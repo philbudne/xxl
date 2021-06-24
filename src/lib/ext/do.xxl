@@ -12,7 +12,6 @@ var __extend_parser = function (p) {
 	methods: {
 	    std: function (this) {	// parse as statement
 		this.first = p.block();
-		p.advance("}");
 		if (p.check("while")) {
 		    this.third = true;
 		}
