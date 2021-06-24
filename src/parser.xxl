@@ -295,9 +295,7 @@ var PrattParser = Class.new({
 	_gtok: function (this) {
 	    var t = this.get_token();
 	    if (!t) {
-		// value MUST be this.END (for advance/check calls)
-		// stash pointer so only one instance created? make Singleton??
-		return(this.End.new("EOF", this.END, null));
+		return(this.EOF);
 	    }
 	    var t_error = function (msg) {
 		__xxl.error(t.where, "ERROR: ", msg);
@@ -340,9 +338,15 @@ var PrattParser = Class.new({
 	    //  (so advance would need to take both)
 	    return(this.token.check(id));
 	},
-	advance: function (this, id) {
-	    if (id && !this.check(id)) {
+	expect: function (this, id, final) {
+	    if (!this.check(id)) {
 		this.token.error("Expected '" + id + "'");
+	    }
+	    this.need_advance = final;
+	},
+	advance: function (this, id) {
+	    if (id) {
+		this.expect(id);
 	    }
 	    if (this._next_token) { // saved from peek?
 		this.token = this._next_token;
@@ -387,6 +391,17 @@ var PrattParser = Class.new({
 	    return(left);
 	}, // expression
 
+	check_advance_end: function (this) {
+	    // here from bootstrap.xxl before calling statement
+	    // avoids reading a token ahead for REPL
+
+	    // need_advance should be set unless at EOF
+	    this.advance();
+	    this.need_advance = false;
+
+	    return(this.end());
+	},
+
 	statement: function (this, labeled) {
 	    var n = this.token;
 	    if (n.arity == "name") { // possible label name?
@@ -420,7 +435,7 @@ var PrattParser = Class.new({
 	    if (!v.exp_stmt) {
 		v.error("Bad expression statement.");
 	    }
-	    this.advance(";");
+	    this.expect(";", true);
 	    return(v);
 	}, // expression_statement
 
@@ -441,8 +456,6 @@ var PrattParser = Class.new({
 
 	init: function (this_parser) {
 	    var p = this_parser; // brevity
-
-	    p.END = "(end)";	// .value for End Symbol
 
 	    p.symbol_classes = {}; // string to Symbol subclass
 
@@ -538,7 +551,7 @@ var PrattParser = Class.new({
 		    },
 		    check: function (this, value) {
 			// .id field originally existed w/ same value as .value
-			// EXCPET was "(literal)" for literals
+			// EXCEPT was "(literal)" for literals
 			// COULD be reinstated
 			// (with optional 4th arg to Symbol.init)
 			// *IF* someone needs check/advance(p.LIT)
@@ -622,6 +635,11 @@ var PrattParser = Class.new({
 		    nud: function (this) { return(this); }
 		}
 	    });
+
+	    p.END = "(end)";	// .value for End Symbol
+
+	    // value MUST be this.END (for advance/check calls)
+	    p.EOF = p.End.new("EOF", p.END, null);
 
 	    //////////////// operator Symbol base classes
 
@@ -1233,7 +1251,7 @@ var Parser = Class.new({
 			p.advance("{"); // must be AFTER label defined!
 			this.first = p.statements();
 			p.scope = p.scope.pop();
-			p.advance("}");
+			p.expect("}", true);
 			this.arity = "statement";
 			return(this); // no longer discards LBrace stmt node!
 		    },
@@ -1289,7 +1307,7 @@ var Parser = Class.new({
 			    p.advance("=");
 			    this.second = p.expression(0);
 			}
-			p.advance(";");
+			p.expect(";", true);
 			return(this);
 		    },
 		    gen: function (this, vmcode) {
@@ -1313,10 +1331,13 @@ var Parser = Class.new({
 			this.first = p.expression(0);
 			p.advance(")");
 			this.second = p.block();
+			// this will cause REPL to block for next token. Sorry!
+			var next = p.peek();
 			// XXX change "else if" exception (crock) to "elif"?
-			if (p.check("else")) {
-			    p.scope.reserve(p.token);
+			if (next.check("else")) {
+			    p.advance();	// toss "}"
 			    p.advance("else");
+			    p.scope.reserve(p.token);
 			    // never a list:
 			    this.third = p.check("if") ? p.statement() : p.block();
 			}
@@ -1446,10 +1467,16 @@ var Parser = Class.new({
 
 	statements: function (this) {
 	    var a = [];
-	    while (!this.end()) { // until end of block or file.
+	    while (true) {
+		if (this.need_advance) {
+		    this.advance();
+		    this.need_advance = false;
+		}
+		if (this.end()) { // until end of block or file.
+		    return(a);
+		}
 		a.append(this.statement());
 	    }
-	    return(a);
 	}, // statements
 	block: function (this) { // [LABEL ":"] "{" STATEMENTS "}"
 	    var label;
@@ -1492,7 +1519,7 @@ var Parser = Class.new({
 	    // set by new_module in classes.py
 	    this.predef("__modinfo");
 				   
-	    this.advance();	// prime the pump (load this.token)
+	    this.need_advance = true; // pump needs priming
 	},
 	parse: function (this, fname) {	// parse whole file
 	    this.start_parse(fname);

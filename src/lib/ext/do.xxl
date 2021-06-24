@@ -25,7 +25,7 @@ var __extend_parser = function (p) {
 		p.advance("(");
 		this.second = p.expression(0);
 		p.advance(")");
-		p.advance(";");
+		p.expect(";", true); // last token: don't read ahead
 		this.arity = "statement";
 		return(this);
 	    },
