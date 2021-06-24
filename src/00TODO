@@ -1,15 +1,15 @@
 FIX
 ===
 Makefile:
-	move checked-in {bootstrap,parser}.{xxl,vmx} to lib/ ??
+	move checked-in {bootstrap,parser}.{xxl,vmx} to dist??
 	generate classes.md in src dir
-	complain if bootstrap.vmx, classes.md out of date?
-	"make install" install classes.md, bootstrap.vmx, parser.vmx?
+	complain if bootstrap.vmx, classes.md out of date (vs lib)
+	"make install" install to "lib"
+	"make dist" install to "dist"?
+	have Makefile set XXL_LIB_PATH to ".:lib:dist"??
 
-lib dir
+lib & ext/lib:
 	generate .md files, index.md file??
-
-lib and ext/lib:
 	run all as tests??
 
 *** BUG: Only CPObjects can be used as Dict keys
@@ -57,17 +57,20 @@ split Number into Float and Int
 test if implementing VM as chain of if's (on ints)
 	instead step on Instr objects is faster
 split up parser.xxl (into pratt,xlparser,vmcode??)
-Make Scopes transparent??
-	System.scope()??
+Make Scopes transparent??  Subclass of Dict??
+	__xxl.current_scope()??
 	Scope.parent()??
 Make callable objects (more) transparent??
-	Closure.get{code,scope,args}??
-	BoundMethod.get{object,function}??
+	Closure.get{code,scope,args}()??
+	BoundMethod.get{object,function}()??
+	Closure.getframe() => Frame object w/ where, scope, code, pc, parent methods?
 implement methods, class members, class methods via descriptors???
 reenable MethodInstr (binop_lit_call?); avoid BoundMethod!!
 
 FEATURES (or extensions)
 ========================
+NOTE! many of these are just thoughts, possibly bad ones!
+
 Set
 Object: dir() method?? Return Set??
 load compressed vmx (JSON) files and/or use some faster serialization library!!
@@ -92,15 +95,14 @@ make function name () .... define name in local scope?????
 	ALWAYS put name into CClosure for debug/trace???
 
 make a full expression language??
-	is "{" ambiguous?? forbid at "top level"??
-
-XXXop opcodes do not consume vm.args
-	("clargs" needed for spread args; clear needed in "call")
+	optionally (via a subclass?)
+	stmt value already available in vm AC
 
 create wrapper Class for CObjects with real invoke method,
 	with a "(" binop that calls invoke??
 
-bring back to_bool?
+truthiness: check for is_true property, then to_bool method??
+	(default to_bool method returns property value)
 
 Helper to declare PyFunc wrappers for methods???
 	take string of argument types to expect/translate
@@ -120,11 +122,17 @@ Parser doc formatter;
 Complain about unused/unread variables (when exiting scope?)
 
 Can lexer operator/name dichotomy be eliminated????
-	would lose "Unknown operator" error.
 	(to allow unicode to start either operator or name)
+	would lose "Unknown operator" error.
 	things that start w/ letter terminated by operator or space
 	things that start w/ operator ASCII terminated by letter or space?
 	things that contain non-ASCII need to be terminated by space or non-operator
+	allow { and } as combining characters?
+		(to allow {{ }} for frozen Dict?)
+		would need "{ }" for empty Dict lit.
+
+XXXop opcodes, PyFunc.invoke do not consume vm.args
+	("clargs" needed for spread args; clear needed in "call")
 
 doc.xxl
     HTML markup:
@@ -142,19 +150,15 @@ Makefile:
 		recurse setting BOOTSTRAP_VMX to bootstrap.vmx.tmp to test??
 
 import:
-	optional bootstrap_vmx file
-	option to ignore __extend_parser
-
+	options (dict as second arg?)
+		bootstrap_vmx file
+		parser_vmx file
+		ignore __extend_parser
 	Make Module.new() do importing?
 	Module.create replaces System._import?
 	Native Module.init() would call Module.create
 	    could call __modinfo.load_vmx(bootstrap)
 		*BUT* would need to do it "manually" for "main"
-	    optional args (dict?)
-		optional parser_vmx file (set __modinfo.parser)
-		    default parser in __xxl.parser?
-	_COULD_ define native code __modinfo.load_vmx (using .assemble)
-	    BUT still need to load bootstrap!!!
 
 parser:
     "end" flag on Symbols (rather than hard-wired in p.end())
@@ -183,10 +187,10 @@ print module??
 	__xxl.print => print.out
 	__xxl.error => print.err
 
-Implement Object.freeze_object, Object.seal_object (methods)
-	freeze: smash setprop, delprop, setitem, pop, lhs [ (if any)
-	seal: smash delprop
+Implement Object.freeze_object, Object.seal_object (methods) ???
 
 Add List, Dict [gs]etitem methods??
 
 Keep cache of PyObjects, so not making new ones?
+
+for symmetry define a '(' binop for Callable: r.invoke(r, *l.value) ??
