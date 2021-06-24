@@ -332,30 +332,36 @@ var PrattParser = Class.new({
 	    return(s);
 	}, // _gtok
 	check: function (this, id) {
-	    this.check_advance(); // // handle deferred advance
-	    return(this.token.check(id));
+	    """
+	    Check if Str `id` matches current token
+	    (handles deferred advance)
+	    """
+	    return(this.ctoken().check(id));
 	},
 	expect: function (this, id, final) {
 	    if (!this.check(id)) {
-		this.token.error("Expected '" + id + "'");
+		this._token.error("Expected '" + id + "'");
 	    }
 	    this.need_advance = final;
 	},
 	advance: function (this, id) {
 	    if (id) {
-		this.expect(id);
+		this.expect(id); // may recurse w/ null id
+	    }
+	    if (!this.need_advance) {
+		this.need_advance = true; // defer, defer!!
+		return();
 	    }
 	    if (this._next_token) { // saved from peek?
-		this.token = this._next_token;
+		this._token = this._next_token;
 		this._next_token = null; // consume it
 	    }
 	    else {
-		this.token = this._gtok();
+		this._token = this._gtok();
 	    }
 	    this.need_advance = false;
-	    return(this.token);	// a Symbol!!
 	},
-	peek: function (this) {	// peek at token after this.token
+	peek: function (this) {	// peek at token after this._token
 	    // you can only peek one token ahead!
 	    if (!this._next_token) {
 		this._next_token = this._gtok();
@@ -378,29 +384,29 @@ var PrattParser = Class.new({
 	    }
 	},
 	expression: function (this, rbp) {
-	    var t = this.token;
+	    var t = this.ctoken();
 	    this.advance();
 	    var left = t.nud();
-	    while (rbp < this.token.lbp) {
-		t = this.token;
+	    while (rbp < (t = this.ctoken()).lbp) {
 		this.advance();
 		left = t.led(left);
 	    }
 	    return(left);
 	}, // expression
 
-	check_advance: function (this) { // vs cash_advance?!
+	ctoken: function (this) {
 	    """
 	    Check if deferred advance needed
-	    (advance no longer reads next token;
+	    (was originally "check_advance", vs "cash_advance?!);
+	    advance no longer reads next token;
 	     just marks new token is needed,
-	     so interactive REPL doesn't hang at end of stmt).
+	     so interactive REPL doesn't hang at end of stmt.
 	    returns current token
 	    """
 	    if (this.need_advance) {
 		this.advance();
 	    }
-	    return(this.token);
+	    return(this._token);
 	},
 
 	check_advance_end: function (this) {
@@ -408,11 +414,11 @@ var PrattParser = Class.new({
 	    // avoids reading a token ahead for REPL
 	    __xxl._reset_prompt();
 
-	    return(this.check_advance().end); // handle deferred advance
+	    return(this.ctoken().end); // handle deferred advance
 	},
 
 	statement: function (this, labeled) {
-	    var n = this.token;
+	    var n = this.ctoken();
 	    if (n.arity == "name") { // possible label name?
 		var next = this.peek(); // peek at next token
 		if (next.check(":")) {
@@ -954,11 +960,12 @@ var Parser = Class.new({
 			//	(avoid creating BoundMethod)????
 			this.lvalue = true;
 			this.first = left;
-			if (p.token.arity != "name") {
-			    p.token.error("Expected a property name.");
+			var t = p.ctoken();
+			if (t.arity != "name") {
+			    t.error("Expected a property name.");
 			}
-			p.token.arity = "literal";
-			this.second = p.token;
+			t.arity = "literal";
+			this.second = t;
 			this.arity = "binary";
 			p.advance();
 			return(this);
@@ -1061,7 +1068,7 @@ var Parser = Class.new({
 			  leave_while:
 			    while (true) {
 				if (p.check("...")) {
-				    var arg = p.token;
+				    var arg = p.ctoken();
 				    p.advance();
 				    arg.first = p.expression(0);
 				    a.append(arg);
@@ -1143,7 +1150,8 @@ var Parser = Class.new({
 			var a = [];
 			p.scope = p.Scope.new(p.scope); // XXX pass true for func. scope?
 			p.defname(this.where, "return", true);
-			if (p.token.arity == "name") { // function NAME?
+			var t = p.ctoken();
+			if (t.arity == "name") { // function NAME?
 			    // NOTE!! name (currently) defined only
 			    // INSIDE the function's scope, to allow
 			    // recursive functions declared in hashes.
@@ -1151,8 +1159,8 @@ var Parser = Class.new({
 			    //	statement expr. (setting .exp_stmt (as class member?))
 			    //  to allow bare "function" outside of expression.
 			    //  (would be moot point in pure expression language)
-			    this.name = p.token.value;
-			    p.define(p.token, true); // define function name R/O
+			    this.name = t.value;
+			    p.define(t, true); // define function name R/O
 			    p.advance();
 			}
 			p.advance("(");
@@ -1164,15 +1172,16 @@ var Parser = Class.new({
 				    p.advance("...");
 				    last = true;
 				}
-				if (p.token.arity != "name") {
-				    p.token.error("Expected a parameter name.");
+				t = p.ctoken(); // XXX t2?
+				if (t.arity != "name") {
+				    t.error("Expected a parameter name.");
 				}
-				p.define(p.token); // define argument
-				if (!last) {	   // not ...args
-				    a.append(p.token);
+				p.define(t); // define argument
+				if (!last) { // not ...args
+				    a.append(t);
 				}
 				else {
-				    this.third = p.token; // ...formal name
+				    this.third = t; // ...formal name
 				    p.advance();
 				    leave_while();
 				}
@@ -1186,9 +1195,10 @@ var Parser = Class.new({
 			this.first = a;
 			p.advance(")");
 			p.advance("{");
-			if (p.token.arity == "literal") {
+			t = p.ctoken(); // t2?
+			if (t.arity == "literal") {
 			    // XXX check if Str??
-			    this.doc = p.token.value; // XXX not visible xxl__tree
+			    this.doc = t.value; // XXX not visible xxl__tree
 			    p.advance();
 			}
 			else {
@@ -1246,10 +1256,10 @@ var Parser = Class.new({
 			var v;
 		      leave_while:
 			while (!p.check("}")) {
-			    n = p.token;
+			    n = p.ctoken();
 			    if (n.arity != "name"
 				&& n.arity != "literal") {
-				p.token.error("Dict key must be name or number");
+				n.error("Dict key must be name or number");
 			    }
 			    p.advance();
 			    p.advance(":");
@@ -1314,17 +1324,17 @@ var Parser = Class.new({
 		    std: function (this) {
 			var t;
 			this.arity = "statement";
-			var n = p.token;
+			var n = p.ctoken();
 			if (n.arity != "name") {
 			    n.error("Expected a new variable name.");
 			}
 			if (n.reserved) {
-			    n.error("'" + p.token.value + "' reserved.");
+			    n.error("'" + n.value + "' reserved.");
 			}
-			var read_only = this.value == "const";
+			var read_only = this.value == "const"; // true for "const" stmt
 			p.define(n, read_only); // define variable
 			this.first = n;
-			p.advance();
+			p.advance(n.value);
 			if (p.check("=") || read_only) {
 			    p.advance("=");
 			    this.second = p.expression(0);
@@ -1357,11 +1367,12 @@ var Parser = Class.new({
 			// this will cause REPL to block for next token. Sorry!
 			// node.js seems to avoid this, only continues on "} else ...."
 			// (could have a "peek" which won't look across lines?)
-			var next = p.peek();
+			var next = p.peek(); // XXX FLUSH!
 			if (next.check("else")) { // XXX works even w/ prev "var else"
-			    p.advance();	  // toss "}"
+			    p.advance();	  // toss "}" XXX FLUSH!!!
 			    p.advance("else");
-			    p.scope.reserve(p.token);
+			    var t = p.ctoken();
+			    p.scope.reserve(t);
 			    // XXX change "else if" exception (crock) to "elif"?
 			    this.third = p.check("if") ? p.statement() : p.block();
 			}
@@ -1397,12 +1408,12 @@ var Parser = Class.new({
 		supers: [p.Stmt],
 		methods: {
 		    std: function (this) {	// parse
-			var n = p.token;
+			var n = p.ctoken();
 			if (n.arity != "name") {
 			    n.error("Expected a label name.");
 			}
 			if (n.reserved) {
-			    n.error("'" + p.token.value + "' reserved.");
+			    n.error("'" + n.value + "' reserved.");
 			}
 			p.scope = p.Scope.new(p.scope);
 			p.define(n, true); // define variable for label as read-only
@@ -1500,12 +1511,12 @@ var Parser = Class.new({
 	}, // statements
 	block: function (this) { // [LABEL ":"] "{" STATEMENTS "}"
 	    var label;
-	    var t = this.token;
+	    var t = this.ctoken();
 	    if (t.arity == "name") { // label name?
 		label = t;	     // save it
 		this.advance();
 		this.advance(":");
-		t = this.token;
+		t = this.ctoken();
 	    }
 
 	    // was advance, but reads first token in block,
@@ -1526,7 +1537,7 @@ var Parser = Class.new({
 	    var oprs = '!@#$%^&*-=+<>\|:,./?~';
 	    // was: '=<>!+-*&|/%^.', '=<>&|.'
 	    this.get_token = __xxl._tokenizer(fname, oprs, oprs);
-	    this.token = null;	// current Symbol object
+	    this._token = null;	// current Symbol object
 
 	    // set in root_scope by classes.py classes_init()
 	    this.predef("Class");

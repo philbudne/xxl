@@ -13,15 +13,16 @@ var __extend_parser = function (p) {
 	    std: function (this) {	// parse as statement
 		this.first = p.block();
 		if (p.check("while")) {
+		    p.advance("while");
 		    this.third = true;
 		}
 		else if (p.check("until")) {
+		    p.advance("until");
 		    this.third = false;
 		}
 		else {
-		    p.token.error("expecting 'while' or 'until'");
+		    p.ctoken().error("in 'do' expecting 'while' or 'until'");
 		}
-		p.advance();
 		p.advance("(");
 		this.second = p.expression(0);
 		p.advance(")");
