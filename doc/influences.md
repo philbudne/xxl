@@ -69,6 +69,7 @@ original misfeatures.
 * method calls are magical (no bound methods)
 * painful (initial) list/object "for" iteration behavior
 * UTF-16 (surrogate pairs for anything outside unicode basic plane)
+* regexp literals are an abomination
 
 ### Ruby influences:
 * blocks as closures
