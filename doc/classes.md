@@ -46,13 +46,8 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `repr (this)`
-*PyFunc at classes.py:1854 (bool_str)*
+*PyFunc at classes.py:1865 (bool_str)*
 
 > return Str representation: "true" or "false"
 
@@ -65,6 +60,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `to_str (this)`
 *Closure at bootstrap.xxl:56:42*
@@ -128,9 +128,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
 ## Class `BoundMethod` subclass of `Callable`
@@ -180,11 +180,6 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `repr (this)`
 *PyFunc at classes.py:767 (obj_repr)*
 
@@ -199,6 +194,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `subclass_of (this, c)`
 *PyFunc at classes.py:1058 (class_subclass_of)*
@@ -267,9 +267,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
 ## Class `Callable` subclass of `Object`
@@ -309,11 +309,6 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `repr (this)`
 *PyFunc at classes.py:767 (obj_repr)*
 
@@ -328,6 +323,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `to_str (this)`
 *Closure at bootstrap.xxl:56:42*
@@ -391,9 +391,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
 ## Class `Class` subclass of `Object`
@@ -443,11 +443,6 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `repr (this)`
 *PyFunc at classes.py:767 (obj_repr)*
 
@@ -462,6 +457,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `subclass_of (this, c)`
 *PyFunc at classes.py:1058 (class_subclass_of)*
@@ -530,9 +530,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
 ## Class `Closure` subclass of `Callable`
@@ -582,11 +582,6 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `repr (this)`
 *PyFunc at classes.py:767 (obj_repr)*
 
@@ -601,6 +596,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `subclass_of (this, c)`
 *PyFunc at classes.py:1058 (class_subclass_of)*
@@ -669,9 +669,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
 ## Class `Continuation` subclass of `Callable`
@@ -711,11 +711,6 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `repr (this)`
 *PyFunc at classes.py:767 (obj_repr)*
 
@@ -730,6 +725,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `to_str (this)`
 *Closure at bootstrap.xxl:56:42*
@@ -793,9 +793,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
 ## PClass `Dict` subclass of `PyIterable`
@@ -880,11 +880,6 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `range (...args)`
 *PyFunc at classes.py:1276 (pyiterable_range)*
 
@@ -909,6 +904,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `sorted (this, reverse)`
 *PyFunc at classes.py:1261 (pyiterable_sorted)*
@@ -987,9 +987,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `[ (l, r, value)`
 *PyFunc at classes.py:1302 (dict_put)*
@@ -1059,11 +1059,6 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `repr (this)`
 *PyFunc at classes.py:767 (obj_repr)*
 
@@ -1083,6 +1078,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `sorted (this, reverse)`
 *Closure at bootstrap.xxl:164:44*
@@ -1151,9 +1151,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
 ## PClass `List` subclass of `PyIterable`
@@ -1238,11 +1238,6 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `range (...args)`
 *PyFunc at classes.py:1276 (pyiterable_range)*
 
@@ -1267,6 +1262,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `sorted (this, reverse)`
 *PyFunc at classes.py:1261 (pyiterable_sorted)*
@@ -1340,9 +1340,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `[ (l, r, value)`
 *PyFunc at classes.py:1408 (list_put)*
@@ -1358,7 +1358,7 @@
 ### Methods
 
 #### `assemble (this, tree, srcfile)`
-*PyFunc at classes.py:2131 (modinfo_assemble)*
+*PyFunc at classes.py:2142 (modinfo_assemble)*
 
 > Assemble List of Lists representing VM code. `tree`: List of Lists. `srcfile`: source of code (for output only). Returns Closure in __modinfo.module top level scope.
 
@@ -1388,7 +1388,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `load_vmx (this, fname)`
-*PyFunc at classes.py:2121 (modinfo_load_vmx)*
+*PyFunc at classes.py:2132 (modinfo_load_vmx)*
 
 > Load compiled `.vmx` file; Returns Closure in __modinfo.module top level scope.
 
@@ -1396,11 +1396,6 @@
 *PyFunc at classes.py:759 (obj_props)*
 
 > returns an Iterable for (String) property names of `this` Object
-
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
 *PyFunc at classes.py:767 (obj_repr)*
@@ -1416,6 +1411,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `to_str (this)`
 *Closure at bootstrap.xxl:56:42*
@@ -1479,9 +1479,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
 ## Class `Module` subclass of `Object`
@@ -1531,11 +1531,6 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `repr (this)`
 *PyFunc at classes.py:767 (obj_repr)*
 
@@ -1550,6 +1545,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `subclass_of (this, c)`
 *PyFunc at classes.py:1058 (class_subclass_of)*
@@ -1622,9 +1622,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
 ## Class `Null` subclass of `Nullish,PObject`
@@ -1669,11 +1669,6 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `repr (this)`
 *PyFunc at classes.py:1802 (null_str)*
 
@@ -1688,6 +1683,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:1844 (nullish_setprop)*
+
+> Nullish Object setprop method/operator
 
 #### `to_str (this)`
 *Closure at bootstrap.xxl:56:42*
@@ -1751,9 +1751,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
 ## Class `Nullish` subclass of `Object`
@@ -1793,11 +1793,6 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `repr (this)`
 *PyFunc at classes.py:767 (obj_repr)*
 
@@ -1812,6 +1807,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:1844 (nullish_setprop)*
+
+> Nullish Object setprop method/operator
 
 #### `to_str (this)`
 *Closure at bootstrap.xxl:56:42*
@@ -1875,9 +1875,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:1844 (nullish_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Nullish Object setprop method/operator
 
 ---
 ## PClass `Number` subclass of `PObject`
@@ -1922,11 +1922,6 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `repr (this)`
 *PyFunc at classes.py:1115 (pobj_repr)*
 
@@ -1941,6 +1936,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `to_float (this)`
 *PyFunc at classes.py:1580 (num_to_float)*
@@ -2079,9 +2079,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
 ## Class `Object` subclass of `Object`
@@ -2121,11 +2121,6 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `repr (this)`
 *PyFunc at classes.py:767 (obj_repr)*
 
@@ -2140,6 +2135,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `to_str (this)`
 *Closure at bootstrap.xxl:56:42*
@@ -2203,9 +2203,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
 ## Class `PClass` subclass of `Class`
@@ -2255,11 +2255,6 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `repr (this)`
 *PyFunc at classes.py:767 (obj_repr)*
 
@@ -2274,6 +2269,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `subclass_of (this, c)`
 *PyFunc at classes.py:1058 (class_subclass_of)*
@@ -2342,9 +2342,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
 ## PClass `PObject` subclass of `Object`
@@ -2384,11 +2384,6 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `repr (this)`
 *PyFunc at classes.py:1115 (pobj_repr)*
 
@@ -2403,6 +2398,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `to_str (this)`
 *Closure at bootstrap.xxl:56:42*
@@ -2466,9 +2466,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
 ## Class `PyFunc` subclass of `Callable`
@@ -2518,11 +2518,6 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `repr (this)`
 *PyFunc at classes.py:767 (obj_repr)*
 
@@ -2537,6 +2532,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `subclass_of (this, c)`
 *PyFunc at classes.py:1058 (class_subclass_of)*
@@ -2605,9 +2605,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
 ## PClass `PyIterable` subclass of `PObject,Iterable`
@@ -2672,11 +2672,6 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `range (...args)`
 *PyFunc at classes.py:1276 (pyiterable_range)*
 
@@ -2701,6 +2696,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `sorted (this, reverse)`
 *PyFunc at classes.py:1261 (pyiterable_sorted)*
@@ -2769,9 +2769,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
 ## Class `PyIterator` subclass of `Object,Iterable`
@@ -2817,7 +2817,7 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `iter (this)`
-*PyFunc at classes.py:1960 (pyiterator_iter)*
+*PyFunc at classes.py:1971 (pyiterator_iter)*
 
 > Returns `this.` https://docs.python.org/3/library/stdtypes.html#typeiter says an iterator should have an __iter__ method.
 
@@ -2832,7 +2832,7 @@
 > Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).
 
 #### `next (this, finished_continuation)`
-*PyFunc at classes.py:1970 (pyiterator_next)*
+*PyFunc at classes.py:1981 (pyiterator_next)*
 
 > `finished` should be a CContinuation (eg; block leave label or "return") to call when iterator exhausted
 
@@ -2840,11 +2840,6 @@
 *PyFunc at classes.py:759 (obj_props)*
 
 > returns an Iterable for (String) property names of `this` Object
-
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
 *PyFunc at classes.py:767 (obj_repr)*
@@ -2865,6 +2860,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `sorted (this, reverse)`
 *Closure at bootstrap.xxl:164:44*
@@ -2933,9 +2933,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
 ## PClass `PyObject` subclass of `Object`
@@ -2971,14 +2971,9 @@
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
 #### `props (this)`
-*PyFunc at classes.py:1923 (pyobj_props)*
+*PyFunc at classes.py:1934 (pyobj_props)*
 
 > return dir() of wrapped Python object
-
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `repr (this)`
 *PyFunc at classes.py:767 (obj_repr)*
@@ -2994,6 +2989,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `to_str (this)`
 *Closure at bootstrap.xxl:56:42*
@@ -3030,12 +3030,12 @@
 > Test if `l` and `r` refer to different Objects
 
 #### `( (this, ...args)`
-*PyFunc at classes.py:1938 (pyobj_call)*
+*PyFunc at classes.py:1949 (pyobj_call)*
 
 > 
 
 #### `. (l, r)`
-*PyFunc at classes.py:1906 (pyobj_getprop)*
+*PyFunc at classes.py:1917 (pyobj_getprop)*
 
 > PyObject `.` binop -- proxies to Python object getattr
 
@@ -3055,16 +3055,16 @@
 > Test if `l` and `r` refer to the same Object
 
 #### `[ (l, r)`
-*PyFunc at classes.py:1930 (pyobj_getitem)*
+*PyFunc at classes.py:1941 (pyobj_getitem)*
 
 > PyObject `[` binop
 
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
 ## Class `PyVMFunc` subclass of `Callable`
@@ -3114,11 +3114,6 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `repr (this)`
 *PyFunc at classes.py:767 (obj_repr)*
 
@@ -3133,6 +3128,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `subclass_of (this, c)`
 *PyFunc at classes.py:1058 (class_subclass_of)*
@@ -3201,9 +3201,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
 ## Class `SingletonClass` subclass of `Class`
@@ -3253,11 +3253,6 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `repr (this)`
 *PyFunc at classes.py:767 (obj_repr)*
 
@@ -3272,6 +3267,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `subclass_of (this, c)`
 *PyFunc at classes.py:1058 (class_subclass_of)*
@@ -3340,9 +3340,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
 ## PClass `Str` subclass of `PyIterable`
@@ -3437,11 +3437,6 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `range (...args)`
 *PyFunc at classes.py:1276 (pyiterable_range)*
 
@@ -3466,6 +3461,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:821 (obj_setprop)*
+
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 #### `slice (this, start, end)`
 *PyFunc at classes.py:1657 (str_slice)*
@@ -3599,9 +3599,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
 ## Class `Undefined` subclass of `Nullish,Object`
@@ -3646,13 +3646,8 @@
 
 > returns an Iterable for (String) property names of `this` Object
 
-#### `putprop (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
-
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
-
 #### `repr (this)`
-*PyFunc at classes.py:1994 (undef_str)*
+*PyFunc at classes.py:2005 (undef_str)*
 
 > to_string/repr method for Undefined Class: returns `"undefined"`
 
@@ -3665,6 +3660,11 @@
 *PyFunc at classes.py:959 (obj_setclass)*
 
 > set Class for `this`!!
+
+#### `setprop (l, r, value)`
+*PyFunc at classes.py:1844 (nullish_setprop)*
+
+> Nullish Object setprop method/operator
 
 #### `to_str (this)`
 *Closure at bootstrap.xxl:56:42*
@@ -3701,7 +3701,7 @@
 > Test if `l` and `r` refer to different Objects
 
 #### `( (this, ...args)`
-*PyFunc at classes.py:2001 (undef_call)*
+*PyFunc at classes.py:2012 (undef_call)*
 
 > `(` method for `undefined` value (fatal error). commonly happens when a bad method name is used, so output a "helpful" message.
 
@@ -3728,9 +3728,9 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:821 (obj_putprop)*
+*PyFunc at classes.py:821 (obj_setprop)*
 
-> Object putprop method/operator store `value` as `r` (String) property of object `l`
+> Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
-formatted by doc.xxl on 2021-06-23
+formatted by doc.xxl on 2021-06-24

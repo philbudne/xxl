@@ -819,9 +819,9 @@ def obj_delprop(this, name):
     return null_value
 
 @pyfunc
-def obj_putprop(l, r, value):
+def obj_setprop(l, r, value):
     """
-    Object putprop method/operator
+    Object setprop method/operator
     store `value` as `r` (String) property of object `l`
     """
     # XXX check r is Str!!!
@@ -989,7 +989,7 @@ Object.setprop(const.METHODS, _mkdict({
     'setclass': obj_setclass,
     'instance_of': obj_instance_of,
     'delprop': obj_delprop,
-    'putprop': obj_putprop,
+    'setprop': obj_setprop,
     'getprop': obj_getprop,
     'props': obj_props,
     'repr': obj_repr,
@@ -1009,7 +1009,7 @@ Object.setprop(const.UNOPS, _mkdict({
     '!': obj_not,
 }))
 Object.setprop(const.LHSOPS, _mkdict({
-    '.': obj_putprop                # same as putprop!!
+    '.': obj_setprop                # same as setprop!!
 }))
 Object.setprop(const.NULLISH, false_value)
 
@@ -1841,12 +1841,23 @@ def nullish_getprop(l, r):
         raise UError("unknown property '%s' of %s" % (rv, l.classname()))
     return val
 
-# XXX setprop too!!!
+@pyfunc
+def nullish_setprop(l, r, value):
+    """
+    Nullish Object setprop method/operator
+    """
+    rv = r.value              # XXX must be Str
+    raise UError("Cannot set property '%s' of %s" % (rv, l.classname()))
+
 Nullish.setprop(const.METHODS, _mkdict({
-    'getprop': nullish_getprop
+    'getprop': nullish_getprop,
+    'setprop': nullish_setprop
 }))
 Nullish.setprop(const.BINOPS, _mkdict({
     '.': nullish_getprop
+}))
+Nullish.setprop(const.LHSOPS, _mkdict({
+    '.': nullish_setprop
 }))
 
 ################ Bool
