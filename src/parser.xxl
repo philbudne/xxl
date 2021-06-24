@@ -1364,12 +1364,9 @@ var Parser = Class.new({
 			// this will cause REPL to block for next token. Sorry!
 			// node.js seems to avoid this, only continues on "} else ...."
 			// (could have a "peek" which won't look across lines?)
-			var next = p.peek(); // XXX FLUSH!
-			if (next.check("else")) { // XXX works even w/ prev "var else"
-			    p.advance();	  // toss "}" XXX FLUSH!!!
+			if (p.check("else")) { // XXX works even w/ prev "var else"
+			    p.scope.reserve(p.ctoken());
 			    p.advance("else");
-			    var t = p.ctoken();
-			    p.scope.reserve(t);
 			    // XXX change "else if" exception (crock) to "elif"?
 			    this.third = p.check("if") ? p.statement() : p.block();
 			}

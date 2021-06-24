@@ -1,9 +1,5 @@
 FIX
 ===
-"else" handling:
-	eliminate peek?
-	eliminate explicit "}" toss!
-
 xxl.py: w/o filename run read/eval/PRINT loop
 
 Makefile:
