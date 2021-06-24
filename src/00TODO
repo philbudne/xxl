@@ -1,6 +1,6 @@
 FIX
 ===
-BUG: unbalanced "}" treated as EOF!
+Give LBrace a std or nud w/ error "unbalanced '}'"!!
 
 xxl.py: w/o filename run read/eval/PRINT loop
 

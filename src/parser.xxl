@@ -357,7 +357,7 @@ var PrattParser = Class.new({
 
 	advance: function (this, id) {
 	    if (id && !this.check(id)) { // may recurse w/ null id
-		this._token.error("Expected '" + id + "'");
+		this._token.error("Expected " + id);
 	    }
 	    if (!this.need_advance) {
 		this.need_advance = true; // defer, defer!!
@@ -405,19 +405,17 @@ var PrattParser = Class.new({
 	    return(left);
 	}, // expression
 
-
-	check_advance_end: function (this) {
-	    return(this.check_end());
-	},
-
-	check_end: function (this) {
+	check_end: function (this, eof_only) {
 	    """
-	    Check for end of block or EOF using Symbol "end" property.
+	    Check for end of block or EOF using Symbol "end_block" property.
 	    Called from bootstrap.xxl & statements loop.
 	    """
+	    var t = this.ctoken(); // handle deferred advance check
+	    if (t === this.EOF) {
+		return(true);
+	    }
 	    __xxl._reset_prompt();
-
-	    return(this.ctoken().end); // handle deferred advance check
+	    return(eof_only ? false : t.end_block);
 	},
 
 	statement: function (this, labeled) {
@@ -595,7 +593,7 @@ var PrattParser = Class.new({
 			Output a fatal error displaying token location and value .
 			"""
 			// XXX wrap this.value in quotes??
-			__xxl.error(this.where, "ERROR: symbol", this.value,
+			__xxl.error(this.where, "ERROR: saw", this.value,
 				     "--", msg);
 			__xxl.exit(1);
 		    },
@@ -664,9 +662,9 @@ var PrattParser = Class.new({
 		    nud: function (this) { return(this); }
 		}
 	    });
-	    p.End.end = true;
+	    p.End.end_block = true;
 
-	    p.END = "(end)";	// .value for End Symbol
+	    p.END = "(EOF)";	// .value for End Symbol
 
 	    // value MUST be this.END (for advance/check calls)
 	    // (only still used in "parse" method)
@@ -777,7 +775,7 @@ var Parser = Class.new({
 	    p.add_terminal("Semi",   ";");
 	    p.add_terminal("RParen", ")");
 	    p.add_terminal("RBrack", "]");
-	    p.add_terminal("RBrace", "}").end = true;
+	    p.add_terminal("RBrace", "}").end_block = true;
 	    p.add_terminal("Else",   "else");
 
 	    p.Assign = Class.new({
