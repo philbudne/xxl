@@ -398,8 +398,7 @@ var PrattParser = Class.new({
 	    // need_advance should be set unless at EOF
 	    this.advance();
 	    this.need_advance = false;
-
-	    return(this.end());
+	    return(this.token.end);
 	},
 
 	statement: function (this, labeled) {
@@ -635,6 +634,7 @@ var PrattParser = Class.new({
 		    nud: function (this) { return(this); }
 		}
 	    });
+	    p.End.end = true;
 
 	    p.END = "(end)";	// .value for End Symbol
 
@@ -746,7 +746,7 @@ var Parser = Class.new({
 	    p.add_terminal("Semi",   ";");
 	    p.add_terminal("RParen", ")");
 	    p.add_terminal("RBrack", "]");
-	    p.add_terminal("RBrace", "}");
+	    p.add_terminal("RBrace", "}").end = true;
 	    p.add_terminal("Else",   "else");
 
 	    p.Assign = Class.new({
@@ -1442,6 +1442,7 @@ var Parser = Class.new({
 		supers: [this_parser.Symbol]
 	    });
 	    this_parser.add_symbol_class(id, c);
+	    return(c);
 	}, // add_terminal
 
 	// XXX move to PrattParser?
@@ -1472,7 +1473,7 @@ var Parser = Class.new({
 		    this.advance();
 		    this.need_advance = false;
 		}
-		if (this.end()) { // until end of block or file.
+		if (this.token.end) { // until end of block or file.
 		    return(a);
 		}
 		a.append(this.statement());
@@ -1527,13 +1528,6 @@ var Parser = Class.new({
 	    this.advance(this.END);
 	    this.scope = this.scope.pop();
 	    return(s);		// return list of statement ASTs
-	},
-
-	end: function (this) {	// test if at end of block or file
-	    // called from Parser.statements and in bootstrap.xxl
-	    var t = this.token;
-	    // XXX check a boolean member rather than token type?!!!
-	    return(t && (t.check("}") || t.check(this.END)));
 	}
     } // Parser methods
 });

@@ -157,10 +157,6 @@ import:
 	    could call __modinfo.load_vmx(bootstrap)
 		*BUT* would need to do it "manually" for "main"
 
-parser:
-    "end" flag on Symbols (rather than hard-wired in p.end())
-    add "accept" method??
-
 ** add .git/pre-commit check?
 
 bootstrap.md -- describe adding operator;
