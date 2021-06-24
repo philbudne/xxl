@@ -8,7 +8,7 @@ var Do = Class.new({
     methods: {
 	std: function (this) {	// parse as statement
 	    this.first = p.block();
-	    p.advance();	// toss "}"
+	    p.advance("}");
 	    p.advance("while");
 	    p.advance("(");
 	    this.second = p.expression(0);
