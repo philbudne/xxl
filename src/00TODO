@@ -1,6 +1,7 @@
 FIX
 ===
-Give LBrace a std or nud w/ error "unbalanced '}'"!!
+Create "Balanced" Symbol class for terminals ')' '}' ']'
+	w/ nud error("unmatched")
 
 xxl.py: w/o filename run read/eval/PRINT loop
 
