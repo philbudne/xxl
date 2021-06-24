@@ -394,6 +394,7 @@ var PrattParser = Class.new({
 	check_advance_end: function (this) {
 	    // here from bootstrap.xxl before calling statement
 	    // avoids reading a token ahead for REPL
+	    __xxl._reset_prompt();
 
 	    // need_advance should be set unless at EOF
 	    this.advance();

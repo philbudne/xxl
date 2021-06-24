@@ -26,6 +26,14 @@ import readline                 # enable editing in input()
 
 # XXX PLB replace with native code (it's SLOOOOW!)???
 
+prompt = ''
+
+def reset_prompt():
+    global prompt
+    prompt = "}}} "           # "There are no curly braces in Python!"
+
+reset_prompt()
+
 NHEX_CHARS = { # number of hex chars for numeric escapes
     'x':2,
     'u':4,
@@ -80,8 +88,7 @@ class Stream(object):
             if self.f.isatty():
                 # XXX change prompt to "... " if not at top (in statement()?)
                 try:
-                    # "There are no curly braces in Python!"
-                    self.buf = input('}}} ') + '\n'
+                    self.buf = input(prompt) + '\n'
                 except (EOFError, KeyboardInterrupt):
                     print('')
                     return ''
@@ -152,6 +159,8 @@ def tokenize(finput, prefix='<>+-&', suffix='=>&:'):
 
         def make(type_, value):
             #print('make', type_, value, line, from_, s.pos())
+            global prompt
+            prompt = "... "
             return Token(type_, value, line, from_, s.pos())
 
         # Ignore whitespace.
@@ -344,6 +353,7 @@ if __name__ == "__main__":
     else:
         tokenizer = tokenize(sys.stdin)
     t = 1
+    reset_prompt()
     while t:
         t = next(tokenizer)
         print(t)

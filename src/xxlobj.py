@@ -128,6 +128,7 @@ def xxl__find_in_lib_path(fname, suffixes=None):
 ################
 
 # PLB: wrote a native replacement, but it's slooooow
+import jslex
 
 @classes.pyfunc
 def xxl__tokenizer(filename, prefix, suffix):
@@ -135,7 +136,6 @@ def xxl__tokenizer(filename, prefix, suffix):
     returns a token generator:
     returns Objects, and then null
     """
-    import jslex
     fnstr = filename.value # XXX getstr()?
     pstr = prefix.value    # XXX getstr()?
     sstr = suffix.value    # XXX getstr()?
@@ -165,6 +165,13 @@ def xxl__tokenizer(filename, prefix, suffix):
             return null
 
     return gen_wrapper          # returns PyFunc
+
+################
+
+@classes.pyfunc
+def xxl__reset_prompt():
+    jslex.reset_prompt()
+    return classes.null_value
 
 ################
 
@@ -335,6 +342,7 @@ def create_xxl_object(iscope, argv, parser_vmx):
     xxl_obj.setprop('parser_vmx', classes.mkstr(parser_vmx))
     # private, subject to change:
     xxl_obj.setprop('_tokenizer', xxl__tokenizer) # creates token generator
+    xxl_obj.setprop('_reset_prompt', xxl__reset_prompt)
     xxl_obj.setprop('_tree', xxl__tree)
     xxl_obj.setprop('_vtree', xxl__vtree)
     xxl_obj.setprop('_find_in_lib_path', xxl__find_in_lib_path)
