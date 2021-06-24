@@ -1331,7 +1331,7 @@ var Parser = Class.new({
 			var read_only = this.value == "const"; // true for "const" stmt
 			p.define(n, read_only); // define variable
 			this.first = n;
-			p.advance(n.value);
+			p.advance(n.value); // consume variable name
 			if (p.check("=") || read_only) {
 			    p.advance("=");
 			    this.second = p.expression(0);
