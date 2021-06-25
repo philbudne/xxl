@@ -1742,13 +1742,13 @@ def str_to_float(this):
 @pyfunc
 def str_to_int(this, base=None):
     """
-    Convert string to integer Number
-    `base` defaults to zero (accept 0xXXX for base 16)
+    Convert string to integer Number.
+    Int `base` defaults to zero (accept 0xXXX, 0oOOO, 0bBBB).
     """
     if base is None:
-        base = 0                # accept 0xXXX
+        base = 0
     else:
-        base = base.value
+        base = base.value       # XXX getint
     return mknumber(int(this.value, base))
 
 @pyfunc
