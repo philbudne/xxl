@@ -228,7 +228,21 @@ class Tokenizer:
                 str_ = self.c
                 self.s.advance()
 
-                # XXX handle 0xXXX here
+                self.c = self.s.curr()
+                if self.c == 'x':
+                    str_ += self.c
+                    self.s.advance()
+                    while True:
+                        self.c = self.s.curr()
+                        if self.c not in '01234567879abcdefACCDEF':
+                            break
+                        self.s.advance()
+                        str_ += self.c
+                    try:
+                        return self.make('number', int(str_, 0))
+                    except ValueError:
+                        make('number', str_).error("Bad hex number")
+                        continue
 
                 # Look for more digits.
                 while True:

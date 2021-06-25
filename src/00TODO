@@ -1,8 +1,6 @@
 FIX
 ===
-lexer:
-	use interactive, reset_prompt
-	Handle 0xXXX
+REPL: handle parse errors!!!
 
 xxl.py: w/o filename run read/eval/PRINT loop
 
