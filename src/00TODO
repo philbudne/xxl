@@ -1,6 +1,10 @@
 FIX
 ===
-Display line w/ pointer on error!
+jslex:
+	Make class -- return as PyObject?
+		have interactive property?
+	Display line w/ pointer on error!
+	Handle 0xXXX in jslex
 
 xxl.py: w/o filename run read/eval/PRINT loop
 
