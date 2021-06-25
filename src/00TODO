@@ -1,5 +1,7 @@
 FIX
 ===
+REPL: relax exp_stmt check if interactive???
+
 Makefile:
 	move checked-in {bootstrap,parser}.vmx to "dist"??
 	have Makefile set XXL_LIB_PATH to ".:lib:dist"??
