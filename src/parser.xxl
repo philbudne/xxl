@@ -307,8 +307,10 @@ var PrattParser = Class.new({
 	_error: function (this, where, token, msg) {
 	    __xxl.error(where, "ERROR: saw", token, "--", msg);
 	    var l = where.split(':');
-	    // XXX check fname??
-	    this.pointer(l[1].to_int(), l[2].to_int());
+	    if (l.len() >= 3) {
+		// XXX check fname??
+		this.pointer(l[1].to_int(), l[2].to_int());
+	    }
 	    __xxl.exit(1);	// XXX call user supplied function/continuation!!!
 	},
 	_gtok: function (this) {
