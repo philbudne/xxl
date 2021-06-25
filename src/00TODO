@@ -200,3 +200,4 @@ type wrapping:
 
 REPL: handle parse errors!!!
 
+Try using SingletonClass.new for End class!
