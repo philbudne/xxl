@@ -1,5 +1,10 @@
 FIX
 ===
+jslex.py:
+	"error" method
+	make Token w/ type == "ERROR"???
+	need "msg" field???
+
 Makefile:
 	move checked-in {bootstrap,parser}.vmx to "dist"??
 	have Makefile set XXL_LIB_PATH to ".:lib:dist"??
