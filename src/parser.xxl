@@ -28,30 +28,38 @@
 // reality (isolating the creation of each Symbol class into
 // a separate method??).
 
-// Converted to conform to narrow Class/instance data model; the
+// In XXL "this" is always passed as explicit first argument (like
+// Python) to make it clear where the value is coming from.  At least
+// *I* think it's a feature.
+
+// The individual Symbol classes could probably be declared at top
+// level *IF* the nud/led/std parsing methods were passed the Parser
+// instance as an argument.  This might be a great improvement in
+// clarity, but would mean more arg passing, *AND* it would carve the
+// Symbol subclass inheritance graph in stone...  Perhaps time (and
+// attempts to use this toolkit to create new languages) will point the
+// way....
+
+// Converted to a narrow(minded) Class/instance data model; the
 // hobgoblins of my small mind can't cope with the duality of
-// "instances" being used as prototypes.
-
-// The individual Symbol classes could probably be declared at
-// top level *IF* the nud/led/std parsing methods were passed
-// the Parser instance as an argument.  This might be a great
-// improvement in clarity, but would mean more arg passing,
-// and chances of making a mistake.
-
-// "this" is always passed as explicit first argument (like
-// Python) to make it clear where the value is coming from.  At
-// least *I* think it's a feature.
+// "instances" being used as prototypes -- while it might detour the
+// class/metaclass mobius/gordian straightjacket, it also obscures the
+// origin of objects, and their structure/nature, and easily leads to
+// chimerical objects of unclear origin, with parts glued on all over.
 
 // I've refrained from placing any licensing terms on this file,
 // in keeping with the spirit of the original author placement of
 // the code into the public domain.
 
-// It's more than slightly likely that you would be better served
-// by using the original as the starting point for some new project!!
+// It's more than slightly likely that you would be better served by
+// using the original (TDOP) parser as the starting point for some new
+// project!!
 
-// XXX split up??
+// XXX split up?? All imported modules would need to be pre-compiled (vmx files).
 
-var __doc = "Extensible Parser/Compiler for XXL.";
+const __doc = "Extensible Parser/Compiler for XXL.";
+
+const classes = __xxl.import("classes"); // SingletonClass
 
 // XXX move to vmcode.xxl?
 var VMCode = Class.new({
@@ -283,7 +291,7 @@ var VMCode = Class.new({
 var PrattParser = Class.new({
     name: "PrattParser",
     methods: {
-	start_parse: function (this, fname, prefix, suffix) {
+	start_parse: function (this, fname, prefix, suffix, fatal) {
 	    // XXX take error handler/callback/continuation!
 	    this.scope = this.Scope.new(null);
 
@@ -292,6 +300,8 @@ var PrattParser = Class.new({
 	    this.reset_prompt = ret[1]; // void function
 	    this.pointer = ret[2]; // func(line,pos); prints line w/ pointer
 	    this.interactive = ret[3]; // bool
+
+	    this._fatal = fatal || function () { __xxl.exit(1); };
 
 	    this._token = null;	// current Symbol object
 	},
@@ -304,21 +314,30 @@ var PrattParser = Class.new({
 	    // XXX assert str.instance_of("".getclass()) ????
 	    this.symbol_classes[str] = symbol_class;
 	},
-	_error: function (this, where, token, msg) {
-	    __xxl.error(where, "ERROR: saw", token, "--", msg);
+	_msg: function (this, where, prefix, token, msg) {
+	    __xxl.error(where, prefix, msg, token.repr()); // to stderr
 	    var l = where.split(':');
 	    if (l.len() >= 3) {
 		// XXX check fname??
 		this.pointer(l[1].to_int(), l[2].to_int());
 	    }
-	    __xxl.exit(1);	// XXX call user supplied function/continuation!!!
+	},
+	_error: function (this, where, token, msg) {
+	    this._msg(where, "ERROR", token, msg);
+	    this._fatal();
+	},
+	_warning: function(this, where, token, msg) {
+	    this._msg(where, "WARNING", token, msg);
+	},
+	_t_error: function(this, t, msg) {
+	    """
+	    Token error (for _gtok); `t` is a token from tokenizer.
+	    """
+	    this._error(t.where, t.value, msg);
+	    // NOTREACHED
 	},
 	_gtok: function (this) {
 	    var t = this.get_token();
-	    var t_error = function (msg) {
-		this._error(t.where, t.value, msg);
-		// NOTREACHED
-	    };
 	    var v = t.value;
 	    var a = t.type;		// arity (name,number,string,operator)
 	    var c;			// class
@@ -335,7 +354,7 @@ var PrattParser = Class.new({
 	    else if (a == "operator") {
 		c = this.symbol_classes[v];
 		if (!c) {
-		    t_error("Unknown operator.");
+		    this._t_error(t, "Unknown operator");
 		}
 	    }
 	    else if (a == "string" || a == "number") {
@@ -344,14 +363,11 @@ var PrattParser = Class.new({
 		// id = this.LIT;
 	    }
 	    else if (a == "EOF") {
-		if (!this.EOF) {
-		    // XXX declare using SingletonClass?!
-		    this.EOF = this.End.new(t.where, this.END, a);
-		}
-		return(this.EOF);
+		c = this.End;	// a SingletonClass!
+		v = this.END;	// for advance(this.END)
 	    }
 	    else {
-		t_error("Unexpected token.");
+		this._t_error(t, "Unexpected token");
 	    }
 	    var s = c.new(t.where, v, a); // Symbol
 	    s.defn = d;	    // PLB 2021-06-17 (try to avoid repeating)
@@ -383,7 +399,7 @@ var PrattParser = Class.new({
 
 	advance: function (this, id) {
 	    if (id && !this.check(id)) { // may recurse w/ null id
-		this._token.error("Expected " + id);
+		this._token.error("Expected " + id.to_str());
 	    }
 	    if (!this.need_advance) {
 		this.need_advance = true; // defer, defer!!
@@ -431,16 +447,19 @@ var PrattParser = Class.new({
 	    return(left);
 	}, // expression
 
-	check_end: function (this, eof_only) {
+	check_end: function (this) {
 	    """
-	    Check for end of block or EOF using Symbol "end_block" property.
-	    Called from bootstrap.xxl & statements loop.
+	    Check for EOF token. Called from bootstrap reader loop.
 	    """
-	    var t = this.ctoken(); // handle deferred advance check
-	    if (this.EOF && t === this.EOF) {
-		return(true);
-	    }
-	    return(eof_only ? false : t.end_block);
+	    return(this.ctoken().eof); // see also check_end_block
+	},
+
+	check_end_block: function (this) {
+	    """
+	    Check for end of block or EOF token. Called from statements loop.
+	    """
+	    var t = this.ctoken();
+	    return(t.end_block || t.eof); // see also check_end
 	},
 
 	statement: function (this, labeled) {
@@ -450,11 +469,11 @@ var PrattParser = Class.new({
 		if (next.check(":")) {
 		    // will be defined inside of a new scope (closure)
 		    if (n.reserved) { // XXX ???
-			n.error("'" + n.value + "' reserved.");
+			n.error(n.value.repr() + ' reserved');
 		    }
 		    if (labeled) { // nested labels?
 			// would generate nested closures! could just chain them on...
-			n.error("statement already labeled");
+			n.error("Statement already labeled");
 		    }
 		    // create Label node: creates new scope & defines label var in it
 		    var nn = this.Label.new(n.where, n.value, "name");
@@ -474,7 +493,7 @@ var PrattParser = Class.new({
 	expression_statement: function (this) {
 	    var v = this.expression(0);
 	    if (!this.interactive && !v.exp_stmt) {
-		v.error("Bad expression statement.");
+		v.error("Bad expression statement");
 	    }
 	    this.advance(";");
 	    return(v);
@@ -514,8 +533,8 @@ var PrattParser = Class.new({
 			var t = this.def[n.value];
 			if (t) {
 			    n.error((t.reserved
-				     ? "reserved at "
-				     : "defined at ")
+				     ? "Reserved at "
+				     : "Defined at ")
 				    + t.where);
 			}
 			this.def[n.value] = n;
@@ -561,7 +580,7 @@ var PrattParser = Class.new({
 			    if (t.arity == "name") {
 				// here with an operator keyword previously
 				// used as an identifier??
-				sym.error("defined at " + t.where);
+				sym.error("Defined at " + t.where);
 			    }
 			} // t
 			this.def[sym.value] = sym;
@@ -604,7 +623,7 @@ var PrattParser = Class.new({
 			"null denotation" -- invoked by parser at the start of an expression.
 			"""
 			this.error(this.arity == "name" ?
-				   "Undefined symbol." : "Unexpected token.");
+				   "Undefined symbol" : "Unexpected token");
 		    },
 		    led: function (this, ignore) {
 			"""
@@ -612,7 +631,7 @@ var PrattParser = Class.new({
 			context to the left of this symbol, honoring
 			`.lbp` (left binding power) property.
 			"""
-			this.error("Missing operator.");
+			this.error("Missing operator");
 		    },
 		    error: function (this, msg) {
 			"""
@@ -625,14 +644,11 @@ var PrattParser = Class.new({
 			"""
 			Output a warning displaying token location and value .
 			"""
-			// NOTE! output format matched Parser._error
-			// XXX call a p._warning function?
-			__xxl.error(this.where, "WARNING: symbol", this.value,
-				     "--", msg);
+			p._warning(this.where, this.value, msg);
 		    },
 		    gen: function (this, vmcode) {
 			// XXX call gen_XXX based on this.arity???
-			this.error("No gen function.");
+			this.error("No gen function");
 		    }
 		} // methods
 	    }); // Symbol
@@ -660,7 +676,7 @@ var PrattParser = Class.new({
 		supers: [p.Name],
 		methods: {
 		    gen_lhs: function (this, vmcode) {
-			this.error("should not happen: ReadOnly on LHS"); // paranoia
+			this.error("Should not happen (ReadOnly on LHS)"); // paranoia
 		    }
 		}
 	    });
@@ -681,14 +697,15 @@ var PrattParser = Class.new({
 	    });
 
 	    // pseudo-symbol for EOF
-	    p.End = Class.new({
+	    p.End = classes.SingletonClass.new({
 		name: "End",
 		supers: [p.Symbol],
 		methods: {
 		    nud: function (this) { return(this); }
 		}
 	    });
-	    p.End.end_block = true;
+	    p.End.end_block = true; // Class property
+	    p.End.eof = true;	    // Class property
 
 	    p.END = "(EOF)";	// .value for End Symbol
 
@@ -798,7 +815,7 @@ var Parser = Class.new({
 		name: "Balanced",
 		methods: {
 		    nud: function (this) {
-			this.error("Unmatched.");
+			this.error("Unmatched");
 		    }
 		}
 	    });
@@ -817,7 +834,7 @@ var Parser = Class.new({
 		methods: {
 		    led: function (this, left) {
 			if (!left.lvalue) {
-			    left.error("Not allowed on LHS of assignment.");
+			    left.error("Not allowed on LHS of assignment");
 			}
 			this.first = left;
 			this.second = p.expression(this.lbp-1);
@@ -996,7 +1013,7 @@ var Parser = Class.new({
 			this.first = left;
 			var t = p.ctoken();
 			if (t.arity != "name") {
-			    t.error("Expected a property name.");
+			    t.error("Expected a property name");
 			}
 			t.arity = "literal";
 			this.second = t;
@@ -1208,7 +1225,7 @@ var Parser = Class.new({
 				}
 				t = p.ctoken(); // XXX t2?
 				if (t.arity != "name") {
-				    t.error("Expected a parameter name.");
+				    t.error("Expected a parameter name");
 				}
 				p.define(t); // define argument
 				if (!last) { // not ...args
@@ -1275,7 +1292,7 @@ var Parser = Class.new({
 		name: "Stmt",
 		supers: [p.Symbol],
 		methods: {
-		    std: function (this) { this.error("Not a statement."); }
+		    std: function (this) { this.error("Not a statement"); }
 		}
 	    });
 
@@ -1360,10 +1377,10 @@ var Parser = Class.new({
 			this.arity = "statement";
 			var n = p.ctoken();
 			if (n.arity != "name") {
-			    n.error("Expected a new variable name.");
+			    n.error("Expected a new variable name");
 			}
 			if (n.reserved) {
-			    n.error("'" + n.value + "' reserved.");
+			    n.error(n.value.repr() + " reserved");
 			}
 			var read_only = this.value == "const"; // true for "const" stmt
 			p.define(n, read_only); // define variable
@@ -1441,10 +1458,10 @@ var Parser = Class.new({
 		    std: function (this) {	// parse
 			var n = p.ctoken();
 			if (n.arity != "name") {
-			    n.error("Expected a label name.");
+			    n.error("Expected a label name");
 			}
 			if (n.reserved) {
-			    n.error("'" + n.value + "' reserved.");
+			    n.error(n.value.repr() + " reserved.");
 			}
 			p.scope = p.Scope.new(p.scope);
 			p.define(n, true); // define variable for label as read-only
@@ -1538,8 +1555,7 @@ var Parser = Class.new({
 	    Called for function body, block, whole file compile.
 	    """
 	    var a = [];
-	    // get new token if deferred (prev stmt), check if end of block or EOF
-	    while (!this.check_end()) {
+	    while (!this.check_end_block()) {
 		a.append(this.statement());
 	    }
 	    return(a);

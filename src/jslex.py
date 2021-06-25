@@ -241,7 +241,7 @@ class Tokenizer:
                     try:
                         return self.make('number', int(str_, 0))
                     except ValueError:
-                        make('number', str_).error("Bad hex number")
+                        self.make('number', str_).error("Bad hex number")
                         continue
 
                 # Look for more digits.
@@ -271,7 +271,7 @@ class Tokenizer:
                         str_ += self.c
                         self.c = self.s.next()
                     if not self.c.isdigit():
-                        make('number', str_).error("Bad exponent")
+                        self.make('number', str_).error("Bad exponent")
                     while True:
                         str_ += self.c
                         self.c = self.s.next()
@@ -281,7 +281,7 @@ class Tokenizer:
                 if isalpha(self.c):
                     str_ += self.c
                     self.s.advance()
-                    make('number', str_).error("Bad number")
+                    self.make('number', str_).error("Bad number")
 
                 # Convert the string value to a number.
                 try:
@@ -290,7 +290,7 @@ class Tokenizer:
                     try:
                         return self.make('number', float(str_))
                     except ValueError:
-                        make('number', str_).error("Bad number")
+                        self.make('number', str_).error("Bad number")
             elif self.c in ["'", '"']:
                 # string
                 str_ = ''
@@ -317,7 +317,7 @@ class Tokenizer:
                                 v = "Unterminated string."
                             else:
                                 v = "Control Character in string."
-                            make('string', str_).error(v)
+                            self.make('string', str_).error(v)
                         if self.c == self.q:  # end quote?
                             break
                     elif self.c == self.q:    # multi-line: check for end quote
@@ -338,7 +338,7 @@ class Tokenizer:
                         self.c = self.s.next()
                         #print("escaped", self.c)
                         if self.c == '':
-                            make('string', str_).error("Unterminated string")
+                            self.make('string', str_).error("Unterminated string")
                         if self.c == 'b':
                             self.c = '\b'
                         elif self.c == 'f':
@@ -359,12 +359,12 @@ class Tokenizer:
                             while len(h) < n:
                                 self.c = self.s.next()
                                 if self.c == '':
-                                    make('string', str_).error("Unterminated string2")
+                                    self.make('string', str_).error("Unterminated string2")
                                 h += self.c
                             try:
                                 self.c = int(h, 16)
                             except ValueError:
-                                make('string', str_).error("Unterminated string3")
+                                self.make('string', str_).error("Unterminated string3")
                             self.c = chr(self.c)
                         # end c in NHEX_CHARS
                     # end escapement

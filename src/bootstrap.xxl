@@ -3,6 +3,7 @@
 // The pre-compiled version of this file (bootstrap.vmx) is loaded
 // into every new module namespace.
 
+// First time loaded, defines native code methods and functions.
 // Parses and executes source file (if any) one line at a time so that
 // parser extensions are available as soon as they are added!!
 
@@ -12,20 +13,56 @@ if (__modinfo.booting) {
 __modinfo.booting = true;
 
 if (__modinfo.main) {		// once only
-    // __xxl was once private per-module (now defined in root scope)
+    ////////////////////////////////////////////////////////////////
+    // __xxl (simple object) was once private per-module
+    // (now defined in root scope)
+
     __xxl.import = function (name) { // XXX take optional args (as Dict?)
 	"""
 	Import a source file, VM instruction (.vmx) file, or internal module.
-	Calls Module.__modinfo.__extend_parser(importer_parser), if found.
+	Calls Module.__extend_parser(importer_parser), if found.
 	Returns Module.
 	"""
 	return(__modinfo._import(name));
     };
 
-    __modinfo.__methods['_import'] = function (this, name) {
+    ////////////////
+    // print
+    var py_sys = __xxl.pyimport("sys");
+
+    var str = function (x) {
+	return(x.to_str());
+    };
+
+    var __print = function (file, l) {
+	file.write(" ".join(l.map(str)) + "\n");
+    };
+
+    __xxl.print = function (...args) {
+	"""
+	print args (as strings) to stdout
+	"""
+	__print(py_sys.stdout, args);
+    };
+
+    __xxl.error = function (...args) {
+	"""
+	print args (as strings) to stderr
+	"""
+	__print(py_sys.stderr, args);
+	py_sys.stderr.flush();	// needed under PyPy3 7.3.1??
+    };
+
+    ////////////////////////////////////////////////////////////////
+    // native code methods for built-in Classes
+
+    ////////////////
+    // ModInfo
+
+    __modinfo.getclass().__methods['_import'] = function (this, name) {
 	"""
 	Helper for __xxl.import.
-	Method for access to importer's __modinfo.parser
+	ModInfo Method for access to importer's __modinfo.parser
 	"""
 	// _find_in_lib_path takes optional list of suffixes to try
 	var rets = __xxl._import(__xxl._find_in_lib_path(name));
@@ -43,9 +80,6 @@ if (__modinfo.main) {		// once only
 	}
 	return(mod);
     };
-
-    ////////////////////////////////////////////////////////////////
-    // native code methods for built-in Classes
 
     var classes = __xxl.import("classes");
 
@@ -82,7 +116,7 @@ if (__modinfo.main) {		// once only
     classes.Bool.new = function (x) { // static method!
 	"""
 	Return truthiness of `x` (as Bool).
-	NOTE!! A static method, not a (Meta)class method!!!
+	NOTE!! A static method, not a metaclass method!!!
 	"""
 	// XXX could invoke to_bool method?! or "!(!x)"
 	return(x ? true : false);
@@ -252,7 +286,7 @@ if (__modinfo.main) {		// once only
     classes.Null.new = function (x) { // static method!
 	"""
 	Return `null` value
-	NOTE!! A static method, not a (Meta)class method!!!
+	NOTE!! A static method, not a metaclass method!!!
 	"""
 	return(null);
     };
@@ -263,7 +297,7 @@ if (__modinfo.main) {		// once only
     classes.Number.new = function (x) { // static method!
 	"""
 	Convert `x` to a `Number`
-	NOTE!! A static method, not a (Meta)class method!!!
+	NOTE!! A static method, not a metaclass method!!!
 	"""
 	return(x.to_number());
     };
@@ -328,41 +362,12 @@ if (__modinfo.main) {		// once only
     classes.Undefined.new = function (x) { // static method!
 	"""
 	Return `undefined` value
-	NOTE!! A static method, not a (Meta)class method!!!
+	NOTE!! A static method, not a metaclass method!!!
 	"""
 	return(undefined);
     };
 
-} // main / once only
-
-if (true) {			// all modules-- hide temp variables
-    ////////////////
-    // print
-    var py_sys = __xxl.pyimport("sys");
-
-    var str = function (x) {
-	return(x.to_str());
-    };
-
-    var __print = function (file, l) {
-	file.write(" ".join(l.map(str)) + "\n");
-    };
-
-    __xxl.print = function (...args) {
-	"""
-	print args (as strings) to stdout
-	"""
-	__print(py_sys.stdout, args);
-    };
-
-    __xxl.error = function (...args) {
-	"""
-	print args (as strings) to stderr
-	"""
-	__print(py_sys.stderr, args);
-	py_sys.stderr.flush();	// needed under PyPy3 7.3.1??
-    };
-}
+} // main (once only)
 
 if (__modinfo.debug_bootstrap) { // from environment XXL_DEBUG_BOOTSTRAP
     __xxl.error("bootstrap", __modinfo.file, "__modinfo.module", __modinfo.module);
@@ -391,7 +396,7 @@ if (__modinfo.file) {
 	__modinfo.parser = p;	// make visible to parser extensions
 
 	p.start_parse(file);
-	while (!p.check_end(true)) {
+	while (!p.check_end()) { // check for EOF
 	    // parse one statement into abstact syntax tree of Symbols
 	    var ast = p.statement();
 
