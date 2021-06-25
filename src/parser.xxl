@@ -463,6 +463,9 @@ var PrattParser = Class.new({
 	},
 
 	statement: function (this, labeled) {
+	    """
+	    Parse a single statement: called from bootstrap reader loop.
+	    """
 	    var n = this.ctoken();
 	    if (n.arity == "name") { // possible label name?
 		var next = this.peek(); // peek at next token
@@ -510,7 +513,7 @@ var PrattParser = Class.new({
 	},
 
 	predef: function (this, name, read_only) {
-	    """predefine Str `name` as a Name"""
+	    """predefine Str `name` as a Name or ReadOnly"""
 	    this.defname("@predef", name, read_only);
 	},
 
@@ -534,7 +537,7 @@ var PrattParser = Class.new({
 			if (t) {
 			    n.error((t.reserved
 				     ? "Reserved at "
-				     : "Defined at ")
+				     : "Previously defined at ")
 				    + t.where);
 			}
 			this.def[n.value] = n;
