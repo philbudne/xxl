@@ -61,9 +61,9 @@ class Token(object):
             (self.type_, self.value, self.lineno, self.from_, self.to)
 
 class Stream(object):
-    def __init__(self, f):
+    def __init__(self, f, interactive):
         self.f = f
-        self.interactive = f.isatty()
+        self.interactive = interactive
         self.i = 0
         self.buf = None
         self.nextc = None
@@ -180,12 +180,11 @@ def isunicode(c):
     return ord(c) >= 128
 
 class Tokenizer:
-    def __init__(self, fname, prefix, suffix):
-        self.fname = fname
+    def __init__(self, f, prefix, suffix, interactive=False):
         self.prefix = prefix
         self.suffix = suffix
         self.c = ''             # Current character.
-        self.s = Stream(fname)
+        self.s = Stream(f, interactive)
         self.from_ = self.s.pos() # The index of the start of the token.
         self.line = self.s.line()
         self.q = None           # The quote character.
@@ -412,9 +411,9 @@ if __name__ == "__main__":
     prefix = '<>+-&'
     suffix = '=>&:'
     if len(sys.argv) > 1:
-        tokenizer = Tokenizer(open(sys.argv[1]), prefix, suffix)
+        tokenizer = Tokenizer(open(sys.argv[1]), prefix, suffix, False)
     else:
-        tokenizer = Tokenizer(sys.stdin, prefix, suffix)
+        tokenizer = Tokenizer(sys.stdin, prefix, suffix, True)
     t = 1
     while t:
         t = tokenizer.next()
