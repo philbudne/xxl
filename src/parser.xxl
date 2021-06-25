@@ -284,14 +284,15 @@ var PrattParser = Class.new({
     name: "PrattParser",
     methods: {
 	start_parse: function (this, fname, prefix, suffix) {
+	    // XXX take error handler/callback/continuation!
 	    this.scope = this.Scope.new(null);
 
 	    var ret = __xxl._tokenizer(fname, prefix, suffix);
-	    // returns Objects w/ type, value & where properties, and then null
-	    this.get_token = ret[0];
-	    this.reset_prompt = ret[1];
-	    this.pointer = ret[2];
-	    this.interactive = ret[3];
+	    this.get_token = ret[0]; // Object w/ type, value & where properties, and then null
+	    this.reset_prompt = ret[1]; // void function
+	    this.pointer = ret[2]; // func(line,pos); prints line w/ pointer
+	    this.interactive = ret[3]; // bool
+
 	    this._token = null;	// current Symbol object
 	},
 
@@ -306,8 +307,9 @@ var PrattParser = Class.new({
 	_error: function (this, where, token, msg) {
 	    __xxl.error(where, "ERROR: saw", token, "--", msg);
 	    var l = where.split(':');
+	    // XXX check fname??
 	    this.pointer(l[1].to_int(), l[2].to_int());
-	    __xxl.exit(1);	// XXX throw to a continuation!!!
+	    __xxl.exit(1);	// XXX call user supplied function/continuation!!!
 	},
 	_gtok: function (this) {
 	    var t = this.get_token();
