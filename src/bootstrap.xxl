@@ -4,7 +4,7 @@
 // into every new module namespace.
 
 // First time loaded, defines native code methods and functions.
-// Parses and executes source file (if any) one line at a time so that
+// Always: Parses and executes source file (if any) one line at a time so that
 // parser extensions are available as soon as they are added!!
 
 if (__modinfo.booting) {
