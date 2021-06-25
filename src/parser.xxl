@@ -418,7 +418,7 @@ var PrattParser = Class.new({
 	    if (t === this.EOF) {
 		return(true);
 	    }
-	    __xxl._reset_prompt();
+	    this.reset_prompt();
 	    return(eof_only ? false : t.end_block);
 	},
 
@@ -1555,7 +1555,11 @@ var Parser = Class.new({
 	    // tempting to allow braces, but would require '{ }' for empty Dict!
 	    var oprs = '!@#$%^&*-=+<>\|:,./?~';
 	    // was: '=<>!+-*&|/%^.', '=<>&|.'
-	    this.get_token = __xxl._tokenizer(fname, oprs, oprs);
+	    var ret = __xxl._tokenizer(fname, oprs, oprs);
+	    this.get_token = ret[0];
+	    this.reset_prompt = ret[1];
+	    this.pointer = ret[2];
+	    this.interactive = ret[3];
 	    this._token = null;	// current Symbol object
 
 	    // set in root_scope by classes.py classes_init()

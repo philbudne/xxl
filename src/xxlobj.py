@@ -139,39 +139,36 @@ def xxl__tokenizer(filename, prefix, suffix):
     fnstr = filename.value # XXX getstr()?
     pstr = prefix.value    # XXX getstr()?
     sstr = suffix.value    # XXX getstr()?
-    generator = jslex.tokenize(open(fnstr), pstr, sstr)
+    tokenizer = jslex.Tokenizer(open(fnstr), pstr, sstr)
+    # XXX wrap in a PyObject (create token as namedtuple, return as list?)
 
-    # XXX use PyIterator???
     @classes.pyfunc
-    def gen_wrapper(*args):
-        """
-        generator function, wrapper around jslex.tokenize
-        """
-        try:
-            t = next(generator)
-            if not t:
-                return classes.null_value
-            where = "%s:%s:%s" % (fnstr, t.lineno, t.from_)
-            if t.type_ == 'number':
-                v = classes.mknumber(t.value)
-            else:
-                v = classes.mkstr(t.value)
-            return classes._mkobj({ # XXX create a Token
-                'type': classes.mkstr(t.type_),
-                'value': v,
-                'where': classes.mkstr(where)
-            })
-        except StopIteration:
-            return null
+    def next():
+        t = tokenizer.next()
+        if not t:
+            return classes.null_value
+        where = "%s:%s:%s" % (fnstr, t.lineno, t.from_)
+        if t.type_ == 'number':
+            v = classes.mknumber(t.value)
+        else:
+            v = classes.mkstr(t.value)
+        return classes._mkobj({ # XXX create a Token
+            'type': classes.mkstr(t.type_),
+            'value': v,
+            'where': classes.mkstr(where)
+        })
 
-    return gen_wrapper          # returns PyFunc
+    @classes.pyfunc
+    def pointer(line, pos):
+        tokenizer.pointer(line.value, pos.value) # XXX getint
+        return classes.null_value
 
-################
+    @classes.pyfunc
+    def reset_prompt():
+        tokenizer.reset_prompt()
+        return classes.null_value
 
-@classes.pyfunc
-def xxl__reset_prompt():
-    jslex.reset_prompt()
-    return classes.null_value
+    return classes.wrap([next, reset_prompt, pointer, tokenizer.s.interactive])
 
 ################
 
@@ -342,7 +339,6 @@ def create_xxl_object(iscope, argv, parser_vmx):
     xxl_obj.setprop('parser_vmx', classes.mkstr(parser_vmx))
     # private, subject to change:
     xxl_obj.setprop('_tokenizer', xxl__tokenizer) # creates token generator
-    xxl_obj.setprop('_reset_prompt', xxl__reset_prompt)
     xxl_obj.setprop('_tree', xxl__tree)
     xxl_obj.setprop('_vtree', xxl__vtree)
     xxl_obj.setprop('_find_in_lib_path', xxl__find_in_lib_path)

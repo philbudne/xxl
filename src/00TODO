@@ -1,8 +1,6 @@
 FIX
 ===
-jslex:
-	Make class -- return as PyObject?
-		have interactive property?
+lexer:
 	Display line w/ pointer on error!
 	Handle 0xXXX in jslex
 

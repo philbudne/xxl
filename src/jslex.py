@@ -5,16 +5,17 @@
 # 2021-05-04
 # Public Domain
 
+import sys                      # stderr
 import readline                 # enable editing in input()
 
-# Produce an array of simple token objects from a string.
+# Produce simple token objects from a string.
 # A simple token object contains these members:
 #      type: 'name', 'string', 'number', 'operator'
 #      value: string or number value of the token
 #      from: index of first character of the token
 #      to: index of the last character + 1
 
-# Comments of the # type are ignored.
+# Comment lines start with //
 
 # Operators are by default single characters. Multicharacter
 # operators can be made by supplying a string of prefix and
@@ -23,16 +24,13 @@ import readline                 # enable editing in input()
 #      '<>+-&', '=>&:'
 # will match any of these:
 #      <=  >>  >>>  <>  >=  +: -: &: &&: &&
+#
+# All non-ASCII unicode code points can be used in combining operators
+# and after a letter or _ in an ID
 
-# XXX PLB replace with native code (it's SLOOOOW!)???
+# PLB: I wrote a native XXL version, but it's slooooooow!
 
-prompt = ''
-
-def reset_prompt():
-    global prompt
-    prompt = "}}} "           # "There are no curly braces in Python!"
-
-reset_prompt()
+PROMPT = "}}} "               # "There are no curly braces in Python!"
 
 NHEX_CHARS = { # number of hex chars for numeric escapes
     'x':2,
@@ -64,11 +62,18 @@ class Token(object):
 class Stream(object):
     def __init__(self, f):
         self.f = f
+        self.interactive = f.isatty()
         self.i = 0
         self.buf = None
         self.nextc = None
         self.line_ = 1
+        self.reset_prompt()
+        self.orig = self.prev = ''
+        self.origline = self.prevline = -1
         self.advance()
+
+    def reset_prompt(self):
+        self.prompt = PROMPT
 
     def pos(self):
         return self.i
@@ -85,17 +90,49 @@ class Stream(object):
                 c = self.buf[0]
                 self.buf = self.buf[1:]
                 return c
-            if self.f.isatty():
-                # XXX change prompt to "... " if not at top (in statement()?)
+            if self.interactive:
                 try:
-                    self.buf = input(prompt) + '\n'
+                    self.buf = input(self.prompt) + '\n'
                 except (EOFError, KeyboardInterrupt):
                     print('')
                     return ''
             else:
                 self.buf = self.f.readline()
+
+            # save current and prev line for pointer
+            self.prev = self.orig
+            self.prevline = self.origline
+            self.orig = self.buf
+            self.origline = self.line_
+
             if not self.buf:
                 return ''
+
+    def pointer(self, line, pos):
+        """
+        output pointer to start of token to stderr
+        """
+        if line == self.origline:
+            lp = self.orig
+        elif line == self.prevline:
+            lp = self.prev
+        else:
+            return
+        
+        sys.stderr.write(lp)
+        point = []
+        i = 1
+        for ch in lp:
+            if i >= pos:
+                break
+            if ch == '\t':
+                point.append('\t')
+            else:
+                point.append(' ')
+            i += 1
+        point.append('^')
+        point.append('\n')
+        sys.stderr.write(''.join(point))
 
     def advance(self):
         """
@@ -110,6 +147,7 @@ class Stream(object):
         if self.ch == '\n':
             self.line_ += 1
             self.i = 0
+        self.prompt = "... "
 
     def next(self):
         self.advance()
@@ -135,225 +173,230 @@ def isunicode(c):
     """
     return ord(c) >= 128
 
-def tokenize(finput, prefix='<>+-&', suffix='=>&:'):
-    """
-    returns a generator
-    """
-    c = ''                      # The current character.
-    s = Stream(finput)
-    from_ = s.pos()             # The index of the start of the token.
-    line = s.line()
-    n = 0                       # The number value.
-    q = None                    # The quote character.
-    str_ = ''                   # The string value.
+class Tokenizer:
+    def __init__(self, fname, prefix, suffix):
+        self.fname = fname
+        self.prefix = prefix
+        self.suffix = suffix
+        self.c = ''             # Current character.
+        self.s = Stream(fname)
+        self.from_ = self.s.pos() # The index of the start of the token.
+        self.line = self.s.line()
+        self.q = None           # The quote character.
+        self.reset_prompt()
+        self.c = self.s.curr()
 
-    #prefix = set(prefix)
-    #suffix = set(suffix)
+    def reset_prompt(self):
+        self.s.reset_prompt()
 
-    # Begin tokenization.
-    # Loop through this text, one character at a time.
-    c = s.curr()
-    while c:
-        from_ = s.pos()
-        line = s.line()
+    def make(self, type_, value):
+        #print('make', type_, value, self.line, self.from_, self.s.pos())
+        return Token(type_, value, self.line, self.from_, self.s.pos())
 
-        def make(type_, value):
-            #print('make', type_, value, line, from_, s.pos())
-            global prompt
-            prompt = "... "
-            return Token(type_, value, line, from_, s.pos())
+    def pointer(self, line, pos):
+        self.s.pointer(line, pos)
 
-        # Ignore whitespace.
-        if c.isspace():
-            c = s.next()
-        elif isalpha(c):
-            str_ = c
-            s.advance()
-            while True:
-                c = s.curr()
-                if isalpha(c) or c.isdigit() or isunicode(c):
-                    str_ += c
-                    s.advance()
-                else:
-                    break
-            yield make('name', str_)
-        elif c.isdigit():
-            # number.
-            # A number cannot start with a decimal point.
-            # It must start with a digit, possibly '0'.
-            str_ = c
-            s.advance()
+    def next(self):
+        while self.c:
+            self.from_ = self.s.pos()
+            self.line = self.s.line()
 
-            # XXX handle 0xXXX here
-
-            # Look for more digits.
-            while True:
-                c = s.curr()
-                if not c.isdigit():
-                    break
-                s.advance()
-                str_ += c
-
-            # Look for a decimal fraction part.
-            if c == '.':
-                s.advance()
-                str_ += c
+            # Ignore whitespace.
+            if self.c.isspace():
+                self.c = self.s.next()
+            elif isalpha(self.c):
+                str_ = self.c
+                self.s.advance()
                 while True:
-                    c = s.curr()
-                    if not c.isdigit():
+                    self.c = self.s.curr()
+                    if isalpha(self.c) or self.c.isdigit() or isunicode(self.c):
+                        str_ += self.c
+                        self.s.advance()
+                    else:
                         break
-                    s.advance()
-                    str_ += c
+                return self.make('name', str_)
+            elif self.c.isdigit():
+                # number.
+                # A number cannot start with a decimal point.
+                # It must start with a digit, possibly '0'.
+                str_ = self.c
+                self.s.advance()
 
-            # Look for an exponent part.
-            if c in ['e', 'E']:
-                str_ += c
-                c = s.next()
-                if c in ['-', '+']:
-                    str_ += c
-                    c = s.next()
-                if not c.isdigit():
-                    make('number', str_).error("Bad exponent")
+                # XXX handle 0xXXX here
+
+                # Look for more digits.
                 while True:
-                    str_ += c
-                    c = s.next()
-                    if not c.isdigit():
+                    self.c = self.s.curr()
+                    if not self.c.isdigit():
                         break
-            # Make sure the next character is not a letter.
-            if isalpha(c):
-                str_ += c
-                s.advance()
-                make('number', str_).error("Bad number")
+                    self.s.advance()
+                    str_ += self.c
 
-            # Convert the string value to a number.
-            try:
-                yield make('number', int(str_))
-            except ValueError:
-                try:
-                    yield make('number', float(str_))
-                except ValueError:
-                    make('number', str_).error("Bad number")
-        elif c in ["'", '"']:
-            # string
-            str_ = ''
-            q = c
-            escapes = (q == '"') # 'string' are "raw" (like Un*x shell)
-            s.advance()
-            multiline = False
-            looping = True
-            c = s.curr()
-            # check for triple (multi line) quoting
-            if c == q:          # doubled quote?
-                c = s.peek()
-                if c == q:      # three times?
-                    s.advance() # consume third quote
-                    multiline = True
-                else:           # just two -- an empty string
-                    looping = False
-            #print("esc", escapes, "multi", multiline, "looping", looping)
-            while looping:
-                c = s.curr()
-                if not multiline:
-                    if c < ' ':
-                        if c == '\n'  or  c == '\r'  or  c == '':
-                            v = "Unterminated string."
-                        else:
-                            v = "Control Character in string."
-                        make('string', str_).error(v)
-                    if c == q:  # end quote?
-                        break
-                elif c == q:    # multi-line: check for end quote
-                    c = s.next()
-                    # XXX check for EOF?
-                    #print("e2", c)
-                    if c == q: # second quote?
-                        c = s.next() # consume second quote
-                        # XXX check for EOF?
-                        if c == q: # a third??
+                # Look for a decimal fraction part.
+                if self.c == '.':
+                    self.s.advance()
+                    str_ += self.c
+                    while True:
+                        self.c = self.s.curr()
+                        if not self.c.isdigit():
                             break
-                        else: # just two
-                            str_ += q
-                # end multi-line end quote check
+                        self.s.advance()
+                        str_ += self.c
 
-                # Look for escapement.
-                if escapes and c == '\\':
-                    c = s.next()
-                    #print("escaped", c)
-                    if c == '':
-                        make('string', str_).error("Unterminated string")
-                    if c == 'b':
-                        c = '\b'
-                    elif c == 'f':
-                        c = '\f'
-                    elif c == 'n':
-                        c = '\n'
-                    elif c == 'r':
-                        c = '\r'
-                    elif c == 't':
-                        c = '\t';
-                    elif c == 'v':
-                        c = '\v';
-                    elif c == '"'  or  c == "'" or  c == "\\":
-                        pass
-                    elif c in NHEX_CHARS:
-                        n = NHEX_CHARS[c]
-                        h = ''
-                        while len(h) < n:
-                            c = s.next()
-                            if c == '':
-                                make('string', str_).error("Unterminated string2")
-                            h += c
-                        try:
-                            c = int(h, 16)
-                        except ValueError:
-                            make('string', str_).error("Unterminated string3")
-                        c = chr(c)
-                    # end c in NHEX_CHARS
-                # end escapement
-                #print("appending", c)
-                str_ += c
-                s.advance()
-            # end while
-            yield make('string', str_)
-            c = s.next()
-        elif c == '/' and s.peek() == '/': # comment
-            s.advance()
-            while True:
-                c = s.curr()
-                if c == '' or c in ['\n', '\r']:
-                    break
-                s.advance()
+                # Look for an exponent part.
+                if self.c in ['e', 'E']:
+                    str_ += self.c
+                    self.c = self.s.next()
+                    if self.c in ['-', '+']:
+                        str_ += self.c
+                        self.c = self.s.next()
+                    if not self.c.isdigit():
+                        make('number', str_).error("Bad exponent")
+                    while True:
+                        str_ += self.c
+                        self.c = self.s.next()
+                        if not self.c.isdigit():
+                            break
+                # Make sure the next character is not a letter.
+                if isalpha(self.c):
+                    str_ += self.c
+                    self.s.advance()
+                    make('number', str_).error("Bad number")
 
-        # combining
-        elif prefix.find(c) >= 0 or isunicode(c):
-            str_ = c
-            s.advance()
-            while True:
-                c = s.curr()
-                if c == '' or (suffix.find(c) < 0 and not isunicode(c)):
-                    break
-                str_ += c
-                s.advance()
-            yield make('operator', str_)
+                # Convert the string value to a number.
+                try:
+                    return self.make('number', int(str_))
+                except ValueError:
+                    try:
+                        return self.make('number', float(str_))
+                    except ValueError:
+                        make('number', str_).error("Bad number")
+            elif self.c in ["'", '"']:
+                # string
+                str_ = ''
+                self.q = self.c
+                escapes = (self.q == '"') # 'string' are "raw" (like Un*x shell)
+                self.s.advance()
+                multiline = False
+                looping = True
+                self.c = self.s.curr()
+                # check for triple (multi line) quoting
+                if self.c == self.q: # doubled quote?
+                    self.c = self.s.peek()
+                    if self.c == self.q: # three times?
+                        self.s.advance() # consume third quote
+                        multiline = True
+                    else:           # just two -- an empty string
+                        looping = False
+                #print("esc", escapes, "multi", multiline, "looping", looping)
+                while looping:
+                    self.c = self.s.curr()
+                    if not multiline:
+                        if self.c < ' ':
+                            if self.c == '\n'  or  self.c == '\r'  or  self.c == '':
+                                v = "Unterminated string."
+                            else:
+                                v = "Control Character in string."
+                            make('string', str_).error(v)
+                        if self.c == self.q:  # end quote?
+                            break
+                    elif self.c == self.q:    # multi-line: check for end quote
+                        self.c = self.s.next()
+                        # XXX check for EOF?
+                        #print("e2", self.c)
+                        if self.c == self.q: # second quote?
+                            self.c = self.s.next() # consume second quote
+                            # XXX check for EOF?
+                            if self.c == self.q: # a third??
+                                break
+                            else: # just two
+                                str_ += self.q
+                    # end multi-line end quote check
 
-        # single-character operator
-        else:
-            s.advance()
-            yield make('operator', c)
-            c = s.curr()
+                    # Look for escapement.
+                    if escapes and self.c == '\\':
+                        self.c = self.s.next()
+                        #print("escaped", self.c)
+                        if self.c == '':
+                            make('string', str_).error("Unterminated string")
+                        if self.c == 'b':
+                            self.c = '\b'
+                        elif self.c == 'f':
+                            self.c = '\f'
+                        elif self.c == 'n':
+                            self.c = '\n'
+                        elif self.c == 'r':
+                            self.c = '\r'
+                        elif self.c == 't':
+                            self.c = '\t';
+                        elif self.c == 'v':
+                            self.c = '\v';
+                        elif self.c == '"'  or  self.c == "'" or  self.c == "\\":
+                            pass
+                        elif self.c in NHEX_CHARS:
+                            n = NHEX_CHARS[self.c]
+                            h = ''
+                            while len(h) < n:
+                                self.c = self.s.next()
+                                if self.c == '':
+                                    make('string', str_).error("Unterminated string2")
+                                h += self.c
+                            try:
+                                self.c = int(h, 16)
+                            except ValueError:
+                                make('string', str_).error("Unterminated string3")
+                            self.c = chr(self.c)
+                        # end c in NHEX_CHARS
+                    # end escapement
+                    #print("appending", self.c)
+                    str_ += self.c
+                    self.s.advance()
+                # end while
+                self.c = self.s.next()
+                return self.make('string', str_)
+            elif self.c == '/' and self.s.peek() == '/': # comment
+                self.s.advance()
+                while True:
+                    self.c = self.s.curr()
+                    if self.c == '' or self.c in ['\n', '\r']:
+                        break
+                    self.s.advance()
 
-    # keep returning EOF
-    while True:
-        yield None
+            # combining
+            elif self.prefix.find(self.c) >= 0 or isunicode(self.c):
+                str_ = self.c
+                self.s.advance()
+                while True:
+                    self.c = self.s.curr()
+                    if self.c == '' or (self.suffix.find(self.c) < 0 and not isunicode(self.c)):
+                        break
+                    str_ += self.c
+                    self.s.advance()
+                return self.make('operator', str_)
+
+            # single-character operator
+            else:
+                self.s.advance()
+                t = self.c
+                self.c = self.s.curr()
+                return self.make('operator', t)
+
+        # keep returning EOF
+        return None
+
+################
 
 if __name__ == "__main__":
     import sys
+    prefix = '<>+-&'
+    suffix = '=>&:'
     if len(sys.argv) > 1:
-        tokenizer = tokenize(open(sys.argv[1]))
+        tokenizer = Tokenizer(open(sys.argv[1]), prefix, suffix)
     else:
-        tokenizer = tokenize(sys.stdin)
+        tokenizer = Tokenizer(sys.stdin, prefix, suffix)
     t = 1
-    reset_prompt()
     while t:
-        t = next(tokenizer)
+        t = tokenizer.next()
         print(t)
+        if t:
+            tokenizer.pointer(t.lineno, t.from_)

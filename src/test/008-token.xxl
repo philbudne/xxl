@@ -1,11 +1,17 @@
 // tokenize this file!!!
-var token = __xxl._tokenizer("test/008-token.xxl", '=<>!+-*&|/%^', '=<>&|'); // returns generator
+var ret = __xxl._tokenizer("test/008-token.xxl", '=<>!+-*&|/%^', '=<>&|'); // returns generator
+
+var get_token = ret[0];
+var reset_prompt = ret[1];
+var pointer = ret[2];
+var interactive = ret[3];
 
 leave_while:
 while (true) {
-    var t = token();
+    var t = get_token();
     if (!t) {
 	leave_while();
     }
     __xxl.print(t.where, t.type, t.value);
+    // XXX use pointer func?!
 }
