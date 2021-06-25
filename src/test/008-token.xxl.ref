@@ -1,89 +1,366 @@
 test/008-token.xxl:2:1 name var
+var ret = __xxl._tokenizer("test/008-token.xxl", '=<>!+-*&|/%^', '=<>&|'); // returns generator
+^
 test/008-token.xxl:2:5 name ret
+var ret = __xxl._tokenizer("test/008-token.xxl", '=<>!+-*&|/%^', '=<>&|'); // returns generator
+    ^
 test/008-token.xxl:2:9 operator =
+var ret = __xxl._tokenizer("test/008-token.xxl", '=<>!+-*&|/%^', '=<>&|'); // returns generator
+        ^
 test/008-token.xxl:2:11 name __xxl
+var ret = __xxl._tokenizer("test/008-token.xxl", '=<>!+-*&|/%^', '=<>&|'); // returns generator
+          ^
 test/008-token.xxl:2:16 operator .
+var ret = __xxl._tokenizer("test/008-token.xxl", '=<>!+-*&|/%^', '=<>&|'); // returns generator
+               ^
 test/008-token.xxl:2:17 name _tokenizer
+var ret = __xxl._tokenizer("test/008-token.xxl", '=<>!+-*&|/%^', '=<>&|'); // returns generator
+                ^
 test/008-token.xxl:2:27 operator (
+var ret = __xxl._tokenizer("test/008-token.xxl", '=<>!+-*&|/%^', '=<>&|'); // returns generator
+                          ^
 test/008-token.xxl:2:28 string test/008-token.xxl
+var ret = __xxl._tokenizer("test/008-token.xxl", '=<>!+-*&|/%^', '=<>&|'); // returns generator
+                           ^
 test/008-token.xxl:2:48 operator ,
+var ret = __xxl._tokenizer("test/008-token.xxl", '=<>!+-*&|/%^', '=<>&|'); // returns generator
+                                               ^
 test/008-token.xxl:2:50 string =<>!+-*&|/%^
+var ret = __xxl._tokenizer("test/008-token.xxl", '=<>!+-*&|/%^', '=<>&|'); // returns generator
+                                                 ^
 test/008-token.xxl:2:64 operator ,
+var ret = __xxl._tokenizer("test/008-token.xxl", '=<>!+-*&|/%^', '=<>&|'); // returns generator
+                                                               ^
 test/008-token.xxl:2:66 string =<>&|
+var ret = __xxl._tokenizer("test/008-token.xxl", '=<>!+-*&|/%^', '=<>&|'); // returns generator
+                                                                 ^
 test/008-token.xxl:2:73 operator )
+var ret = __xxl._tokenizer("test/008-token.xxl", '=<>!+-*&|/%^', '=<>&|'); // returns generator
+                                                                        ^
 test/008-token.xxl:2:74 operator ;
+var ret = __xxl._tokenizer("test/008-token.xxl", '=<>!+-*&|/%^', '=<>&|'); // returns generator
+                                                                         ^
 test/008-token.xxl:4:1 name var
+var get_token = ret[0];
+^
 test/008-token.xxl:4:5 name get_token
+var get_token = ret[0];
+    ^
 test/008-token.xxl:4:15 operator =
+var get_token = ret[0];
+              ^
 test/008-token.xxl:4:17 name ret
+var get_token = ret[0];
+                ^
 test/008-token.xxl:4:20 operator [
+var get_token = ret[0];
+                   ^
 test/008-token.xxl:4:21 number 0
+var get_token = ret[0];
+                    ^
 test/008-token.xxl:4:22 operator ]
+var get_token = ret[0];
+                     ^
 test/008-token.xxl:4:23 operator ;
+var get_token = ret[0];
+                      ^
 test/008-token.xxl:5:1 name var
+var reset_prompt = ret[1];
+^
 test/008-token.xxl:5:5 name reset_prompt
+var reset_prompt = ret[1];
+    ^
 test/008-token.xxl:5:18 operator =
+var reset_prompt = ret[1];
+                 ^
 test/008-token.xxl:5:20 name ret
+var reset_prompt = ret[1];
+                   ^
 test/008-token.xxl:5:23 operator [
+var reset_prompt = ret[1];
+                      ^
 test/008-token.xxl:5:24 number 1
+var reset_prompt = ret[1];
+                       ^
 test/008-token.xxl:5:25 operator ]
+var reset_prompt = ret[1];
+                        ^
 test/008-token.xxl:5:26 operator ;
+var reset_prompt = ret[1];
+                         ^
 test/008-token.xxl:6:1 name var
+var pointer = ret[2];
+^
 test/008-token.xxl:6:5 name pointer
+var pointer = ret[2];
+    ^
 test/008-token.xxl:6:13 operator =
+var pointer = ret[2];
+            ^
 test/008-token.xxl:6:15 name ret
+var pointer = ret[2];
+              ^
 test/008-token.xxl:6:18 operator [
+var pointer = ret[2];
+                 ^
 test/008-token.xxl:6:19 number 2
+var pointer = ret[2];
+                  ^
 test/008-token.xxl:6:20 operator ]
+var pointer = ret[2];
+                   ^
 test/008-token.xxl:6:21 operator ;
+var pointer = ret[2];
+                    ^
 test/008-token.xxl:7:1 name var
+var interactive = ret[3];
+^
 test/008-token.xxl:7:5 name interactive
+var interactive = ret[3];
+    ^
 test/008-token.xxl:7:17 operator =
+var interactive = ret[3];
+                ^
 test/008-token.xxl:7:19 name ret
+var interactive = ret[3];
+                  ^
 test/008-token.xxl:7:22 operator [
+var interactive = ret[3];
+                     ^
 test/008-token.xxl:7:23 number 3
+var interactive = ret[3];
+                      ^
 test/008-token.xxl:7:24 operator ]
+var interactive = ret[3];
+                       ^
 test/008-token.xxl:7:25 operator ;
+var interactive = ret[3];
+                        ^
 test/008-token.xxl:9:1 name leave_while
+leave_while:
+^
 test/008-token.xxl:9:12 operator :
+leave_while:
+           ^
 test/008-token.xxl:10:1 name while
+while (true) {
+^
 test/008-token.xxl:10:7 operator (
+while (true) {
+      ^
 test/008-token.xxl:10:8 name true
+while (true) {
+       ^
 test/008-token.xxl:10:12 operator )
+while (true) {
+           ^
 test/008-token.xxl:10:14 operator {
+while (true) {
+             ^
 test/008-token.xxl:11:5 name var
+    var t = get_token();
+    ^
 test/008-token.xxl:11:9 name t
+    var t = get_token();
+        ^
 test/008-token.xxl:11:11 operator =
+    var t = get_token();
+          ^
 test/008-token.xxl:11:13 name get_token
+    var t = get_token();
+            ^
 test/008-token.xxl:11:22 operator (
+    var t = get_token();
+                     ^
 test/008-token.xxl:11:23 operator )
+    var t = get_token();
+                      ^
 test/008-token.xxl:11:24 operator ;
+    var t = get_token();
+                       ^
 test/008-token.xxl:12:5 name if
+    if (!t) {
+    ^
 test/008-token.xxl:12:8 operator (
+    if (!t) {
+       ^
 test/008-token.xxl:12:9 operator !
+    if (!t) {
+        ^
 test/008-token.xxl:12:10 name t
+    if (!t) {
+         ^
 test/008-token.xxl:12:11 operator )
+    if (!t) {
+          ^
 test/008-token.xxl:12:13 operator {
+    if (!t) {
+            ^
 test/008-token.xxl:13:2 name leave_while
+	leave_while();
+	^
 test/008-token.xxl:13:13 operator (
+	leave_while();
+	           ^
 test/008-token.xxl:13:14 operator )
+	leave_while();
+	            ^
 test/008-token.xxl:13:15 operator ;
+	leave_while();
+	             ^
 test/008-token.xxl:14:5 operator }
+    }
+    ^
 test/008-token.xxl:15:5 name __xxl
+    __xxl.error(t.where, t.type, t.value);
+    ^
 test/008-token.xxl:15:10 operator .
-test/008-token.xxl:15:11 name print
+    __xxl.error(t.where, t.type, t.value);
+         ^
+test/008-token.xxl:15:11 name error
+    __xxl.error(t.where, t.type, t.value);
+          ^
 test/008-token.xxl:15:16 operator (
+    __xxl.error(t.where, t.type, t.value);
+               ^
 test/008-token.xxl:15:17 name t
+    __xxl.error(t.where, t.type, t.value);
+                ^
 test/008-token.xxl:15:18 operator .
+    __xxl.error(t.where, t.type, t.value);
+                 ^
 test/008-token.xxl:15:19 name where
+    __xxl.error(t.where, t.type, t.value);
+                  ^
 test/008-token.xxl:15:24 operator ,
+    __xxl.error(t.where, t.type, t.value);
+                       ^
 test/008-token.xxl:15:26 name t
+    __xxl.error(t.where, t.type, t.value);
+                         ^
 test/008-token.xxl:15:27 operator .
+    __xxl.error(t.where, t.type, t.value);
+                          ^
 test/008-token.xxl:15:28 name type
+    __xxl.error(t.where, t.type, t.value);
+                           ^
 test/008-token.xxl:15:32 operator ,
+    __xxl.error(t.where, t.type, t.value);
+                               ^
 test/008-token.xxl:15:34 name t
+    __xxl.error(t.where, t.type, t.value);
+                                 ^
 test/008-token.xxl:15:35 operator .
+    __xxl.error(t.where, t.type, t.value);
+                                  ^
 test/008-token.xxl:15:36 name value
+    __xxl.error(t.where, t.type, t.value);
+                                   ^
 test/008-token.xxl:15:41 operator )
+    __xxl.error(t.where, t.type, t.value);
+                                        ^
 test/008-token.xxl:15:42 operator ;
-test/008-token.xxl:17:1 operator }
+    __xxl.error(t.where, t.type, t.value);
+                                         ^
+test/008-token.xxl:16:5 name var
+    var l = t.where.split(':');
+    ^
+test/008-token.xxl:16:9 name l
+    var l = t.where.split(':');
+        ^
+test/008-token.xxl:16:11 operator =
+    var l = t.where.split(':');
+          ^
+test/008-token.xxl:16:13 name t
+    var l = t.where.split(':');
+            ^
+test/008-token.xxl:16:14 operator .
+    var l = t.where.split(':');
+             ^
+test/008-token.xxl:16:15 name where
+    var l = t.where.split(':');
+              ^
+test/008-token.xxl:16:20 operator .
+    var l = t.where.split(':');
+                   ^
+test/008-token.xxl:16:21 name split
+    var l = t.where.split(':');
+                    ^
+test/008-token.xxl:16:26 operator (
+    var l = t.where.split(':');
+                         ^
+test/008-token.xxl:16:27 string :
+    var l = t.where.split(':');
+                          ^
+test/008-token.xxl:16:30 operator )
+    var l = t.where.split(':');
+                             ^
+test/008-token.xxl:16:31 operator ;
+    var l = t.where.split(':');
+                              ^
+test/008-token.xxl:17:5 name pointer
+    pointer(l[1].to_int(), l[2].to_int());
+    ^
+test/008-token.xxl:17:12 operator (
+    pointer(l[1].to_int(), l[2].to_int());
+           ^
+test/008-token.xxl:17:13 name l
+    pointer(l[1].to_int(), l[2].to_int());
+            ^
+test/008-token.xxl:17:14 operator [
+    pointer(l[1].to_int(), l[2].to_int());
+             ^
+test/008-token.xxl:17:15 number 1
+    pointer(l[1].to_int(), l[2].to_int());
+              ^
+test/008-token.xxl:17:16 operator ]
+    pointer(l[1].to_int(), l[2].to_int());
+               ^
+test/008-token.xxl:17:17 operator .
+    pointer(l[1].to_int(), l[2].to_int());
+                ^
+test/008-token.xxl:17:18 name to_int
+    pointer(l[1].to_int(), l[2].to_int());
+                 ^
+test/008-token.xxl:17:24 operator (
+    pointer(l[1].to_int(), l[2].to_int());
+                       ^
+test/008-token.xxl:17:25 operator )
+    pointer(l[1].to_int(), l[2].to_int());
+                        ^
+test/008-token.xxl:17:26 operator ,
+    pointer(l[1].to_int(), l[2].to_int());
+                         ^
+test/008-token.xxl:17:28 name l
+    pointer(l[1].to_int(), l[2].to_int());
+                           ^
+test/008-token.xxl:17:29 operator [
+    pointer(l[1].to_int(), l[2].to_int());
+                            ^
+test/008-token.xxl:17:30 number 2
+    pointer(l[1].to_int(), l[2].to_int());
+                             ^
+test/008-token.xxl:17:31 operator ]
+    pointer(l[1].to_int(), l[2].to_int());
+                              ^
+test/008-token.xxl:17:32 operator .
+    pointer(l[1].to_int(), l[2].to_int());
+                               ^
+test/008-token.xxl:17:33 name to_int
+    pointer(l[1].to_int(), l[2].to_int());
+                                ^
+test/008-token.xxl:17:39 operator (
+    pointer(l[1].to_int(), l[2].to_int());
+                                      ^
+test/008-token.xxl:17:40 operator )
+    pointer(l[1].to_int(), l[2].to_int());
+                                       ^
+test/008-token.xxl:17:41 operator )
+    pointer(l[1].to_int(), l[2].to_int());
+                                        ^
+test/008-token.xxl:17:42 operator ;
+    pointer(l[1].to_int(), l[2].to_int());
+                                         ^
+test/008-token.xxl:18:1 operator }
+}
+^

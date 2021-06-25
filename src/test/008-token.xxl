@@ -12,6 +12,7 @@ while (true) {
     if (!t) {
 	leave_while();
     }
-    __xxl.print(t.where, t.type, t.value);
-    // XXX use pointer func?!
+    __xxl.error(t.where, t.type, t.value);
+    var l = t.where.split(':');
+    pointer(l[1].to_int(), l[2].to_int());
 }
