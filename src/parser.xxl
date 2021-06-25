@@ -434,7 +434,6 @@ var PrattParser = Class.new({
 	    if (t === this.EOF) {
 		return(true);
 	    }
-	    this.reset_prompt();
 	    return(eof_only ? false : t.end_block);
 	},
 
