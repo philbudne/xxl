@@ -178,189 +178,199 @@ test/008-token.xxl:11:23 operator )
 test/008-token.xxl:11:24 operator ;
     var t = get_token();
                        ^
-test/008-token.xxl:12:5 name if
-    if (!t) {
-    ^
-test/008-token.xxl:12:8 operator (
-    if (!t) {
-       ^
-test/008-token.xxl:12:9 operator !
-    if (!t) {
-        ^
-test/008-token.xxl:12:10 name t
-    if (!t) {
-         ^
-test/008-token.xxl:12:11 operator )
-    if (!t) {
-          ^
-test/008-token.xxl:12:13 operator {
-    if (!t) {
-            ^
-test/008-token.xxl:13:2 name leave_while
-	leave_while();
-	^
-test/008-token.xxl:13:13 operator (
-	leave_while();
-	           ^
-test/008-token.xxl:13:14 operator )
-	leave_while();
-	            ^
-test/008-token.xxl:13:15 operator ;
-	leave_while();
-	             ^
-test/008-token.xxl:14:5 operator }
-    }
-    ^
-test/008-token.xxl:15:5 name __xxl
+test/008-token.xxl:12:5 name __xxl
     __xxl.error(t.where, t.type, t.value);
     ^
-test/008-token.xxl:15:10 operator .
+test/008-token.xxl:12:10 operator .
     __xxl.error(t.where, t.type, t.value);
          ^
-test/008-token.xxl:15:11 name error
+test/008-token.xxl:12:11 name error
     __xxl.error(t.where, t.type, t.value);
           ^
-test/008-token.xxl:15:16 operator (
+test/008-token.xxl:12:16 operator (
     __xxl.error(t.where, t.type, t.value);
                ^
-test/008-token.xxl:15:17 name t
+test/008-token.xxl:12:17 name t
     __xxl.error(t.where, t.type, t.value);
                 ^
-test/008-token.xxl:15:18 operator .
+test/008-token.xxl:12:18 operator .
     __xxl.error(t.where, t.type, t.value);
                  ^
-test/008-token.xxl:15:19 name where
+test/008-token.xxl:12:19 name where
     __xxl.error(t.where, t.type, t.value);
                   ^
-test/008-token.xxl:15:24 operator ,
+test/008-token.xxl:12:24 operator ,
     __xxl.error(t.where, t.type, t.value);
                        ^
-test/008-token.xxl:15:26 name t
+test/008-token.xxl:12:26 name t
     __xxl.error(t.where, t.type, t.value);
                          ^
-test/008-token.xxl:15:27 operator .
+test/008-token.xxl:12:27 operator .
     __xxl.error(t.where, t.type, t.value);
                           ^
-test/008-token.xxl:15:28 name type
+test/008-token.xxl:12:28 name type
     __xxl.error(t.where, t.type, t.value);
                            ^
-test/008-token.xxl:15:32 operator ,
+test/008-token.xxl:12:32 operator ,
     __xxl.error(t.where, t.type, t.value);
                                ^
-test/008-token.xxl:15:34 name t
+test/008-token.xxl:12:34 name t
     __xxl.error(t.where, t.type, t.value);
                                  ^
-test/008-token.xxl:15:35 operator .
+test/008-token.xxl:12:35 operator .
     __xxl.error(t.where, t.type, t.value);
                                   ^
-test/008-token.xxl:15:36 name value
+test/008-token.xxl:12:36 name value
     __xxl.error(t.where, t.type, t.value);
                                    ^
-test/008-token.xxl:15:41 operator )
+test/008-token.xxl:12:41 operator )
     __xxl.error(t.where, t.type, t.value);
                                         ^
-test/008-token.xxl:15:42 operator ;
+test/008-token.xxl:12:42 operator ;
     __xxl.error(t.where, t.type, t.value);
                                          ^
-test/008-token.xxl:16:5 name var
+test/008-token.xxl:13:5 name var
     var l = t.where.split(':');
     ^
-test/008-token.xxl:16:9 name l
+test/008-token.xxl:13:9 name l
     var l = t.where.split(':');
         ^
-test/008-token.xxl:16:11 operator =
+test/008-token.xxl:13:11 operator =
     var l = t.where.split(':');
           ^
-test/008-token.xxl:16:13 name t
+test/008-token.xxl:13:13 name t
     var l = t.where.split(':');
             ^
-test/008-token.xxl:16:14 operator .
+test/008-token.xxl:13:14 operator .
     var l = t.where.split(':');
              ^
-test/008-token.xxl:16:15 name where
+test/008-token.xxl:13:15 name where
     var l = t.where.split(':');
               ^
-test/008-token.xxl:16:20 operator .
+test/008-token.xxl:13:20 operator .
     var l = t.where.split(':');
                    ^
-test/008-token.xxl:16:21 name split
+test/008-token.xxl:13:21 name split
     var l = t.where.split(':');
                     ^
-test/008-token.xxl:16:26 operator (
+test/008-token.xxl:13:26 operator (
     var l = t.where.split(':');
                          ^
-test/008-token.xxl:16:27 string :
+test/008-token.xxl:13:27 string :
     var l = t.where.split(':');
                           ^
-test/008-token.xxl:16:30 operator )
+test/008-token.xxl:13:30 operator )
     var l = t.where.split(':');
                              ^
-test/008-token.xxl:16:31 operator ;
+test/008-token.xxl:13:31 operator ;
     var l = t.where.split(':');
                               ^
-test/008-token.xxl:17:5 name pointer
+test/008-token.xxl:14:5 name pointer
     pointer(l[1].to_int(), l[2].to_int());
     ^
-test/008-token.xxl:17:12 operator (
+test/008-token.xxl:14:12 operator (
     pointer(l[1].to_int(), l[2].to_int());
            ^
-test/008-token.xxl:17:13 name l
+test/008-token.xxl:14:13 name l
     pointer(l[1].to_int(), l[2].to_int());
             ^
-test/008-token.xxl:17:14 operator [
+test/008-token.xxl:14:14 operator [
     pointer(l[1].to_int(), l[2].to_int());
              ^
-test/008-token.xxl:17:15 number 1
+test/008-token.xxl:14:15 number 1
     pointer(l[1].to_int(), l[2].to_int());
               ^
-test/008-token.xxl:17:16 operator ]
+test/008-token.xxl:14:16 operator ]
     pointer(l[1].to_int(), l[2].to_int());
                ^
-test/008-token.xxl:17:17 operator .
+test/008-token.xxl:14:17 operator .
     pointer(l[1].to_int(), l[2].to_int());
                 ^
-test/008-token.xxl:17:18 name to_int
+test/008-token.xxl:14:18 name to_int
     pointer(l[1].to_int(), l[2].to_int());
                  ^
-test/008-token.xxl:17:24 operator (
+test/008-token.xxl:14:24 operator (
     pointer(l[1].to_int(), l[2].to_int());
                        ^
-test/008-token.xxl:17:25 operator )
+test/008-token.xxl:14:25 operator )
     pointer(l[1].to_int(), l[2].to_int());
                         ^
-test/008-token.xxl:17:26 operator ,
+test/008-token.xxl:14:26 operator ,
     pointer(l[1].to_int(), l[2].to_int());
                          ^
-test/008-token.xxl:17:28 name l
+test/008-token.xxl:14:28 name l
     pointer(l[1].to_int(), l[2].to_int());
                            ^
-test/008-token.xxl:17:29 operator [
+test/008-token.xxl:14:29 operator [
     pointer(l[1].to_int(), l[2].to_int());
                             ^
-test/008-token.xxl:17:30 number 2
+test/008-token.xxl:14:30 number 2
     pointer(l[1].to_int(), l[2].to_int());
                              ^
-test/008-token.xxl:17:31 operator ]
+test/008-token.xxl:14:31 operator ]
     pointer(l[1].to_int(), l[2].to_int());
                               ^
-test/008-token.xxl:17:32 operator .
+test/008-token.xxl:14:32 operator .
     pointer(l[1].to_int(), l[2].to_int());
                                ^
-test/008-token.xxl:17:33 name to_int
+test/008-token.xxl:14:33 name to_int
     pointer(l[1].to_int(), l[2].to_int());
                                 ^
-test/008-token.xxl:17:39 operator (
+test/008-token.xxl:14:39 operator (
     pointer(l[1].to_int(), l[2].to_int());
                                       ^
-test/008-token.xxl:17:40 operator )
+test/008-token.xxl:14:40 operator )
     pointer(l[1].to_int(), l[2].to_int());
                                        ^
-test/008-token.xxl:17:41 operator )
+test/008-token.xxl:14:41 operator )
     pointer(l[1].to_int(), l[2].to_int());
                                         ^
-test/008-token.xxl:17:42 operator ;
+test/008-token.xxl:14:42 operator ;
     pointer(l[1].to_int(), l[2].to_int());
                                          ^
+test/008-token.xxl:15:5 name if
+    if (t.type == "EOF") {
+    ^
+test/008-token.xxl:15:8 operator (
+    if (t.type == "EOF") {
+       ^
+test/008-token.xxl:15:9 name t
+    if (t.type == "EOF") {
+        ^
+test/008-token.xxl:15:10 operator .
+    if (t.type == "EOF") {
+         ^
+test/008-token.xxl:15:11 name type
+    if (t.type == "EOF") {
+          ^
+test/008-token.xxl:15:16 operator ==
+    if (t.type == "EOF") {
+               ^
+test/008-token.xxl:15:19 string EOF
+    if (t.type == "EOF") {
+                  ^
+test/008-token.xxl:15:24 operator )
+    if (t.type == "EOF") {
+                       ^
+test/008-token.xxl:15:26 operator {
+    if (t.type == "EOF") {
+                         ^
+test/008-token.xxl:16:2 name leave_while
+	leave_while();
+	^
+test/008-token.xxl:16:13 operator (
+	leave_while();
+	           ^
+test/008-token.xxl:16:14 operator )
+	leave_while();
+	            ^
+test/008-token.xxl:16:15 operator ;
+	leave_while();
+	             ^
+test/008-token.xxl:17:5 operator }
+    }
+    ^
 test/008-token.xxl:18:1 operator }
 }
 ^
+test/008-token.xxl:19:0 EOF 

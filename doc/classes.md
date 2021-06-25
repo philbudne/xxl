@@ -3500,7 +3500,7 @@
 #### `to_int (this, base)`
 *PyFunc at classes.py:1742 (str_to_int)*
 
-> Convert string to integer Number `base` defaults to zero (accept 0xXXX for base 16)
+> Convert string to integer Number. Int `base` defaults to zero (accept 0xXXX, 0oOOO, 0bBBB).
 
 #### `to_number (this)`
 *PyFunc at classes.py:1754 (str_to_number)*

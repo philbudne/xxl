@@ -9,10 +9,10 @@ var interactive = ret[3];
 leave_while:
 while (true) {
     var t = get_token();
-    if (!t) {
-	leave_while();
-    }
     __xxl.error(t.where, t.type, t.value);
     var l = t.where.split(':');
     pointer(l[1].to_int(), l[2].to_int());
+    if (t.type == "EOF") {
+	leave_while();
+    }
 }

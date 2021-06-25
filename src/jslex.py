@@ -10,7 +10,7 @@ import readline                 # enable editing in input()
 
 # Produce simple token objects from a string.
 # A simple token object contains these members:
-#      type: 'name', 'string', 'number', 'operator'
+#      type: 'name', 'string', 'number', 'operator', 'EOF'
 #      value: string or number value of the token
 #      from: index of first character of the token
 #      to: index of the last character + 1
@@ -124,7 +124,8 @@ class Stream(object):
             lp = self.prev
         else:
             return
-        
+        if lp.strip() == '':
+            return
         sys.stderr.write(lp)
         point = []
         i = 1
@@ -402,7 +403,7 @@ class Tokenizer:
                 return self.make('operator', t)
 
         # keep returning EOF
-        return None
+        return self.make('EOF', '')
 
 ################
 
@@ -420,3 +421,5 @@ if __name__ == "__main__":
         print(t)
         if t:
             tokenizer.pointer(t.lineno, t.from_)
+            if t.type_ == 'EOF':
+                break

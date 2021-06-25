@@ -288,7 +288,7 @@ var PrattParser = Class.new({
 	    this.scope = this.Scope.new(null);
 
 	    var ret = __xxl._tokenizer(fname, prefix, suffix);
-	    this.get_token = ret[0]; // Object w/ type, value & where properties, and then null
+	    this.get_token = ret[0]; // Object w/ type, value & where properties
 	    this.reset_prompt = ret[1]; // void function
 	    this.pointer = ret[2]; // func(line,pos); prints line w/ pointer
 	    this.interactive = ret[3]; // bool
@@ -315,9 +315,6 @@ var PrattParser = Class.new({
 	},
 	_gtok: function (this) {
 	    var t = this.get_token();
-	    if (!t) {
-		return(this.EOF);
-	    }
 	    var t_error = function (msg) {
 		this._error(t.where, t.value, msg);
 		// NOTREACHED
@@ -345,6 +342,13 @@ var PrattParser = Class.new({
 		c = this.Lit;	// XXX separate classes, opcodes for Str/Number?
 		a = "literal";
 		// id = this.LIT;
+	    }
+	    else if (a == "EOF") {
+		if (!this.EOF) {
+		    // XXX declare using SingletonClass?!
+		    this.EOF = this.End.new(t.where, this.END, a);
+		}
+		return(this.EOF);
 	    }
 	    else {
 		t_error("Unexpected token.");
@@ -433,7 +437,7 @@ var PrattParser = Class.new({
 	    Called from bootstrap.xxl & statements loop.
 	    """
 	    var t = this.ctoken(); // handle deferred advance check
-	    if (t === this.EOF) {
+	    if (this.EOF && t === this.EOF) {
 		return(true);
 	    }
 	    return(eof_only ? false : t.end_block);
@@ -687,10 +691,6 @@ var PrattParser = Class.new({
 	    p.End.end_block = true;
 
 	    p.END = "(EOF)";	// .value for End Symbol
-
-	    // value MUST be this.END (for advance/check calls)
-	    // (only still used in "parse" method)
-	    p.EOF = p.End.new("EOF", p.END, null);
 
 	    //////////////// operator Symbol base classes
 
