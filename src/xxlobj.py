@@ -139,7 +139,12 @@ def xxl__tokenizer(filename, prefix, suffix):
     fnstr = filename.value # XXX getstr()?
     pstr = prefix.value    # XXX getstr()?
     sstr = suffix.value    # XXX getstr()?
-    tokenizer = jslex.Tokenizer(open(fnstr), pstr, sstr)
+    if fnstr == '-':
+        f = sys.stdin
+        print("XXL/0")
+    else:
+        f = open(fnstr)
+    tokenizer = jslex.Tokenizer(f, pstr, sstr)
     # XXX wrap in a PyObject (create token as namedtuple, return as list?)
 
     @classes.pyfunc

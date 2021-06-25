@@ -68,10 +68,6 @@ while argv:
         sys.stderr.write("unknown option {}\n".format(argv[0]))
         sys.exit(1)
 
-if not argv:
-    # XXX XXX XXX want Read/Eval/Print Loop!!!
-    help = True
-
 if help:
     sys.stderr.write("""
 Usage: xxl.py [-h][-s][-t][-x][-P parser.vmx] file args ...
@@ -86,7 +82,10 @@ file can be .xxl (source) or .vmx (VM code)
 """)
     sys.exit(1)
 
-fname = argv.pop(0)
+if argv:
+    fname = argv.pop(0)
+else:
+    fname = "-"
 
 if not parser:
         # _COULD_ choose parser based on source file name!!!

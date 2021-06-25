@@ -1,8 +1,5 @@
 FIX
 ===
-xxl.py: w/o filename run read/eval/PRINT loop
-	pass "-" as magic filename?
-
 Makefile:
 	move checked-in {bootstrap,parser}.vmx to "dist"??
 	have Makefile set XXL_LIB_PATH to ".:lib:dist"??
