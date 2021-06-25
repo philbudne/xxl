@@ -1,11 +1,7 @@
 FIX
 ===
-include filename, line (instead of 'EOF') in End Symbol!!
-	need to pass up a Token w/ type EOF???
-
-REPL: handle parse errors!!!
-
 xxl.py: w/o filename run read/eval/PRINT loop
+	pass "-" as magic filename?
 
 Makefile:
 	move checked-in {bootstrap,parser}.vmx to "dist"??
@@ -204,3 +200,6 @@ type wrapping:
 	classes.py pyfuncs do not invoke Class init methods!
 		revisit wrapping return values in CPyFunc.invoke
 			(tail calls to "new")
+
+REPL: handle parse errors!!!
+
