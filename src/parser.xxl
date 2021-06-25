@@ -473,7 +473,7 @@ var PrattParser = Class.new({
 
 	expression_statement: function (this) {
 	    var v = this.expression(0);
-	    if (!v.exp_stmt) { // XXX don't check if interactive (& top level?)!!
+	    if (!this.interactive && !v.exp_stmt) {
 		v.error("Bad expression statement.");
 	    }
 	    this.advance(";");
