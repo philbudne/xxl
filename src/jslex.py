@@ -30,7 +30,8 @@ import readline                 # enable editing in input()
 
 # PLB: I wrote a native XXL version, but it's slooooooow!
 
-PROMPT = "}}} "               # "There are no curly braces in Python!"
+PROMPT1 = "}}} "              # "There are no curly braces in Python!"
+PROMPT2 = "... "
 
 NHEX_CHARS = { # number of hex chars for numeric escapes
     'x':2,
@@ -73,7 +74,12 @@ class Stream(object):
         self.advance()
 
     def reset_prompt(self):
-        self.prompt = PROMPT
+        self.prompt = PROMPT1
+        #print("reset", self.prompt)
+
+    def change_prompt(self):
+        self.prompt = PROMPT2
+        #print("change", self.prompt)
 
     def pos(self):
         return self.i
@@ -147,7 +153,6 @@ class Stream(object):
         if self.ch == '\n':
             self.line_ += 1
             self.i = 0
-        self.prompt = "... "
 
     def next(self):
         self.advance()
@@ -191,6 +196,7 @@ class Tokenizer:
 
     def make(self, type_, value):
         #print('make', type_, value, self.line, self.from_, self.s.pos())
+        self.s.change_prompt()
         return Token(type_, value, self.line, self.from_, self.s.pos())
 
     def pointer(self, line, pos):
