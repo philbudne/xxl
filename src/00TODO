@@ -1,8 +1,8 @@
 FIX
 ===
 lexer:
-	Display line w/ pointer on error!
-	Handle 0xXXX in jslex
+	use interactive, reset_prompt
+	Handle 0xXXX
 
 xxl.py: w/o filename run read/eval/PRINT loop
 

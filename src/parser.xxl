@@ -283,6 +283,18 @@ var VMCode = Class.new({
 var PrattParser = Class.new({
     name: "PrattParser",
     methods: {
+	start_parse: function (this, fname, prefix, suffix) {
+	    this.scope = this.Scope.new(null);
+
+	    var ret = __xxl._tokenizer(fname, prefix, suffix);
+	    // returns Objects w/ type, value & where properties, and then null
+	    this.get_token = ret[0];
+	    this.reset_prompt = ret[1];
+	    this.pointer = ret[2];
+	    this.interactive = ret[3];
+	    this._token = null;	// current Symbol object
+	},
+
 	add_symbol_class: function (this, str, symbol_class) {
 	    """
 	    Add an operator or statement Symbol class to parser.
@@ -293,6 +305,8 @@ var PrattParser = Class.new({
 	},
 	_error: function (this, where, token, msg) {
 	    __xxl.error(where, "ERROR: saw", token, "--", msg);
+	    var l = where.split(':');
+	    this.pointer(l[1].to_int(), l[2].to_int());
 	    __xxl.exit(1);	// XXX throw to a continuation!!!
 	},
 	_gtok: function (this) {
@@ -1546,21 +1560,11 @@ var Parser = Class.new({
 	    return(t.std());
 	},
 	start_parse: function (this, fname) { // get ready to parse
-	    this.scope = this.Scope.new(null);
-
-	    // returns generator which returns:
-	    // Objects  w/ type, value & where properties, and then null
-
 	    // parens, brackets and braces are non-combining.
 	    // tempting to allow braces, but would require '{ }' for empty Dict!
 	    var oprs = '!@#$%^&*-=+<>\|:,./?~';
 	    // was: '=<>!+-*&|/%^.', '=<>&|.'
-	    var ret = __xxl._tokenizer(fname, oprs, oprs);
-	    this.get_token = ret[0];
-	    this.reset_prompt = ret[1];
-	    this.pointer = ret[2];
-	    this.interactive = ret[3];
-	    this._token = null;	// current Symbol object
+	    this..start_parse(fname, oprs, oprs);
 
 	    // set in root_scope by classes.py classes_init()
 	    this.predef("Class");
