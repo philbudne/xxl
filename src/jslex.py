@@ -140,6 +140,7 @@ class Stream(object):
         point.append('^')
         point.append('\n')
         sys.stderr.write(''.join(point))
+        sys.stderr.flush()      # needed w/ PyPy3 7.3.1
 
     def advance(self):
         """
