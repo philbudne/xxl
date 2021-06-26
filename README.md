@@ -7,6 +7,8 @@ A self-hosting extensible language, VM/type system in Python3.
 *Please consider this a toy, not suitable for serious projects,
 until further notice!!!*
 
+Tested under Python 3.7.9 and PyPy3 7.3.1 (needs `export PYTHONIOENCODING=utf8`).
+
 ### Overall:
 
 * Based on [Douglas Crockford's](http://crockford.com/)
@@ -56,7 +58,10 @@ until further notice!!!*
      language which had no reserved words, and all numeric
      variables were declared with their precision.
 
+* The first extensible language I heard of was Harvard's PPL
+     [Polymorphic Programming Language](https://en.wikipedia.org/wiki/Polymorphic_Programming_Language).
+
 * Intended to be the smallest possible core language,
-  one that no one "needs" to use.
+     one that no one "needs" to use.
 
 * XXL is the U.S. clothing size two sizes larger than "large".

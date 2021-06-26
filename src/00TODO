@@ -36,11 +36,6 @@ lib & ext/lib:
 *** BUG: can overwrite "const" values in a Module!!!
 	need descriptors (slots) ??
 
-* NOTE:
-	regression test depends on:
-		ordered dicts (Python 3.6)
-	need PYTHONIOENCODING=utf8 w/ pypy3 7.3.1 to pass test #41
-
 wrap:
 	PyObject: test if Python object is Itera{ble,tor};
 		if so, return PyItera{ble,tor}Object???
