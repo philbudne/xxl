@@ -86,6 +86,11 @@ var HTML = Class.new({
 	    this.nappend(this._twrap( "h" + n.to_str(), list));
 	},
 
+	head: function (this, ...title) { // XXX take Dict? List?? Dict of Lists???
+	    this.append(this._twrap("head",
+				    [this._twrap("title", title)]));
+	},
+
 	make_anchor: function (this, name) {
 	    """
 	    Create internal document link destination

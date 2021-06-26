@@ -33,20 +33,20 @@ var collect_class_ops = function (class, prop) {
 	if (prop == '__methods') {
 	    c.props().for_each(
 		function (mprop) { // member property name
-		    if (!mprop.starts_with("_")) { // ignore private members
-			var value = c.getprop(mprop);
-			if (value.instance_of(classes.Callable)) {
-			    if (!funcs[mprop]) {
-				funcs[mprop] = value;
-			    }
-			}
-			else if (!props[mprop]) {
-			    props[mprop] = value;
+		    if (mprop.starts_with("_")) { // ignore private members
+			return();
+		    }
+		    var value = c.getprop(mprop);
+		    if (value.instance_of(classes.Callable)) {
+			if (!funcs[mprop]) {
+			    funcs[mprop] = value;
 			}
 		    }
-
+		    else if (!props[mprop]) {
+			props[mprop] = value;
+		    }
 		}
-	    );
+	    ); // c.props().for_each
 	} // __methods
 	c.getprop(prop).items().for_each(
 	    function (item) {	// item is [key, value]
@@ -175,6 +175,7 @@ var mumodule = function (mu, module_name) {
     """
     var mod = __xxl.import(module_name);
 
+    mu.head(module_name + " | " + (mod.__doc ? mod.__doc.to_str() : "Mystery Module"));
     mu.h1("Module", mu.code(module_name));
     mu.p();
     mudoc(mu, mod);
@@ -194,28 +195,28 @@ var mumodule = function (mu, module_name) {
 	    var x = mod.getprop(name);
 	    if (x.instance_of(classes.Class)) {
 		mu.hr();
-		var metaclass = x.getclass().name;
 		mu.make_anchor("class-" + name);
-		mu.h2(metaclass, mu.code(name), "subclass of",
-		      mu.code(
-			  ",".join(
-			      x.__supers.map(
-				  function (super) {
-				      var sname = super.name;
-				      var s = mod.getprop(sname);
-				      if (s && s === super) {
-					  return(mu.ilink("class-" + sname, sname));
-				      }
-				      else {
-					  return(name);
-				      }
-				  }
-			      )
-			  )
-		      )
-		); // h2
 
-		var supers = ",".join(x.__supers.map(function (c) { return(c.name); }));
+		var link_class_if_known = function (c) {
+		    """
+		    Take Class object, return link to (hopeful) definition
+		    (if defined in this file), else return plain name.
+		    """
+		    var cname = c.name;
+		    // must be defined at top level;
+		    if (mod.hasprop(cname) && mod.getprop(cname) === c) {
+			return(mu.ilink("class-" + cname, cname));
+		    }
+		    else {
+			return(cname);
+		    }
+		};
+
+		var metaclass = x.getclass();
+		mu.h2(mu.code(link_class_if_known(metaclass)), // metaclass name (typ. Class)
+		      mu.code(name), "subclass of",	       // class name
+		      mu.code(",".join(x.__supers.map(link_class_if_known)))
+		); // h2
 
 		mu.p();
 		muclass(mu, x);

@@ -1,3 +1,4 @@
+<head><title>classes | Built-in Classes for XXL</title></head>
 # Module `classes`
 
 
@@ -6,7 +7,7 @@
 ---
 
 <a name="class-Bool"></a>
-## PClass `Bool` subclass of `[PObject](#class-PObject)`
+## `[PClass](#class-PClass)` `Bool` subclass of `[PObject](#class-PObject)`
 
 
 > Built-in Class for `true` and `false` values
@@ -170,7 +171,7 @@
 ---
 
 <a name="class-BoundMethod"></a>
-## Class `BoundMethod` subclass of `[Callable](#class-Callable)`
+## `[Class](#class-Class)` `BoundMethod` subclass of `[Callable](#class-Callable)`
 
 
 > Built-in Class for a method bound to an Object
@@ -346,7 +347,7 @@
 ---
 
 <a name="class-Callable"></a>
-## Class `Callable` subclass of `[Object](#class-Object)`
+## `[Class](#class-Class)` `Callable` subclass of `[Object](#class-Object)`
 
 
 > Virtual base Class for built-in callable classes (BoundMethod, Continuation, PyFunc, PyVMFunc)
@@ -504,7 +505,7 @@
 ---
 
 <a name="class-Class"></a>
-## Class `Class` subclass of `[Object](#class-Object)`
+## `[Class](#class-Class)` `Class` subclass of `[Object](#class-Object)`
 
 
 > Base Metaclass, home of the default &#x27;new&#x27; method
@@ -679,7 +680,7 @@
 ---
 
 <a name="class-Closure"></a>
-## Class `Closure` subclass of `[Callable](#class-Callable)`
+## `[Class](#class-Class)` `Closure` subclass of `[Callable](#class-Callable)`
 
 
 > Built-in Class for a native function bound to a scope
@@ -855,7 +856,7 @@
 ---
 
 <a name="class-Continuation"></a>
-## Class `Continuation` subclass of `[Callable](#class-Callable)`
+## `[Class](#class-Class)` `Continuation` subclass of `[Callable](#class-Callable)`
 
 
 > Built-in Class for a Continuation
@@ -1013,7 +1014,7 @@
 ---
 
 <a name="class-Dict"></a>
-## PClass `Dict` subclass of `[PyIterable](#class-PyIterable)`
+## `[PClass](#class-PClass)` `Dict` subclass of `[PyIterable](#class-PyIterable)`
 
 
 > Built-in dictionary mapping Class
@@ -1257,7 +1258,7 @@
 ---
 
 <a name="class-Iterable"></a>
-## Class `Iterable` subclass of `[Object](#class-Object)`
+## `[Class](#class-Class)` `Iterable` subclass of `[Object](#class-Object)`
 
 
 > Mixin for Classes that can be iterated over
@@ -1454,7 +1455,7 @@
 ---
 
 <a name="class-List"></a>
-## PClass `List` subclass of `[PyIterable](#class-PyIterable)`
+## `[PClass](#class-PClass)` `List` subclass of `[PyIterable](#class-PyIterable)`
 
 
 > Built-in mutable sequence Class
@@ -1693,7 +1694,7 @@
 ---
 
 <a name="class-ModInfo"></a>
-## Class `ModInfo` subclass of `[Object](#class-Object)`
+## `[Class](#class-Class)` `ModInfo` subclass of `[Object](#class-Object)`
 
 
 > Built-in Class for __modinfo Objects (inside Modules)
@@ -1862,7 +1863,7 @@
 ---
 
 <a name="class-Module"></a>
-## Class `Module` subclass of `[Object](#class-Object)`
+## `[Class](#class-Class)` `Module` subclass of `[Object](#class-Object)`
 
 
 > Built-in class for a Module (from import function)
@@ -2042,7 +2043,7 @@
 ---
 
 <a name="class-Null"></a>
-## Class `Null` subclass of `[Nullish](#class-Nullish),[PObject](#class-PObject)`
+## `[Class](#class-Class)` `Null` subclass of `[Nullish](#class-Nullish),[PObject](#class-PObject)`
 
 
 > Built-in Class of `null` value
@@ -2204,7 +2205,7 @@
 ---
 
 <a name="class-Nullish"></a>
-## Class `Nullish` subclass of `[Object](#class-Object)`
+## `[Class](#class-Class)` `Nullish` subclass of `[Object](#class-Object)`
 
 
 > Mixin for nullish classes.
@@ -2360,7 +2361,7 @@
 ---
 
 <a name="class-Number"></a>
-## PClass `Number` subclass of `[PObject](#class-PObject)`
+## `[PClass](#class-PClass)` `Number` subclass of `[PObject](#class-PObject)`
 
 
 > Built-in int/float wrapper Class
@@ -2601,7 +2602,7 @@
 ---
 
 <a name="class-Object"></a>
-## Class `Object` subclass of `[Object](#class-Object)`
+## `[Class](#class-Class)` `Object` subclass of `[Object](#class-Object)`
 
 
 > Base Class
@@ -2732,7 +2733,7 @@
 ---
 
 <a name="class-PClass"></a>
-## Class `PClass` subclass of `[Class](#class-Class)`
+## `[Class](#class-Class)` `PClass` subclass of `[Class](#class-Class)`
 
 
 > Metaclass for Primitive/Python value Classes
@@ -2907,7 +2908,7 @@
 ---
 
 <a name="class-PObject"></a>
-## PClass `PObject` subclass of `[Object](#class-Object)`
+## `[PClass](#class-PClass)` `PObject` subclass of `[Object](#class-Object)`
 
 
 > Base class for Primitive/Python value Classes
@@ -3060,7 +3061,7 @@
 ---
 
 <a name="class-PyFunc"></a>
-## Class `PyFunc` subclass of `[Callable](#class-Callable)`
+## `[Class](#class-Class)` `PyFunc` subclass of `[Callable](#class-Callable)`
 
 
 > Built-in Class for function implemented in Python
@@ -3236,7 +3237,7 @@
 ---
 
 <a name="class-PyIterable"></a>
-## PClass `PyIterable` subclass of `[PObject](#class-PObject),[Iterable](#class-Iterable)`
+## `[PClass](#class-PClass)` `PyIterable` subclass of `[PObject](#class-PObject),[Iterable](#class-Iterable)`
 
 
 > Wrapper for Python &#x27;iterable&#x27; Objects (Dict, List, Str); Also returned by Dict.items(), Dict.keys(), Dict.values(), Object.props(), static method PyIterable.range().
@@ -3442,7 +3443,7 @@
 ---
 
 <a name="class-PyIterator"></a>
-## Class `PyIterator` subclass of `[Object](#class-Object),[Iterable](#class-Iterable)`
+## `[Class](#class-Class)` `PyIterator` subclass of `[Object](#class-Object),[Iterable](#class-Iterable)`
 
 
 > Built-in Class for a wrapper around a Python iterator
@@ -3648,7 +3649,7 @@
 ---
 
 <a name="class-PyObject"></a>
-## PClass `PyObject` subclass of `[Object](#class-Object)`
+## `[PClass](#class-PClass)` `PyObject` subclass of `[Object](#class-Object)`
 
 
 > Built-in Class for a wrapper around an arbitrary Python Object (returned by pyimport, or operations on PyObjects)
@@ -3810,7 +3811,7 @@
 ---
 
 <a name="class-PyVMFunc"></a>
-## Class `PyVMFunc` subclass of `[Callable](#class-Callable)`
+## `[Class](#class-Class)` `PyVMFunc` subclass of `[Callable](#class-Callable)`
 
 
 > Built-in Class for function implemented in Python with access to VM internals
@@ -3986,7 +3987,7 @@
 ---
 
 <a name="class-SingletonClass"></a>
-## Class `SingletonClass` subclass of `[Class](#class-Class)`
+## `[Class](#class-Class)` `SingletonClass` subclass of `[Class](#class-Class)`
 
 
 > Metaclass for Classes with singleton values. Invoke classes.SingletonClass.new instead of Class.new to create a singleton Class.
@@ -4162,7 +4163,7 @@
 ---
 
 <a name="class-Str"></a>
-## PClass `Str` subclass of `[PyIterable](#class-PyIterable)`
+## `[PClass](#class-PClass)` `Str` subclass of `[PyIterable](#class-PyIterable)`
 
 
 > Built-in immutable Unicode string Class
@@ -4468,7 +4469,7 @@
 ---
 
 <a name="class-Undefined"></a>
-## Class `Undefined` subclass of `[Nullish](#class-Nullish),[Object](#class-Object)`
+## `[Class](#class-Class)` `Undefined` subclass of `[Nullish](#class-Nullish),[Object](#class-Object)`
 
 
 > Class for undefined value.
