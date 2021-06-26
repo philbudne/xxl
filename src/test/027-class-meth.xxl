@@ -1,5 +1,7 @@
-var c = Class.new({
-    name: "c",
+// -*-js-*-
+
+var Z = Class.new({
+    name: "Z",
     methods: {
 	m: function (this) {
 	    __xxl.print(this.a);
@@ -7,7 +9,42 @@ var c = Class.new({
     }
 });
 
-var i = c.new();
-i.a = 1;
-i.m();
+var z = Z.new();
+z.a = 1;
+z.m();
 
+////////////////
+
+var A = Class.new({
+    name: "A",
+    methods: {
+	foo: function (this) {
+	    __xxl.print("A.foo");
+	}
+    }
+});
+
+var B = Class.new({
+    name: "B",
+    supers: [A],
+    methods: {
+	foo: function (this) {
+	    __xxl.print("B.foo");
+	    this.as_class(B)..foo();
+	}
+    }
+});
+
+var C = Class.new({
+    name: "C",
+    supers: [B],
+    methods: {
+	foo: function (this) {
+	    __xxl.print("C.foo");
+	    this.as_class(C)..foo();
+	}
+    }
+});
+
+var c = C.new();
+c.foo();

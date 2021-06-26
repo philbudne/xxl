@@ -783,7 +783,7 @@ var Parser = Class.new({
 	    // so that the Classes can be overridden??
 
 	    var p = this_parser; // for brevity
-	    p..init();		 // call superclass init
+	    p.as_class(Parser)..init();	// call superclass init
 
 	    // precedence levels (keep as Parser.PXXX properties??)
 	    // ***USE EVEN VALUES ONLY: prec-1 used for right associativity!!!

@@ -6,8 +6,7 @@ var MarkUp = Class.new({
     name: "MarkUp",
     doc: "base class for marking up text",
     methods: {
-	_init: function (this) { this._value = []; },
-	init: function (this) { this._init(); }, // XXX TEMP!
+	init: function (this) { this._value = []; },
 	render: function (this) {
 	    """
 	    return final result Str
@@ -75,7 +74,7 @@ var HTML = Class.new({
 	    // quick crock!
 	    // Should replace `thing` with <code>thing</code> AFTER!!
 	    this.quote = html.escape; // override default method!!
-	    this._init();	      // XXX TEMP
+	    this.as_class(HTML)..init();
 	},
 	_twrap: function (this, tag, list) {
 	    var open = "<" + tag + ">";

@@ -107,6 +107,7 @@ class CObject:
 
     def setclass(self, klass):
         self.klass = klass
+        return klass
 
     def getclass(self):
         """
@@ -942,9 +943,10 @@ def find_op(obj, optype, op):
 def obj_get_in_supers(this, prop):
     """
     Object `..` operator; for calling superclass methods
-    looks for `prop` as property or method of superclasses of `this`
+    Looks for `prop` as property or method of superclasses of `this`;
+    can be used w/ `this.as_class(MyClass)..method`.
     """
-    return find_in_supers(this, prop.value, undef_value) # XXX check for CPObject
+    return find_in_supers(this, prop.value, undef_value)
 
 # once upon a time class was stored as '__class' property,
 # but it was messy when cloning.
@@ -961,6 +963,17 @@ def obj_setclass(this, klass):
     set Class for `this`!!
     """
     return this.setclass(klass)
+
+@pyfunc
+def obj_as_class(this, klass):
+    """
+    return an Object of Class `klass`, sharing properties with `this`.
+    Use for calling superclass methods: `this.as_class(MyClass)..method`.
+    """
+    # XXX Have CObject methods?! Need to copy private (eg CPObject) members!?
+    n = type(this)(klass)
+    n.props = this.props        # YIKES! Proxy instead??
+    return n
 
 @pyfunc
 def obj_call(l, *args):
@@ -986,6 +999,7 @@ Object.setprop(const.METHODS, _mkdict({
     const.INIT: obj_init,
     'getclass': obj_getclass,
     'setclass': obj_setclass,
+    'as_class': obj_as_class,
     'instance_of': obj_instance_of,
     'delprop': obj_delprop,
     'setprop': obj_setprop,
