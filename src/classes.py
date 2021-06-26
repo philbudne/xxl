@@ -1706,10 +1706,7 @@ def str_ord(this):
     """
     Return the Unicode code point for a one-character string `this`
     """
-    s = this.value              # XXX getstr
-    if len(s) != 1:
-        raise UError("Str.ord length != 1")
-    return mknumber(ord(s))
+    return mknumber(ord(this.value)) # XXX getstr
 
 @pyfunc
 def str_starts_with(this, pref):
