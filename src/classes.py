@@ -731,14 +731,6 @@ def is_true(obj):
 ################ Object -- the base type for all instances and classes
 
 @pyfunc
-def obj_create(this_class, *args):
-    """
-    default create method for Object (and therefore Class)
-    makes an instance of this_class (called from default Object.new)
-    """
-    return CObject(this_class)
-
-@pyfunc
 def obj_init(this_obj, *args):
     """
     default init method for Object class
@@ -1024,10 +1016,19 @@ Object.setprop(const.NULLISH, false_value)
 ################ Class -- base type for Classes (a MetaClass)
 
 @pyfunc
+def class_create(this_class, *args):
+    """
+    Default create method for `Class` (the base metaclass);
+    Creates an empty instance of this_class (called from `Class.new`).
+    """
+    return CObject(this_class)
+
+@pyfunc
 def class_init(this_class, props):
     """
-    init method for meta-class "Class" -- used to create new Classes
-    `props` is Dict holding properties (see const.CLASS_PROPS)
+    init method for meta-class "Class" -- used to create new Classes.
+    `props` is Dict holding properties (see doc/creating-classes.md and
+    src/const.py CLASS_PROPS)
     """
     # XXX check props is a Dict!
     for key, val in props.value.items():
@@ -1036,13 +1037,13 @@ def class_init(this_class, props):
         if key == 'props':
             # XXX check for overlap with methods?
             # XXX use descriptors for methods/members?!!!
-            this_class.props.update(val.value)
+            this_class.props.update(val.value) # XXX getdict
             continue
         ikey = const.CLASS_PROPS.get(key)
         if not ikey:
-            metaclass = this_class.classname()
-            raise UError("Unknown %s property %s" % (metaclass, key))
-        this_class.props[ikey] = val
+            metaclassname = this_class.classname()
+            raise UError("Unknown %s property %s" % (metaclassname, key))
+        this_class.props[ikey] = val # NOTE! stashes argument Dict value!!!
 
     if const.NAME not in this_class.props:
         raise UError("Class.new requires '%s'"  % (metaclass, const.NAME))
@@ -1061,16 +1062,17 @@ def class_call(this_class, *args):
     (but common mistake if you have Python fingers) --
     tells you to use .new method!!
     """
-    raise UError("call %s.new!" % this_class.getprop(const.NAME).value)
+    name = this_class.getprop(const.NAME).value
+    raise UError("Called %s Class! Did you mean %s.new?" % (name, name))
 
 @pyfunc
 def class_subclass_of(this, c):
     """
-    return `true` if Class `this` is a subclass of
+    Return `true` if Class `this` is a subclass of
     Class (or List of Classes) `c`
     """
     if subclass_of(c.getclass(), List):
-        c = c.value             # get Python list
+        c = c.value             # XXX getlist
     else:
         c = [c]                 # make Python list
     return mkbool(subclass_of(this, c))
@@ -1078,9 +1080,10 @@ def class_subclass_of(this, c):
 # Class: a meta-class: all Classes are instances of a meta-class
 # (Class.new creates a new Class)
 Class.setprop(const.METHODS, _mkdict({
-    const.CREATE: obj_create,
+    # Class.new in bootstrap.vmx
+    const.CREATE: class_create,
     const.INIT: class_init,     # Class.new creates new Classes
-    # NOTE: "name" is a member
+    # NOTE: "name" is a member, not a method!
     'subclass_of': class_subclass_of
 }))
 

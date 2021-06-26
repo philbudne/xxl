@@ -310,7 +310,8 @@ if (__modinfo.main) {		// once only
 	supers: [Class],	// a metaclass!
 	doc: """
 	    Metaclass for Classes with singleton values.
-	    Invoke classes.SingletonClass.new instead of Class.new.
+	    Invoke classes.SingletonClass.new instead of Class.new
+	    to create a singleton Class.
 	    """,
 	methods: {
 	    new: function (this_class, ...args) {
