@@ -144,7 +144,8 @@ def xxl__tokenizer(filename, prefix, suffix):
         print("XXL/0")
         interactive = True
     else:
-        f = open(fnstr)
+        # encoding= needed for pypy3 7.3.1 (python 3.6)
+        f = open(fnstr, encoding="utf8")
         interactive = False
     tokenizer = jslex.Tokenizer(f, pstr, sstr, interactive)
     # XXX wrap in a PyObject (create token as namedtuple, return as list?)
