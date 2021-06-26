@@ -6,7 +6,8 @@ var MarkUp = Class.new({
     name: "MarkUp",
     doc: "base class for marking up text",
     methods: {
-	init: function (this) { this._value = []; },
+	_init: function (this) { this._value = []; },
+	init: function (this) { this._init(); }, // XXX TEMP!
 	render: function (this) {
 	    """
 	    return final result Str
@@ -64,10 +65,91 @@ var MarkUp = Class.new({
     } // methods
 });
 
+var HTML = Class.new({
+    name: "HTML",
+    doc: "MarkUp class for HTML",
+    supers: [MarkUp],
+    methods: {
+	init: function (this) {
+	    var html = __xxl.pyimport("html");
+	    // quick crock!
+	    // Should replace `thing` with <code>thing</code> AFTER!!
+	    this.quote = html.escape; // override default method!!
+	    this._init();	      // XXX TEMP
+	},
+	_twrap: function (this, tag, list) {
+	    var open = "<" + tag + ">";
+	    var close = "</" + tag + ">";
+	    return(this.lwrap(open, list, close));
+	},
+	_hn: function (this, n, list) {
+	    this.nappend(this._twrap( "h" + n.to_str(), list));
+	},
+
+	make_anchor: function (this, name) {
+	    """
+	    Create internal document link destination
+	    """
+	    // prepend something unlikely to name if github markdown auto-anchors confuse things?!
+	    this.nappend('<a name="' + name + '"></a>');
+	},
+
+	// the following take multiple args, will space separate and APPEND.
+	h1: function (this, ...args) { this._hn(1, args); },
+	h2: function (this, ...args) { this._hn(2, args); },
+	h3: function (this, ...args) { this._hn(3, args); },
+	h4: function (this, ...args) { this._hn(4, args); },
+	h5: function (this, ...args) { this._hn(5, args); },
+	hn: function (this, n, ...args) { this._hn(n, args); },
+
+	hr: function (this, ...args) { this.nappend("<hr>\n"); },
+	p: function (this, ...args) { this.nappend("<p>\n"); }, // paragraph
+	blockquote: function (this, ...args) {
+	    this.nappend(this._twrap("blockquote", args));
+	},
+
+	start_color: function (this, color) {
+	    //this.append('<span style="color:' + color + '">');
+	    this.append('<font color="' + color + '">');
+	},
+	end_color: function (this) {
+	    //this.append('</span>');
+	    this.append('</font>');
+	},
+
+	// code_block?
+	// (un)ordered_list (take list)??
+
+	// NOTE!! the following RETURN strings:
+	bold: function (this, ...words) {
+	    return(this._twrap("b", words));
+	},
+	i: function (this, ...words) {
+	    return(this._twrap("i", words));
+	},
+	code: function (this, ...words) {
+	    return(this._twrap("code", words));
+	},
+	link: function (this, dest, ...words) {
+	    """
+	    display `words` as a link to `dest`
+	    """
+	    return(this.lwrap('<a href="' + dest + '">', words, '</a>'));
+	},
+	ilink: function (this, name, ...words) {
+	    """
+	    display `words` as an internal document link to anchor `dest`
+	    """
+	    // prepend something unlikely to name if github markdown auto-anchors confuse things?!
+	    return(this.link('#' + name, ...words));
+	}
+    }
+});
+
 var MarkDown = Class.new({
     name: "MarkDown",
     doc: "MarkUp class for MarkDown (.md) format!",
-    supers: [MarkUp],
+    supers: [HTML],
     methods: {
 	// the following take multiple args, will space separate and APPEND.
 	h1: function (this, ...args) { this.wrapnap("# ", args, "\n"); },
@@ -97,57 +179,10 @@ var MarkDown = Class.new({
 	},
 	code: function (this, ...words) {
 	    return(this.lwrap("`", words, "`"));
+	},
+	link: function (this, dest, ...words) {
+	    return(this.lwrap("[", words, "]") + "(" + dest + ")");
 	}
-    }
-});
-
-var HTML = Class.new({
-    name: "HTML",
-    doc: "MarkUp class for HTML",
-    supers: [MarkUp],
-    methods: {
-	init: function (this) {
-	    var html = __xxl.pyimport("html");
-	    this..init();
-	    // quick crock!
-	    // Should replace `thing` with <code>thing</code> AFTER!!
-	    this.quote = html.escape; // override default method!!
-	},
-	_twrap: function (this, tag, list) {
-	    var open = "<" + tag + ">";
-	    var close = "</" + tag + ">";
-	    return(this.lwrap(open, list, close));
-	},
-	_hn: function (this, n, list) {
-	    this.nappend(this._twrap( "h" + n.to_str(), list));
-	},
-
-	// the following take multiple args, will space separate and APPEND.
-	h1: function (this, ...args) { this._hn(1, args); },
-	h2: function (this, ...args) { this._hn(2, args); },
-	h3: function (this, ...args) { this._hn(3, args); },
-	h4: function (this, ...args) { this._hn(4, args); },
-	h5: function (this, ...args) { this._hn(5, args); },
-	hn: function (this, n, ...args) { this._hn(n, args); },
-
-	hr: function (this, ...args) { this.nappend("<hr>\n"); },
-	p: function (this, ...args) { this.nappend("<p>\n"); }, // paragraph
-	blockquote: function (this, ...args) {
-	    this.nappend(this._twrap("blockquote", args));
-	},
-
-	// code_block?
-	// (un)ordered_list (take list)??
-
-	// NOTE!! the following RETURN strings:
-	bold: function (this, ...words) {
-	    return(this._twrap("b", words));
-	},
-	i: function (this, ...words) {
-	    return(this._twrap("i", words));
-	},
-	code: function (this, ...words) {
-	    return(this._twrap("code", words));
-	}
+	// use HTML ilink!
     }
 });
