@@ -903,6 +903,13 @@ def obj_getprop(l, r):
         return l.getprop(rv)
     return find_in_class(l, rv, undef_value) # may return BoundMethod
 
+@pyfunc
+def obj_hasprop(l, r):
+    """
+    Return `true` if object `l` has own (Str) property `r` (not interited).
+    """
+    return mkbool(l.hasprop(r.value)) # XXX getstr
+
 def find_op(obj, optype, op):
     """
     Utility (not method)
@@ -991,6 +998,7 @@ Object.setprop(const.METHODS, _mkdict({
     'delprop': obj_delprop,
     'setprop': obj_setprop,
     'getprop': obj_getprop,
+    'hasprop': obj_hasprop,
     'props': obj_props,
     'repr': obj_repr,
     'reprx': obj_reprx,
@@ -1978,9 +1986,8 @@ def pyiterator_iter(this):
 @pyvmfunc
 def pyiterator_next(vm, this, finished_continuation):
     """
-    `finished` should be a CContinuation
-    (eg; block leave label or "return")
-    to call when iterator exhausted
+    Returns next value; calls `finished_continuation`
+    (eg; block leave label or `return`) to call when iterator exhausted.
     """
     try:
         return wrap(next(this.value))
