@@ -3,8 +3,6 @@
 
 > Built-in Classes for XXL
 
-
-<font color="slategray">(inherited methods in this color)</font>
 ---
 
 <a name="class-Bool"></a>

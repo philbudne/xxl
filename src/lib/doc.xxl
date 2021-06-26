@@ -178,10 +178,11 @@ var mumodule = function (mu, module_name) {
     mu.h1("Module", mu.code(module_name));
     mu.p();
     mudoc(mu, mod);
-    mu.p();
-    mu.start_color(SUPER_COLOR);
-    mu.append("(inherited methods in this color)");
-    mu.end_color();
+    // not yet working:
+    // mu.p();
+    // mu.start_color(SUPER_COLOR);
+    // mu.append("(inherited methods in this color)");
+    // mu.end_color();
 
     // iterate over sorted names in Module
     var vars = [];
