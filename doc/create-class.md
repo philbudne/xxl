@@ -1,6 +1,8 @@
 ## Creating Classes
 
-New classes are created with Class.new:
+New classes are created with Class.new
+(`Class` is a metaclass, used to create new classes):
+
 ```
     var MyClass =
         Class.new({
@@ -35,3 +37,7 @@ New classes are created with Class.new:
 
 * All classes should provide "str" and "repr" methods, and an "init"
 	method *IFF* you want to pass anything to MyClass.new
+
+* To create a singleton class (one with only one instance), use
+	metaclass SingletonClass (use `SingletonClass.new` instead of
+	`Class.new`).
