@@ -137,7 +137,7 @@ class VM:
             pass
 
         try:
-            # seems yukky, but POSIX now defines size and order of first two values?!
+            # seems yukky, but POSIX now defines size and order!
             import fcntl
             import struct
             import termios
