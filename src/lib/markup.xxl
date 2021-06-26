@@ -161,7 +161,7 @@ var MarkDown = Class.new({
 	    this.wrapnap("##########".slice(0,n) + " ", args, "\n");
 	},
 
-	hr: function (this, ...args) { this.nappend("---\n"); },
+	hr: function (this, ...args) { this.nappend("---\n\n"); }, // github was combining
 	p: function (this, ...args) { this.nappend("\n"); }, // paragraph
 	blockquote: function (this, ...args) {
 	    this.wrapnap("> ", args, "\n\n");

@@ -3,7 +3,10 @@
 
 > Built-in Classes for XXL
 
+
+<font color="slategray">(inherited methods in this color)</font>
 ---
+
 <a name="class-Bool"></a>
 ## PClass `Bool` subclass of `[PObject](#class-PObject)`
 
@@ -167,6 +170,7 @@
 
 </font>
 ---
+
 <a name="class-BoundMethod"></a>
 ## Class `BoundMethod` subclass of `[Callable](#class-Callable)`
 
@@ -342,6 +346,7 @@
 
 </font>
 ---
+
 <a name="class-Callable"></a>
 ## Class `Callable` subclass of `[Object](#class-Object)`
 
@@ -499,6 +504,7 @@
 
 </font>
 ---
+
 <a name="class-Class"></a>
 ## Class `Class` subclass of `[Object](#class-Object)`
 
@@ -673,6 +679,7 @@
 
 </font>
 ---
+
 <a name="class-Closure"></a>
 ## Class `Closure` subclass of `[Callable](#class-Callable)`
 
@@ -848,6 +855,7 @@
 
 </font>
 ---
+
 <a name="class-Continuation"></a>
 ## Class `Continuation` subclass of `[Callable](#class-Callable)`
 
@@ -1005,6 +1013,7 @@
 
 </font>
 ---
+
 <a name="class-Dict"></a>
 ## PClass `Dict` subclass of `[PyIterable](#class-PyIterable)`
 
@@ -1248,6 +1257,7 @@
 > `l[r] = value`
 
 ---
+
 <a name="class-Iterable"></a>
 ## Class `Iterable` subclass of `[Object](#class-Object)`
 
@@ -1444,6 +1454,7 @@
 
 </font>
 ---
+
 <a name="class-List"></a>
 ## PClass `List` subclass of `[PyIterable](#class-PyIterable)`
 
@@ -1682,6 +1693,7 @@
 > `l[r] = value`
 
 ---
+
 <a name="class-ModInfo"></a>
 ## Class `ModInfo` subclass of `[Object](#class-Object)`
 
@@ -1850,6 +1862,7 @@
 
 </font>
 ---
+
 <a name="class-Module"></a>
 ## Class `Module` subclass of `[Object](#class-Object)`
 
@@ -2029,6 +2042,7 @@
 
 </font>
 ---
+
 <a name="class-Null"></a>
 ## Class `Null` subclass of `[Nullish](#class-Nullish),[PObject](#class-PObject)`
 
@@ -2190,6 +2204,7 @@
 
 </font>
 ---
+
 <a name="class-Nullish"></a>
 ## Class `Nullish` subclass of `[Object](#class-Object)`
 
@@ -2345,6 +2360,7 @@
 > Nullish Object setprop method/operator
 
 ---
+
 <a name="class-Number"></a>
 ## PClass `Number` subclass of `[PObject](#class-PObject)`
 
@@ -2585,6 +2601,7 @@
 
 </font>
 ---
+
 <a name="class-Object"></a>
 ## Class `Object` subclass of `[Object](#class-Object)`
 
@@ -2715,6 +2732,7 @@
 > Object setprop method/operator store `value` as `r` (String) property of object `l`
 
 ---
+
 <a name="class-PClass"></a>
 ## Class `PClass` subclass of `[Class](#class-Class)`
 
@@ -2889,6 +2907,7 @@
 
 </font>
 ---
+
 <a name="class-PObject"></a>
 ## PClass `PObject` subclass of `[Object](#class-Object)`
 
@@ -3041,6 +3060,7 @@
 
 </font>
 ---
+
 <a name="class-PyFunc"></a>
 ## Class `PyFunc` subclass of `[Callable](#class-Callable)`
 
@@ -3216,6 +3236,7 @@
 
 </font>
 ---
+
 <a name="class-PyIterable"></a>
 ## PClass `PyIterable` subclass of `[PObject](#class-PObject),[Iterable](#class-Iterable)`
 
@@ -3421,6 +3442,7 @@
 
 </font>
 ---
+
 <a name="class-PyIterator"></a>
 ## Class `PyIterator` subclass of `[Object](#class-Object),[Iterable](#class-Iterable)`
 
@@ -3626,6 +3648,7 @@
 
 </font>
 ---
+
 <a name="class-PyObject"></a>
 ## PClass `PyObject` subclass of `[Object](#class-Object)`
 
@@ -3787,6 +3810,7 @@
 
 </font>
 ---
+
 <a name="class-PyVMFunc"></a>
 ## Class `PyVMFunc` subclass of `[Callable](#class-Callable)`
 
@@ -3962,6 +3986,7 @@
 
 </font>
 ---
+
 <a name="class-SingletonClass"></a>
 ## Class `SingletonClass` subclass of `[Class](#class-Class)`
 
@@ -4137,6 +4162,7 @@
 
 </font>
 ---
+
 <a name="class-Str"></a>
 ## PClass `Str` subclass of `[PyIterable](#class-PyIterable)`
 
@@ -4442,6 +4468,7 @@
 
 </font>
 ---
+
 <a name="class-Undefined"></a>
 ## Class `Undefined` subclass of `[Nullish](#class-Nullish),[Object](#class-Object)`
 
@@ -4603,4 +4630,5 @@
 
 </font>
 ---
+
 formatted by doc.xxl on 2021-06-26

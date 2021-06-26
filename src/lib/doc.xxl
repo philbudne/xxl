@@ -8,6 +8,8 @@ const re = __xxl.pyimport("re");
 
 const ADDR_RE = re.compile(" at 0x[0-9a-z]*");
 
+const SUPER_COLOR = "slategray";
+
 // XXX need general iterator for class and all supers
 
 var collect_class_ops = function (class, prop) {
@@ -89,7 +91,7 @@ var mufunc = function (mu, level, name, func, not_own_method) {
     """
     var args = func.__args() || "(?)"; // get string for argument names
     if (not_own_method) {
-	mu.start_color("slategray");
+	mu.start_color(SUPER_COLOR);
     }
     // apply (HTML entity) quoting for operators
     mu.hn(level, mu.code(mu.quote(name), args));
@@ -153,7 +155,7 @@ var muclass = function (mu, class) {
 			 var value = ditem[1];
 			 var own_member = class.hasprop(name);
 			 if (!own_member) {
-			     mu.start_color("slategray");
+			     mu.start_color(SUPER_COLOR);
 			 }
 			 muvalue(mu, 4, name, value);
 			 if (!own_member) {
@@ -176,6 +178,10 @@ var mumodule = function (mu, module_name) {
     mu.h1("Module", mu.code(module_name));
     mu.p();
     mudoc(mu, mod);
+    mu.p();
+    mu.start_color(SUPER_COLOR);
+    mu.append("(inherited methods in this color)");
+    mu.end_color();
 
     // iterate over sorted names in Module
     var vars = [];
