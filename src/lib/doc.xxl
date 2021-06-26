@@ -176,6 +176,7 @@ var mumodule = function (mu, module_name) {
     var mod = __xxl.import(module_name);
 
     mu.head(module_name + " | " + (mod.__doc ? mod.__doc.to_str() : "Mystery Module"));
+    mu.start_body();
     mu.h1("Module", mu.code(module_name));
     mu.p();
     mudoc(mu, mod);
@@ -243,7 +244,7 @@ var mumodule = function (mu, module_name) {
 	    }
 	    mu.p();
 	}
-    );
+    ); // vars.for_each
 };
 
 if (__modinfo.main) {
@@ -258,12 +259,13 @@ if (__modinfo.main) {
 
     var mu = markup_class.new();
 
-    mumodule(mu, module_name);
+    mumodule(mu, module_name);	// starts body, but does not end
 
     mu.hr();
     var time = __xxl.pyimport("time");
     mu.nappend("formatted by doc.xxl on",
 	       time.strftime("%Y-%m-%d")); // XXX want UTC
+    mu.end_body();
 
     // The very very very end.
     __xxl.print(mu.render());	// output results
