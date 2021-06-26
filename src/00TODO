@@ -166,7 +166,8 @@ bootstrap.md -- describe adding operator;
 straighten out .py file dependency graph?
 	split up classes.py into classes/Classname.py??
 	    missing methods (lots!!!)
-		Str binop: full relops (require str lhs)
+		define PyFuncs via format strings like PyArg_ParseTuple?
+			OR machine generated Python (no run-time interp.)
 		List slice method
 	    add Bytes Class (subclass of CharSeq? ByteLike?)
 
