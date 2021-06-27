@@ -380,7 +380,8 @@ if (__modinfo.file) {
     var file = __modinfo.file;
 
     if (file.ends_with(".vmx")) {
-	__modinfo.load_vmx(file)(); // load vmx as Closure and invoke
+	var f2 = __xxl._find_in_lib_path(file);
+	__modinfo.load_vmx(f2)(); // load vmx as Closure and invoke
 	if (__modinfo.debug_bootstrap) {
 	    __xxl.error("bootstrap", file, "load_vmx finished");
 	}

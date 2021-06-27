@@ -78,4 +78,6 @@ MODINFO_MODULE = 'module'
 MODINFO_PARSER_VMX = 'parser_vmx' # bootstrap: load for Parser, VMCode
 
 # default LIB path
-XXL_LIB_PATH = 'lib'
+# .xxl library files in lib/
+# distribution .vmx files in dist/
+XXL_LIB_PATH = 'lib:dist'

@@ -1,7 +1,7 @@
 
 # XXL build/test Makefile
 
-# set XXL_PYTHON on command line (ie; "make XXL_PYTHON=pypy3")
+# set XXL_PYTHON on command line (eg; "make XXL_PYTHON=pypy3")
 #	to override xxl.py "#!" line choice of Python interpreter
 
 PARSER= parser
@@ -10,6 +10,10 @@ PARSER_SRC=$(PARSER).xxl
 
 # precompiled VM code for parser
 PARSER_VMX=$(PARSER).vmx
+
+# .xxl files in lib/
+# distribution .vmx files in dist/
+LIB=	lib:dist
 
 # note: using $(PARSER_VMX).[abc] looks like a (suffix) rule?!
 A=	a.vmx
@@ -26,55 +30,55 @@ VM=	$(XXL) vmx.py classes.py const.py jslex.py xxlobj.py scopes.py
 #	otherwise they should be identical.
 
 TESTED=tested
-IDENTICAL=.identical.ab
+ABIDENTICAL=.identical.ab
 
-# never created (always display "up to date")
-IDENTICAL2=.identical.parser-c
+# XXX lib/*.xxl and lib/ext/*.xxl too!
+DOCS= classes.md
 
-DOCS= ../doc/classes.md
+all:	$(TESTED) $(DOCS)
 
-all:	$(TESTED) $(IDENTICAL) $(IDENTICAL2) $(DOCS) $(PARSER_VMX)
-
-$(TESTED): $(B) $(C)
+$(TESTED): $(C) $(ABIDENTICAL)
 	cmp $(B) $(C)
 	XXL_PARSER=$(C) CMD="$(XXL_PYTHON) ./$(XXL)" ./test.sh
+	@if cmp $(B) $(PARSER_VMX);  then \
+	    echo no change to $(PARSER_VMX); \
+	else \
+	    test -f $(PARSER_VMX) && mv -f $(PARSER_VMX) $(PARSER_VMX).bak;\
+	    cp -fp $(B) $(PARSER_VMX); \
+	    echo updated $(PARSER_VMX); \
+	fi
 	date > $(TESTED)
 
-$(IDENTICAL): $(A) $(B)
+$(ABIDENTICAL): $(A) $(B)
 	@if cmp -s $(A) $(B); then \
 		echo "no change in generated code"; \
-		date > $(IDENTICAL); \
+		date > $(ABIDENTICAL); \
 	else \
 		echo "NOTE: generated code changed"; \
 	fi
 
-# XXX skip first line in each file (skip metadata)?
-$(IDENTICAL2): $(PARSER_VMX) $(C)
-	@tail -n+2 $(C) > .tmp.c
-	@tail -n+2 $(PARSER_VMX) > .tmp.p
-	@if cmp -s .tmp.c .tmp.p; then \
-		echo "$(PARSER_VMX) up to date"; \
-	else \
-		echo "NOTE: $(PARSER_VMX) out of date (update from $(C))"; \
-	fi
-	@rm -f .tmp.c .tmp.p
+################
 
-../doc/classes.md: classes.py bootstrap.vmx lib/doc.xxl lib/markup.xxl $(TESTED)
-	./$(XXL) lib/doc.xxl classes > ../doc/classes.md
+classes.md: classes.py bootstrap.vmx lib/doc.xxl lib/markup.xxl $(TESTED)
+	./$(XXL) lib/doc.xxl classes > classes.md
 
-install: $(TESTED)
-	cp $(C) $(PARSER_VMX)	
-
+# uncomment to enable timing
 #TIME=time -p
-# no longer requires -x!
+
+# not working?
+# XXL_LIB_PATH=$(LIB)
+
 RUNVMX=$(TIME) $(XXL_PYTHON) ./$(XXL)
 
-# step A: run PARSER_VMX on PARSER_SRC generating VMX
+$(PARSER_VMX):
+	test -f $(PARSER_VMX) || cp -f dist/$(PARSER_VMX) .
+
+# step A: run PARSER_VMX on PARSER_SRC generating $(A) VMX file
 # Compiles, but DOES NOT RUN new source.
 # Not dying here only means parser.xxl is syntactically correct.
 # A separate step just so the (old) generated code is visible;
 # MOST of the time (no generated code changes) "a" will match "b" and "c"
-$(A):	$(VM) $(PARSER_VMX) $(PARSER_SRC)
+$(A):	$(VM) $(PARSER_SRC) $(PARSER_VMX)
 	$(RUNVMX) $(PARSER_VMX) $(PARSER_SRC) > $(A).tmp && mv $(A).tmp $(A)
 
 # step B: use output of step A to self-generate VM code
@@ -88,13 +92,39 @@ $(B):	$(VM) $(A) $(PARSER_SRC)
 $(C):	$(VM) $(B) $(PARSER_SRC)
 	$(RUNVMX) $(B) $(PARSER_SRC) > $(C).tmp && mv $(C).tmp $(C)
 
-# XXX test new file before replacing?!!
+# XXX test new file (w/ recursive make????) before replacing?!!
 bootstrap.vmx: bootstrap.xxl $(PARSER_VMX) $(VM)
-	$(RUNVMX) $(PARSER_VMX) bootstrap.xxl > bootstrap.vmx.tmp && \
-		mv bootstrap.vmx bootstrap.vmx.bak && \
-		mv bootstrap.vmx.tmp bootstrap.vmx
+	$(RUNVMX) $(PARSER_VMX) bootstrap.xxl > bootstrap.vmx.tmp
+	@if [ -f bootstrap.vmx ] && cmp bootstrap.vmx bootstrap.vmx.tmp; then \
+	    echo no change to bootstrap.vmx; \
+	else \
+	    test -f bootstrap.vmx && mv -f bootstrap.vmx  bootstrap.vmx.bak; \
+	    mv bootstrap.vmx.tmp bootstrap.vmx; \
+	    echo updated bootstrap.vmx; \
+	fi
 
-GENERATED=$(A) $(B) $(C) $(TESTED) $(IDENTICAL) $(IDENTICAL2)
+################
+# run ONLY before git checkin for main repo
+# (so clean checkouts get initial VM code)
+
+install-dist: $(TESTED) $(DOCS)
+	cp $(PARSER_VMX) bootstrap.vmx $(DOCS) dist/
+
+# manually check if dist dir up to date (before git checkin)
+# skip first line in each VMX file (skip metadata)
+check-dist: $(PARSER_VMX)
+	@for FILE in $(PARSER_VMX) bootstrap.vmx; do \
+	    tail -n+2 $$FILE > .tmp.c; \
+	    tail -n+2 dist/$$FILE > .tmp.d; \
+	    if cmp -s .tmp.c .tmp.d; then \
+		echo "dist/$$FILE up to date"; \
+	    else \
+		echo "NOTE: dist/$$FILE out of date"; \
+	    fi; \
+	done
+
+################
+GENERATED=$(A) $(B) $(C) $(TESTED) $(ABIDENTICAL) $(DOC)
 clean:
 	rm -f *.tmp .tmp* *.bak *~ $(GENERATED)
 	rm -rf __pycache__
