@@ -561,7 +561,7 @@ def instance_of(this, classes):
     """
     test if `this` is an instance of any Class in `classes` list
     `this` is CObject
-    `classes` is list of Classes (CObjects of class or subclasses of Class)
+    `classes` is list of Classes (CObject instances of (subclasses of) Class)
     """
     return subclass_of(this.getclass(), classes)
 
@@ -819,7 +819,7 @@ def obj_delprop(this, name):
     Delete property `name` from Object `this`
     (only effects `this` -- never Class or superclasses)
     """
-    this.props.pop(name)
+    this.props.pop(name.getvalue())
     return null_value
 
 @pyfunc
@@ -1075,9 +1075,13 @@ def class_init(this_class, props):
 
     # XXX complain if NAME doesn't start with a capitol letter??
 
+    # XXX check if a metaclass: subclass_of(this_class, [Class])
+    #   and insist that NAME ends with "Class"??
+
     if const.SUPERS not in this_class.props:
         # XXX complain??
         this_class.setprop(const.SUPERS, wrap([Object]))
+
     return null_value
 
 @pyfunc

@@ -46,7 +46,7 @@
 
 </font><font color="slategray">
 #### `init (l, value)`
-*PyFunc at classes.py:1166 (pobj_init)*
+*PyFunc at classes.py:1170 (pobj_init)*
 
 > default PObject init method (fatal error)
 
@@ -70,13 +70,13 @@
 
 </font>
 #### `repr (this)`
-*PyFunc at classes.py:1898 (bool_str)*
+*PyFunc at classes.py:1902 (bool_str)*
 
 > return Str representation: &quot;true&quot; or &quot;false&quot;
 
 <font color="slategray">
 #### `reprx (this)`
-*PyFunc at classes.py:1159 (pobj_reprx)*
+*PyFunc at classes.py:1163 (pobj_reprx)*
 
 > for debug: show Class name, and Python repr
 
@@ -124,19 +124,19 @@
 
 <font color="slategray">
 #### `!= (l, r)`
-*PyFunc at classes.py:1193 (pobj_differ)*
+*PyFunc at classes.py:1197 (pobj_differ)*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 </font><font color="slategray">
 #### `!== (l, r)`
-*PyFunc at classes.py:1193 (pobj_differ)*
+*PyFunc at classes.py:1197 (pobj_differ)*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 </font><font color="slategray">
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1083 (class_call)*
+*PyFunc at classes.py:1087 (class_call)*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
@@ -154,13 +154,13 @@
 
 </font><font color="slategray">
 #### `== (l, r)`
-*PyFunc at classes.py:1182 (pobj_ident)*
+*PyFunc at classes.py:1186 (pobj_ident)*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 </font><font color="slategray">
 #### `=== (l, r)`
-*PyFunc at classes.py:1182 (pobj_ident)*
+*PyFunc at classes.py:1186 (pobj_ident)*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
@@ -270,7 +270,7 @@
 
 </font><font color="slategray">
 #### `subclass_of (this, c)`
-*PyFunc at classes.py:1093 (class_subclass_of)*
+*PyFunc at classes.py:1097 (class_subclass_of)*
 
 > Return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
@@ -318,7 +318,7 @@
 
 </font><font color="slategray">
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1083 (class_call)*
+*PyFunc at classes.py:1087 (class_call)*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
@@ -482,7 +482,7 @@
 
 </font><font color="slategray">
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1083 (class_call)*
+*PyFunc at classes.py:1087 (class_call)*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
@@ -616,7 +616,7 @@
 
 </font>
 #### `subclass_of (this, c)`
-*PyFunc at classes.py:1093 (class_subclass_of)*
+*PyFunc at classes.py:1097 (class_subclass_of)*
 
 > Return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
@@ -664,7 +664,7 @@
 
 </font>
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1083 (class_call)*
+*PyFunc at classes.py:1087 (class_call)*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
@@ -798,7 +798,7 @@
 
 </font><font color="slategray">
 #### `subclass_of (this, c)`
-*PyFunc at classes.py:1093 (class_subclass_of)*
+*PyFunc at classes.py:1097 (class_subclass_of)*
 
 > Return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
@@ -846,7 +846,7 @@
 
 </font><font color="slategray">
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1083 (class_call)*
+*PyFunc at classes.py:1087 (class_call)*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
@@ -1010,7 +1010,7 @@
 
 </font><font color="slategray">
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1083 (class_call)*
+*PyFunc at classes.py:1087 (class_call)*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
@@ -1114,24 +1114,24 @@
 
 </font>
 #### `items (this)`
-*PyFunc at classes.py:1372 (dict_items)*
+*PyFunc at classes.py:1376 (dict_items)*
 
 > Return PyIterable for [key, value] value pairs.
 
 <font color="slategray">
 #### `iter (this)`
-*PyFunc at classes.py:1281 (pyiterable_iter)*
+*PyFunc at classes.py:1285 (pyiterable_iter)*
 
 > Return forward iterator.
 
 </font>
 #### `keys (this)`
-*PyFunc at classes.py:1379 (dict_keys)*
+*PyFunc at classes.py:1383 (dict_keys)*
 
 > Return PyIterable for Dict keys.
 
 #### `len (this)`
-*PyFunc at classes.py:1136 (pobj_len)*
+*PyFunc at classes.py:1140 (pobj_len)*
 
 > returns length (of String, List or Dict)
 
@@ -1149,7 +1149,7 @@
 
 </font>
 #### `pop (obj, key)`
-*PyFunc at classes.py:1365 (dict_pop)*
+*PyFunc at classes.py:1369 (dict_pop)*
 
 > Remove Dict item with specified `key`.
 
@@ -1161,7 +1161,7 @@
 
 </font><font color="slategray">
 #### `range (...args)`
-*PyFunc at classes.py:1312 (pyiterable_range)*
+*PyFunc at classes.py:1316 (pyiterable_range)*
 
 > Static method: returns PyIterable for an integer range; iter() method generates fresh Iterators. range(10): returns Iterable for 0..9; range(1,10): returns Iterable for 1..9; range(1,10,2): returns Iterable for odd numbers 1..9
 
@@ -1173,13 +1173,13 @@
 
 <font color="slategray">
 #### `reprx (this)`
-*PyFunc at classes.py:1159 (pobj_reprx)*
+*PyFunc at classes.py:1163 (pobj_reprx)*
 
 > for debug: show Class name, and Python repr
 
 </font><font color="slategray">
 #### `reversed (this)`
-*PyFunc at classes.py:1288 (pyiterable_reversed)*
+*PyFunc at classes.py:1292 (pyiterable_reversed)*
 
 > Return reverse iterator.
 
@@ -1197,7 +1197,7 @@
 
 </font><font color="slategray">
 #### `sorted (this, reverse)`
-*PyFunc at classes.py:1297 (pyiterable_sorted)*
+*PyFunc at classes.py:1301 (pyiterable_sorted)*
 
 > Return sorted List of iterator values. `reverse` is Bool to sort in reverse order (defaults to `false`).
 
@@ -1209,7 +1209,7 @@
 
 </font>
 #### `values (this)`
-*PyFunc at classes.py:1386 (dict_values)*
+*PyFunc at classes.py:1390 (dict_values)*
 
 > Return PyIterable for Dict values.
 
@@ -1238,19 +1238,19 @@
 
 <font color="slategray">
 #### `!= (l, r)`
-*PyFunc at classes.py:1193 (pobj_differ)*
+*PyFunc at classes.py:1197 (pobj_differ)*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 </font><font color="slategray">
 #### `!== (l, r)`
-*PyFunc at classes.py:1193 (pobj_differ)*
+*PyFunc at classes.py:1197 (pobj_differ)*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 </font><font color="slategray">
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1083 (class_call)*
+*PyFunc at classes.py:1087 (class_call)*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
@@ -1268,19 +1268,19 @@
 
 </font><font color="slategray">
 #### `== (l, r)`
-*PyFunc at classes.py:1182 (pobj_ident)*
+*PyFunc at classes.py:1186 (pobj_ident)*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 </font><font color="slategray">
 #### `=== (l, r)`
-*PyFunc at classes.py:1182 (pobj_ident)*
+*PyFunc at classes.py:1186 (pobj_ident)*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 </font>
 #### `[ (l, r)`
-*PyFunc at classes.py:1347 (dict_get)*
+*PyFunc at classes.py:1351 (dict_get)*
 
 > `l[r]`
 
@@ -1294,7 +1294,7 @@
 
 </font>
 #### `[ (l, r, value)`
-*PyFunc at classes.py:1338 (dict_put)*
+*PyFunc at classes.py:1342 (dict_put)*
 
 > `l[r] = value`
 
@@ -1463,7 +1463,7 @@
 
 </font><font color="slategray">
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1083 (class_call)*
+*PyFunc at classes.py:1087 (class_call)*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
@@ -1512,7 +1512,7 @@
 ### Methods
 
 #### `append (this, item)`
-*PyFunc at classes.py:1419 (list_append)*
+*PyFunc at classes.py:1423 (list_append)*
 
 > append `item`.
 
@@ -1578,13 +1578,13 @@
 
 </font><font color="slategray">
 #### `iter (this)`
-*PyFunc at classes.py:1281 (pyiterable_iter)*
+*PyFunc at classes.py:1285 (pyiterable_iter)*
 
 > Return forward iterator.
 
 </font>
 #### `len (this)`
-*PyFunc at classes.py:1136 (pobj_len)*
+*PyFunc at classes.py:1140 (pobj_len)*
 
 > returns length (of String, List or Dict)
 
@@ -1602,7 +1602,7 @@
 
 </font>
 #### `pop (l, index)`
-*PyFunc at classes.py:1427 (list_pop)*
+*PyFunc at classes.py:1431 (list_pop)*
 
 > Remove and return item at `index` (default last).
 
@@ -1614,7 +1614,7 @@
 
 </font><font color="slategray">
 #### `range (...args)`
-*PyFunc at classes.py:1312 (pyiterable_range)*
+*PyFunc at classes.py:1316 (pyiterable_range)*
 
 > Static method: returns PyIterable for an integer range; iter() method generates fresh Iterators. range(10): returns Iterable for 0..9; range(1,10): returns Iterable for 1..9; range(1,10,2): returns Iterable for odd numbers 1..9
 
@@ -1626,13 +1626,13 @@
 
 <font color="slategray">
 #### `reprx (this)`
-*PyFunc at classes.py:1159 (pobj_reprx)*
+*PyFunc at classes.py:1163 (pobj_reprx)*
 
 > for debug: show Class name, and Python repr
 
 </font><font color="slategray">
 #### `reversed (this)`
-*PyFunc at classes.py:1288 (pyiterable_reversed)*
+*PyFunc at classes.py:1292 (pyiterable_reversed)*
 
 > Return reverse iterator.
 
@@ -1650,7 +1650,7 @@
 
 </font><font color="slategray">
 #### `sorted (this, reverse)`
-*PyFunc at classes.py:1297 (pyiterable_sorted)*
+*PyFunc at classes.py:1301 (pyiterable_sorted)*
 
 > Return sorted List of iterator values. `reverse` is Bool to sort in reverse order (defaults to `false`).
 
@@ -1686,19 +1686,19 @@
 
 <font color="slategray">
 #### `!= (l, r)`
-*PyFunc at classes.py:1193 (pobj_differ)*
+*PyFunc at classes.py:1197 (pobj_differ)*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 </font><font color="slategray">
 #### `!== (l, r)`
-*PyFunc at classes.py:1193 (pobj_differ)*
+*PyFunc at classes.py:1197 (pobj_differ)*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 </font><font color="slategray">
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1083 (class_call)*
+*PyFunc at classes.py:1087 (class_call)*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
@@ -1716,19 +1716,19 @@
 
 </font><font color="slategray">
 #### `== (l, r)`
-*PyFunc at classes.py:1182 (pobj_ident)*
+*PyFunc at classes.py:1186 (pobj_ident)*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 </font><font color="slategray">
 #### `=== (l, r)`
-*PyFunc at classes.py:1182 (pobj_ident)*
+*PyFunc at classes.py:1186 (pobj_ident)*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 </font>
 #### `[ (l, r)`
-*PyFunc at classes.py:1436 (list_get)*
+*PyFunc at classes.py:1440 (list_get)*
 
 > `l[r]`
 
@@ -1742,7 +1742,7 @@
 
 </font>
 #### `[ (l, r, value)`
-*PyFunc at classes.py:1444 (list_put)*
+*PyFunc at classes.py:1448 (list_put)*
 
 > `l[r] = value`
 
@@ -1764,7 +1764,7 @@
 
 </font>
 #### `assemble (this, tree, srcfile)`
-*PyFunc at classes.py:2174 (modinfo_assemble)*
+*PyFunc at classes.py:2178 (modinfo_assemble)*
 
 > Assemble List of Lists representing VM code. `tree`: List of Lists. `srcfile`: source of code (for output only). Returns Closure in __modinfo.module top level scope.
 
@@ -1806,7 +1806,7 @@
 
 </font>
 #### `load_vmx (this, fname)`
-*PyFunc at classes.py:2164 (modinfo_load_vmx)*
+*PyFunc at classes.py:2168 (modinfo_load_vmx)*
 
 > Load compiled `.vmx` file; Returns Closure in __modinfo.module top level scope.
 
@@ -1884,7 +1884,7 @@
 
 </font><font color="slategray">
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1083 (class_call)*
+*PyFunc at classes.py:1087 (class_call)*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
@@ -2018,7 +2018,7 @@
 
 </font><font color="slategray">
 #### `subclass_of (this, c)`
-*PyFunc at classes.py:1093 (class_subclass_of)*
+*PyFunc at classes.py:1097 (class_subclass_of)*
 
 > Return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
@@ -2070,7 +2070,7 @@
 
 </font><font color="slategray">
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1083 (class_call)*
+*PyFunc at classes.py:1087 (class_call)*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
@@ -2138,7 +2138,7 @@
 
 </font><font color="slategray">
 #### `getprop (l, r)`
-*PyFunc at classes.py:1859 (nullish_getprop)*
+*PyFunc at classes.py:1863 (nullish_getprop)*
 
 > `.` method for Nullish (null, undefined) values. Fatal error if unknown property. Allows all Object methods (JavaScript is stricter, Python is not).
 
@@ -2150,7 +2150,7 @@
 
 </font><font color="slategray">
 #### `init (l, value)`
-*PyFunc at classes.py:1166 (pobj_init)*
+*PyFunc at classes.py:1170 (pobj_init)*
 
 > default PObject init method (fatal error)
 
@@ -2174,13 +2174,13 @@
 
 </font>
 #### `repr (this)`
-*PyFunc at classes.py:1835 (null_str)*
+*PyFunc at classes.py:1839 (null_str)*
 
 > to_string/repr method for Null Class: returns &quot;null&quot;
 
 <font color="slategray">
 #### `reprx (this)`
-*PyFunc at classes.py:1159 (pobj_reprx)*
+*PyFunc at classes.py:1163 (pobj_reprx)*
 
 > for debug: show Class name, and Python repr
 
@@ -2192,7 +2192,7 @@
 
 </font><font color="slategray">
 #### `setprop (l, r, value)`
-*PyFunc at classes.py:1877 (nullish_setprop)*
+*PyFunc at classes.py:1881 (nullish_setprop)*
 
 > Nullish Object setprop method/operator
 
@@ -2226,25 +2226,25 @@
 
 <font color="slategray">
 #### `!= (l, r)`
-*PyFunc at classes.py:1193 (pobj_differ)*
+*PyFunc at classes.py:1197 (pobj_differ)*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 </font><font color="slategray">
 #### `!== (l, r)`
-*PyFunc at classes.py:1193 (pobj_differ)*
+*PyFunc at classes.py:1197 (pobj_differ)*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 </font>
 #### `( (this, ...args)`
-*PyFunc at classes.py:1842 (null_call)*
+*PyFunc at classes.py:1846 (null_call)*
 
 > `(` method for `null` value (fatal error)
 
 <font color="slategray">
 #### `. (l, r)`
-*PyFunc at classes.py:1859 (nullish_getprop)*
+*PyFunc at classes.py:1863 (nullish_getprop)*
 
 > `.` method for Nullish (null, undefined) values. Fatal error if unknown property. Allows all Object methods (JavaScript is stricter, Python is not).
 
@@ -2256,13 +2256,13 @@
 
 </font><font color="slategray">
 #### `== (l, r)`
-*PyFunc at classes.py:1182 (pobj_ident)*
+*PyFunc at classes.py:1186 (pobj_ident)*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 </font><font color="slategray">
 #### `=== (l, r)`
-*PyFunc at classes.py:1182 (pobj_ident)*
+*PyFunc at classes.py:1186 (pobj_ident)*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
@@ -2306,7 +2306,7 @@
 
 </font>
 #### `getprop (l, r)`
-*PyFunc at classes.py:1859 (nullish_getprop)*
+*PyFunc at classes.py:1863 (nullish_getprop)*
 
 > `.` method for Nullish (null, undefined) values. Fatal error if unknown property. Allows all Object methods (JavaScript is stricter, Python is not).
 
@@ -2354,7 +2354,7 @@
 
 </font>
 #### `setprop (l, r, value)`
-*PyFunc at classes.py:1877 (nullish_setprop)*
+*PyFunc at classes.py:1881 (nullish_setprop)*
 
 > Nullish Object setprop method/operator
 
@@ -2408,7 +2408,7 @@
 
 </font>
 #### `. (l, r)`
-*PyFunc at classes.py:1859 (nullish_getprop)*
+*PyFunc at classes.py:1863 (nullish_getprop)*
 
 > `.` method for Nullish (null, undefined) values. Fatal error if unknown property. Allows all Object methods (JavaScript is stricter, Python is not).
 
@@ -2434,7 +2434,7 @@
 ### LHS Binary operators
 
 #### `. (l, r, value)`
-*PyFunc at classes.py:1877 (nullish_setprop)*
+*PyFunc at classes.py:1881 (nullish_setprop)*
 
 > Nullish Object setprop method/operator
 
@@ -2480,7 +2480,7 @@
 
 </font><font color="slategray">
 #### `init (l, value)`
-*PyFunc at classes.py:1166 (pobj_init)*
+*PyFunc at classes.py:1170 (pobj_init)*
 
 > default PObject init method (fatal error)
 
@@ -2504,13 +2504,13 @@
 
 </font><font color="slategray">
 #### `repr (this)`
-*PyFunc at classes.py:1151 (pobj_repr)*
+*PyFunc at classes.py:1155 (pobj_repr)*
 
 > return less human-friendly string representation of `this` (use Python repr function on value)
 
 </font><font color="slategray">
 #### `reprx (this)`
-*PyFunc at classes.py:1159 (pobj_reprx)*
+*PyFunc at classes.py:1163 (pobj_reprx)*
 
 > for debug: show Class name, and Python repr
 
@@ -2528,17 +2528,17 @@
 
 </font>
 #### `to_float (this)`
-*PyFunc at classes.py:1616 (num_to_float)*
+*PyFunc at classes.py:1620 (num_to_float)*
 
 > If value is a float, return `this` If value is an int, return a new Number object
 
 #### `to_int (this)`
-*PyFunc at classes.py:1626 (num_to_int)*
+*PyFunc at classes.py:1630 (num_to_int)*
 
 > If value is an int, return `this` If value is a float, return a new Number object
 
 #### `to_number (this)`
-*PyFunc at classes.py:1636 (num_to_number)*
+*PyFunc at classes.py:1640 (num_to_number)*
 
 > identity method; returns `this`
 
@@ -2571,31 +2571,31 @@
 
 </font>
 #### `- (x)`
-*PyFunc at classes.py:1473 (neg)*
+*PyFunc at classes.py:1477 (neg)*
 
 > Return negative of `x`
 
 #### `~ (this)`
-*PyFunc at classes.py:1609 (bitnot)*
+*PyFunc at classes.py:1613 (bitnot)*
 
 > return bitwise (binary) &quot;not&quot; (complement) of `this`
 
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:1542 (ne)*
+*PyFunc at classes.py:1546 (ne)*
 
 > return `true` if value of `l` is different from the value of `r`
 
 <font color="slategray">
 #### `!== (l, r)`
-*PyFunc at classes.py:1193 (pobj_differ)*
+*PyFunc at classes.py:1197 (pobj_differ)*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 </font>
 #### `&amp; (l, r)`
-*PyFunc at classes.py:1583 (bitand)*
+*PyFunc at classes.py:1587 (bitand)*
 
 > return bitwise (binary) &quot;and&quot; (conjunction) of `l` and `r`
 
@@ -2607,17 +2607,17 @@
 
 </font>
 #### `* (l, r)`
-*PyFunc at classes.py:1504 (mul)*
+*PyFunc at classes.py:1508 (mul)*
 
 > multiply `l` and `r`
 
 #### `+ (l, r)`
-*PyFunc at classes.py:1480 (add)*
+*PyFunc at classes.py:1484 (add)*
 
 > add `l` and `r`
 
 #### `- (l, r)`
-*PyFunc at classes.py:1493 (sub)*
+*PyFunc at classes.py:1497 (sub)*
 
 > subtract `r` from `l`
 
@@ -2635,44 +2635,44 @@
 
 </font>
 #### `/ (l, r)`
-*PyFunc at classes.py:1517 (div)*
+*PyFunc at classes.py:1521 (div)*
 
 > Divide `l` by `r`; always creates float.
 
 #### `&lt; (l, r)`
-*PyFunc at classes.py:1559 (lt)*
+*PyFunc at classes.py:1563 (lt)*
 
 > return `true` if value of `l` is &lt; the value of `r`
 
 #### `&lt;= (l, r)`
-*PyFunc at classes.py:1569 (le)*
+*PyFunc at classes.py:1573 (le)*
 
 > return `true` if value of `l` is &lt;= the value of `r`
 
 #### `== (l, r)`
-*PyFunc at classes.py:1535 (eq)*
+*PyFunc at classes.py:1539 (eq)*
 
 > return `true` if value of `l` is the same as value of `r`
 
 <font color="slategray">
 #### `=== (l, r)`
-*PyFunc at classes.py:1182 (pobj_ident)*
+*PyFunc at classes.py:1186 (pobj_ident)*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 </font>
 #### `&gt; (l, r)`
-*PyFunc at classes.py:1576 (gt)*
+*PyFunc at classes.py:1580 (gt)*
 
 > return `true` if value of `l` is &gt; the value of `r`
 
 #### `&gt;= (l, r)`
-*PyFunc at classes.py:1552 (ge)*
+*PyFunc at classes.py:1556 (ge)*
 
 > return `true` if value of `l` is &gt;= the value of `r`
 
 #### `| (l, r)`
-*PyFunc at classes.py:1596 (bitor)*
+*PyFunc at classes.py:1600 (bitor)*
 
 > return bitwise (binary) &quot;or&quot; (union) of `l` and `r`
 
@@ -2839,7 +2839,7 @@
 
 </font>
 #### `create (this_class)`
-*PyFunc at classes.py:1121 (pclass_create)*
+*PyFunc at classes.py:1125 (pclass_create)*
 
 > &#x27;create&#x27; method for PClass metaclass makes an instance of this_class backed by a CPObject used to create PClass subclass objects (Number, List, Dict, Bool, Null)
 
@@ -2917,7 +2917,7 @@
 
 </font><font color="slategray">
 #### `subclass_of (this, c)`
-*PyFunc at classes.py:1093 (class_subclass_of)*
+*PyFunc at classes.py:1097 (class_subclass_of)*
 
 > Return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
@@ -2965,7 +2965,7 @@
 
 </font><font color="slategray">
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1083 (class_call)*
+*PyFunc at classes.py:1087 (class_call)*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
@@ -3045,7 +3045,7 @@
 
 </font>
 #### `init (l, value)`
-*PyFunc at classes.py:1166 (pobj_init)*
+*PyFunc at classes.py:1170 (pobj_init)*
 
 > default PObject init method (fatal error)
 
@@ -3063,12 +3063,12 @@
 
 </font>
 #### `repr (this)`
-*PyFunc at classes.py:1151 (pobj_repr)*
+*PyFunc at classes.py:1155 (pobj_repr)*
 
 > return less human-friendly string representation of `this` (use Python repr function on value)
 
 #### `reprx (this)`
-*PyFunc at classes.py:1159 (pobj_reprx)*
+*PyFunc at classes.py:1163 (pobj_reprx)*
 
 > for debug: show Class name, and Python repr
 
@@ -3115,12 +3115,12 @@
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:1193 (pobj_differ)*
+*PyFunc at classes.py:1197 (pobj_differ)*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 #### `!== (l, r)`
-*PyFunc at classes.py:1193 (pobj_differ)*
+*PyFunc at classes.py:1197 (pobj_differ)*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
@@ -3144,12 +3144,12 @@
 
 </font>
 #### `== (l, r)`
-*PyFunc at classes.py:1182 (pobj_ident)*
+*PyFunc at classes.py:1186 (pobj_ident)*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 #### `=== (l, r)`
-*PyFunc at classes.py:1182 (pobj_ident)*
+*PyFunc at classes.py:1186 (pobj_ident)*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
@@ -3258,7 +3258,7 @@
 
 </font><font color="slategray">
 #### `subclass_of (this, c)`
-*PyFunc at classes.py:1093 (class_subclass_of)*
+*PyFunc at classes.py:1097 (class_subclass_of)*
 
 > Return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
@@ -3306,7 +3306,7 @@
 
 </font><font color="slategray">
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1083 (class_call)*
+*PyFunc at classes.py:1087 (class_call)*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
@@ -3398,7 +3398,7 @@
 
 </font><font color="slategray">
 #### `init (l, value)`
-*PyFunc at classes.py:1166 (pobj_init)*
+*PyFunc at classes.py:1170 (pobj_init)*
 
 > default PObject init method (fatal error)
 
@@ -3410,7 +3410,7 @@
 
 </font>
 #### `iter (this)`
-*PyFunc at classes.py:1281 (pyiterable_iter)*
+*PyFunc at classes.py:1285 (pyiterable_iter)*
 
 > Return forward iterator.
 
@@ -3434,25 +3434,25 @@
 
 </font><font color="slategray">
 #### `range (...args)`
-*PyFunc at classes.py:1312 (pyiterable_range)*
+*PyFunc at classes.py:1316 (pyiterable_range)*
 
 > Static method: returns PyIterable for an integer range; iter() method generates fresh Iterators. range(10): returns Iterable for 0..9; range(1,10): returns Iterable for 1..9; range(1,10,2): returns Iterable for odd numbers 1..9
 
 </font><font color="slategray">
 #### `repr (this)`
-*PyFunc at classes.py:1151 (pobj_repr)*
+*PyFunc at classes.py:1155 (pobj_repr)*
 
 > return less human-friendly string representation of `this` (use Python repr function on value)
 
 </font><font color="slategray">
 #### `reprx (this)`
-*PyFunc at classes.py:1159 (pobj_reprx)*
+*PyFunc at classes.py:1163 (pobj_reprx)*
 
 > for debug: show Class name, and Python repr
 
 </font>
 #### `reversed (this)`
-*PyFunc at classes.py:1288 (pyiterable_reversed)*
+*PyFunc at classes.py:1292 (pyiterable_reversed)*
 
 > Return reverse iterator.
 
@@ -3470,7 +3470,7 @@
 
 </font>
 #### `sorted (this, reverse)`
-*PyFunc at classes.py:1297 (pyiterable_sorted)*
+*PyFunc at classes.py:1301 (pyiterable_sorted)*
 
 > Return sorted List of iterator values. `reverse` is Bool to sort in reverse order (defaults to `false`).
 
@@ -3506,19 +3506,19 @@
 
 <font color="slategray">
 #### `!= (l, r)`
-*PyFunc at classes.py:1193 (pobj_differ)*
+*PyFunc at classes.py:1197 (pobj_differ)*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 </font><font color="slategray">
 #### `!== (l, r)`
-*PyFunc at classes.py:1193 (pobj_differ)*
+*PyFunc at classes.py:1197 (pobj_differ)*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 </font><font color="slategray">
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1083 (class_call)*
+*PyFunc at classes.py:1087 (class_call)*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
@@ -3536,13 +3536,13 @@
 
 </font><font color="slategray">
 #### `== (l, r)`
-*PyFunc at classes.py:1182 (pobj_ident)*
+*PyFunc at classes.py:1186 (pobj_ident)*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 </font><font color="slategray">
 #### `=== (l, r)`
-*PyFunc at classes.py:1182 (pobj_ident)*
+*PyFunc at classes.py:1186 (pobj_ident)*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
@@ -3574,7 +3574,7 @@
 
 </font><font color="slategray">
 #### `create (this_class)`
-*PyFunc at classes.py:1121 (pclass_create)*
+*PyFunc at classes.py:1125 (pclass_create)*
 
 > &#x27;create&#x27; method for PClass metaclass makes an instance of this_class backed by a CPObject used to create PClass subclass objects (Number, List, Dict, Bool, Null)
 
@@ -3616,7 +3616,7 @@
 
 </font><font color="slategray">
 #### `init (l, value)`
-*PyFunc at classes.py:1166 (pobj_init)*
+*PyFunc at classes.py:1170 (pobj_init)*
 
 > default PObject init method (fatal error)
 
@@ -3628,7 +3628,7 @@
 
 </font><font color="slategray">
 #### `iter (this)`
-*PyFunc at classes.py:1281 (pyiterable_iter)*
+*PyFunc at classes.py:1285 (pyiterable_iter)*
 
 > Return forward iterator.
 
@@ -3646,13 +3646,13 @@
 
 </font><font color="slategray">
 #### `props (this)`
-*PyFunc at classes.py:1967 (pyobj_props)*
+*PyFunc at classes.py:1971 (pyobj_props)*
 
 > return dir() of wrapped Python object
 
 </font><font color="slategray">
 #### `range (...args)`
-*PyFunc at classes.py:1312 (pyiterable_range)*
+*PyFunc at classes.py:1316 (pyiterable_range)*
 
 > Static method: returns PyIterable for an integer range; iter() method generates fresh Iterators. range(10): returns Iterable for 0..9; range(1,10): returns Iterable for 1..9; range(1,10,2): returns Iterable for odd numbers 1..9
 
@@ -3670,7 +3670,7 @@
 
 </font><font color="slategray">
 #### `reversed (this)`
-*PyFunc at classes.py:1288 (pyiterable_reversed)*
+*PyFunc at classes.py:1292 (pyiterable_reversed)*
 
 > Return reverse iterator.
 
@@ -3688,7 +3688,7 @@
 
 </font><font color="slategray">
 #### `sorted (this, reverse)`
-*PyFunc at classes.py:1297 (pyiterable_sorted)*
+*PyFunc at classes.py:1301 (pyiterable_sorted)*
 
 > Return sorted List of iterator values. `reverse` is Bool to sort in reverse order (defaults to `false`).
 
@@ -3736,13 +3736,13 @@
 
 </font><font color="slategray">
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1083 (class_call)*
+*PyFunc at classes.py:1087 (class_call)*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
 </font><font color="slategray">
 #### `. (l, r)`
-*PyFunc at classes.py:1950 (pyobj_getprop)*
+*PyFunc at classes.py:1954 (pyobj_getprop)*
 
 > PyObject `.` binop -- proxies to Python object getattr
 
@@ -3766,7 +3766,7 @@
 
 </font><font color="slategray">
 #### `[ (l, r)`
-*PyFunc at classes.py:1974 (pyobj_getitem)*
+*PyFunc at classes.py:1978 (pyobj_getitem)*
 
 > PyObject `[` binop
 
@@ -3846,7 +3846,7 @@
 
 </font>
 #### `iter (this)`
-*PyFunc at classes.py:2004 (pyiterator_iter)*
+*PyFunc at classes.py:2008 (pyiterator_iter)*
 
 > Returns `this.` https://docs.python.org/3/library/stdtypes.html#typeiter says an iterator should have an __iter__ method.
 
@@ -3864,7 +3864,7 @@
 
 </font>
 #### `next (this, finished_continuation)`
-*PyFunc at classes.py:2014 (pyiterator_next)*
+*PyFunc at classes.py:2018 (pyiterator_next)*
 
 > Returns next value; calls `finished_continuation` (eg; block leave label or `return`) to call when iterator exhausted.
 
@@ -3954,7 +3954,7 @@
 
 </font><font color="slategray">
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1083 (class_call)*
+*PyFunc at classes.py:1087 (class_call)*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
@@ -4010,7 +4010,7 @@
 
 </font><font color="slategray">
 #### `create (this_class)`
-*PyFunc at classes.py:1121 (pclass_create)*
+*PyFunc at classes.py:1125 (pclass_create)*
 
 > &#x27;create&#x27; method for PClass metaclass makes an instance of this_class backed by a CPObject used to create PClass subclass objects (Number, List, Dict, Bool, Null)
 
@@ -4052,7 +4052,7 @@
 
 </font><font color="slategray">
 #### `init (l, value)`
-*PyFunc at classes.py:1166 (pobj_init)*
+*PyFunc at classes.py:1170 (pobj_init)*
 
 > default PObject init method (fatal error)
 
@@ -4064,7 +4064,7 @@
 
 </font><font color="slategray">
 #### `iter (this)`
-*PyFunc at classes.py:2004 (pyiterator_iter)*
+*PyFunc at classes.py:2008 (pyiterator_iter)*
 
 > Returns `this.` https://docs.python.org/3/library/stdtypes.html#typeiter says an iterator should have an __iter__ method.
 
@@ -4082,13 +4082,13 @@
 
 </font><font color="slategray">
 #### `next (this, finished_continuation)`
-*PyFunc at classes.py:2014 (pyiterator_next)*
+*PyFunc at classes.py:2018 (pyiterator_next)*
 
 > Returns next value; calls `finished_continuation` (eg; block leave label or `return`) to call when iterator exhausted.
 
 </font><font color="slategray">
 #### `props (this)`
-*PyFunc at classes.py:1967 (pyobj_props)*
+*PyFunc at classes.py:1971 (pyobj_props)*
 
 > return dir() of wrapped Python object
 
@@ -4172,13 +4172,13 @@
 
 </font><font color="slategray">
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1083 (class_call)*
+*PyFunc at classes.py:1087 (class_call)*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
 </font><font color="slategray">
 #### `. (l, r)`
-*PyFunc at classes.py:1950 (pyobj_getprop)*
+*PyFunc at classes.py:1954 (pyobj_getprop)*
 
 > PyObject `.` binop -- proxies to Python object getattr
 
@@ -4202,7 +4202,7 @@
 
 </font><font color="slategray">
 #### `[ (l, r)`
-*PyFunc at classes.py:1974 (pyobj_getitem)*
+*PyFunc at classes.py:1978 (pyobj_getitem)*
 
 > PyObject `[` binop
 
@@ -4258,7 +4258,7 @@
 
 </font>
 #### `init (l, value)`
-*PyFunc at classes.py:1166 (pobj_init)*
+*PyFunc at classes.py:1170 (pobj_init)*
 
 > default PObject init method (fatal error)
 
@@ -4270,7 +4270,7 @@
 
 </font>
 #### `props (this)`
-*PyFunc at classes.py:1967 (pyobj_props)*
+*PyFunc at classes.py:1971 (pyobj_props)*
 
 > return dir() of wrapped Python object
 
@@ -4342,12 +4342,12 @@
 
 </font>
 #### `( (this, ...args)`
-*PyFunc at classes.py:1982 (pyobj_call)*
+*PyFunc at classes.py:1986 (pyobj_call)*
 
 > 
 
 #### `. (l, r)`
-*PyFunc at classes.py:1950 (pyobj_getprop)*
+*PyFunc at classes.py:1954 (pyobj_getprop)*
 
 > PyObject `.` binop -- proxies to Python object getattr
 
@@ -4371,7 +4371,7 @@
 
 </font>
 #### `[ (l, r)`
-*PyFunc at classes.py:1974 (pyobj_getitem)*
+*PyFunc at classes.py:1978 (pyobj_getitem)*
 
 > PyObject `[` binop
 
@@ -4480,7 +4480,7 @@
 
 </font><font color="slategray">
 #### `subclass_of (this, c)`
-*PyFunc at classes.py:1093 (class_subclass_of)*
+*PyFunc at classes.py:1097 (class_subclass_of)*
 
 > Return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
@@ -4528,7 +4528,7 @@
 
 </font><font color="slategray">
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1083 (class_call)*
+*PyFunc at classes.py:1087 (class_call)*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
@@ -4662,7 +4662,7 @@
 
 </font><font color="slategray">
 #### `subclass_of (this, c)`
-*PyFunc at classes.py:1093 (class_subclass_of)*
+*PyFunc at classes.py:1097 (class_subclass_of)*
 
 > Return `true` if Class `this` is a subclass of Class (or List of Classes) `c`
 
@@ -4710,7 +4710,7 @@
 
 </font><font color="slategray">
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1083 (class_call)*
+*PyFunc at classes.py:1087 (class_call)*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
@@ -4766,29 +4766,29 @@
 
 </font>
 #### `capitalize (self)`
-*PyFunc at classes.py:2322 (capitalize)*
+*PyFunc at classes.py:2326 (capitalize)*
 
 > Return a capitalized version of the string. More specifically, make the first character have upper case and the rest lower case.
 
 #### `case_fold (self)`
-*PyFunc at classes.py:2322 (case_fold)*
+*PyFunc at classes.py:2326 (case_fold)*
 
 > Return a version of the string suitable for caseless comparisons.
 
 #### `center (self, width, fillchar)`
-*PyFunc at classes.py:2322 (center)*
+*PyFunc at classes.py:2326 (center)*
 
 > Return a centered string of length width. Padding is done using the specified fill character (default is a space).
 
 <font color="slategray">
 #### `chr (i)`
-*PyFunc at classes.py:1798 (str_chr)*
+*PyFunc at classes.py:1802 (str_chr)*
 
 > Return a Unicode string of one character with ordinal i; 0 &lt;= i &lt;= 0x10ffff
 
 </font>
 #### `count (...args)`
-*PyFunc at classes.py:2322 (count)*
+*PyFunc at classes.py:2326 (count)*
 
 > S.count(sub[, start[, end]]) -&gt; int Return the number of non-overlapping occurrences of substring sub in string S[start:end].  Optional arguments start and end are interpreted as in slice notation.
 
@@ -4806,17 +4806,17 @@
 
 </font>
 #### `ends_with (this, suff)`
-*PyFunc at classes.py:1722 (str_ends_with)*
+*PyFunc at classes.py:1726 (str_ends_with)*
 
 > Return `true` if `this` ends with the suffix `suff`, `false` otherwise.
 
 #### `expand_tabs (self, tabsize)`
-*PyFunc at classes.py:2322 (expand_tabs)*
+*PyFunc at classes.py:2326 (expand_tabs)*
 
 > Return a copy where all tab characters are expanded using spaces. If tabsize is not given, a tab size of 8 characters is assumed.
 
 #### `find (...args)`
-*PyFunc at classes.py:2322 (find)*
+*PyFunc at classes.py:2326 (find)*
 
 > S.find(sub[, start[, end]]) -&gt; int Return the lowest index in S where substring sub is found, such that sub is contained within S[start:end].  Optional arguments start and end are interpreted as in slice notation. Return -1 on failure.
 
@@ -4828,7 +4828,7 @@
 
 </font>
 #### `format (...args)`
-*PyFunc at classes.py:2322 (format)*
+*PyFunc at classes.py:2326 (format)*
 
 > S.format(*args, **kwargs) -&gt; str Return a formatted version of S, using substitutions from args and kwargs. The substitutions are identified by braces (&#x27;{&#x27; and &#x27;}&#x27;).
 
@@ -4852,12 +4852,12 @@
 
 </font>
 #### `index (...args)`
-*PyFunc at classes.py:2322 (index)*
+*PyFunc at classes.py:2326 (index)*
 
 > S.index(sub[, start[, end]]) -&gt; int Return the lowest index in S where substring sub is found, such that sub is contained within S[start:end].  Optional arguments start and end are interpreted as in slice notation. Raises ValueError when the substring is not found.
 
 #### `init (l, value)`
-*PyFunc at classes.py:1166 (pobj_init)*
+*PyFunc at classes.py:1170 (pobj_init)*
 
 > default PObject init method (fatal error)
 
@@ -4869,68 +4869,68 @@
 
 </font>
 #### `is_alnum (self)`
-*PyFunc at classes.py:2322 (is_alnum)*
+*PyFunc at classes.py:2326 (is_alnum)*
 
 > Return True if the string is an alpha-numeric string, False otherwise. A string is alpha-numeric if all characters in the string are alpha-numeric and there is at least one character in the string.
 
 #### `is_alpha (self)`
-*PyFunc at classes.py:2322 (is_alpha)*
+*PyFunc at classes.py:2326 (is_alpha)*
 
 > Return True if the string is an alphabetic string, False otherwise. A string is alphabetic if all characters in the string are alphabetic and there is at least one character in the string.
 
 #### `is_ascii (self)`
-*PyFunc at classes.py:2322 (is_ascii)*
+*PyFunc at classes.py:2326 (is_ascii)*
 
 > Return True if all characters in the string are ASCII, False otherwise. ASCII characters have code points in the range U+0000-U+007F. Empty string is ASCII too.
 
 #### `is_decimal (self)`
-*PyFunc at classes.py:2322 (is_decimal)*
+*PyFunc at classes.py:2326 (is_decimal)*
 
 > Return True if the string is a decimal string, False otherwise. A string is a decimal string if all characters in the string are decimal and there is at least one character in the string.
 
 #### `is_digit (self)`
-*PyFunc at classes.py:2322 (is_digit)*
+*PyFunc at classes.py:2326 (is_digit)*
 
 > Return True if the string is a digit string, False otherwise. A string is a digit string if all characters in the string are digits and there is at least one character in the string.
 
 #### `is_identifier (self)`
-*PyFunc at classes.py:2322 (is_identifier)*
+*PyFunc at classes.py:2326 (is_identifier)*
 
 > Return True if the string is a valid Python identifier, False otherwise. Call keyword.iskeyword(s) to test whether string s is a reserved identifier, such as &quot;def&quot; or &quot;class&quot;.
 
 #### `is_lower (self)`
-*PyFunc at classes.py:2322 (is_lower)*
+*PyFunc at classes.py:2326 (is_lower)*
 
 > Return True if the string is a lowercase string, False otherwise. A string is lowercase if all cased characters in the string are lowercase and there is at least one cased character in the string.
 
 #### `is_numeric (self)`
-*PyFunc at classes.py:2322 (is_numeric)*
+*PyFunc at classes.py:2326 (is_numeric)*
 
 > Return True if the string is a numeric string, False otherwise. A string is numeric if all characters in the string are numeric and there is at least one character in the string.
 
 #### `is_printable (self)`
-*PyFunc at classes.py:2322 (is_printable)*
+*PyFunc at classes.py:2326 (is_printable)*
 
 > Return True if the string is printable, False otherwise. A string is printable if all of its characters are considered printable in repr() or if it is empty.
 
 #### `is_space (self)`
-*PyFunc at classes.py:2322 (is_space)*
+*PyFunc at classes.py:2326 (is_space)*
 
 > Return True if the string is a whitespace string, False otherwise. A string is whitespace if all characters in the string are whitespace and there is at least one character in the string.
 
 #### `is_title (self)`
-*PyFunc at classes.py:2322 (is_title)*
+*PyFunc at classes.py:2326 (is_title)*
 
 > Return True if the string is a title-cased string, False otherwise. In a title-cased string, upper- and title-case characters may only follow uncased characters and lowercase characters only cased ones.
 
 #### `is_upper (self)`
-*PyFunc at classes.py:2322 (is_upper)*
+*PyFunc at classes.py:2326 (is_upper)*
 
 > Return True if the string is an uppercase string, False otherwise. A string is uppercase if all cased characters in the string are uppercase and there is at least one cased character in the string.
 
 <font color="slategray">
 #### `iter (this)`
-*PyFunc at classes.py:1281 (pyiterable_iter)*
+*PyFunc at classes.py:1285 (pyiterable_iter)*
 
 > Return forward iterator.
 
@@ -4941,12 +4941,12 @@
 > Concatenate strings from `iterable` using `this` as the separator.
 
 #### `len (this)`
-*PyFunc at classes.py:1136 (pobj_len)*
+*PyFunc at classes.py:1140 (pobj_len)*
 
 > returns length (of String, List or Dict)
 
 #### `ljust (self, width, fillchar)`
-*PyFunc at classes.py:2322 (ljust)*
+*PyFunc at classes.py:2326 (ljust)*
 
 > Return a left-justified string of length width. Padding is done using the specified fill character (default is a space).
 
@@ -4970,7 +4970,7 @@
 
 </font>
 #### `ord (this)`
-*PyFunc at classes.py:1740 (str_ord)*
+*PyFunc at classes.py:1744 (str_ord)*
 
 > Return the Unicode code point for a one-character string `this`
 
@@ -4982,47 +4982,47 @@
 
 </font><font color="slategray">
 #### `range (...args)`
-*PyFunc at classes.py:1312 (pyiterable_range)*
+*PyFunc at classes.py:1316 (pyiterable_range)*
 
 > Static method: returns PyIterable for an integer range; iter() method generates fresh Iterators. range(10): returns Iterable for 0..9; range(1,10): returns Iterable for 1..9; range(1,10,2): returns Iterable for odd numbers 1..9
 
 </font>
 #### `replace (self, old, new, count)`
-*PyFunc at classes.py:2322 (replace)*
+*PyFunc at classes.py:2326 (replace)*
 
 > Return a copy with all occurrences of substring old replaced by new. count Maximum number of occurrences to replace. -1 (the default value) means replace all occurrences. If the optional argument count is given, only the first count occurrences are replaced.
 
 <font color="slategray">
 #### `repr (this)`
-*PyFunc at classes.py:1151 (pobj_repr)*
+*PyFunc at classes.py:1155 (pobj_repr)*
 
 > return less human-friendly string representation of `this` (use Python repr function on value)
 
 </font><font color="slategray">
 #### `reprx (this)`
-*PyFunc at classes.py:1159 (pobj_reprx)*
+*PyFunc at classes.py:1163 (pobj_reprx)*
 
 > for debug: show Class name, and Python repr
 
 </font><font color="slategray">
 #### `reversed (this)`
-*PyFunc at classes.py:1288 (pyiterable_reversed)*
+*PyFunc at classes.py:1292 (pyiterable_reversed)*
 
 > Return reverse iterator.
 
 </font>
 #### `rfind (...args)`
-*PyFunc at classes.py:2322 (rfind)*
+*PyFunc at classes.py:2326 (rfind)*
 
 > S.rfind(sub[, start[, end]]) -&gt; int Return the highest index in S where substring sub is found, such that sub is contained within S[start:end].  Optional arguments start and end are interpreted as in slice notation. Return -1 on failure.
 
 #### `rsplit (self, sep, maxsplit)`
-*PyFunc at classes.py:2322 (rsplit)*
+*PyFunc at classes.py:2326 (rsplit)*
 
 > Return a list of the words in the string, using sep as the delimiter string. sep The delimiter according which to split the string. None (the default value) means split according to any whitespace, and discard empty strings from the result. maxsplit Maximum number of splits to do. -1 (the default value) means no limit. Splits are done starting at the end of the string and working to the front.
 
 #### `rstrip (self, chars)`
-*PyFunc at classes.py:2322 (rstrip)*
+*PyFunc at classes.py:2326 (rstrip)*
 
 > Return a copy of the string with trailing whitespace removed. If chars is given and not None, remove characters in chars instead.
 
@@ -5040,74 +5040,74 @@
 
 </font>
 #### `slice (this, start, end)`
-*PyFunc at classes.py:1693 (str_slice)*
+*PyFunc at classes.py:1697 (str_slice)*
 
 > return a substring (slice) of `this` starting at position `start` ending at position `end` (defaults to rest of string
 
 <font color="slategray">
 #### `sorted (this, reverse)`
-*PyFunc at classes.py:1297 (pyiterable_sorted)*
+*PyFunc at classes.py:1301 (pyiterable_sorted)*
 
 > Return sorted List of iterator values. `reverse` is Bool to sort in reverse order (defaults to `false`).
 
 </font>
 #### `split (this, sep, limit)`
-*PyFunc at classes.py:1708 (str_split)*
+*PyFunc at classes.py:1712 (str_split)*
 
 > Return a List of the words in the string, using sep as the delimiter string (default to `null` -- any whitespace). Limit to `limit` return values (defaults to -1 -- no limit)
 
 #### `split_lines (self, keepends)`
-*PyFunc at classes.py:2322 (split_lines)*
+*PyFunc at classes.py:2326 (split_lines)*
 
 > Return a list of the lines in the string, breaking at line boundaries. Line breaks are not included in the resulting list unless keepends is given and true.
 
 #### `starts_with (this, pref)`
-*PyFunc at classes.py:1747 (str_starts_with)*
+*PyFunc at classes.py:1751 (str_starts_with)*
 
 > Return `true` if `this` starts with prefix `pref, `false` otherwise.
 
 #### `strip (this)`
-*PyFunc at classes.py:1761 (str_strip)*
+*PyFunc at classes.py:1765 (str_strip)*
 
 > Return a copy of the string with leading and trailing whitespace removed.
 
 #### `swap_case (self)`
-*PyFunc at classes.py:2322 (swap_case)*
+*PyFunc at classes.py:2326 (swap_case)*
 
 > Convert uppercase characters to lowercase and lowercase characters to uppercase.
 
 #### `to_float (this)`
-*PyFunc at classes.py:1768 (str_to_float)*
+*PyFunc at classes.py:1772 (str_to_float)*
 
 > Convert string to a floating point Number
 
 #### `to_int (this, base)`
-*PyFunc at classes.py:1775 (str_to_int)*
+*PyFunc at classes.py:1779 (str_to_int)*
 
 > Convert string to integer Number. Int `base` defaults to zero (accept 0xXXX, 0oOOO, 0bBBB).
 
 #### `to_lower (self)`
-*PyFunc at classes.py:2322 (to_lower)*
+*PyFunc at classes.py:2326 (to_lower)*
 
 > Return a copy of the string converted to lowercase.
 
 #### `to_number (this)`
-*PyFunc at classes.py:1787 (str_to_number)*
+*PyFunc at classes.py:1791 (str_to_number)*
 
 > Convert string to a Number
 
 #### `to_str (this)`
-*PyFunc at classes.py:1754 (str_str)*
+*PyFunc at classes.py:1758 (str_str)*
 
 > Identity method
 
 #### `to_upper (self)`
-*PyFunc at classes.py:2322 (to_upper)*
+*PyFunc at classes.py:2326 (to_upper)*
 
 > Return a copy of the string converted to uppercase.
 
 #### `zfill (self, width)`
-*PyFunc at classes.py:2322 (zfill)*
+*PyFunc at classes.py:2326 (zfill)*
 
 > Pad a numeric string with zeros on the left, to fill a field of the given width. The string is never truncated.
 
@@ -5135,25 +5135,25 @@
 ### Binary operators
 
 #### `!= (l, r)`
-*PyFunc at classes.py:1542 (ne)*
+*PyFunc at classes.py:1546 (ne)*
 
 > return `true` if value of `l` is different from the value of `r`
 
 <font color="slategray">
 #### `!== (l, r)`
-*PyFunc at classes.py:1193 (pobj_differ)*
+*PyFunc at classes.py:1197 (pobj_differ)*
 
 > Check if value of PObject `l` is not the same Python Object as value of PObject `r`
 
 </font><font color="slategray">
 #### `( (this_class, ...args)`
-*PyFunc at classes.py:1083 (class_call)*
+*PyFunc at classes.py:1087 (class_call)*
 
 > `(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!
 
 </font>
 #### `+ (x, y)`
-*PyFunc at classes.py:1671 (str_concat)*
+*PyFunc at classes.py:1675 (str_concat)*
 
 > String concatenation
 
@@ -5171,39 +5171,39 @@
 
 </font>
 #### `&lt; (l, r)`
-*PyFunc at classes.py:1559 (lt)*
+*PyFunc at classes.py:1563 (lt)*
 
 > return `true` if value of `l` is &lt; the value of `r`
 
 #### `&lt;= (l, r)`
-*PyFunc at classes.py:1569 (le)*
+*PyFunc at classes.py:1573 (le)*
 
 > return `true` if value of `l` is &lt;= the value of `r`
 
 #### `== (l, r)`
-*PyFunc at classes.py:1535 (eq)*
+*PyFunc at classes.py:1539 (eq)*
 
 > return `true` if value of `l` is the same as value of `r`
 
 <font color="slategray">
 #### `=== (l, r)`
-*PyFunc at classes.py:1182 (pobj_ident)*
+*PyFunc at classes.py:1186 (pobj_ident)*
 
 > Check if value of PObject `l` is the same Python Object as value of PObject `r`
 
 </font>
 #### `&gt; (l, r)`
-*PyFunc at classes.py:1576 (gt)*
+*PyFunc at classes.py:1580 (gt)*
 
 > return `true` if value of `l` is &gt; the value of `r`
 
 #### `&gt;= (l, r)`
-*PyFunc at classes.py:1552 (ge)*
+*PyFunc at classes.py:1556 (ge)*
 
 > return `true` if value of `l` is &gt;= the value of `r`
 
 #### `[ (l, r)`
-*PyFunc at classes.py:1684 (str_get)*
+*PyFunc at classes.py:1688 (str_get)*
 
 > Str l[r] return `r`&#x27;th character of Str `l`
 
@@ -5246,7 +5246,7 @@
 
 </font><font color="slategray">
 #### `getprop (l, r)`
-*PyFunc at classes.py:1859 (nullish_getprop)*
+*PyFunc at classes.py:1863 (nullish_getprop)*
 
 > `.` method for Nullish (null, undefined) values. Fatal error if unknown property. Allows all Object methods (JavaScript is stricter, Python is not).
 
@@ -5282,7 +5282,7 @@
 
 </font>
 #### `repr (this)`
-*PyFunc at classes.py:2037 (undef_str)*
+*PyFunc at classes.py:2041 (undef_str)*
 
 > to_string/repr method for Undefined Class: returns `&quot;undefined&quot;`
 
@@ -5300,7 +5300,7 @@
 
 </font><font color="slategray">
 #### `setprop (l, r, value)`
-*PyFunc at classes.py:1877 (nullish_setprop)*
+*PyFunc at classes.py:1881 (nullish_setprop)*
 
 > Nullish Object setprop method/operator
 
@@ -5346,13 +5346,13 @@
 
 </font>
 #### `( (this, ...args)`
-*PyFunc at classes.py:2044 (undef_call)*
+*PyFunc at classes.py:2048 (undef_call)*
 
 > `(` method for `undefined` value (fatal error). commonly happens when a bad method name is used, so output a &quot;helpful&quot; message.
 
 <font color="slategray">
 #### `. (l, r)`
-*PyFunc at classes.py:1859 (nullish_getprop)*
+*PyFunc at classes.py:1863 (nullish_getprop)*
 
 > `.` method for Nullish (null, undefined) values. Fatal error if unknown property. Allows all Object methods (JavaScript is stricter, Python is not).
 
