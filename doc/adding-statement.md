@@ -4,16 +4,14 @@ Example defining a C-style "do-while" statement to XXL:
 
 ```
     // define "do" statement
-    var p = __modinfo.parser;   // Parser object
+    var p = __modinfo.parser;           // active Parser Object
 
     var Do = Class.new({
         name: "Do",
         supers: [p.Stmt],
         methods: {
-            std: function (this) {      // parse as statement
+            std: function (this) {      // statement parser
                 this.first = p.block(); // parse { STATEMENTS... }
-                p.check("while");
-                p.scope.reserve(this.token);
                 p.advance("while");
                 p.advance("(");
                 this.second = p.expression(0); // parse condition
