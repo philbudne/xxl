@@ -4766,12 +4766,17 @@
 
 </font>
 #### `capitalize (self)`
-*PyFunc at classes.py:2321 (capitalize)*
+*PyFunc at classes.py:2322 (capitalize)*
+
+> Return a capitalized version of the string. More specifically, make the first character have upper case and the rest lower case.
+
+#### `case_fold (self)`
+*PyFunc at classes.py:2322 (case_fold)*
 
 > Return a version of the string suitable for caseless comparisons.
 
 #### `center (self, width, fillchar)`
-*PyFunc at classes.py:2321 (center)*
+*PyFunc at classes.py:2322 (center)*
 
 > Return a centered string of length width. Padding is done using the specified fill character (default is a space).
 
@@ -4782,10 +4787,10 @@
 > Return a Unicode string of one character with ordinal i; 0 &lt;= i &lt;= 0x10ffff
 
 </font>
-#### `count (self, tabsize)`
-*PyFunc at classes.py:2321 (count)*
+#### `count (...args)`
+*PyFunc at classes.py:2322 (count)*
 
-> Return a copy where all tab characters are expanded using spaces. If tabsize is not given, a tab size of 8 characters is assumed.
+> S.count(sub[, start[, end]]) -&gt; int Return the number of non-overlapping occurrences of substring sub in string S[start:end].  Optional arguments start and end are interpreted as in slice notation.
 
 <font color="slategray">
 #### `delprop (this, name)`
@@ -4805,8 +4810,13 @@
 
 > Return `true` if `this` ends with the suffix `suff`, `false` otherwise.
 
+#### `expand_tabs (self, tabsize)`
+*PyFunc at classes.py:2322 (expand_tabs)*
+
+> Return a copy where all tab characters are expanded using spaces. If tabsize is not given, a tab size of 8 characters is assumed.
+
 #### `find (...args)`
-*PyFunc at classes.py:2321 (find)*
+*PyFunc at classes.py:2322 (find)*
 
 > S.find(sub[, start[, end]]) -&gt; int Return the lowest index in S where substring sub is found, such that sub is contained within S[start:end].  Optional arguments start and end are interpreted as in slice notation. Return -1 on failure.
 
@@ -4818,7 +4828,7 @@
 
 </font>
 #### `format (...args)`
-*PyFunc at classes.py:2321 (format)*
+*PyFunc at classes.py:2322 (format)*
 
 > S.format(*args, **kwargs) -&gt; str Return a formatted version of S, using substitutions from args and kwargs. The substitutions are identified by braces (&#x27;{&#x27; and &#x27;}&#x27;).
 
@@ -4841,10 +4851,10 @@
 > Return `true` if object `l` has own (Str) property `r` (not interited).
 
 </font>
-#### `index (self)`
-*PyFunc at classes.py:2321 (index)*
+#### `index (...args)`
+*PyFunc at classes.py:2322 (index)*
 
-> Return True if the string is an uppercase string, False otherwise. A string is uppercase if all cased characters in the string are uppercase and there is at least one cased character in the string.
+> S.index(sub[, start[, end]]) -&gt; int Return the lowest index in S where substring sub is found, such that sub is contained within S[start:end].  Optional arguments start and end are interpreted as in slice notation. Raises ValueError when the substring is not found.
 
 #### `init (l, value)`
 *PyFunc at classes.py:1166 (pobj_init)*
@@ -4857,7 +4867,68 @@
 
 > return `true` if Object `this` is an instance of Class (or List of Classes) `c`
 
-</font><font color="slategray">
+</font>
+#### `is_alnum (self)`
+*PyFunc at classes.py:2322 (is_alnum)*
+
+> Return True if the string is an alpha-numeric string, False otherwise. A string is alpha-numeric if all characters in the string are alpha-numeric and there is at least one character in the string.
+
+#### `is_alpha (self)`
+*PyFunc at classes.py:2322 (is_alpha)*
+
+> Return True if the string is an alphabetic string, False otherwise. A string is alphabetic if all characters in the string are alphabetic and there is at least one character in the string.
+
+#### `is_ascii (self)`
+*PyFunc at classes.py:2322 (is_ascii)*
+
+> Return True if all characters in the string are ASCII, False otherwise. ASCII characters have code points in the range U+0000-U+007F. Empty string is ASCII too.
+
+#### `is_decimal (self)`
+*PyFunc at classes.py:2322 (is_decimal)*
+
+> Return True if the string is a decimal string, False otherwise. A string is a decimal string if all characters in the string are decimal and there is at least one character in the string.
+
+#### `is_digit (self)`
+*PyFunc at classes.py:2322 (is_digit)*
+
+> Return True if the string is a digit string, False otherwise. A string is a digit string if all characters in the string are digits and there is at least one character in the string.
+
+#### `is_identifier (self)`
+*PyFunc at classes.py:2322 (is_identifier)*
+
+> Return True if the string is a valid Python identifier, False otherwise. Call keyword.iskeyword(s) to test whether string s is a reserved identifier, such as &quot;def&quot; or &quot;class&quot;.
+
+#### `is_lower (self)`
+*PyFunc at classes.py:2322 (is_lower)*
+
+> Return True if the string is a lowercase string, False otherwise. A string is lowercase if all cased characters in the string are lowercase and there is at least one cased character in the string.
+
+#### `is_numeric (self)`
+*PyFunc at classes.py:2322 (is_numeric)*
+
+> Return True if the string is a numeric string, False otherwise. A string is numeric if all characters in the string are numeric and there is at least one character in the string.
+
+#### `is_printable (self)`
+*PyFunc at classes.py:2322 (is_printable)*
+
+> Return True if the string is printable, False otherwise. A string is printable if all of its characters are considered printable in repr() or if it is empty.
+
+#### `is_space (self)`
+*PyFunc at classes.py:2322 (is_space)*
+
+> Return True if the string is a whitespace string, False otherwise. A string is whitespace if all characters in the string are whitespace and there is at least one character in the string.
+
+#### `is_title (self)`
+*PyFunc at classes.py:2322 (is_title)*
+
+> Return True if the string is a title-cased string, False otherwise. In a title-cased string, upper- and title-case characters may only follow uncased characters and lowercase characters only cased ones.
+
+#### `is_upper (self)`
+*PyFunc at classes.py:2322 (is_upper)*
+
+> Return True if the string is an uppercase string, False otherwise. A string is uppercase if all cased characters in the string are uppercase and there is at least one cased character in the string.
+
+<font color="slategray">
 #### `iter (this)`
 *PyFunc at classes.py:1281 (pyiterable_iter)*
 
@@ -4874,10 +4945,10 @@
 
 > returns length (of String, List or Dict)
 
-#### `ljust (self)`
-*PyFunc at classes.py:2321 (ljust)*
+#### `ljust (self, width, fillchar)`
+*PyFunc at classes.py:2322 (ljust)*
 
-> Return a copy of the string converted to lowercase.
+> Return a left-justified string of length width. Padding is done using the specified fill character (default is a space).
 
 <font color="slategray">
 #### `map (this, func)`
@@ -4917,7 +4988,7 @@
 
 </font>
 #### `replace (self, old, new, count)`
-*PyFunc at classes.py:2321 (replace)*
+*PyFunc at classes.py:2322 (replace)*
 
 > Return a copy with all occurrences of substring old replaced by new. count Maximum number of occurrences to replace. -1 (the default value) means replace all occurrences. If the optional argument count is given, only the first count occurrences are replaced.
 
@@ -4941,19 +5012,19 @@
 
 </font>
 #### `rfind (...args)`
-*PyFunc at classes.py:2321 (rfind)*
+*PyFunc at classes.py:2322 (rfind)*
 
 > S.rfind(sub[, start[, end]]) -&gt; int Return the highest index in S where substring sub is found, such that sub is contained within S[start:end].  Optional arguments start and end are interpreted as in slice notation. Return -1 on failure.
 
 #### `rsplit (self, sep, maxsplit)`
-*PyFunc at classes.py:2321 (rsplit)*
+*PyFunc at classes.py:2322 (rsplit)*
 
 > Return a list of the words in the string, using sep as the delimiter string. sep The delimiter according which to split the string. None (the default value) means split according to any whitespace, and discard empty strings from the result. maxsplit Maximum number of splits to do. -1 (the default value) means no limit. Splits are done starting at the end of the string and working to the front.
 
-#### `rstrip (self)`
-*PyFunc at classes.py:2321 (rstrip)*
+#### `rstrip (self, chars)`
+*PyFunc at classes.py:2322 (rstrip)*
 
-> Return a copy of the string converted to uppercase.
+> Return a copy of the string with trailing whitespace removed. If chars is given and not None, remove characters in chars instead.
 
 <font color="slategray">
 #### `setclass (this, klass)`
@@ -4985,6 +5056,11 @@
 
 > Return a List of the words in the string, using sep as the delimiter string (default to `null` -- any whitespace). Limit to `limit` return values (defaults to -1 -- no limit)
 
+#### `split_lines (self, keepends)`
+*PyFunc at classes.py:2322 (split_lines)*
+
+> Return a list of the lines in the string, breaking at line boundaries. Line breaks are not included in the resulting list unless keepends is given and true.
+
 #### `starts_with (this, pref)`
 *PyFunc at classes.py:1747 (str_starts_with)*
 
@@ -4994,6 +5070,11 @@
 *PyFunc at classes.py:1761 (str_strip)*
 
 > Return a copy of the string with leading and trailing whitespace removed.
+
+#### `swap_case (self)`
+*PyFunc at classes.py:2322 (swap_case)*
+
+> Convert uppercase characters to lowercase and lowercase characters to uppercase.
 
 #### `to_float (this)`
 *PyFunc at classes.py:1768 (str_to_float)*
@@ -5005,6 +5086,11 @@
 
 > Convert string to integer Number. Int `base` defaults to zero (accept 0xXXX, 0oOOO, 0bBBB).
 
+#### `to_lower (self)`
+*PyFunc at classes.py:2322 (to_lower)*
+
+> Return a copy of the string converted to lowercase.
+
 #### `to_number (this)`
 *PyFunc at classes.py:1787 (str_to_number)*
 
@@ -5015,8 +5101,13 @@
 
 > Identity method
 
+#### `to_upper (self)`
+*PyFunc at classes.py:2322 (to_upper)*
+
+> Return a copy of the string converted to uppercase.
+
 #### `zfill (self, width)`
-*PyFunc at classes.py:2321 (zfill)*
+*PyFunc at classes.py:2322 (zfill)*
 
 > Pad a numeric string with zeros on the left, to fill a field of the given width. The string is never truncated.
 

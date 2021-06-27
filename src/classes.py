@@ -2295,8 +2295,9 @@ def def_wrappers(cname, ptype, methods):
     str `cname` is XXL Class name.
     Python type `ptype` is a Python class/type.
     str `pmname` is Python method name
-    list `methods` is list of str or 2-tuple of str (pymeth, xxlmeth)
+    list `methods` is list of str and/or 2-tuple of str (pymeth, xxlmeth)
     """
+    # find Class with cname, find or create methods Dict
     c = classes_scope.lookup(cname)
     if not c.hasprop(const.METHODS):
         mdict = _mkdict({})
@@ -2306,24 +2307,25 @@ def def_wrappers(cname, ptype, methods):
 
     for pmname in methods:
         if isinstance(pmname, (list, tuple)):
-            pmname, mmeth = pmname # (Python_name, XXL_NAME)
+            pmname, mname = pmname # (Python_name, XXL_NAME)
         else:
             mname = pmname
 
-        # try getting method at setup time, outside of closure
-        # likely to lose for static/class methods??
-        # may want to do it anyway, to detect missing methods!
         try:
-            pmethod = getattr(ptype, pmname)
+            getattr(ptype, pmname)
         except AttributeError:
             continue            # not in this version of Python
 
-        def wrapper(pobj, *args):
-            return wrap(pmethod(pobj.value, *[unwrap(x) for x in args]), pobj)
-        wrapper.__name__ = mname # crock for CPyFunc.defn()
-        pf = CPyFunc(wrapper, pmethod) # second arg crock for CPyFunc.args()
-        pf.setprop(const.DOC, _mkstr(pmethod.__doc__ or ""))
-        mdict.value[mname] = pf # XXX NOTE Python str key
+        def def_wrapper(_pmname, _mname):
+            # closure with private names, pmethod (not loop variables!)
+            pmethod = getattr(ptype, _pmname)
+            def wrapper(*args):
+                return wrap(pmethod(*[unwrap(x) for x in args]))
+            wrapper.__name__ = _mname # crock for CPyFunc.defn()
+            pf = CPyFunc(wrapper, pmethod) # second arg crock for CPyFunc.args()
+            pf.setprop(const.DOC, _mkstr(pmethod.__doc__ or ""))
+            mdict.value[mname] = pf # XXX NOTE Python str key
+        def_wrapper(pmname, mname)
 
 ################
 # XXX need Bytes for "encode" output
