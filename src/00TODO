@@ -1,5 +1,7 @@
 FIX
 ===
+Make VM "Error @" conform to FNAME:LINE:CHAR MSG format?
+
 doc.xxl: generate index of classes (& Vars section) at top
 	hn Method NAME instead of "hn Method & hn+1 NAME"
 		(avoid tiny print)
