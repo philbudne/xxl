@@ -1,5 +1,7 @@
 FIX
 ===
+Use Class.new "props" for static members/methods!!!
+
 Make VM "Error @" conform to FNAME:LINE:CHAR MSG format?
 
 doc.xxl: generate index of classes (& Vars section) at top
@@ -200,3 +202,10 @@ type wrapping:
 REPL: handle parse errors!!!
 
 How do Ruby and ES6 deal with calling superclass methods?
+
+allow 'class_methods' arg in class_init?
+	create private metaclass on the fly???
+
+create metaclasses for Bool, Null, Number, Str, Undefined with
+	private 'new' methods?
+
