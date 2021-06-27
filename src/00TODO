@@ -124,12 +124,9 @@ XXXop opcodes, PyFunc.invoke do not consume vm.args
 	("clargs" needed for spread args; clear needed in "call")
 
 doc.xxl
-    HTML markup:
-	output name anchors
-	replace HTML entities!!!!!
-	at low (append?) level:
-		use re's to change `thing` in docstrings to <code></code>
+    HTML: use re's to change `thing` in docstrings to <code></code>
     detect ```stuff``` and DON'T smush together???
+	treat blank line as HTML <p>
 	change ```stuff``` to HTML <pre>stuff</pre>
 
 Makefile:
