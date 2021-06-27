@@ -911,15 +911,6 @@ def assemble(scope, tree, srcfile):
 
 ################
 
-def breakpoint_if_debugging():
-    """
-    call from exception handlers
-    drop into pdb if it's loaded
-    (previous breakpoint, or -mpdb on command line)
-    """
-    if 'pdb' in sys.modules:
-        breakpoint()
-
 # XXX make a VM method?!!!
 def run(boot, scope, stats, trace, xcept):
     """
@@ -950,7 +941,8 @@ def run(boot, scope, stats, trace, xcept):
         import traceback
         traceback.print_exc()
 
-        breakpoint_if_debugging()
+        if 'pdb' in sys.modules:
+            breakpoint()
         sys.exit(1)
     except user_errors as e:
         # NOTE: user error: just displays "where" and VM backtrace
@@ -962,7 +954,8 @@ def run(boot, scope, stats, trace, xcept):
         vm.backtrace()
         if not xcept and not isinstance(e, always_user_errors):
             sys.stderr.write("\n(Use -x option to get Python traceback)\n")
-        breakpoint_if_debugging()
+        if 'pdb' in sys.modules:
+            breakpoint()
         sys.exit(1)
     except jslex.LexError as e:
         sys.stderr.write("Lexer error %s\n" % e)
