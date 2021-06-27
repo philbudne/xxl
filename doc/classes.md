@@ -4766,12 +4766,12 @@
 
 </font>
 #### `capitalize (self)`
-*PyFunc at classes.py:2317 (capitalize)*
+*PyFunc at classes.py:2321 (capitalize)*
 
 > Return a version of the string suitable for caseless comparisons.
 
 #### `center (self, width, fillchar)`
-*PyFunc at classes.py:2317 (center)*
+*PyFunc at classes.py:2321 (center)*
 
 > Return a centered string of length width. Padding is done using the specified fill character (default is a space).
 
@@ -4783,7 +4783,7 @@
 
 </font>
 #### `count (self, tabsize)`
-*PyFunc at classes.py:2317 (count)*
+*PyFunc at classes.py:2321 (count)*
 
 > Return a copy where all tab characters are expanded using spaces. If tabsize is not given, a tab size of 8 characters is assumed.
 
@@ -4806,7 +4806,7 @@
 > Return `true` if `this` ends with the suffix `suff`, `false` otherwise.
 
 #### `find (...args)`
-*PyFunc at classes.py:2317 (find)*
+*PyFunc at classes.py:2321 (find)*
 
 > S.find(sub[, start[, end]]) -&gt; int Return the lowest index in S where substring sub is found, such that sub is contained within S[start:end].  Optional arguments start and end are interpreted as in slice notation. Return -1 on failure.
 
@@ -4818,7 +4818,7 @@
 
 </font>
 #### `format (...args)`
-*PyFunc at classes.py:2317 (format)*
+*PyFunc at classes.py:2321 (format)*
 
 > S.format(*args, **kwargs) -&gt; str Return a formatted version of S, using substitutions from args and kwargs. The substitutions are identified by braces (&#x27;{&#x27; and &#x27;}&#x27;).
 
@@ -4842,7 +4842,7 @@
 
 </font>
 #### `index (self)`
-*PyFunc at classes.py:2317 (index)*
+*PyFunc at classes.py:2321 (index)*
 
 > Return True if the string is an uppercase string, False otherwise. A string is uppercase if all cased characters in the string are uppercase and there is at least one cased character in the string.
 
@@ -4875,7 +4875,7 @@
 > returns length (of String, List or Dict)
 
 #### `ljust (self)`
-*PyFunc at classes.py:2317 (ljust)*
+*PyFunc at classes.py:2321 (ljust)*
 
 > Return a copy of the string converted to lowercase.
 
@@ -4917,7 +4917,7 @@
 
 </font>
 #### `replace (self, old, new, count)`
-*PyFunc at classes.py:2317 (replace)*
+*PyFunc at classes.py:2321 (replace)*
 
 > Return a copy with all occurrences of substring old replaced by new. count Maximum number of occurrences to replace. -1 (the default value) means replace all occurrences. If the optional argument count is given, only the first count occurrences are replaced.
 
@@ -4941,17 +4941,17 @@
 
 </font>
 #### `rfind (...args)`
-*PyFunc at classes.py:2317 (rfind)*
+*PyFunc at classes.py:2321 (rfind)*
 
 > S.rfind(sub[, start[, end]]) -&gt; int Return the highest index in S where substring sub is found, such that sub is contained within S[start:end].  Optional arguments start and end are interpreted as in slice notation. Return -1 on failure.
 
 #### `rsplit (self, sep, maxsplit)`
-*PyFunc at classes.py:2317 (rsplit)*
+*PyFunc at classes.py:2321 (rsplit)*
 
 > Return a list of the words in the string, using sep as the delimiter string. sep The delimiter according which to split the string. None (the default value) means split according to any whitespace, and discard empty strings from the result. maxsplit Maximum number of splits to do. -1 (the default value) means no limit. Splits are done starting at the end of the string and working to the front.
 
 #### `rstrip (self)`
-*PyFunc at classes.py:2317 (rstrip)*
+*PyFunc at classes.py:2321 (rstrip)*
 
 > Return a copy of the string converted to uppercase.
 
@@ -5016,7 +5016,7 @@
 > Identity method
 
 #### `zfill (self, width)`
-*PyFunc at classes.py:2317 (zfill)*
+*PyFunc at classes.py:2321 (zfill)*
 
 > Pad a numeric string with zeros on the left, to fill a field of the given width. The string is never truncated.
 
