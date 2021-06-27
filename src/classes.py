@@ -2311,8 +2311,12 @@ def def_wrappers(cname, ptype, methods):
             mname = pmname
 
         # try getting method at setup time, outside of closure
-        # like to lose for static/class methods?!!!
-        pmethod = getattr(ptype, pmname)
+        # likely to lose for static/class methods??
+        # may want to do it anyway, to detect missing methods!
+        try:
+            pmethod = getattr(ptype, pmname)
+        except AttributeError:
+            continue            # not in this version of Python
 
         def wrapper(pobj, *args):
             return wrap(pmethod(pobj.value, *[unwrap(x) for x in args]), pobj)
