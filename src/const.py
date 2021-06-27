@@ -64,6 +64,8 @@ INIT = 'init'
 # Class names
 # XXX more here??
 PYOBJECT = 'PyObject'
+PYITERATOROBJECT = 'PyIteratorObject'
+PYITERABLEOBJECT = 'PyIterableObject'
 
 # per-module:
 MODINFO = '__modinfo'

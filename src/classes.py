@@ -149,6 +149,9 @@ class CObject:
     def setprop(self, prop, value):
         self.props[prop] = value
 
+    def getvalue(self):
+        raise UError("not a Python valued Object")
+
     def __str__(self):
         return repr(self)       # XXX ???
 
@@ -166,6 +169,9 @@ class CPObject(CObject):
         ### XXX TEMP
         super().__init__(this_class)
         self.value = None       # set by init method
+
+    def getvalue(self):
+        return self.value
 
     def __str__(self):
         if self.value is None:
@@ -216,7 +222,7 @@ class CContinuation(CCallable):
 
     def __repr__(self):
         return "<Continuation: %s>" % self.defn()
-        
+
     def invoke(self, vm):
         vm.restore_frame(self.fp) # just like ReturnInstr
         l = len(vm.args)
@@ -262,7 +268,7 @@ class CClosure(CCallable):
 
     def __repr__(self):
         return "<Closure: %s>" % self.defn()
-        
+
     def invoke(self, vm):
         vm.save_frame(True)     # show=True
         # 'return' Continuation will be generated from FP
@@ -287,7 +293,7 @@ class CBClosure(CClosure):
     """
     def __repr__(self):
         return "<BClosure: %s>" % self.defn()
-        
+
     def invoke(self, vm):
         vm.save_frame(False)    # show=False
         # leave label Continuation will be generated from FP
@@ -317,7 +323,7 @@ class CBoundMethod(CCallable):
 
     def __repr__(self):
         return "<BoundMethod: %s %s>" % (repr(self.obj), self.method)
-        
+
     def invoke(self, vm):
         # *this* is the main place "THIS" is explicitly passed!!!
         vm.args.insert(0, self.obj) # prepend saved "this" to arguments
@@ -336,20 +342,22 @@ class CPyFunc(CCallable):
     """
     A Callable instance backed by a Python function
     """
-    def __init__(self, func):
+    __slots__ = ['func']
+    def __init__(self, func, argfunc=None):
         super().__init__(PyFunc)
         # detect pyfunc() calls on a pre-decorated function
         if isinstance(func, CPyFunc):
             # Python programming error, want Python backtrace:
             raise Exception("double wrapping %s" % func.func)
         self.func = func
+        self.argfunc = argfunc or func
         # make sure PyFunc.__doc never shows through
         self.setprop(const.DOC, _mkstr(func.__doc__ or ""))
 
     def __repr__(self):
         # was self.func.__name___
         return "<PyFunc: %s>" % self.defn()
-        
+
     def invoke(self, vm):
         vm.ac = self.func(*vm.args)
         assert(isinstance(vm.ac, CObject))
@@ -366,8 +374,11 @@ class CPyFunc(CCallable):
         """
         For documentation: return Python list of str of arg names
         """
-        import inspect
-        fas = inspect.getfullargspec(self.func)
+        try:
+            import inspect
+            fas = inspect.getfullargspec(self.argfunc)
+        except:
+            return ['...args']  # str.find, str.format, str.rfind
         args = list(fas.args)
         if fas.varargs:
             args.append('...' + fas.varargs)
@@ -540,7 +551,7 @@ def subclass_of(this_class, bases):
         s = c.getprop(const.SUPERS)
         if s is None or s is null_value:
             return False
-        for x in s.value:       # XXX check if List
+        for x in s.getvalue():       # XXX check if List
             if x not in visited and check(x):
                 return True
         return False
@@ -819,7 +830,7 @@ def obj_setprop(l, r, value):
     """
     # XXX check r is Str!!!
     # implement access via descriptors??
-    l.setprop(r.value, value)
+    l.setprop(r.getvalue(), value)
     return value                # lhsop MUST return value
 
 # NOTE! utility, not method
@@ -837,7 +848,7 @@ def find_in_supers(l, rv, default):
 
     while True:
         if getprop_ok(supers):
-            for s in supers.value:  # XXX check
+            for s in supers.getvalue():  # XXX check
                 q.append(s)
                 seen.add(s)
 
@@ -853,7 +864,7 @@ def find_in_supers(l, rv, default):
 
         methods = c.getprop(const.METHODS)
         if getprop_ok(methods):
-            m = methods.value.get(rv, GETPROP_NONE) # Dict
+            m = methods.getvalue().get(rv, GETPROP_NONE) # Dict
             if getprop_ok(m):
                 return CBoundMethod(l, m)
 
@@ -879,7 +890,7 @@ def find_in_class(l, rv, default):
 
     methods = c.getprop(const.METHODS)
     if getprop_ok(methods):
-        m = methods.value.get(rv, GETPROP_NONE) # Dict
+        m = methods.getvalue().get(rv, GETPROP_NONE) # Dict
         if getprop_ok(m):
             return CBoundMethod(l, m)
 
@@ -891,7 +902,7 @@ def obj_getprop(l, r):
     Object getprop method/operator
     return `r` (String) property of object `l`
     """
-    rv = r.value              # XXX must be Str
+    rv = r.getvalue()              # XXX must be Str
     if l.hasprop(rv):
         return l.getprop(rv)
     return find_in_class(l, rv, undef_value) # may return BoundMethod
@@ -901,7 +912,7 @@ def obj_hasprop(l, r):
     """
     Return `true` if object `l` has own (Str) property `r` (not interited).
     """
-    return mkbool(l.hasprop(r.value)) # XXX getstr
+    return mkbool(l.hasprop(r.getvalue())) # XXX getstr
 
 def find_op(obj, optype, op):
     """
@@ -919,15 +930,15 @@ def find_op(obj, optype, op):
     seen = set()
     seen.add(c)
     while True:
-        ops = c.getprop(optype) 
+        ops = c.getprop(optype)
         if ops and ops != null_value:
-            if op in ops.value:
-                return ops.value[op]
+            if op in ops.getvalue():
+                return ops.getvalue()[op]
 
         supers = c.getprop(const.SUPERS)
         if supers and supers != null_value:
             # XXX check if List
-            for s in supers.value:
+            for s in supers.getvalue():
                 if s not in seen:
                     q.append(s)
                     seen.add(s)
@@ -946,7 +957,7 @@ def obj_get_in_supers(this, prop):
     Looks for `prop` as property or method of superclasses of `this`;
     can be used w/ `this.as_class(MyClass)..method`.
     """
-    return find_in_supers(this, prop.value, undef_value)
+    return find_in_supers(this, prop.getvalue(), undef_value)
 
 # once upon a time class was stored as '__class' property,
 # but it was messy when cloning.
@@ -990,7 +1001,7 @@ def obj_instance_of(this, c):
     Class (or List of Classes) `c`
     """
     if subclass_of(c.getclass(), [List]):
-        c = c.value             # get Python list
+        c = c.getvalue()             # get Python list
     else:
         c = [c]                 # make Python list
     return mkbool(instance_of(this, c))
@@ -1045,13 +1056,13 @@ def class_init(this_class, props):
     src/const.py CLASS_PROPS)
     """
     # XXX check props is a Dict!
-    for key, val in props.value.items():
+    for key, val in props.getvalue().items():
         # XXX depends on key as Python str
         # XXX check val is a Dict!
         if key == 'props':
             # XXX check for overlap with methods?
             # XXX use descriptors for methods/members?!!!
-            this_class.props.update(val.value) # XXX getdict
+            this_class.props.update(val.getvalue()) # XXX getdict
             continue
         ikey = const.CLASS_PROPS.get(key)
         if not ikey:
@@ -1076,7 +1087,7 @@ def class_call(this_class, *args):
     (but common mistake if you have Python fingers) --
     tells you to use .new method!!
     """
-    name = this_class.getprop(const.NAME).value
+    name = this_class.getprop(const.NAME).getvalue()
     raise UError("Called %s Class! Did you mean %s.new?" % (name, name))
 
 @pyfunc
@@ -1086,7 +1097,7 @@ def class_subclass_of(this, c):
     Class (or List of Classes) `c`
     """
     if subclass_of(c.getclass(), List):
-        c = c.value             # XXX getlist
+        c = c.getvalue()             # XXX getlist
     else:
         c = [c]                 # make Python list
     return mkbool(subclass_of(this, c))
@@ -1127,7 +1138,7 @@ def pobj_len(this):
     """
     returns length (of String, List or Dict)
     """
-    return _new_pobj(Number, len(this.value)) # XXX look up by name?
+    return _new_pobj(Number, len(this.getvalue())) # XXX look up by name?
 
 @pyfunc
 def pobj_str(this):
@@ -1135,7 +1146,7 @@ def pobj_str(this):
     return human-friendly string representation of `this`
     (uses Python str function on value)
     """
-    return mkstr(str(this.value))
+    return mkstr(str(this.getvalue()))
 
 @pyfunc
 def pobj_repr(this):
@@ -1143,14 +1154,14 @@ def pobj_repr(this):
     return less human-friendly string representation of `this`
     (use Python repr function on value)
     """
-    return mkstr(repr(this.value))
+    return mkstr(repr(this.getvalue()))
 
 @pyfunc
 def pobj_reprx(this):
     """
     for debug: show Class name, and Python repr
     """
-    return mkstr("<%s: %s>" % (this.classname(), repr(this.value)))
+    return mkstr("<%s: %s>" % (this.classname(), repr(this.getvalue())))
 
 @pyfunc
 def pobj_init(l, value):
@@ -1176,7 +1187,7 @@ def pobj_ident(l, r):
     as value of PObject `r`
     """
     lv = l.value
-    rv = r.value
+    rv = r.getvalue()
     return mkbool(lv is rv)
 
 @pyfunc
@@ -1187,12 +1198,12 @@ def pobj_differ(l, r):
     as value of PObject `r`
     """
     lv = l.value
-    rv = r.value
+    rv = r.getvalue()
     return mkbool(lv is not rv)
 
 @pyfunc
 def pobj__format(this, fmt):
-    return mkstr(format(this.value, fmt.value)) # XXX fmt.getstr()
+    return mkstr(format(this.getvalue(), fmt.getvalue())) # XXX fmt.getstr()
 
 PObject.setprop(const.METHODS, _mkdict({
     'repr': pobj_repr,
@@ -1272,7 +1283,7 @@ def pyiterable_iter(this):
     """
     Return forward iterator.
     """
-    return pyiterator(iter(this.value))
+    return pyiterator(iter(this.getvalue()))
 
 @pyfunc
 def pyiterable_reversed(this):
@@ -1281,7 +1292,7 @@ def pyiterable_reversed(this):
     """
     # XXX handle TypeError for "not reversible" (dict pre Python 3.8)?
     # XXX XXX make list, and reverse that??
-    return pyiterator(reversed(this.value))
+    return pyiterator(reversed(this.getvalue()))
 
 @pyfunc
 def pyiterable_sorted(this, reverse=false_value):
@@ -1289,7 +1300,7 @@ def pyiterable_sorted(this, reverse=false_value):
     Return sorted List of iterator values.
     `reverse` is Bool to sort in reverse order (defaults to `false`).
     """
-    return wrap(sorted(this.value, reverse=is_true(reverse)))
+    return wrap(sorted(this.getvalue(), reverse=is_true(reverse)))
 
 PyIterable.setprop(const.METHODS, _mkdict({
     'iter': pyiterable_iter,
@@ -1310,11 +1321,11 @@ def pyiterable_range(*args):
     range(1,10,2): returns Iterable for odd numbers 1..9
     """
     if len(args) == 1:
-        r = range(args[0].value) # XXX getint?
+        r = range(args[0].getvalue()) # XXX getint?
     elif len(args) == 2:
-        r = range(args[0].value, args[1].value) # XXX getint?
+        r = range(args[0].getvalue(), args[1].getvalue()) # XXX getint?
     elif len(args) == 3:
-        r = range(args[0].value, args[1].value, args[2].value) # XXX getint?
+        r = range(args[0].getvalue(), args[1].getvalue(), args[2].getvalue()) # XXX getint?
     else:
         raise UError("range requires one to three arguments")
 
@@ -1329,7 +1340,7 @@ def dict_put(l, r, value):
     """
     `l[r] = value`
     """
-    entry = r.value             # XXX
+    entry = r.getvalue()             # XXX
     l.value[entry] = value
     return value                # lhsop MUST return value
 
@@ -1338,17 +1349,17 @@ def dict_get(l, r):
     """
     `l[r]`
     """
-    entry = r.value             # XXX
+    entry = r.getvalue()             # XXX
     ret = l.value.get(entry, null_value)
     return ret
 
 @pyfunc
-def dict__init0(obj):
+def dict__init0(this):
     """
     Called by Dict.init (in bootstrap.xxl).
     Dodges needing private metaclass for Dict.
     """
-    obj.value = {}
+    this.value = {}
     return null_value
 
 @pyfunc
@@ -1356,28 +1367,28 @@ def dict_pop(obj, key):
     """
     Remove Dict item with specified `key`.
     """
-    return obj.value.pop(key.value) # XXX check arg has value!!!
+    return obj.getvalue().pop(key.getvalue()) # XXX check arg has value!!!
 
 @pyfunc
 def dict_items(this):
     """
     Return PyIterable for [key, value] value pairs.
     """
-    return mkiterable(this.value.items())
+    return mkiterable(this.getvalue().items())
 
 @pyfunc
 def dict_keys(this):
     """
     Return PyIterable for Dict keys.
     """
-    return mkiterable(this.value.keys())
+    return mkiterable(this.getvalue().keys())
 
 @pyfunc
 def dict_values(this):
     """
     Return PyIterable for Dict values.
     """
-    return mkiterable(this.value.values())
+    return mkiterable(this.getvalue().values())
 
 Dict.setprop(const.METHODS, _mkdict({
     '__init0': dict__init0,
@@ -1410,7 +1421,7 @@ def list_append(this, item):
     """
     append `item`.
     """
-    this.value.append(item)
+    this.getvalue().append(item)
     return null_value
 
 @pyfunc
@@ -1420,7 +1431,7 @@ def list_pop(l, index=None):
     """
     if index is None:
         return l.value.pop()
-    return l.value.pop(index.value) # XXX getnum
+    return l.value.pop(index.getvalue()) # XXX getnum
 
 @pyfunc
 def list_get(l, r):
@@ -1428,7 +1439,7 @@ def list_get(l, r):
     `l[r]`
     """
     # XXX check if integer
-    return l.value[r.value]
+    return l.value[r.getvalue()]
 
 @pyfunc
 def list_put(l, r, value):
@@ -1436,7 +1447,7 @@ def list_put(l, r, value):
     `l[r] = value`
     """
     # XXX check if integer
-    l.value[r.value] = value
+    l.value[r.getvalue()] = value
     return value		# lhsop MUST return value
 
 # str, repr, for_each, each_for, map, map2 from Iterable (in bootstrap.xxl)
@@ -1464,7 +1475,7 @@ def neg(x):
     """
     Return negative of `x`
     """
-    return _new_pobj(x.getclass(), -x.value)
+    return _new_pobj(x.getclass(), -x.getvalue())
 
 @pyfunc
 def add(l, r):
@@ -1472,7 +1483,7 @@ def add(l, r):
     add `l` and `r`
     """
     lv = l.value
-    rv = r.value
+    rv = r.getvalue()
     if lv == 0:
         return r
     if rv == 0:
@@ -1485,7 +1496,7 @@ def sub(l, r):
     subtract `r` from `l`
     """
     lv = l.value
-    rv = r.value
+    rv = r.getvalue()
     if rv == 0:
         return l
     return _new_pobj(l.getclass(), lv - rv)
@@ -1496,12 +1507,12 @@ def mul(l, r):
     multiply `l` and `r`
     """
     lv = l.value
-    rv = r.value
+    rv = r.getvalue()
     if lv == 1:
         return r
     if rv == 1:
         return l
-    return _new_pobj(l.getclass(), l.value * r.value)
+    return _new_pobj(l.getclass(), l.value * r.getvalue())
 
 @pyfunc
 def div(l, r):
@@ -1509,7 +1520,7 @@ def div(l, r):
     Divide `l` by `r`; always creates float.
     """
     lv = l.value
-    rv = r.value
+    rv = r.getvalue()
     if rv == 1:
         return l
     return _new_pobj(l.getclass(), lv / rv)
@@ -1519,7 +1530,7 @@ def _eq(l, r):
     call any time (not a pyfunc)
     takes CPObject, returns CPObject
     """
-    return mkbool(l.value == r.value)
+    return mkbool(l.value == r.getvalue())
 
 @pyfunc
 def eq(l, r):
@@ -1536,7 +1547,7 @@ def ne(l, r):
     return _not(_eq(l, r))
 
 def _ge(l, r):
-    return mkbool(l.value >= r.value)
+    return mkbool(l.value >= r.getvalue())
 
 @pyfunc
 def ge(l, r):
@@ -1553,7 +1564,7 @@ def lt(l, r):
     return _not(_ge(l, r))
 
 def _le(l, r):
-    return mkbool(l.value <= r.value)
+    return mkbool(l.value <= r.getvalue())
 
 @pyfunc
 def le(l, r):
@@ -1575,7 +1586,7 @@ def bitand(l, r):
     return bitwise (binary) "and" (conjunction) of `l` and `r`
     """
     lv = l.value
-    rv = r.value
+    rv = r.getvalue()
     if lv == 0:
         return l
     if rv == 0:
@@ -1588,7 +1599,7 @@ def bitor(l, r):
     return bitwise (binary) "or" (union) of `l` and `r`
     """
     lv = l.value
-    rv = r.value
+    rv = r.getvalue()
     if lv == 0:
         return r
     if rv == 0:
@@ -1600,7 +1611,7 @@ def bitnot(this):
     """
     return bitwise (binary) "not" (complement) of `this`
     """
-    return _new_pobj(this.getclass(), ~this.value)
+    return _new_pobj(this.getclass(), ~this.getvalue())
 
 @pyfunc
 def num_to_float(this):
@@ -1608,9 +1619,9 @@ def num_to_float(this):
     If value is a float, return `this`
     If value is an int, return a new Number object
     """
-    if isinstance(this.value, float):
+    if isinstance(this.getvalue(), float):
         return this
-    return _new_pobj(this.getclass(), float(this.value))
+    return _new_pobj(this.getclass(), float(this.getvalue()))
 
 @pyfunc
 def num_to_int(this):
@@ -1618,9 +1629,9 @@ def num_to_int(this):
     If value is an int, return `this`
     If value is a float, return a new Number object
     """
-    if isinstance(this.value, int):
+    if isinstance(this.getvalue(), int):
         return this
-    return _new_pobj(this.getclass(), int(this.value))
+    return _new_pobj(this.getclass(), int(this.getvalue()))
 
 @pyfunc
 def num_to_number(this):
@@ -1662,8 +1673,8 @@ def str_concat(x, y):
     """
     String concatenation
     """
-    xv = x.value                # XXX getstr
-    yv = y.value                # XXX getstr
+    xv = x.getvalue()                # XXX getstr
+    yv = y.getvalue()                # XXX getstr
     if xv == "":
         return y
     if yv == "":
@@ -1677,7 +1688,7 @@ def str_get(l, r):              # [] operator
     return `r`'th character of Str `l`
     """
     # XXX check if r is integer
-    return _new_pobj(l.getclass(), l.value[r.value])
+    return _new_pobj(l.getclass(), l.value[r.getvalue()])
 
 @pyfunc
 def str_slice(this, start, end=None):
@@ -1686,9 +1697,9 @@ def str_slice(this, start, end=None):
     starting at position `start`
     ending at position `end` (defaults to rest of string
     """
-    startv = start.value        # XXX check if int
+    startv = start.getvalue()        # XXX check if int
     if end is not None:
-        endv = end.value            # XXX check if int
+        endv = end.getvalue()            # XXX check if int
         ret = this.value[startv:endv]
     else:
         ret = this.value[startv:]
@@ -1702,9 +1713,9 @@ def str_split(this, sep=None, limit=-1):
     Limit to `limit` return values (defaults to -1 -- no limit)
     """
     if sep is not None:
-        sep = sep.value         # XXX getstr
+        sep = sep.getvalue()         # XXX getstr
     if limit != -1:
-        limit = limit.value     # XXX getint
+        limit = limit.getvalue()     # XXX getint
     # will use current "Str" defn:
     return wrap(this.value.split(sep, limit))
 
@@ -1713,13 +1724,13 @@ def str_ends_with(this, suff):
     """
     Return `true` if `this` ends with the suffix `suff`, `false` otherwise.
     """
-    return mkbool(this.value.endswith(suff.value))
+    return mkbool(this.value.endswith(suff.getvalue()))
 
 @pyfunc
 def str__join(this, arg):
     """
     Concatenate any number of strings.
-    
+
     The string whose method is called is inserted in between each given string.
     The result is returned as a new string.
     """
@@ -1738,7 +1749,7 @@ def str_starts_with(this, pref):
     """
     Return `true` if `this` starts with prefix `pref, `false` otherwise.
     """
-    return mkbool(this.value.startswith(pref.value))
+    return mkbool(this.value.startswith(pref.getvalue()))
 
 @pyfunc
 def str_str(this):
@@ -1770,7 +1781,7 @@ def str_to_int(this, base=None):
     if base is None:
         base = 0
     else:
-        base = base.value       # XXX getint
+        base = base.getvalue()       # XXX getint
     return mknumber(int(this.value, base))
 
 @pyfunc
@@ -1789,7 +1800,7 @@ def str_chr(i):
     """
     Return a Unicode string of one character with ordinal i; 0 <= i <= 0x10ffff
     """
-    return mkstr(chr(i.value)) # XXX getint
+    return mkstr(chr(i.getvalue())) # XXX getint
 
 Str.setprop(const.METHODS, _mkdict({
     'ends_with': str_ends_with,
@@ -1853,7 +1864,7 @@ def nullish_getprop(l, r):
 
     Allows all Object methods (JavaScript is stricter, Python is not).
     """
-    rv = r.value              # XXX must be Str
+    rv = r.getvalue()              # XXX must be Str
     if l.hasprop(rv):
         return l.getprop(rv)
 
@@ -1868,7 +1879,7 @@ def nullish_setprop(l, r, value):
     """
     Nullish Object setprop method/operator
     """
-    rv = r.value              # XXX must be Str
+    rv = r.getvalue()              # XXX must be Str
     raise UError("Cannot set property '%s' of %s" % (rv, l.classname()))
 
 Nullish.setprop(const.METHODS, _mkdict({
@@ -1943,7 +1954,7 @@ def pyobj_getprop(l, r):
     """
     # XXX r must be Str
     #   for access to Object properties?
-    rv = r.value                # XXX getstr
+    rv = r.getvalue()                # XXX getstr
     if hasattr(l.value, rv):
         v = getattr(l.value, rv) # get Python object attribute
     elif l.hasprop(rv):  # check Object properties (most likely empty)
@@ -1965,7 +1976,7 @@ def pyobj_getitem(l, r):
     """
     PyObject `[` binop
     """
-    v = l.value[r.value]        # XXX unwrap(r)??
+    v = l.value[r.getvalue()]        # XXX unwrap(r)??
     return wrap(v)
 
 @pyfunc
@@ -2116,9 +2127,9 @@ def new_module(fname, main=False, parser_vmx=None):
     md = Module.getprop('modules') # Module Dict/directory (Class variable)
 
     # XXX Dict indexed by Python str
-    if fname and fname in md.value: # previously loaded?
+    if fname and fname in md.getvalue(): # previously loaded?
         # XXX Dict indexed by Python str
-        return md.value[fname], None # yes; return it, no bootstrap needed
+        return md.getvalue()[fname], None # yes; return it, no bootstrap needed
 
     scope = scopes.Scope(root_scope) # create base scope for module
     mod = CModule(scope)
@@ -2127,7 +2138,7 @@ def new_module(fname, main=False, parser_vmx=None):
 
     if fname:
         # XXX Dict indexed by Python str
-        md.value[fname] = mod   # save as previously loaded
+        md.getvalue()[fname] = mod   # save as previously loaded
 
     mi = new_modinfo(main=main, module=mod, fname=fname, parser_vmx=parser_vmx)
     mod.modinfo = mi
@@ -2157,7 +2168,7 @@ def modinfo_load_vmx(this, fname):
     Returns Closure in __modinfo.module top level scope.
     """
     mod = this.getprop(const.MODINFO_MODULE) # XXX check return
-    code = vmx.load_vm_json(fname.value, mod.scope) # XXX getstr
+    code = vmx.load_vm_json(fname.getvalue(), mod.scope) # XXX getstr
     return CClosure(code, mod.scope)
 
 @pyfunc
@@ -2182,6 +2193,19 @@ ModInfo.setprop(const.METHODS, _mkdict({
 
 ################################################################
 
+PyIteratorObject = defclass(PClass, const.PYITERATOROBJECT, [PyObject,PyIterator],
+                    doc="""
+    Built-in Class for a wrapper around an arbitrary Python Object that is an iterator
+    (has a __next__ method -- should also have __iter__ method).
+    """)
+
+PyIterableObject = defclass(PClass, const.PYITERABLEOBJECT, [PyObject,PyIterable],
+                    doc="""
+    Built-in Class for a wrapper around an arbitrary Python Object that is an iterable
+    (has an __iter__ method -- an iterator factory).
+    """)
+
+# XXX maybe take second arg PObject orig, and return if "value is orig.value"??
 def wrap(value):
     """
     wrap a Python `value` in a language CObject
@@ -2197,7 +2221,7 @@ def wrap(value):
         return mkbool(value)
 
     if isinstance(value, NUM):
-        return new_by_name('Number', value)
+        return mknumber(value)
 
     if isinstance(value, str):
         return mkstr(value)
@@ -2212,10 +2236,14 @@ def wrap(value):
     if value is None:
         return null_value
 
-    # XXX handle dict?!!!
+    if isinstance(value, dict):
+        return new_by_name('Dict', value)
 
-    #if hasattr(value, '__next__'): return pyiterator(value)???
-    # Add next/iter/reversed methods to PyObject??????
+    if hasattr(value, '__next__'): # Python I/O objects!
+        return new_by_name(const.PYITERATOROBJECT, value)
+
+    if hasattr(value, '__iter__'):
+        return new_by_name(const.PYITERABLEOBJECT, value)
 
     return new_by_name(const.PYOBJECT, value)
 
@@ -2230,7 +2258,7 @@ def defmodule(name, mod):
     assert(isinstance(mod, CModule))
     md = Module.getprop('modules') # module Dict
     # XXX indexed by Python str:
-    md.value[name] = mod
+    md.getvalue()[name] = mod
 
 classes_module = None           # XXX TEMP?
 
@@ -2259,6 +2287,72 @@ def classes_init(argv, parser_vmx):
     # NOTE: below crushes __modinfo!!!??? (do we care???)
     classes_module.props = classes_scope.vars # XXX XXX DOUBLY SO
     defmodule('classes', classes_module)      # XXX __classes?
+
+################################################################
+
+def def_wrappers(cname, ptype, methods):
+    """
+    str `cname` is XXL Class name.
+    Python type `ptype` is a Python class/type.
+    str `pmname` is Python method name
+    list `methods` is list of str or 2-tuple of str (pymeth, xxlmeth)
+    """
+    c = classes_scope.lookup(cname)
+    if not c.hasprop(const.METHODS):
+        mdict = _mkdict({})
+        c.setprop(const.METHODS, mdict)
+    else:
+        mdict = c.getprop(const.METHODS)
+
+    for pmname in methods:
+        if isinstance(pmname, (list, tuple)):
+            pmname, mmeth = pmname # (Python_name, XXL_NAME)
+        else:
+            mname = pmname
+
+        # try getting method at setup time, outside of closure
+        # like to lose for static/class methods?!!!
+        pmethod = getattr(ptype, pmname)
+
+        def wrapper(pobj, *args):
+            return wrap(pmethod(pobj.value, *[unwrap(x) for x in args]), pobj)
+        wrapper.__name__ = mname # crock for CPyFunc.defn()
+        pf = CPyFunc(wrapper, pmethod) # second arg crock for CPyFunc.args()
+        pf.setprop(const.DOC, _mkstr(pmethod.__doc__ or ""))
+        mdict.value[mname] = pf # XXX NOTE Python str key
+
+################
+# XXX need Bytes for "encode" output
+def_wrappers('Str', str, ['capitalize',
+                          ('casefold', 'case_fold'),
+                          'center', 'count',
+                          ('expandtabs', 'expand_tabs'),
+                          'find',
+                          'format', # !!??
+                          'index',
+                          ('isalnum', 'is_alnum'),
+                          ('isalpha', 'is_alpha'),
+                          ('isascii', 'is_ascii'),
+                          ('isdecimal', 'is_decimal'),
+                          ('isdigit', 'is_digit'),
+                          ('isidentifier', 'is_identifier'),
+                          ('islower', 'is_lower'),
+                          ('isnumeric', 'is_numeric'),
+                          ('isprintable', 'is_printable'),
+                          ('isspace', 'is_space'),
+                          ('istitle', 'is_title'),
+                          ('isupper', 'is_upper'),
+                          'ljust',
+                          ('lower', 'to_lower'),
+                          'replace', 'rfind', 'rsplit', 'rstrip',
+                          ('splitlines', 'split_lines'),
+                          ('swapcase', 'swap_case'),
+                          # XXX translate??
+                         ('upper', 'to_upper'),
+                          'zfill'])
+
+# XXX def more classes mere
+################################################################
 
 # earlier?!!!!!
 __initialized = True        # don't allow _mkXXX any more

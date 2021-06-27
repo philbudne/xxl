@@ -2,7 +2,10 @@ var io = __xxl.pyimport("io");
 var sys = __xxl.pyimport("sys");
 var f = io.open('test/026-py-file.xxl');
 
+__xxl.print("================ while");
 var line;
 while ((line = f.readline()) != '') {
     sys.stdout.write(line);
 }
+__xxl.print("================ for_each");
+io.open('test/026-py-file.xxl').for_each(sys.stdout.write);
