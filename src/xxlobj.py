@@ -160,11 +160,14 @@ def xxl__tokenizer(filename, prefix, suffix):
             v = classes.mknumber(t.value)
         else:
             v = classes.mkstr(t.value)
-        return classes._mkobj({ # XXX create a Token
+        tok = classes._mkobj({ # XXX create a Token
             'type': classes.mkstr(t.type_),
             'value': v,
             'where': classes.mkstr(where)
         })
+        if t.msg:
+            tok.setprop('msg', classes.mkstr(t.msg))
+        return tok
 
     @classes.pyfunc
     def pointer(line, pos):

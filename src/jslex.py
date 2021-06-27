@@ -10,7 +10,7 @@ import readline                 # enable editing in input()
 
 # Produce simple token objects from a string.
 # A simple token object contains these members:
-#      type: 'name', 'string', 'number', 'operator', 'EOF'
+#      type: 'name', 'string', 'number', 'operator', 'EOF', 'ERROR'
 #      value: string or number value of the token
 #      from: index of first character of the token
 #      to: index of the last character + 1
@@ -45,16 +45,13 @@ class LexError(Exception):
     """
 
 class Token(object):
-    def __init__(self, type_, value, lineno, from_, to):
+    def __init__(self, type_, value, lineno, from_, to, msg=None):
         self.type_ = type_
         self.value = value
         self.from_ = from_
         self.lineno = lineno
         self.to = to
-
-    def error(self, s):
-        # XXX need filename!
-        raise LexError("%s at %s:%s" % (s, self.lineno, self.from_))
+        self.msg = msg
 
     def __repr__(self):
         return "<Token %s %r l%d %d:%d>" % \
@@ -200,6 +197,10 @@ class Tokenizer:
         self.s.change_prompt()
         return Token(type_, value, self.line, self.from_, self.s.pos())
 
+    def make_error(self, value, msg):
+        # NOTE: at current pos
+        return Token('ERROR', value, self.line, self.s.pos(), self.s.pos(), msg)
+
     def pointer(self, line, pos):
         self.s.pointer(line, pos)
 
@@ -242,8 +243,8 @@ class Tokenizer:
                     try:
                         return self.make('number', int(str_, 0))
                     except ValueError:
-                        self.make('number', str_).error("Bad hex number")
-                        continue
+                        # test case "0x"
+                        return self.make_error(str_, "Bad hex number")
 
                 # Look for more digits.
                 while True:
@@ -272,7 +273,8 @@ class Tokenizer:
                         str_ += self.c
                         self.c = self.s.next()
                     if not self.c.isdigit():
-                        self.make('number', str_).error("Bad exponent")
+                        # test case: 1.0eQ
+                        return self.make_error(self.c, "Bad exponent")
                     while True:
                         str_ += self.c
                         self.c = self.s.next()
@@ -282,7 +284,8 @@ class Tokenizer:
                 if isalpha(self.c):
                     str_ += self.c
                     self.s.advance()
-                    self.make('number', str_).error("Bad number")
+                    # test case "123x"
+                    return self.make_error(str_, "Bad number")
 
                 # Convert the string value to a number.
                 try:
@@ -291,7 +294,7 @@ class Tokenizer:
                     try:
                         return self.make('number', float(str_))
                     except ValueError:
-                        self.make('number', str_).error("Bad number")
+                        return self.make_error(str_, "Bad number")
             elif self.c in ["'", '"']:
                 # string
                 str_ = ''
@@ -314,11 +317,11 @@ class Tokenizer:
                     self.c = self.s.curr()
                     if not multiline:
                         if self.c < ' ':
-                            if self.c == '\n'  or  self.c == '\r'  or  self.c == '':
+                            if self.c == '\n' or self.c == '\r' or self.c == '':
                                 v = "Unterminated string."
                             else:
                                 v = "Control Character in string."
-                            self.make('string', str_).error(v)
+                            return self.make_error(str_, v)
                         if self.c == self.q:  # end quote?
                             break
                     elif self.c == self.q:    # multi-line: check for end quote
@@ -339,7 +342,7 @@ class Tokenizer:
                         self.c = self.s.next()
                         #print("escaped", self.c)
                         if self.c == '':
-                            self.make('string', str_).error("Unterminated string")
+                            return self.make_error(str_, "Unterminated string")
                         if self.c == 'b':
                             self.c = '\b'
                         elif self.c == 'f':
@@ -360,12 +363,14 @@ class Tokenizer:
                             while len(h) < n:
                                 self.c = self.s.next()
                                 if self.c == '':
-                                    self.make('string', str_).error("Unterminated string2")
+                                    return self.make_error(str_,
+                                                           "Unterminated string")
                                 h += self.c
                             try:
                                 self.c = int(h, 16)
                             except ValueError:
-                                self.make('string', str_).error("Unterminated string3")
+                                return self.make_error(str_,
+                                                       "Unterminated string")
                             self.c = chr(self.c)
                         # end c in NHEX_CHARS
                     # end escapement

@@ -362,6 +362,9 @@ var PrattParser = Class.new({
 		a = "literal";
 		// id = this.LIT;
 	    }
+	    else if (a == "ERROR") {
+		this._t_error(t, t.msg);
+	    }
 	    else if (a == "EOF") {
 		c = this.End;	// a SingletonClass!
 		v = this.END;	// for advance(this.END)
