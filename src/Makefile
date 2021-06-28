@@ -96,7 +96,7 @@ $(C):	$(VM) $(B) $(PARSER_SRC)
 bootstrap.vmx: bootstrap.xxl $(PARSER_VMX) $(VM)
 	$(RUNVMX) $(PARSER_VMX) bootstrap.xxl > bootstrap.vmx.tmp
 	@if [ -f bootstrap.vmx ] && cmp bootstrap.vmx bootstrap.vmx.tmp; then \
-	    echo no change to bootstrap.vmx; \
+	    echo no change to bootstrap.vmx; rm -f bootstrap.vmx.tmp; \
 	else \
 	    test -f bootstrap.vmx && mv -f bootstrap.vmx  bootstrap.vmx.bak; \
 	    mv bootstrap.vmx.tmp bootstrap.vmx; \
