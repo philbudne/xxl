@@ -9,6 +9,6 @@ mkboot
 mkparser
 *.bak
 notes
-classes.md
+classes.html
 .tmp.*
 .bootstrap

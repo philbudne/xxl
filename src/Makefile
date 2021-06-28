@@ -33,7 +33,7 @@ TESTED=tested
 ABIDENTICAL=.identical.ab
 
 # XXX lib/*.xxl and lib/ext/*.xxl too!
-DOCS= classes.md
+DOCS= classes.html
 
 all:	$(TESTED) $(DOCS)
 
@@ -59,8 +59,8 @@ $(ABIDENTICAL): $(A) $(B)
 
 ################
 
-classes.md: classes.py .bootstrap lib/doc.xxl lib/markup.xxl $(TESTED)
-	./$(XXL) lib/doc.xxl classes > classes.md
+classes.html: classes.py .bootstrap lib/doc.xxl lib/markup.xxl $(TESTED)
+	./$(XXL) lib/doc.xxl classes > classes.html
 
 # uncomment to enable timing
 #TIME=time -p
@@ -123,12 +123,12 @@ check-dist: $(PARSER_VMX)
 		echo "NOTE: dist/$$FILE out of date"; \
 	    fi; \
 	done
-	@grep -v 'formatted by doc.xxl' classes.md > .tmp.c
-	@grep -v 'formatted by doc.xxl' dist/classes.md > .tmp.d
+	@grep -v 'formatted by doc.xxl' classes.html > .tmp.c
+	@grep -v 'formatted by doc.xxl' dist/classes.html > .tmp.d
 	@if cmp -s .tmp.c .tmp.d; then \
-	    echo "dist/classes.md up to date"; \
+	    echo "dist/classes.html up to date"; \
 	else \
-	    echo "NOTE: dist/classes.md out of date"; \
+	    echo "NOTE: dist/classes.html out of date"; \
 	fi
 	@rm -f .tmp.[cd]
 

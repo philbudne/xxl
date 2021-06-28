@@ -8,9 +8,14 @@ const re = __xxl.pyimport("re");
 
 const ADDR_RE = re.compile(" at 0x[0-9a-z]*");
 
-const SUPER_COLOR = "slategray";
+const SUPER_COLOR = "slategray"; // text color for superclass properties
+const BLACK = null;
 
 // XXX need general iterator for class and all supers
+
+var callable = function (c) {
+    return(c.instance_of(classes.Callable));
+};
 
 var collect_class_ops = function (class, prop) {
     """
@@ -37,8 +42,8 @@ var collect_class_ops = function (class, prop) {
 			return();
 		    }
 		    var value = c.getprop(mprop);
-		    if (value.instance_of(classes.Callable)) {
-			if (!funcs[mprop]) {
+		    if (callable(value)) {
+			if (!funcs[mprop]) { // don't overwrite super's defn
 			    funcs[mprop] = value;
 			}
 		    }
@@ -84,30 +89,25 @@ var mudoc = function(mu, obj) {
     mu.blockquote(" ".join(doc.split("\n").map2(strip, "")));
 };
 
-var mufunc = function (mu, level, name, func, not_own_method) {
+var mufunc = function (mu, level, type, name, func, not_own_method) {
     """
     Markup a function/method.
     `level` is header level, `name` is opr/function name, `func` is Callable.
     """
     var args = func.__args() || "(?)"; // get string for argument names
-    if (not_own_method) {
-	mu.start_color(SUPER_COLOR);
-    }
+    mu.start_color(not_own_method ? SUPER_COLOR : BLACK);
     // apply (HTML entity) quoting for operators
-    mu.hn(level, mu.code(mu.quote(name), args));
+    mu.hn(level, type, mu.code(mu.quote(name), args));
     var defn = func.__defn() || "?"; // get class and definition location
     mu.nappend(mu.i(func.getclass().name, "at", defn));
     mudoc(mu, func);
-    if (not_own_method) {
-	mu.end_color();
-    }
 };
 
-var muvalue = function (mu, level, name, value) {
+var muvalue = function (mu, level, type, name, value) {
     """
     mark up a variable with a non-callable value
     """
-    mu.hn(level, mu.code(name));
+    mu.hn(level, type, mu.code(name));
     mu.nappend(mu.i(value.getclass().name));
     var vstr = ADDR_RE.sub("", value.repr()); // remove " at 0xXXXX"
     mu.blockquote(mu.code(mu.quote(vstr)));
@@ -122,48 +122,34 @@ var muclass = function (mu, class) {
     mudoc(mu, class);
 
     [
-     ['__methods', 'Methods'],
-     ['__unops', 'Unary operators'],
-     ['__binops', 'Binary operators'],
-     ['__lhsops', 'LHS Binary operators']
+     ['__methods', 'Method'],
+     ['__unops', 'Unary'],
+     ['__binops', 'Binary'],
+     ['__lhsops', 'LHS']
     ].for_each(			// for_each property
 	 function (pitem) {	// pitem => ["property", "english"]
 	     var mprop = pitem[0]; // property for methods
 	     var mtype = pitem[1]; // english name for method type
 	     var stuff = collect_class_ops(class, mprop);
 	     var m = stuff[0];	// dictionary of methods
-	     if (m.len() > 0) {
-		 mu.h3(mtype);	// english name
-		 mu.p();
-
-		 m.items().sorted().for_each(
-		     function (ditem) { // ditem => [method/op_name, function]
-			 var name = ditem[0]; // method name or operator string
-			 var func = ditem[1]; // Callable
-			 var own_method = class.hasprop(mprop) && class.getprop(mprop)[name];
-			 mufunc(mu, 4, name, func, !own_method);
-		     }
-		 );
-	     } // have methods
+	     m.items().sorted().for_each(
+		 function (ditem) { // ditem => [method/op_name, function]
+		     var name = ditem[0]; // method name or operator string
+		     var func = ditem[1]; // Callable
+		     var own_method = (class.hasprop(mprop) &&
+				       class.getprop(mprop)[name]);
+		     mufunc(mu, 3, mtype, name, func, !own_method);
+		 }
+	     ); // m....for_each
 	     m = stuff[1];	// dict of members (only w/ regular methods)
-	     if (m.len() > 0) {
-		 mu.h3("Members");
-		 mu.p();
-		 m.items().sorted().for_each(
-		     function (ditem) { // ditem => [member_name, value]
-			 var name = ditem[0]; // method name or operator string
-			 var value = ditem[1];
-			 var own_member = class.hasprop(name);
-			 if (!own_member) {
-			     mu.start_color(SUPER_COLOR);
-			 }
-			 muvalue(mu, 4, name, value);
-			 if (!own_member) {
-			     mu.end_color();
-			 }
-		     } // function (ditem)
-		 ); // for_each member
-	     }
+	     m.items().sorted().for_each(
+		 function (ditem) { // ditem => [member_name, value]
+		     var name = ditem[0]; // method name or operator string
+		     var value = ditem[1];
+		     mu.start_color(class.hasprop(name) ? BLACK : SUPER_COLOR);
+		     muvalue(mu, 3, "Member", name, value);
+		 } // function (ditem)
+	     ); // for_each member
 	 } // function (pitem)
     ); // for_each property
 };
@@ -184,7 +170,7 @@ var mumodule = function (mu, module_name) {
     // mu.p();
     // mu.start_color(SUPER_COLOR);
     // mu.append("(inherited methods in this color)");
-    // mu.end_color();
+    // mu.start_color(BLACK);
 
     // iterate over sorted names in Module
     var vars = [];
@@ -195,6 +181,7 @@ var mumodule = function (mu, module_name) {
 	    }
 	    var x = mod.getprop(name);
 	    if (x.instance_of(classes.Class)) {
+		mu.start_color(BLACK);
 		mu.hr();
 		mu.make_anchor("class-" + name);
 
@@ -221,12 +208,13 @@ var mumodule = function (mu, module_name) {
 
 		mu.p();
 		muclass(mu, x);
-	    }
+	    } // is a (meta)Class
 	    else {
 		vars.append(name);
 	    }
 	}
     );
+    mu.start_color(BLACK);
     if (vars.len() == 0) {
 	return();
     }
@@ -240,7 +228,7 @@ var mumodule = function (mu, module_name) {
 		mufunc(mu, 3, name, x);
 	    }
 	    else {
-		muvalue(mu, 3, name, x);
+		muvalue(mu, 3, '', name, x);
 	    }
 	    mu.p();
 	}
@@ -249,10 +237,10 @@ var mumodule = function (mu, module_name) {
 
 if (__modinfo.main) {
     var markup = __xxl.import("markup.xxl");
-    var markup_class = markup.MarkDown;
+    var markup_class = markup.HTML;
     var i = 0;
-    if (__xxl.argv.len() > i && __xxl.argv[i] == "--html") {
-	markup_class = markup.HTML;
+    if (__xxl.argv.len() > i && __xxl.argv[i] == "--markdown") {
+	markup_class = markup.MarkDown;
 	i += 1;
     }
     var module_name = __xxl.argv.len() > i ? __xxl.argv[i] : "classes";

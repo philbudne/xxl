@@ -27,7 +27,7 @@ Tested under Python 3.7.9 and PyPy3 7.3.1 (needs `export PYTHONIOENCODING=utf8`)
 
 * [Syntax](doc/syntax.md) -- core language syntax
 
-* [Classes](src/dist/classes.md) -- built in classes (machine generated doc)
+* [Classes](src/dist/classes.html) -- built in classes (machine generated doc)
 
 * [Creating a Class](doc/create-class.md) -- how to create a new Class
 

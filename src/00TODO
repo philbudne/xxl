@@ -1,12 +1,14 @@
 FIX
 ===
-Add test for Class.new "props"?
+BUG null ==(=) undefined is fatal
+	BUT undefined ==(=) null is false
+	have pobj_(ident,differ) return false if both not PObject?
 
 Make VM "Error @" conform to FNAME:LINE:CHAR MSG format?
 
-doc.xxl: generate (hidable?) index of classes (& Vars section) at top
-	hn Method NAME instead of "hn Method & hn+1 NAME"
-		(avoid tiny print)
+doc.xxl: links not working in MD headers
+	need blank lines before headers?
+	generate (hidable?) index of classes (& Vars section) at top
 
 Makefile:
 	"make install" install to "dev"???????
@@ -32,6 +34,7 @@ wrap:
 
 TEST
 ====
+Add test for Class.new "props"?
 test PyObject.props()
 str & repr methods (& Str.join)
 	Callables

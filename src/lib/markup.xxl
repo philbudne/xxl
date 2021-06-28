@@ -6,7 +6,7 @@ var MarkUp = Class.new({
     name: "MarkUp",
     doc: "base class for marking up text",
     methods: {
-	init: function (this) { this._value = []; },
+	init: function (this) { this._value = []; this.color = null; },
 	render: function (this) {
 	    """
 	    return final result Str
@@ -76,13 +76,25 @@ var HTML = Class.new({
 	    this.quote = html.escape; // override default method!!
 	    this.as_class(HTML)..init();
 	},
-	_twrap: function (this, tag, list) {
-	    var open = "<" + tag + ">";
+	_twrap: function (this, tag, list, props) {
+	    if (props) {
+		if (props.len() == 0) {
+		    props = null;
+		}
+		else {
+		    props.insert(0, ' ');
+		}
+	    }
+	    var open = "<" + tag + " ".join(props ? props : []) + ">";
 	    var close = "</" + tag + ">";
 	    return(this.lwrap(open, list, close));
 	},
 	_hn: function (this, n, list) {
-	    this.nappend(this._twrap( "h" + n.to_str(), list));
+	    var props = [];
+	    if (this.color) {
+		props.append('color="' + this.color + '"');
+	    }
+	    this.nappend(this._twrap( "h" + n.to_str(), list, props));
 	},
 
 	head: function (this, ...title) { // XXX take Dict? List?? Dict of Lists???
@@ -94,6 +106,7 @@ var HTML = Class.new({
 	    this.nappend("<body>\n");
 	},
 	end_body: function (this) {
+	    this.start_color();	// force end to region, if any
 	    this.nappend("</body>\n");
 	},
 
@@ -120,12 +133,14 @@ var HTML = Class.new({
 	},
 
 	start_color: function (this, color) {
-	    //this.append('<span style="color:' + color + '">');
-	    this.append('<font color="' + color + '">');
-	},
-	end_color: function (this) {
-	    //this.append('</span>');
-	    this.append('</font>');
+	    if (color != this.color) {
+		this.append('</font>');
+		this.color = color;
+		//this.append('<span style="color:' + color + '">');
+		if (color) {
+		    this.append('<font color="' + color + '">');
+		}
+	    }
 	},
 
 	// code_block?
@@ -167,15 +182,16 @@ var MarkDown = Class.new({
 	end_body: function (this) {
 	},
 
+// SIGH: markdown doesn't support formatting in header lines: use HTML
 	// the following take multiple args, will space separate and APPEND.
-	h1: function (this, ...args) { this.wrapnap("# ", args, "\n"); },
-	h2: function (this, ...args) { this.wrapnap("## ", args, "\n"); },
-	h3: function (this, ...args) { this.wrapnap("### ", args, "\n"); },
-	h4: function (this, ...args) { this.wrapnap("#### ", args, "\n"); },
-	h5: function (this, ...args) { this.wrapnap("##### ", args, "\n"); },
-	hn: function (this, n, ...args) {
-	    this.wrapnap("##########".slice(0,n) + " ", args, "\n");
-	},
+//	h1: function (this, ...args) { this.wrapnap("# ", args, "\n"); },
+//	h2: function (this, ...args) { this.wrapnap("## ", args, "\n"); },
+//	h3: function (this, ...args) { this.wrapnap("### ", args, "\n"); },
+//	h4: function (this, ...args) { this.wrapnap("#### ", args, "\n"); },
+//	h5: function (this, ...args) { this.wrapnap("##### ", args, "\n"); },
+//	hn: function (this, n, ...args) {
+//	    this.wrapnap("##########".slice(0,n) + " ", args, "\n");
+//	},
 
 	hr: function (this, ...args) { this.nappend("---\n\n"); }, // github was combining
 	p: function (this, ...args) { this.nappend("\n"); }, // paragraph
