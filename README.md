@@ -27,7 +27,7 @@ Tested under Python 3.7.9 and PyPy3 7.3.1 (needs `export PYTHONIOENCODING=utf8`)
 
 * [Syntax](doc/syntax.md) -- core language syntax
 
-[comment:] <> DOUBLE BLEH: no relative link, no way to link to HTML!?!!
+<!-- DOUBLE BLEH: no relative link, no way to link to HTML!?!! -->
 
 * [Classes](https://rawcdn.githack.com/philbudne/xxl/ad795fc6506bc29c3db35efc7bee86680e34da58/src/dist/classes.html) -- built in classes (machine generated doc, delivered by external CDN)
 
