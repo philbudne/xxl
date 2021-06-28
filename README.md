@@ -12,9 +12,9 @@ Tested under Python 3.7.9 and PyPy3 7.3.1 (needs `export PYTHONIOENCODING=utf8`)
 ### Overall:
 
 * Based on [Douglas Crockford's](http://crockford.com/)
-	[JavaScript parser](http://crockford.com/javascript/tdop/tdop.html)
+	[TDOP JavaScript parser](http://crockford.com/javascript/tdop/tdop.html)
 	based on [Vaughan Pratt's](http://boole.stanford.edu/pratt.html)
-	[Top Down Operator Precedence Parsing](http://web.archive.org/web/20151223215421/http://hall.org.ua/halls/wizzard/pdf/Vaughan.Pratt.TDOP.pdf) technique.
+	[Top Down Operator Precedence Parsing](http://web.archive.org/web/20151223215421/http://hall.org.ua/halls/wizzard/pdf/Vaughan.Pratt.TDOP.pdf) (PDF) technique.
 
 * JavaScript-like syntax, Python3-like types,
 	new statements, operators and classes can be created at runtime.
@@ -27,9 +27,8 @@ Tested under Python 3.7.9 and PyPy3 7.3.1 (needs `export PYTHONIOENCODING=utf8`)
 
 * [Syntax](doc/syntax.md) -- core language syntax
 
-<!-- DOUBLE BLEH: no relative link, no way to link to HTML!?!! -->
-
-* [Classes](https://rawcdn.githack.com/philbudne/xxl/ad795fc6506bc29c3db35efc7bee86680e34da58/src/dist/classes.html) -- built in classes (machine generated doc, delivered by external CDN)
+<!-- DOUBLE BLEH: no way to link to HTML!?!! no relative link!!!!! -->
+* [Classes](https://raw.githack.com/philbudne/xxl/main/src/dist/classes.html) -- built in classes (machine generated HTML, *delivered by external CDN*)
 
 * [Creating a Class](doc/create-class.md) -- how to create a new Class
 
