@@ -1446,6 +1446,14 @@ def list_get(l, r):
     return l.value[r.getvalue()]
 
 @pyfunc
+def list_insert(l, index, object):
+    """
+    Insert `object` at `index` (0 is first, -1 is last); Returns `null`.
+    """
+    l.value.insert(index.getvalue(), object)
+    return null_value
+
+@pyfunc
 def list_put(l, r, value):
     """
     `l[r] = value`
@@ -1457,6 +1465,7 @@ def list_put(l, r, value):
 # str, repr, for_each, each_for, map, map2 from Iterable (in bootstrap.xxl)
 List.setprop(const.METHODS, _mkdict({
     'append': list_append,
+    'insert': list_insert,
     'len': pobj_len,
     'pop': list_pop,
     # XXX slice(start[,end]) (return range of elements)
