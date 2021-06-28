@@ -1,6 +1,6 @@
 FIX
 ===
-Use Class.new arg dict "props" for static members/methods!!!
+Add test for Class.new "props"?
 
 Make VM "Error @" conform to FNAME:LINE:CHAR MSG format?
 
