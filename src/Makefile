@@ -59,7 +59,7 @@ $(ABIDENTICAL): $(A) $(B)
 
 ################
 
-classes.md: classes.py bootstrap.vmx lib/doc.xxl lib/markup.xxl $(TESTED)
+classes.md: classes.py .bootstrap lib/doc.xxl lib/markup.xxl $(TESTED)
 	./$(XXL) lib/doc.xxl classes > classes.md
 
 # uncomment to enable timing
@@ -93,7 +93,7 @@ $(C):	$(VM) $(B) $(PARSER_SRC)
 	$(RUNVMX) $(B) $(PARSER_SRC) > $(C).tmp && mv $(C).tmp $(C)
 
 # XXX test new file (w/ recursive make????) before replacing?!!
-bootstrap.vmx: bootstrap.xxl $(PARSER_VMX) $(VM)
+.bootstrap bootstrap.vmx: bootstrap.xxl $(PARSER_VMX) $(VM)
 	$(RUNVMX) $(PARSER_VMX) bootstrap.xxl > bootstrap.vmx.tmp
 	@if [ -f bootstrap.vmx ] && cmp bootstrap.vmx bootstrap.vmx.tmp; then \
 	    echo no change to bootstrap.vmx; rm -f bootstrap.vmx.tmp; \
@@ -102,12 +102,13 @@ bootstrap.vmx: bootstrap.xxl $(PARSER_VMX) $(VM)
 	    mv bootstrap.vmx.tmp bootstrap.vmx; \
 	    echo updated bootstrap.vmx; \
 	fi
+	@touch .bootstrap
 
 ################
 # run ONLY before git checkin for main repo
 # (so clean checkouts get initial VM code)
 
-install-dist: $(TESTED) $(DOCS)
+install-dist: $(TESTED) $(DOCS) .bootstrap
 	cp $(PARSER_VMX) bootstrap.vmx $(DOCS) dist/
 
 # manually check if dist dir up to date (before git checkin)
