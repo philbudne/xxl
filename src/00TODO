@@ -1,22 +1,21 @@
 FIX
 ===
-Use Class.new "props" for static members/methods!!!
+Use Class.new arg dict "props" for static members/methods!!!
 
 Make VM "Error @" conform to FNAME:LINE:CHAR MSG format?
 
-doc.xxl: generate index of classes (& Vars section) at top
+doc.xxl: generate (hidable?) index of classes (& Vars section) at top
 	hn Method NAME instead of "hn Method & hn+1 NAME"
 		(avoid tiny print)
 
 Makefile:
-	"make install" install to "lib"???????
-	complain if bootstrap.vmx, classes.md out of date (vs dist)
+	"make install" install to "dev"???????
 	"make html" -- generate html for classes & all lib & lib/ext files
 		in html dir??
-
-lib & ext/lib:
-	generate .md files, index.md file??
-	run all as tests??
+	have dist-check look at classes.md as well!!
+	lib & ext/lib:
+		generate .md files, index.md file??
+		run all as tests??
 
 *** BUG: Only CPObjects can be used as Dict keys
 	(Dicts currently indexed by Python values,

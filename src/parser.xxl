@@ -379,12 +379,12 @@ var PrattParser = Class.new({
 
 	ctoken: function (this) {
 	    """
-	    Check if deferred advance needed
-	    (was originally "check_advance", vs "cash_advance?!);
+	    Check if deferred advance needed, and fetch token if needed.
+	    (was originally "check_advance", vs "cash_advance?!");
 	    advance no longer reads next token;
 	     just marks new token is needed,
 	     so interactive REPL doesn't hang at end of stmt.
-	    returns current token
+	    Returns current token (Symbol)
 	    """
 	    if (this.need_advance) {
 		this.advance();
@@ -401,8 +401,8 @@ var PrattParser = Class.new({
 	}, // check
 
 	advance: function (this, id) {
-	    if (id && !this.check(id)) { // may recurse w/ null id
-		this._token.error("Expected " + id.to_str());
+	    if (id && !this.check(id)) { // may recurse w/ null id!
+		this._token.error("Expected " + id.repr());
 	    }
 	    if (!this.need_advance) {
 		this.need_advance = true; // defer, defer!!
@@ -656,9 +656,11 @@ var PrattParser = Class.new({
 			// XXX call gen_XXX based on this.arity???
 			this.error("No gen function");
 		    }
-		} // methods
+		}, // methods
+		props: {
+		    lbp: 0
+		}
 	    }); // Symbol
-	    p.Symbol.lbp = 0;	// Class member
 
 	    p.Name = Class.new({
 		name: "Name",
@@ -673,9 +675,11 @@ var PrattParser = Class.new({
 		    gen_lhs: function (this, vmcode) {
 			vmcode.emit_store(this.value, this);
 		    }
+		}, // methods
+		props: {
+		    lvalue: true
 		}
 	    });
-	    p.Name.lvalue = true; // class member
 
 	    p.ReadOnly = Class.new({ // not Const -- keep that for Stmt
 		name: "ReadOnly",
@@ -684,9 +688,11 @@ var PrattParser = Class.new({
 		    gen_lhs: function (this, vmcode) {
 			this.error("Should not happen (ReadOnly on LHS)"); // paranoia
 		    }
+		},
+		props: {
+		    lvalue: false // override from Name
 		}
 	    });
-	    p.ReadOnly.lvalue = false; // class member: override from Name
 
 	    p.Lit = Class.new({
 		name: "Lit",
@@ -708,10 +714,14 @@ var PrattParser = Class.new({
 		supers: [p.Symbol],
 		methods: {
 		    nud: function (this) { return(this); }
+		},
+		props: {
+		    end_block: true,
+		    eof: true
 		}
 	    });
-	    p.End.end_block = true; // Class property
-	    p.End.eof = true;	    // Class property
+//	    p.End.end_block = true; // Class property
+//	    p.End.eof = true;	    // Class property
 
 	    p.END = "(EOF)";	// .value for End Symbol
 
@@ -744,16 +754,20 @@ var PrattParser = Class.new({
 			// XXX have top level call gen_XXX based on arity?
 			this.gen_infix(vmcode);
 		    }
-		} // methods
+		}, // methods
+		props: {
+		    right_assoc: 0 // false: used in math
+		}
 	    });
-	    p.Infix.right_assoc = 0; // Class member
 
 	    // Right associative infix
 	    p.InfixR = Class.new({
 		name: "InfixR",
-		supers: [p.Infix]
+		supers: [p.Infix],
+		props: {
+		    right_assoc: 1 // true: used in math
+		}
 	    });
-	    p.InfixR.right_assoc = 1; // Class member
 
 	} // init method
     } // methods
@@ -821,7 +835,7 @@ var Parser = Class.new({
 		name: "Balanced",
 		methods: {
 		    nud: function (this) {
-			this.error("Unmatched");
+			this.error("Unbalanced");
 		    }
 		}
 	    });
@@ -851,10 +865,12 @@ var Parser = Class.new({
 			this.second.gen(vmcode); // rhs
 			this.first.gen_lhs(vmcode); // store
 		    }
+		}, // methods
+		props: {
+		    lbp: p.PASS,
+		    exp_stmt: true
 		}
 	    });
-	    p.Assign.lbp = p.PASS; // Class member
-	    p.Assign.exp_stmt = true;
 	    p.add_symbol_class("=", p.Assign);
 
 	    // base class for OP=
@@ -876,12 +892,12 @@ var Parser = Class.new({
 	    });
 
 	    p.add_assignop = function (name, id, aop) {
-		var c = Class.new({
+		var C = Class.new({
 		    name: name,
-		    supers: [p.AssignOp]
+		    supers: [p.AssignOp],
+		    props: { aop: aop }
 		});
-		c.aop = aop;	// Class member
-		p.add_symbol_class(id, c);
+		p.add_symbol_class(id, C);
 	    };
 	    p.add_assignop("AssignPlus",  "+=", "+");
 	    p.add_assignop("AssignMinus", "-=", "-");
@@ -912,9 +928,11 @@ var Parser = Class.new({
 
 			vmcode.drop_fwd_label(done_label);
 		    }
-		} // methods
+		}, // methods
+		props: {
+		    lbp: p.PTERN
+		}
 	    });
-	    p.Ternary.lbp = p.PTERN; // Class member
 	    p.add_symbol_class("?", p.Ternary);
 
 	    p.AndIf = Class.new({
@@ -928,9 +946,11 @@ var Parser = Class.new({
 			this.second.gen(vmcode); // lhs true: eval rhs
 			vmcode.drop_fwd_label(done_label);
 		    }
+		},
+		props: {
+		    lbp: p.PLAND
 		}
 	    });
-	    p.AndIf.lbp = p.PLAND; // Class member
 	    p.add_symbol_class("&&", p.AndIf);
 
 	    p.OrIf = Class.new({
@@ -944,9 +964,11 @@ var Parser = Class.new({
 			this.second.gen(vmcode); // lhs false: eval rhs
 			vmcode.drop_fwd_label(done_label);
 		    }
+		},
+		props: {
+		    lbp: p.PLOR
 		}
 	    });
-	    p.OrIf.lbp = p.PLOR;	// Class member
 	    p.add_symbol_class("||", p.OrIf);
 
 	    // right associative
@@ -999,9 +1021,11 @@ var Parser = Class.new({
 			    this.gen_infix(vmcode);
 			}
 		    } // gen
-		} // methods
+		}, // methods
+		props: {
+		    lbp: p.PSUB
+		}
 	    });
-	    p.Minus.lbp = p.PSUB; // Class member
 	    p.add_symbol_class("-", p.Minus);
 
 	    // right associative
@@ -1038,9 +1062,11 @@ var Parser = Class.new({
 			this.first.gen(vmcode); // object
 			vmcode.emit_lhsop(this.value, this);
 		    }
-		} // methods
+		}, // methods
+		props: {
+		    lbp: p.PDOT
+		}
 	    });
-	    p.Dot.lbp = p.PDOT;	// Class member
 	    p.add_symbol_class(".", p.Dot);
 
 	    // superclass "." operator
@@ -1104,9 +1130,11 @@ var Parser = Class.new({
 			this.first.gen(vmcode); // container
 			vmcode.emit_lhsop(this.value, this);
 		    }
-		} // methods
+		}, // methods
+		props: {
+		    lbp: p.PIDX
+		}
 	    });
-	    p.LBrack.lbp = p.PIDX; // Class member
 	    p.add_symbol_class("[", p.LBrack);
 
 	    p.LParen = Class.new({
@@ -1190,10 +1218,12 @@ var Parser = Class.new({
 			    vmcode.emit_call(this.second.len(), this);
 			} // no ...args
 		    } // gen
-		} // methods
+		}, // methods
+		props: {
+		    lbp: p.PFUN,
+		    exp_stmt: true
+		}
 	    }); // LParen
-	    p.LParen.lbp = p.PFUN;      // Class member
-	    p.LParen.exp_stmt = true; // Class member
 	    p.add_symbol_class("(", p.LParen);
 
 	    p.add_prefix("Not", "!");
@@ -1526,33 +1556,33 @@ var Parser = Class.new({
 
 	// XXX move to PrattParser?
 	add_terminal: function (this_parser, name, id, super) {
-	    var c = Class.new({
+	    var C = Class.new({
 		name: name,
 		supers: [super || this_parser.Symbol]
 	    });
-	    this_parser.add_symbol_class(id, c);
-	    return(c);
+	    this_parser.add_symbol_class(id, C);
+	    return(C);
 	}, // add_terminal
 
 	// XXX move to PrattParser?
 	add_infix: function(this_parser, name, id, right, lbp) {
 	    // helper to generate simple infix Symbol classes
-	    var c = Class.new({
+	    var C = Class.new({
 		name: name,
-		supers: [right ? this_parser.InfixR : this_parser.Infix]
+		supers: [right ? this_parser.InfixR : this_parser.Infix],
+		props: { lbp: lbp }
 	    });
-	    c.lbp = lbp;	// Class member
-	    this_parser.add_symbol_class(id, c);
+	    this_parser.add_symbol_class(id, C);
 	},
 
 	// XXX move to PrattParser?
 	add_prefix: function (this_parser, name, id) {
 	    // helper to generate simple prefix Symbol classes
-	    var c = Class.new({
+	    var C = Class.new({
 		name: name,
 		supers: [this_parser.Prefix]
 	    });
-	    this_parser.add_symbol_class(id, c);
+	    this_parser.add_symbol_class(id, C);
 	},
 
 	statements: function (this) {
