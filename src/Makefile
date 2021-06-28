@@ -130,6 +130,8 @@ check-dist: $(PARSER_VMX)
 	else \
 	    echo "NOTE: dist/classes.md out of date"; \
 	fi
+	@rm -f .tmp.[cd]
+
 ################
 GENERATED=$(A) $(B) $(C) $(TESTED) $(ABIDENTICAL) $(DOC)
 clean:
