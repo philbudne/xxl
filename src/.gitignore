@@ -10,3 +10,4 @@ mkparser
 *.bak
 notes
 classes.md
+.tmp.*
