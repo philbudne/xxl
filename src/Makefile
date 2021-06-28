@@ -123,7 +123,13 @@ check-dist: $(PARSER_VMX)
 		echo "NOTE: dist/$$FILE out of date"; \
 	    fi; \
 	done
-
+	@grep -v 'formatted by doc.xxl' classes.md > .tmp.c
+	@grep -v 'formatted by doc.xxl' dist/classes.md > .tmp.d
+	@if cmp -s .tmp.c .tmp.d; then \
+	    echo "dist/classes.md up to date"; \
+	else \
+	    echo "NOTE: dist/classes.md out of date"; \
+	fi
 ################
 GENERATED=$(A) $(B) $(C) $(TESTED) $(ABIDENTICAL) $(DOC)
 clean:

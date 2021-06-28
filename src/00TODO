@@ -12,7 +12,6 @@ Makefile:
 	"make install" install to "dev"???????
 	"make html" -- generate html for classes & all lib & lib/ext files
 		in html dir??
-	have dist-check look at classes.md as well!!
 	lib & ext/lib:
 		generate .md files, index.md file??
 		run all as tests??
