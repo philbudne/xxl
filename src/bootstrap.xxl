@@ -1,7 +1,7 @@
 // -*-js-*-
 
 // The pre-compiled version of this file (bootstrap.vmx) is loaded
-// into every new module namespace.
+// into every new module namespace [run from __modinfo._import, below!].
 
 // First time loaded, defines native code methods and functions.
 // Always: Parses and executes source file (if any) one line at a time so that
@@ -66,11 +66,11 @@ if (__modinfo.main) {		// once only
 	"""
 	// _find_in_lib_path takes optional list of suffixes to try
 	var rets = __xxl._import(__xxl._find_in_lib_path(name));
-	var mod  = rets[0];	// Module
-	var boot = rets[1];	// Closure for bootstrap.vmx (first time only)
+	var mod  = rets[0]; // Module
+	var boot = rets[1]; // Closure for bootstrap.vmx(!) (first time only)
 
 	if (boot) {
-	    boot();
+	    boot(); // start execution of bootstrap.vmx in new Module!
 	}
 
 	// check for parser extensions at "well known" name:
