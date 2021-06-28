@@ -28,6 +28,7 @@ Tested under Python 3.7.9 and PyPy3 7.3.1 (needs `export PYTHONIOENCODING=utf8`)
 * [Syntax](doc/syntax.md) -- core language syntax
 
 <!-- DOUBLE BLEH: no way to link to HTML!?!! no relative link!!!!! -->
+<!-- also https://htmlpreview.github.io/ -->
 * [Classes](https://raw.githack.com/philbudne/xxl/main/src/dist/classes.html) -- built in classes (machine generated HTML, *delivered by external CDN*)
 
 * [Creating a Class](doc/create-class.md) -- how to create a new Class
