@@ -1,9 +1,5 @@
 FIX
 ===
-BUG null ==(=) undefined is fatal
-	BUT undefined ==(=) null is false
-	have pobj_(ident,differ) return false if both not PObject?
-
 Make VM "Error @" conform to FNAME:LINE:CHAR MSG format?
 
 doc.xxl:

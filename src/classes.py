@@ -1191,7 +1191,10 @@ def pobj_ident(l, r):
     as value of PObject `r`
     """
     lv = l.value
-    rv = r.getvalue()
+    if hasattr(r, 'value'):     # faster than isinstance(x, PObject)??
+        rv = r.getvalue()
+    else:
+        return false_value
     return mkbool(lv is rv)
 
 @pyfunc
@@ -1202,7 +1205,10 @@ def pobj_differ(l, r):
     as value of PObject `r`
     """
     lv = l.value
-    rv = r.getvalue()
+    if hasattr(r, 'value'):     # faster than isinstance(x, PObject)??
+        rv = r.getvalue()
+    else:
+        return false_value
     return mkbool(lv is not rv)
 
 @pyfunc
