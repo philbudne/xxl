@@ -18,9 +18,11 @@ Makefile:
 
 *** BUG: Only CPObjects can be used as Dict keys
 	first attempt in github branch cobj-dict-key
+	passes all tests, EXCEPT ",".join({"a":1, "b":2})
 	(issues at top of classes.py)
 	-- cannot be a PyIterable?
 	-- Module.modules dict
+	-- mkstr(value) in BinOpInstr
 
 *** BUG: can overwrite "const" values in a Module!!!
 	need descriptors (slots) ??
