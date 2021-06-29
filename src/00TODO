@@ -6,8 +6,7 @@ BUG null ==(=) undefined is fatal
 
 Make VM "Error @" conform to FNAME:LINE:CHAR MSG format?
 
-doc.xxl: links not working in MD headers
-	need blank lines before headers?
+doc.xxl:
 	generate (hidable?) index of classes (& Vars section) at top
 
 Makefile:
@@ -199,6 +198,9 @@ type wrapping:
 			(tail calls to "new")
 
 REPL: handle parse errors!!!
+	p.parse_statement_error() ??
+		stash "return" as "_fatal"
+		need lexer "reset" method (dump buffered input)???
 
 How do Ruby and ES6 deal with calling superclass methods?
 
