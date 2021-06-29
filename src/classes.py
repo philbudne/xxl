@@ -228,7 +228,6 @@ class CContinuation(CCallable):
         return "<Continuation: %s>" % self.defn()
 
     def invoke(self, vm):
-        vm.restore_frame(self.fp) # just like ReturnInstr
         l = len(vm.args)
         if l == 1:
             vm.ac = vm.args[0]  # return value
@@ -236,6 +235,8 @@ class CContinuation(CCallable):
             vm.ac = null_value
         else:
             raise UError("Too many Continuation args %s" % len(vm.args))
+        # after args check, for full backtrace
+        vm.restore_frame(self.fp) # just like ReturnInstr
 
     def args(self):
         """
