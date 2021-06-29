@@ -144,6 +144,7 @@ def xxl__tokenizer(filename, prefix, suffix):
     if fnstr == '-':
         f = sys.stdin
         print("XXL/0")
+        print("type a complete statement, or an expression terminated with ';'")
         interactive = True
     else:
         # encoding= needed for pypy3 7.3.1 (python 3.6)
