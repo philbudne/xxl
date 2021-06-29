@@ -1655,6 +1655,7 @@ var Parser = Class.new({
 	    """
 	    here when interactive parse failed
 	    """
+	    this.reset_prompt();
 	    this.reset_tokenizer();
 	    this._token = this._next_token = null;
 	    this.need_advance = true;

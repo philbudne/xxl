@@ -424,8 +424,8 @@ if (__modinfo.file) {
 	    // generate Closure in module initial scope and invoke
 	    var result = __modinfo.assemble(insts, file)();
 	    if (interactive) {	  // input from tty?
-		__xxl.print(result); // output statement result
 		p.reset_prompt(); // change prompt to start of statement
+		__xxl.print(result); // output statement result
 	    }
 	}
 	if (__modinfo.debug_bootstrap) {
