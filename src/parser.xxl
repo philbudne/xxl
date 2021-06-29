@@ -213,7 +213,7 @@ var VMCode = Class.new({
 	    this._emit([sym.where, "append"]);
 	},
 
-	// for calls w/ ...arg 
+	// for calls w/ ...arg
 	emit_clargs: function (this, sym) {
 	    this._emit([sym.where, "clargs"]);
 	},
@@ -300,6 +300,7 @@ var PrattParser = Class.new({
 	    this.reset_prompt = ret[1]; // void function
 	    this.pointer = ret[2]; // func(line,pos); prints line w/ pointer
 	    this.interactive = ret[3]; // bool
+	    this.reset_tokenizer = ret[4];
 
 	    this._fatal = fatal || function () { __xxl.exit(1); };
 
@@ -324,7 +325,7 @@ var PrattParser = Class.new({
 	},
 	_error: function (this, where, token, msg) {
 	    this._msg(where, "ERROR", token, msg);
-	    this._fatal();
+	    this._fatal();	// call error handler
 	},
 	_warning: function(this, where, token, msg) {
 	    this._msg(where, "WARNING", token, msg);
@@ -463,6 +464,14 @@ var PrattParser = Class.new({
 	    """
 	    var t = this.ctoken();
 	    return(t.end_block || t.eof); // see also check_end
+	},
+
+	statement_error: function (this) {
+	    """returns null on parse error;"""
+	    // XXX save "return" in a var,
+	    // create a closure that calls it after cleanup??
+	    this._fatal = return;
+	    return(this.statement());
 	},
 
 	statement: function (this, labeled) {
@@ -1631,7 +1640,7 @@ var Parser = Class.new({
 
 	    // set by new_module in classes.py
 	    this.predef("__modinfo");
-				   
+
 	    this.need_advance = true; // pump needs priming
 	},
 	parse: function (this, fname) {	// parse whole file
@@ -1640,6 +1649,15 @@ var Parser = Class.new({
 	    this.advance(this.END);
 	    this.scope = this.scope.pop();
 	    return(s);		// return list of statement ASTs
+	},
+
+	reset: function (this) {
+	    """
+	    here when interactive parse failed
+	    """
+	    this.reset_tokenizer();
+	    this._token = this._next_token = null;
+	    this.need_advance = true;
 	}
     } // Parser methods
 });

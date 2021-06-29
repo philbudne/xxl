@@ -61,9 +61,8 @@ class Stream(object):
     def __init__(self, f, interactive):
         self.f = f
         self.interactive = interactive
-        self.i = 0
-        self.buf = None
         self.nextc = None
+        self.reset()
         self.line_ = 1
         self.reset_prompt()
         self.orig = self.prev = ''
@@ -72,7 +71,10 @@ class Stream(object):
 
     def reset_prompt(self):
         self.prompt = PROMPT1
-        #print("reset", self.prompt)
+
+    def reset(self):
+        self.i = 0
+        self.buf = ''
 
     def change_prompt(self):
         self.prompt = PROMPT2
@@ -96,7 +98,7 @@ class Stream(object):
             if self.interactive:
                 try:
                     self.buf = input(self.prompt) + '\n'
-                except (EOFError, KeyboardInterrupt):
+                except (EOFError, KeyboardInterrupt) as e:
                     print('')
                     return ''
             else:
@@ -175,7 +177,7 @@ def isunicode(c):
     """
     return True if `c` is a non-ASCII unicode code point
     """
-    return ord(c) >= 128
+    return c != '' and ord(c) >= 128
 
 class Tokenizer:
     def __init__(self, f, prefix, suffix, interactive=False):
@@ -192,14 +194,17 @@ class Tokenizer:
     def reset_prompt(self):
         self.s.reset_prompt()
 
+    def reset(self):
+        self.s.reset()
+        self.c = self.s.curr()
+
     def make(self, type_, value):
         #print('make', type_, value, self.line, self.from_, self.s.pos())
         self.s.change_prompt()
         return Token(type_, value, self.line, self.from_, self.s.pos())
 
     def make_error(self, value, msg):
-        # NOTE: at current pos
-        return Token('ERROR', value, self.line, self.s.pos(), self.s.pos(), msg)
+        return Token('ERROR', value, self.line, self.from_, self.s.pos(), msg)
 
     def pointer(self, line, pos):
         self.s.pointer(line, pos)

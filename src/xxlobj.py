@@ -94,7 +94,7 @@ def find_in_lib_path(fname, suffixes=[]):
             print('try', path)
         if os.path.exists(path):
             if DEBUG_LIB_PATH:
-                print('found', path)
+                print(' found', path)
             return path
         for suffix in suffixes:
             p2 = path + suffix
@@ -102,11 +102,13 @@ def find_in_lib_path(fname, suffixes=[]):
                 print('try', p2)
             if os.path.exits(p2):
                 if DEBUG_LIB_PATH:
-                    print('found', p2)
+                    print(' found', p2)
                 return p2
         return None
 
     p = trydir(None)
+    if p:
+        return p
     for dir in XXL_LIB_PATH:
         p = trydir(dir)
         if p:
@@ -179,7 +181,13 @@ def xxl__tokenizer(filename, prefix, suffix):
         tokenizer.reset_prompt()
         return classes.null_value
 
-    return classes.wrap([next, reset_prompt, pointer, tokenizer.s.interactive])
+    @classes.pyfunc
+    def reset_tokenizer():
+        t = tokenizer.reset()
+        return classes.null_value
+
+    return classes.wrap([next, reset_prompt, pointer,
+                         tokenizer.s.interactive, reset_tokenizer])
 
 ################
 

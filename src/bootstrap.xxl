@@ -381,6 +381,9 @@ if (__modinfo.file) {
 
     if (file.ends_with(".vmx")) {
 	var f2 = __xxl._find_in_lib_path(file);
+	if (__modinfo.debug_bootstrap) {
+	    __xxl.error("bootstrap", file, "load_vmx", f2);
+	}
 	__modinfo.load_vmx(f2)(); // load vmx as Closure and invoke
 	if (__modinfo.debug_bootstrap) {
 	    __xxl.error("bootstrap", file, "load_vmx finished");
@@ -398,9 +401,20 @@ if (__modinfo.file) {
 	__modinfo.parser = p;	// make visible to parser extensions
 
 	p.start_parse(file);
-	while (!p.check_end()) { // check for EOF
+	var interactive = p.interactive;
+	while (!p.check_end()) continue: { // check for EOF
 	    // parse one statement into abstact syntax tree of Symbols
-	    var ast = p.statement();
+	    var ast;
+	    if (interactive) {
+		ast = p.statement_error(); // returns null on error
+		if (!ast) {
+		    p.reset();	// (try to) reset Parser state
+		    continue();
+		}
+	    }
+	    else {
+		ast = p.statement();
+	    }
 
 	    // generate VM code
 	    var vmcode = pm.VMCode.new();
@@ -409,12 +423,10 @@ if (__modinfo.file) {
 
 	    // generate Closure in module initial scope and invoke
 	    var result = __modinfo.assemble(insts, file)();
-
-	    if (p.interactive) {  // input from tty?
+	    if (interactive) {	  // input from tty?
 		__xxl.print(result); // output statement result
 		p.reset_prompt(); // change prompt to start of statement
 	    }
-
 	}
 	if (__modinfo.debug_bootstrap) {
 	    __xxl.error("bootstrap", file, "parse/execute finished");
