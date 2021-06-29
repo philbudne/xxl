@@ -19,6 +19,8 @@ Makefile:
 *** BUG: Only CPObjects can be used as Dict keys
 	first attempt in github branch cobj-dict-key
 	(issues at top of classes.py)
+	-- cannot be a PyIterable?
+	-- Module.modules dict
 
 *** BUG: can overwrite "const" values in a Module!!!
 	need descriptors (slots) ??
