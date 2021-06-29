@@ -628,7 +628,8 @@ class SpreadArgInstr(VMInstr0):
 @reginstr
 class Call0Instr(VMInstr0):
     """
-    actual function call for calls with span arguments
+    actual function call for calls with spread arguments
+    (does not alter vm.args)
     """
     name = "call0"
 
