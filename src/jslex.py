@@ -196,10 +196,10 @@ class Tokenizer:
 
     def reset(self):
         self.s.reset()
-        self.c = self.s.curr()
+        self.c = ' '
 
     def make(self, type_, value):
-        #print('make', type_, value, self.line, self.from_, self.s.pos())
+        #print('make', type_, value, self.line, self.from_, file=sys.stderr)
         self.s.change_prompt()
         return Token(type_, value, self.line, self.from_, self.s.pos())
 
