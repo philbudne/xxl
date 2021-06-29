@@ -99,6 +99,7 @@ GETPROP_NONE = None
 
 class CObject:
     __slots__ = ['props', 'klass']
+    hasvalue = False
 
     def __init__(self, klass):
         # klass may only be None when creating initial Class (Object)
@@ -117,15 +118,15 @@ class CObject:
 
     def classname(self):
         """
-        return Python string for object class name
+        return Python string for object class name; used in __repr__
         """
         c = self.getclass()
         if not getprop_ok(c):
             return "Unknown!"
 
-        n = c.getprop(const.NAME).value # XXX getstr
+        n = c.getprop(const.NAME).getvalue()
         if subclass_of(c, [Class]):
-            return '%s: %s' % (n, self.getprop(const.NAME).value)
+            return '%s: %s' % (n, self.getprop(const.NAME).getvalue())
 
         return n
 
@@ -150,7 +151,7 @@ class CObject:
         self.props[prop] = value
 
     def getvalue(self):
-        raise UError("not a Python valued Object")
+        raise UError("not a Python valued Object") # ValueError?!
 
     def __str__(self):
         return repr(self)       # XXX ???
@@ -164,11 +165,12 @@ class CPObject(CObject):
     (has a value property which contains a Python type)
     """
     __slots__ = ['value']
+    hasvalue = True
 
     def __init__(self, this_class):
         ### XXX TEMP
         super().__init__(this_class)
-        self.value = None       # set by init method
+        self.value = None       # set by init method and/or _new_pobj
 
     def getvalue(self):
         return self.value
@@ -186,10 +188,12 @@ class CPObject(CObject):
         return self.value.__hash__()
 
     def __eq__(self, other):
-        return (isinstance(other, CPObject) and self.value == other.value)
+        # XXX raise ValueError?
+        return hasattr(other,'value') and self.value == other.value
 
-    def __lt__(self, other):
-        return (isinstance(other, CPObject) and self.value < other.value)
+    def __lt__(self, other):    # need for sorted iterator
+        # XXX raise ValueError?
+        return self.value < other.getvalue()
 
     def __repr__(self):
         """show wrapped value"""
@@ -203,13 +207,13 @@ class CCallable(CObject):
     Base class for directly callable CObjects.
     """
     def invoke(self, vm):
-        raise Exception("invoke not overridden")
+        raise Exception("invoke not overridden") # SNH -- Should Not Happen
 
     def args(self):
-        return ["<FIXME1>"]     # XXX
+        raise Exception("args not overridden") # SNH
 
     def defn(self):
-        return "<FIXME2>"
+        raise Exception("defn not overridden") # SNH
 
 class CContinuation(CCallable):
     """
@@ -736,9 +740,9 @@ def is_true(obj):
     """
     if obj is false_value or obj is null_value or obj is undef_value:
         return False
-    if hasattr(obj, 'value') and obj.value == 0: # faster than isinstance?
+    if obj.hasvalue and obj.value == 0:
         return False
-    return True
+    return True                 # not falsey
 
 ################ Object -- the base type for all instances and classes
 
@@ -809,7 +813,7 @@ def _not(x):
 def obj_not(x):
     """
     Object unary logical "not" operator; returns `true` if `x` is "falsey"
-    (false, null, or zero)
+    (false, zero, null, or undefined)
     """
     return _not(x)
 
@@ -1190,12 +1194,7 @@ def pobj_ident(l, r):
     is the same Python Object
     as value of PObject `r`
     """
-    lv = l.value
-    if hasattr(r, 'value'):     # faster than isinstance(x, PObject)??
-        rv = r.getvalue()
-    else:
-        return false_value
-    return mkbool(lv is rv)
+    return mkbool(r.hasvalue and l.value is r.value)
 
 @pyfunc
 def pobj_differ(l, r):
@@ -1204,12 +1203,7 @@ def pobj_differ(l, r):
     is not the same Python Object
     as value of PObject `r`
     """
-    lv = l.value
-    if hasattr(r, 'value'):     # faster than isinstance(x, PObject)??
-        rv = r.getvalue()
-    else:
-        return false_value
-    return mkbool(lv is not rv)
+    return mkbool(r.hasvalue and l.value is not r.value)
 
 @pyfunc
 def pobj__format(this, fmt):
@@ -1531,7 +1525,7 @@ def mul(l, r):
         return r
     if rv == 1:
         return l
-    return _new_pobj(l.getclass(), l.value * r.getvalue())
+    return _new_pobj(l.getclass(), lv * rv)
 
 @pyfunc
 def div(l, r):
@@ -1544,60 +1538,50 @@ def div(l, r):
         return l
     return _new_pobj(l.getclass(), lv / rv)
 
-def _eq(l, r):
-    """
-    call any time (not a pyfunc)
-    takes CPObject, returns CPObject
-    """
-    return mkbool(l.value == r.getvalue())
-
 @pyfunc
 def eq(l, r):
     """
     return `true` if value of `l` is the same as value of `r`
     """
-    return _eq(l, r)
+    # fail sliently if r is not PObject
+    return mkbool(r.hasvalue and l.value == r.value)
 
 @pyfunc
 def ne(l, r):
     """
     return `true` if value of `l` is different from the value of `r`
     """
-    return _not(_eq(l, r))
-
-def _ge(l, r):
-    return mkbool(l.value >= r.getvalue())
+    # fail sliently if r is not PObject
+    return mkbool(r.hasvalue and l.value != r.value)
 
 @pyfunc
 def ge(l, r):
     """
     return `true` if value of `l` is >= the value of `r`
     """
-    return _ge(l, r)
+    return mkbool(l.value >= r.getvalue())
 
 @pyfunc
 def lt(l, r):
     """
     return `true` if value of `l` is < the value of `r`
     """
-    return _not(_ge(l, r))
-
-def _le(l, r):
-    return mkbool(l.value <= r.getvalue())
+    return mkbool(l.value < r.getvalue())
 
 @pyfunc
 def le(l, r):
     """
     return `true` if value of `l` is <= the value of `r`
     """
-    return _le(l, r)
+    return mkbool(l.value <= r.getvalue())
 
 @pyfunc
 def gt(l, r):
     """
     return `true` if value of `l` is > the value of `r`
+    (implemented as `!(l <= r)`)
     """
-    return _not(_le(l, r))
+    return mkbool(l.value > r.getvalue())
 
 @pyfunc
 def bitand(l, r):
@@ -1725,7 +1709,7 @@ def str_slice(this, start, end=None):
     return _new_pobj(this.getclass(), ret)
 
 @pyfunc
-def str_split(this, sep=None, limit=-1):
+def str_split(this, sep=None, limit=None):
     """
     Return a List of the words in the string,
     using sep as the delimiter string (default to `null` -- any whitespace).
@@ -1733,7 +1717,9 @@ def str_split(this, sep=None, limit=-1):
     """
     if sep is not None:
         sep = sep.getvalue()         # XXX getstr
-    if limit != -1:
+    if limit is None:
+        limit = -1
+    else:
         limit = limit.getvalue()     # XXX getint
     # will use current "Str" defn:
     return wrap(this.value.split(sep, limit))
@@ -1954,8 +1940,9 @@ PyObject = defclass(PClass, const.PYOBJECT, [Object],
 def unwrap(x):
     """
     recursively unwrap an Object, to pass to PyObject on call
+    (Pythonify value)
     """
-    if hasattr(x, 'value'):     # faster than isinstance(x, PObject)??
+    if x.hasvalue:
         x = x.value
         if isinstance(x, list): # XXX handle any iterable?
             return [unwrap(y) for y in x]
@@ -2259,6 +2246,7 @@ def wrap(value):
         return new_by_name('Dict', value)
 
     if hasattr(value, '__next__'): # Python I/O objects!
+        # should also have __iter__
         return new_by_name(const.PYITERATOROBJECT, value)
 
     if hasattr(value, '__iter__'):
@@ -2295,7 +2283,6 @@ def classes_init(argv, parser_vmx):
 
     # create __xxl object
     xxlobj.create_xxl_object(root_scope, argv=argv, parser_vmx=parser_vmx)
-
 
     # UTTERLY VILE: either hide in a "make_internal_module"
     #   or do it more cleanly!!!!
