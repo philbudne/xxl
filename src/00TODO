@@ -4,6 +4,7 @@ Make VM "Error @" conform to FNAME:LINE:CHAR MSG format?
 
 doc.xxl:
 	generate (hidable?) index of classes (& Vars section) at top
+	by default hide all greyed out methods/members?!
 
 Makefile:
 	"make install" install to "dev"???????
@@ -22,10 +23,6 @@ Makefile:
 
 *** BUG: can overwrite "const" values in a Module!!!
 	need descriptors (slots) ??
-
-wrap:
-	PyObject: test if Python object is Itera{ble,tor};
-		if so, return PyItera{ble,tor}Object???
 
 TEST
 ====
