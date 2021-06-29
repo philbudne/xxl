@@ -98,8 +98,12 @@ var HTML = Class.new({
 	},
 
 	head: function (this, ...title) { // XXX take Dict? List?? Dict of Lists???
-	    this.append(this._twrap("head",
-				    [this._twrap("title", title)]));
+	    this.append('<head>');
+	    this.nappend(this._twrap("title", title));
+	    this.nappend('''<style>
+code { font-family:Courier,monospace; font-size:1.25em; }
+</style>
+</head>''');
 	},
 
 	start_body: function (this) {
