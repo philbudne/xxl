@@ -1341,7 +1341,7 @@ PyIterable.setprop('range', pyiterable_range) # static method
 ################ Dict
 
 @pyfunc
-def dict_put(l, r, value):
+def dict_putitem(l, r, value):
     """
     `l[r] = value`
     """
@@ -1350,7 +1350,7 @@ def dict_put(l, r, value):
     return value                # lhsop MUST return value
 
 @pyfunc
-def dict_get(l, r):
+def dict_getitem(l, r):
     """
     `l[r]`
     """
@@ -1404,10 +1404,10 @@ Dict.setprop(const.METHODS, _mkdict({
     'values': dict_values,
 }))
 Dict.setprop(const.BINOPS, _mkdict({
-    '[': dict_get
+    '[': dict_getitem
 }))
 Dict.setprop(const.LHSOPS, _mkdict({
-    '[': dict_put
+    '[': dict_putitem
 }))
 
 ################ List
