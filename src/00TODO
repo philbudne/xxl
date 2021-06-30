@@ -1,7 +1,5 @@
 FIX
 ===
-Fix "Expected" error!
-
 Make VM "Error @" conform to FNAME:LINE:CHAR MSG format?
 
 doc.xxl:

@@ -1,4 +1,4 @@
-{"v": 1.0, "fn": "parser.xxl", "mt": 1624926313.5112424, "sz": 50018}
+{"v": 1.0, "fn": "parser.xxl", "mt": 1625036222.1482482, "sz": 50027}
 [["60:1", "var", "__doc"],
  ["60:15", "lit", "Extensible Parser/Compiler for XXL."],
  ["60:1", "store", "__doc"],
@@ -1306,7 +1306,8 @@
      ["406:42", "push"],
      ["406:21", "lit", "Expected "],
      ["406:33", "binop", "+"],
-     ["406:33", "push"],
+     ["406:45", "binop_lit", "+", " saw"],
+     ["406:45", "push"],
      ["406:3", "load", "this"],
      ["406:7", "binop_lit", ".", "_token"],
      ["406:14", "binop_lit", ".", "error"],

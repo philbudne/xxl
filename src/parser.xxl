@@ -403,7 +403,7 @@ var PrattParser = Class.new({
 
 	advance: function (this, id) {
 	    if (id && !this.check(id)) { // may recurse w/ null id!
-		this._token.error("Expected " + id.repr());
+		this._token.error("Expected " + id.repr() + " saw");
 	    }
 	    if (!this.need_advance) {
 		this.need_advance = true; // defer, defer!!
