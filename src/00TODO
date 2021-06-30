@@ -19,8 +19,11 @@ Makefile:
 *** BUG: Only CPObjects can be used as Dict keys
 	first attempt in github branch cobj-dict-key
 	passes all tests, EXCEPT ",".join({"a":1, "b":2})
-	(issues at top of classes.py)
-	-- cannot be a PyIterable?
+	 replace 'return {key: unwrap(val) for key, val in x.items()}'
+		with 'return {unwrap(key): unwrap(val) for key, val in x.items()}'???
+	 OR wrap Dict in own class, w/ custom __iter__ and __reversed__ methods?
+	 Do the same for List, to avoid [unwrap(y) for y in x]???
+
 	-- Module.modules dict
 	-- mkstr(value) in BinOpInstr
 
