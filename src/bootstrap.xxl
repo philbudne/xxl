@@ -263,16 +263,16 @@ if (__modinfo.main) {		// once only
     var repr = function (x) { return(x.repr()); };
     classes.List.__methods['repr'] = function (this) {
 	"""
-	return representation of List
+	Return representation of `this` List as Str.
 	"""
 	return("[" + ", ".join(this.map(repr)) + "]");
     };
 
     classes.List.__methods['extend'] = function (this, iterable) {
 	"""
-	Create an iterator from `iterable`
-	and iterate appending values to `this`
-	returns `null`
+	Create an iterator from `iterable`,
+	and iterate appending values to `this`;
+	Returns `null`
 	"""
 	var iter = iterable.iter();
 	while (true) {
