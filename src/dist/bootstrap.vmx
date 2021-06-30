@@ -1,4 +1,4 @@
-{"v": 1.0, "fn": "bootstrap.xxl", "mt": 1624926331.3675592, "sz": 11187}
+{"v": 1.0, "fn": "bootstrap.xxl", "mt": 1625002925.3298616, "sz": 11204}
 [["10:5", "load", "__modinfo"],
  ["10:14", "binop_lit", ".", "booting"],
  ["10:1", "jumpe", 4],
@@ -671,7 +671,7 @@
      ["268:2", "load", "return"],
      ["268:8", "call", 1],
      ["264:38", "return"]],
-  "\n\treturn representation of List\n\t"],
+  "\n\tReturn representation of `this` List as Str.\n\t"],
    ["264:27", "push"],
    ["264:28", "push_lit", "repr"],
    ["264:5", "load", "classes"],
@@ -704,7 +704,7 @@
        ["278:2", "jrst", 1],
        ["278:2", "return"]]],
      ["271:40", "return"]],
-  "\n\tCreate an iterator from `iterable`\n\tand iterate appending values to `this`\n\treturns `null`\n\t"],
+  "\n\tCreate an iterator from `iterable`,\n\tand iterate appending values to `this`;\n\tReturns `null`\n\t"],
    ["271:27", "push"],
    ["271:28", "push_lit", "extend"],
    ["271:5", "load", "classes"],
