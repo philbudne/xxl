@@ -122,10 +122,10 @@ def xxl__find_in_lib_path(fname, suffixes=None):
     return full path of file in current dir, or in XXL_LIB_PATH
     """
     if suffixes:
-        suff2 = [x.value for x in suffixes.value] # XXX unwrap?
+        suff2 = [x.getvalue() for x in suffixes.getvalue()] # XXX unwrap?
     else:
         suff2 = []
-    return classes.mkstr(find_in_lib_path(fname.value, suff2))
+    return classes.mkstr(find_in_lib_path(fname.getvalue(), suff2))
 
 ################
 
@@ -138,9 +138,9 @@ def xxl__tokenizer(filename, prefix, suffix):
     returns a token generator:
     returns Objects, and then null
     """
-    fnstr = filename.value # XXX getstr()?
-    pstr = prefix.value    # XXX getstr()?
-    sstr = suffix.value    # XXX getstr()?
+    fnstr = filename.getvalue() # getstr()?
+    pstr = prefix.getvalue()    # getstr()?
+    sstr = suffix.getvalue()    # getstr()?
     if fnstr == '-':
         f = sys.stdin
         print("XXL/0")
@@ -155,7 +155,7 @@ def xxl__tokenizer(filename, prefix, suffix):
 
     @classes.pyfunc
     def next():
-        t = tokenizer.next()
+        t = tokenizer.next()    # jslex.Token object
         if not t:
             return classes.null_value
         where = "%s:%s:%s" % (fnstr, t.lineno, t.from_)
@@ -174,7 +174,7 @@ def xxl__tokenizer(filename, prefix, suffix):
 
     @classes.pyfunc
     def pointer(line, pos):
-        tokenizer.pointer(line.value, pos.value) # XXX getint
+        tokenizer.pointer(line.getvalue(), pos.getvalue()) # XXX getint
         return classes.null_value
 
     @classes.pyfunc
@@ -193,9 +193,19 @@ def xxl__tokenizer(filename, prefix, suffix):
 ################
 
 @classes.pyfunc
-def xxl_exit(value=0):
-    # XXX check if VCObject?!
-    sys.exit(value.value)       # XXX to_int??
+def xxl_exit(status=None):
+    """
+    Exit the interpreter.
+    `status` defaults to zero.
+    """
+    if status is None:
+        status = 0
+    else:
+        try:
+            status = status.getvalue()
+        except:
+            status = repr(status)
+    sys.exit(status)
 
 ################
 
@@ -209,41 +219,49 @@ def xxl__tree(t):
 
 ################
 
+# NOTE: used to do string concatenation rather than list building.
+#       not clear that on average this is any better
+
 def format_instr(instr, indent=''):
     """
     helper for xxl_vtree
     format one instruction (Python list)
+    returns list of strings to concatenate
     """
     op = instr[1]
     if op not in vmx.INST2CODE:
-        return indent + json.dumps(instr)
+        return [indent, json.dumps(instr)]
 
     # here to handle "close" and "bccall" (instr[2] is a code list)
     nindent = indent + " "
+    ret = [indent, '["', instr[0], '", "', op, '",\n', nindent ]
+    ret.extend(format_code(instr[2], nindent))
     if op == "close" and len(instr) >= 4 and instr[3]: # now with doc string!!
-        return ('%s["%s", "%s",\n%s%s,\n%s%s]' %
-                (indent, instr[0], op,
-                 nindent, format_code(instr[2], nindent),
-                 nindent, json.dumps(instr[3])))
-    else:
-        return ('%s["%s", "%s",\n%s%s]' % \
-                (indent, instr[0], op,
-                 nindent, format_code(instr[2], nindent)))
+        ret.append(',\n')
+        ret.append(nindent)
+        ret.append(json.dumps(instr[3])) # doc string
+    ret.append(']')
+    return ret
 
 def format_code(code, indent=''):
     """
     helper for xxl_vtree
     takes Python list of instructions (Python lists)
+    returns list of strings to concatenate
     """
-    sep = ",\n" + indent + " "
-    return (indent + "[" + format_instr(code[0]) + sep + # first line
-            sep.join([format_instr(inst, indent) for inst in code[1:]]) +
-            "]")
+    ret = [indent, "["]
+    sep = ',\n' + indent + ' '
+    ret.extend(format_instr(code[0]))
+    for inst in code[1:]:
+        ret.append(sep)
+        ret.extend(format_instr(inst, indent))
+    ret.append("]")
+    return ret
 
 def trim_where(code, fname):
     """
     helper for xxl_vtree, assemble
-    `code` is Python list of lists: MODIFIED IN PLACE!!!
+    `code` is Python list of lists: ***MODIFIED IN PLACE!!!***
     trim `fname` from all Python instruction list "where" fields
     """
     if not fname:
@@ -267,10 +285,10 @@ def xxl__vtree(t, fname=classes.null_value):
     t2 = obj2python_json(t)     # convert to list of list of str
 
     if fname and fname is not classes.null_value:
-        fn = fname.value        # getstr?
+        fn = fname.getvalue()
         trim_where(t2, fn)
 
-    return classes.mkstr(format_code(t2))
+    return classes.mkstr(''.join(format_code(t2)))
 
 # used in:
 # __xxl.tree (above) XXX replace with a Symbol.json method??
@@ -290,10 +308,10 @@ def obj2python_json(x):
         worker function
         """
         if classes.instance_of(x, value_classes):
-            return x.value
+            return x.getvalue()
 
         if classes.instance_of(x, iterable_classes):
-            return [clean1(z) for z in x.value]
+            return [clean1(z) for z in x.getvalue()]
 
         # NOTE!! Does not handle Dict!!!
 
@@ -313,7 +331,7 @@ def obj2python_json(x):
 
 @classes.pyfunc
 def xxl_pyimport(module):
-    m = importlib.import_module(module.value) # XXX getstr?
+    m = importlib.import_module(module.getvalue()) # XXX getstr?
     return classes.wrap(m)         # make PyObject
 
 ################
@@ -326,7 +344,7 @@ def xxl__import(filename):
     worker function for __xxl.import()
     (defined in bootstrap.xxl)
     """
-    fname = filename.value      # XXX getstr???
+    fname = filename.getvalue() # XXX getstr???
     if DEBUG_IMPORT:
         print("xxl__import", fname, file=sys.stderr)
 
