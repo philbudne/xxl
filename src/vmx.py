@@ -921,8 +921,12 @@ def run(boot, scope, stats, trace, xcept):
     vm = VM(stats=stats, trace=trace)
 
     user_errors = always_user_errors = (classes.UError,)
-    if not xcept:
-        user_errors += (KeyboardInterrupt, Exception,) # too many to list!
+    internal_errors = (VMError, AssertionError)
+    errors = (KeyboardInterrupt, Exception) # too many to list!
+    if xcept:                               # -x option
+        internal_errors += errors           # show IR, Python traceback
+    else:
+        user_errors += errors
 
     vm.ac = boot                # Closure
     b0 = [["0", "call0"],       # call Closure
@@ -932,8 +936,8 @@ def run(boot, scope, stats, trace, xcept):
         vm.start(code, scope)
     except SystemExit:          # from os.exit
         raise
-    except (VMError, AssertionError) as e: # an internal error
-        # NOTE: displays VM Instr
+    except internal_errors as e: # an internal error
+        # NOTE: displays VM Instr, Python backtrace
         sys.stderr.write("VM Error @ {}: {}\n".format(vm.ir, e))
         # XXX dump VM registers?
         vm.backtrace()
@@ -948,16 +952,12 @@ def run(boot, scope, stats, trace, xcept):
     except user_errors as e:
         # NOTE: user error: just displays "where" and VM backtrace
         if vm.ir:
-            sys.stderr.write("Error @ {}:{}: {}\n".format(
-                vm.ir.fn, vm.ir.where, e))
+            sys.stderr.write("{}: {}\n".format(vm.ir.fn_where(), e))
         else:
-            sys.stderr.write("Error @ ???: {}\n".format(e))
+            sys.stderr.write("???: {}\n".format(e))
         vm.backtrace()
         if not xcept and not isinstance(e, always_user_errors):
             sys.stderr.write("\n(Use -x option to get Python traceback)\n")
         if 'pdb' in sys.modules:
             breakpoint()
-        sys.exit(1)
-    except jslex.LexError as e:
-        sys.stderr.write("Lexer error %s\n" % e)
         sys.exit(1)

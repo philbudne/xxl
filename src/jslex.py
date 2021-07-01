@@ -39,11 +39,6 @@ NHEX_CHARS = { # number of hex chars for numeric escapes
     'U':8
 }
 
-class LexError(Exception):
-    """
-    Class for lexer errors
-    """
-
 class Token(object):
     def __init__(self, type_, value, lineno, from_, to, msg=None):
         self.type_ = type_
