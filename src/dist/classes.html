@@ -686,7 +686,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <h3>Method <code>init (this, arg)</code></h3>
 <i>Closure at bootstrap.xxl:210:38</i>
 <p>
-<blockquote>init method for Dict: takes Iterable returning two-item lists, OR an Iterable returning keys, and implementing &#x27;[&#x27;</blockquote></font><font color="slategray">
+<blockquote>init method for Dict.  arg passed to this.update().</blockquote></font><font color="slategray">
 <h3  color="slategray">Method <code>instance_of (this, c)</code></h3>
 <i>PyFunc at classes.py:1002 (obj_instance_of)</i>
 <p>
@@ -728,7 +728,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Static method: returns PyIterable for an integer range; iter() method generates fresh Iterators. range(10): returns Iterable for 0..9; range(1,10): returns Iterable for 1..9; range(1,10,2): returns Iterable for odd numbers 1..9</blockquote></font>
 <h3>Method <code>repr (this)</code></h3>
-<i>Closure at bootstrap.xxl:236:38</i>
+<i>Closure at bootstrap.xxl:246:38</i>
 <p>
 <blockquote>return representation of Dict</blockquote></font><font color="slategray">
 <h3  color="slategray">Method <code>reprx (this)</code></h3>
@@ -755,6 +755,10 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <i>Closure at bootstrap.xxl:90:42</i>
 <p>
 <blockquote>Default to_str method: calls this.repr().</blockquote></font>
+<h3>Method <code>update (this, arg)</code></h3>
+<i>Closure at bootstrap.xxl:221:40</i>
+<p>
+<blockquote>Update `this` using `arg.iter()` legal iterator values: List w/ two elements: `this[l[0]] = l[1];` Non-list: `this[item] = arg[item];`</blockquote>
 <h3>Method <code>values (this)</code></h3>
 <i>PyFunc at classes.py:1391 (dict_values)</i>
 <p>
@@ -960,7 +964,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Create reverse Iterator from `this`, call `func` with each value. returns `null`</blockquote></font>
 <h3>Method <code>extend (this, iterable)</code></h3>
-<i>Closure at bootstrap.xxl:271:40</i>
+<i>Closure at bootstrap.xxl:281:40</i>
 <p>
 <blockquote>Create an iterator from `iterable`, and iterate appending values to `this`; Returns `null`</blockquote></font><font color="slategray">
 <h3  color="slategray">Method <code>for_each (this, func)</code></h3>
@@ -980,7 +984,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Return `true` if object `l` has own (Str) property `r` (not interited).</blockquote></font>
 <h3>Method <code>init (this, arg)</code></h3>
-<i>Closure at bootstrap.xxl:252:38</i>
+<i>Closure at bootstrap.xxl:262:38</i>
 <p>
 <blockquote>init method for List: takes Iterable</blockquote>
 <h3>Method <code>insert (l, index, object)</code></h3>
@@ -1020,7 +1024,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Static method: returns PyIterable for an integer range; iter() method generates fresh Iterators. range(10): returns Iterable for 0..9; range(1,10): returns Iterable for 1..9; range(1,10,2): returns Iterable for odd numbers 1..9</blockquote></font>
 <h3>Method <code>repr (this)</code></h3>
-<i>Closure at bootstrap.xxl:264:38</i>
+<i>Closure at bootstrap.xxl:274:38</i>
 <p>
 <blockquote>Return representation of `this` List as Str.</blockquote></font><font color="slategray">
 <h3  color="slategray">Method <code>reprx (this)</code></h3>
@@ -1355,7 +1359,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return `true` if Object `this` is an instance of Class (or List of Classes) `c`</blockquote>
 <h3  color="slategray">Method <code>new (x)</code></h3>
-<i>Closure at bootstrap.xxl:286:24</i>
+<i>Closure at bootstrap.xxl:296:24</i>
 <p>
 <blockquote>Return `null` value NOTE!! A static method, not a metaclass method!!!</blockquote>
 <h3  color="slategray">Method <code>props (this)</code></h3>
@@ -1559,7 +1563,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return `true` if Object `this` is an instance of Class (or List of Classes) `c`</blockquote>
 <h3  color="slategray">Method <code>new (x)</code></h3>
-<i>Closure at bootstrap.xxl:297:26</i>
+<i>Closure at bootstrap.xxl:307:26</i>
 <p>
 <blockquote>Convert `x` to a `Number` NOTE!! A static method, not a metaclass method!!!</blockquote>
 <h3  color="slategray">Method <code>props (this)</code></h3>
@@ -2911,7 +2915,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return `true` if Object `this` is an instance of Class (or List of Classes) `c`</blockquote></font>
 <h3>Method <code>new (this_class, ...args)</code></h3>
-<i>Closure at bootstrap.xxl:317:11</i>
+<i>Closure at bootstrap.xxl:327:11</i>
 <p>
 <blockquote>SingletonClass new method: invoke to create a new class with a single value. First time: calls `this_class.create` to create obj, then calls obj.init(); After: returns previous value.</blockquote></font><font color="slategray">
 <h3  color="slategray">Method <code>props (this)</code></h3>
@@ -3119,7 +3123,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Return forward iterator.</blockquote></font>
 <h3>Method <code>join (this, iterable)</code></h3>
-<i>Closure at bootstrap.xxl:337:37</i>
+<i>Closure at bootstrap.xxl:347:37</i>
 <p>
 <blockquote>Concatenate strings from `iterable` using `this` as the separator.</blockquote>
 <h3>Method <code>len (this)</code></h3>
@@ -3139,7 +3143,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).</blockquote>
 <h3  color="slategray">Method <code>new (arg)</code></h3>
-<i>Closure at bootstrap.xxl:353:23</i>
+<i>Closure at bootstrap.xxl:363:23</i>
 <p>
 <blockquote>Str Class new (static) method; calls arg.to_str method</blockquote></font>
 <h3>Method <code>ord (this)</code></h3>
@@ -3347,7 +3351,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return `true` if Object `this` is an instance of Class (or List of Classes) `c`</blockquote>
 <h3  color="slategray">Method <code>new (x)</code></h3>
-<i>Closure at bootstrap.xxl:363:29</i>
+<i>Closure at bootstrap.xxl:373:29</i>
 <p>
 <blockquote>Return `undefined` value NOTE!! A static method, not a metaclass method!!!</blockquote>
 <h3  color="slategray">Method <code>props (this)</code></h3>

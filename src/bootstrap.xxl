@@ -209,21 +209,31 @@ if (__modinfo.main) {		// once only
 
     classes.Dict.__methods['init'] = function (this, arg) {
 	"""
-	init method for Dict: takes Iterable returning two-item lists,
-	OR an Iterable returning keys, and implementing '['
+	init method for Dict.  arg passed to this.update().
 	"""
-	this.__init0();
 	if (!arg.instance_of(classes.Iterable)) {
-	    __xxl.uerror(this.name + ".init needs iterable");
+            __xxl.uerror(this.getclass().name + ".init needs iterable");
 	}
+	this.__init0();
+	this.update(arg);
+    };
+
+    classes.Dict.__methods['update'] = function (this, arg) {
+	"""
+	Update `this` using `arg.iter()` legal iterator values:
+	List w/ two elements: `this[l[0]] = l[1];`
+	Non-list: `this[item] = arg[item];`
+	"""
+	// Update if arg is Dict, call __update?
 	var iter = arg.iter();
 	while (true) {
 	    var item = iter.next(return);
-	    // if first item, set sentinal
-	    // make sure all following items of same size/shape
+	    // if first item, set sentinal?
+	    // make sure all following items of same size/shape??
 	    if (item.instance_of(classes.List)) {
 		if (item.len() != 2) {
-		    __xxl.uerror(this.name + ".init got List w/ len != 2");
+		    __xxl.uerror(this.getclass().name +
+				 ".update got List w/ len != 2");
 		}
 		this[item[0]] = item[1];
 	    }
@@ -255,7 +265,7 @@ if (__modinfo.main) {		// once only
 	"""
 	this.__init0();
 	if (!arg.instance_of(classes.Iterable) && !arg.iter) {
-	    __xxl.uerror(this.name + ".init needs Iterable");
+	    __xxl.uerror(this.getclass().name + ".init needs Iterable");
 	}
 	this.extend(arg);
     };
@@ -339,14 +349,14 @@ if (__modinfo.main) {		// once only
 	Concatenate strings from `iterable` using `this` as the separator.
 	"""
 	if (iterable.instance_of(classes.PyIterable)) {
-	    return(this.__join(iterable));
+	    return(this.__join(iterable)); // unwrap and join
 	}
 	else if (iterable.instance_of(classes.Iterable)) {
 	    var list = classes.List.new(iterable);
 	    return(this.__join(list));
 	}
 	else {
-	    __xxl.uerror(this.name + ".join needs Iterable");
+	    __xxl.uerror(this.getclass().name + ".join needs Iterable");
 	}
     };
 

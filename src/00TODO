@@ -197,8 +197,6 @@ create metaclasses for Bool, Null, Number, Str, Undefined with
 	private 'new' methods?
 	(have defclass always create metaclass name + 'Class'???)
 
-Add Dict update method
-	use __update if arg is a Dict
-	else native code
+Dict update: use __update if arg is a Dict?
 
 Have List.__extend: have List.extend call for List argument?
