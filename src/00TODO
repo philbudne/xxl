@@ -1,7 +1,5 @@
 FIX
 ===
-Make VM "Error @" conform to FNAME:LINE:CHAR MSG format?
-
 doc.xxl:
 	generate (hidable?) index of classes (& Vars section) at top
 	by default hide all greyed out methods/members?!
@@ -15,10 +13,10 @@ Makefile:
 		run all as tests??
 
 *** BUG: Only CPObjects can be used as Dict keys
-	fix in github branch cobj-dict-key; parser.vmx on parser.xxl slowdown 5.27s => 5.798
+	fix in github branch cobj-dict-key
+	parser.vmx on parser.xxl slowdown 5.27s => 5.798
 	TODO:
 	-- Module.modules dict
-	-- mkstr(value) in BinOpInstr
 
 *** BUG: can overwrite "const" values in a Module!!!
 	need descriptors (slots) ??
@@ -200,3 +198,22 @@ create metaclasses for Bool, Null, Number, Str, Undefined with
 Dict update: use __update if arg is a Dict?
 
 Have List.__extend: have List.extend call for List argument?
+
+Implement List '+' op using "extend"??
+
+Add Symbol.json method for dumping ASTs, rather than obj2python_json crockery?
+	could include non-standard object field names
+	(outside ordinals "first", "second", "third")
+	default method just loops:
+      leave_loop:
+	['first, 'second', 'third'].for_each(
+	    function (ordinal) {
+		if (this.hasprop(ordinal)) {
+		    list.append(this.getprop(ordinal));
+		}
+		else {
+		    leave_loop();
+		}
+	    }
+	);
+
