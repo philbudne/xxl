@@ -181,24 +181,24 @@ BUG: "var else;" doesn't stop "if .... else" ?!
 Accept "props" key in Class.new Dict to initialize
 	class properties??
 
-Always create a FooClass metaclass when creating Class Foo?
-	populate with "class_methods" for methods????
-
 type wrapping:
-	classes.py pyfuncs do not invoke Class init methods!
+	new_by_name does not invoke Class init methods!
 		revisit wrapping return values in CPyFunc.invoke
 			(tail calls to "new")
 
-REPL: handle parse errors!!!
-	p.parse_statement_error() ??
-		stash "return" as "_fatal"
-		need lexer "reset" method (dump buffered input)???
+Always create a FooClass metaclass when creating Class Foo?
+	populate with "class_methods" for methods????
 
-How do Ruby and ES6 deal with calling superclass methods?
-
-allow 'class_methods' arg in class_init?
-	create private metaclass on the fly???
+	Class.new({name: "Foo", ... }) would need to create
+		Class._new({name: "FooClass", supers: [this_class]})
+		and return instance of FooClass!!!
 
 create metaclasses for Bool, Null, Number, Str, Undefined with
 	private 'new' methods?
+	(have defclass always create metaclass name + 'Class'???)
 
+Add Dict update method
+	use __update if arg is a Dict
+	else native code
+
+Have List.__extend: have List.extend call for List argument?
