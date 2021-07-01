@@ -1706,6 +1706,14 @@ var dump_parser = function (p) {
 };
 
 var compile = function (fname, output) {
+    """
+    Compile code in file `fname`.
+    Returns List of Str.
+    Optional `output` determines format:
+	'ast': string with JSON string for AST
+	default: list[0]: JSON metadata
+		 list[0]: JSON code
+    """
     var p = Parser.new();
 
     // get list of abstract syntax trees (of Symbols)
@@ -1714,7 +1722,7 @@ var compile = function (fname, output) {
 
     if (output == "ast") {
 	var j = __xxl._tree(asts); // returns big JSON string
-	return(j);
+	return([j]);
     }
 
     // generate VM code (as List of instruction Lists)
@@ -1731,14 +1739,13 @@ var compile = function (fname, output) {
 	     fn: fname,
 	     mt: stat.st_mtime,
 	     sz: stat.st_size};
-    var meta_json = py_json.dumps(d) + "\n";
+    var meta_json = py_json.dumps(d);
 
     // get code as JSON string
     // XXX maybe option to serialize in a format
     //	that loads faster than JSON????
     var code_json = __xxl._vtree(code, fname);
-
-    return(meta_json + code_json); // return as List??
+    return([meta_json, code_json]);
 }; // compile
 
 if (__modinfo.main) {
@@ -1770,6 +1777,7 @@ if (__modinfo.main) {
     if (i == argc) {
 	usage();
     }
-    __xxl.print(compile(__xxl.argv[i], output));
+    var ret = compile(__xxl.argv[i], output);
+    ret.for_each(__xxl.print);
     // no __xxl.exit, so stats visible w/o catching SystemExit Exception
 } // main
