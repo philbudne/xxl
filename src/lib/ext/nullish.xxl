@@ -11,6 +11,9 @@ const _classes = __xxl.import("classes");
 
 var __extend_parser = function (p) {
     // "ordinary" infix operator (implemented by a method)
+    // NOTE! Both values are evaluated.
+    // See "OrIf" class in parser.xxl for how to implement short-circuit.
+    // *BUT* would need to implement ??= as well.
     p.Nullish = Class.new({
 	name: "Nullish",
 	supers: [p.InfixR],
