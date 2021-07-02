@@ -1,17 +1,3 @@
-FIX
-===
-doc.xxl:
-	generate (hidable?) index of classes (& Vars section) at top
-	by default hide all greyed out methods/members?!
-
-Makefile:
-	"make install" install to "dev"???????
-	"make html" -- generate html for classes & all lib & lib/ext files
-		in html dir??
-	lib & ext/lib:
-		generate .md files, index.md file??
-		run all as tests??
-
 *** BUG: Only CPObjects can be used as Dict keys
 	fix in github branch cobj-dict-key
 	parser.vmx on parser.xxl slowdown 5.27s => 5.798
@@ -21,19 +7,16 @@ Makefile:
 *** BUG: can overwrite "const" values in a Module!!!
 	need descriptors (slots) ??
 
+BUG: "var else;" doesn't stop "if .... else"
+
 TEST
 ====
-Add test for Class.new "props"?
 test PyObject.props()
-str & repr methods (& Str.join)
-	Callables
 __extend_parser
 
 CLEANUP
 =======
-"make update_parser"?  Have PARSER_VMX out of date message tell you to run it???
-CPObject.getstr() method for PyFuncs, or utility function????
-split Number into Float and Int
+split Number into Float and Int??
 	Have Int initializer take optional radix
 test if implementing VM as chain of if's (on ints)
 	instead step on Instr objects is faster
@@ -174,8 +157,6 @@ for symmetry define a '(' binop for Callable: r.invoke(r, *l.value) ??
 Implement JS ...spread in List and Dict lits?
 	just means calling extend or update??
 
-BUG: "var else;" doesn't stop "if .... else" ?!
-
 Accept "props" key in Class.new Dict to initialize
 	class properties??
 
@@ -216,4 +197,16 @@ Add Symbol.json method for dumping ASTs, rather than obj2python_json crockery?
 		}
 	    }
 	);
+
+doc.xxl:
+	generate (hidable?) index of classes (& Vars section) at top
+	by default hide all greyed out methods/members?!
+
+Makefile:
+	"make install" install to "dev"???????
+	"make html" -- generate html for classes & all lib & lib/ext files
+		in html dir??
+	lib & ext/lib:
+		generate .md files, index.md file??
+		run all as tests??
 
