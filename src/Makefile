@@ -32,8 +32,10 @@ VM=	$(XXL) vmx.py classes.py const.py jslex.py xxlobj.py scopes.py
 TESTED=tested
 ABIDENTICAL=.identical.ab
 
+DIST_VMX_FILES=$(PARSER_VMX) bootstrap.vmx
+
 # XXX lib/*.xxl and lib/ext/*.xxl too!
-DOCS= classes.html
+DIST_DOCS= classes.html
 
 all:	$(TESTED) $(DOCS)
 
@@ -108,13 +110,13 @@ $(C):	$(VM) $(B) $(PARSER_SRC)
 # run ONLY before git checkin for main repo
 # (so clean checkouts get initial VM code)
 
-install-dist: $(TESTED) $(DOCS) .bootstrap
-	cp $(PARSER_VMX) bootstrap.vmx $(DOCS) dist/
+install-dist: $(TESTED) $(DIST_VMX_FILES) $(DIST_DOCS) .bootstrap
+	cp $(DIST_VMX_FILES) $(DIST_DOCS) dist/
 
 # manually check if dist dir up to date (before git checkin)
 # skip first line in each VMX file (skip metadata)
 check-dist: $(PARSER_VMX)
-	@for FILE in $(PARSER_VMX) bootstrap.vmx; do \
+	@for FILE in $(DIST_VMX_FILES); do \
 	    tail -n+2 $$FILE > .tmp.c; \
 	    tail -n+2 dist/$$FILE > .tmp.d; \
 	    if cmp -s .tmp.c .tmp.d; then \
