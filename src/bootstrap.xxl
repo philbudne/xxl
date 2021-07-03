@@ -56,10 +56,13 @@ if (__modinfo.main) {		// once only
     ////////////////////////////////////////////////////////////////
     // native code methods for built-in Classes
 
+    // __xxl.import not available until ModInfo._import defined!
+    var classes = __xxl._import("classes")[0];
+
     ////////////////
     // ModInfo
 
-    __modinfo.getclass().__methods['_import'] = function (this, name) {
+    classes.ModInfo.__methods['_import'] = function (this, name) {
 	"""
 	Helper for __xxl.import.
 	ModInfo Method for access to importer's __modinfo.parser
@@ -80,8 +83,6 @@ if (__modinfo.main) {		// once only
 	}
 	return(mod);
     };
-
-    var classes = __xxl.import("classes");
 
     ////////////////
     // Object
