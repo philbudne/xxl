@@ -1,3 +1,6 @@
+** BUG: "nullish coalescing operator" ?? evals RHS regardless;
+	fix by generating block closure for RHS, passing to ?? method???
+
 *** BUG: Only CPObjects can be used as Dict keys
 	fix in github branch cobj-dict-key
 	parser.vmx on parser.xxl slowdown 5.27s => 5.798
@@ -210,3 +213,5 @@ Makefile:
 		generate .md files, index.md file??
 		run all as tests??
 
+Replace TEMP register w/ __tN variables in scope?
+	execute code in a block closure??
