@@ -33,7 +33,7 @@ Tested under Python 3.7.9 and PyPy3 7.3.1 (needs `export PYTHONIOENCODING=utf8`)
 
 * [Creating a Class](doc/create-class.md) -- how to create a new Class
 
-* [Adding a statement](doc/adding-statement.md) -- example of adding new statement syntax
+* [Adding a statement](src/lib/ext/do.xxl) -- example of adding a "do" statement
 
 * [Adding an operator](doc/adding-operator.md) -- example of adding an operator
 
