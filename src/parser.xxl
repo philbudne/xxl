@@ -532,6 +532,8 @@ var PrattParser = Class.new({
 	init: function (this_parser) {
 	    var p = this_parser; // brevity
 
+	    p.VMCode = VMCode;	// for extensions
+
 	    p.symbol_classes = {}; // string to Symbol subclass
 
 	    // defined inside class initializer so it can be overridden

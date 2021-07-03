@@ -1,0 +1,128 @@
+// -*-js-*-
+
+var __doc = """
+EXTENSION: switch statement
+""";
+
+var __extend_parser = function (p) {
+    const CASEVAR = '-*-case-*-';
+
+    var Switch = Class.new({
+	name: "Do",
+	supers: [p.Stmt],
+	methods: {
+	    std: function (this) {	// parse as statement
+		p.advance("(");
+		this.first = p.expression(0);
+		__xxl.print("switch", this.first);
+		var slist = [];
+		p.advance(")");
+		p.advance("{");
+		var have_default = false;
+		while (!p.check("}")) {
+		    var tok = p.ctoken();
+		    if (p.check("case")) {
+			p.advance();
+			tok.first = p.expression(0);
+			tok.case = true;
+			// XXX set tok.arity?
+			slist.append(tok);
+			p.advance(":");
+		    }
+		    else if (p.check("default")) {
+			if (have_default) {
+			    tok.error("second default label in switch");
+			}
+			have_default = true;
+			tok.default = true;
+			// XXX set tok.arity?
+			slist.append(tok);
+			p.advance();
+			p.advance(":");
+		    }
+		    else {
+			var s = p.statement();
+			slist.append(s);
+		    }
+		}
+		p.advance("}");
+		this.second = slist;
+		this.arity = "statement";
+		return(this);
+	    },
+	    gen: function (this, vmcode) { // gen
+		var swcode = p.VMCode.new(); // switch VMcode block
+
+		swcode.emit_var(CASEVAR, this); // create variable for value
+		this.first.gen(swcode);		// evaluate switch expr
+		swcode.emit_store(CASEVAR, this); // store in variable
+
+		// XXX should "hoist" emit_var (but not init) to top of block?!
+
+		// emit tests/branches
+		this.second.for_each(
+		    function (item) {
+			if (item.case) {
+			    swcode.gen_push(item.first);
+			    swcode.emit_load(CASEVAR, item);
+			    swcode.emit_binop("==", item);
+			    item.label = swcode.def_fwd_label();
+			    swcode.emit_iftrue(item.label, item);
+			}
+		    } // function (item)
+		); // for_each
+
+		// end of tests, go to default
+		var default_label = swcode.def_fwd_label();
+		swcode.emit_jrst(default_label, this);
+
+		// run thru stmts, dropping labels or code
+		this.second.for_each(
+		    function (item) {
+			if (item.case) {
+			    swcode.drop_fwd_label(item.label);
+			}
+			else if (item.default) {
+			    swcode.drop_fwd_label(default_label);
+			    default_label = null;
+			}
+			else {
+			    item.gen(swcode);
+			}
+		    }
+		);
+
+		// if no default label seen, drop at end of block.
+		if (default_label !== null) {
+		    swcode.drop_fwd_label(default_label);
+		}
+
+		// create block closure & invoke
+		vmcode.emit_bclose_call(swcode, this);
+	    } // gen
+	}
+    });
+    p.add_symbol_class("switch", Switch);
+};
+
+__extend_parser(__modinfo.parser); // needed to parse test below
+
+if (__modinfo.main) {
+    var f = function(x) {
+      break:
+	switch (x) {
+	default:
+	case 1:
+	    __xxl.print("1");
+	case 2:
+	    __xxl.print("2");
+	    break();
+	case "hel" + "lo":
+	    __xxl.print("hello");
+	}
+    }; // f
+    f("hello");			// hello
+    f(1);			// 1, 2
+    f(2);			// 2
+    f(3);			// 1, 2
+}
