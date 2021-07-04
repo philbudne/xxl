@@ -24,7 +24,11 @@ New classes are created with Class.new
             lhsops: {
                 ".": function(l, r, value) { ... }
                 ...
-            }
+            },
+	    props: {
+		class_member: value,
+		static_method: function (args) { ... }
+	    }
         })
 ```
 
