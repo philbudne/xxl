@@ -25,24 +25,25 @@ When I returned, I translated Crockford's parser to Python to play
 with, called jsparse.py
 
 In December 2013 I made notes about a type system, and thoughts about
-"sc2k", a SNOBOL4 for the 2000's, entiled "ASAP (but not simpler)"
+"sc2k", a SNOBOL4 for the 2000's, entiled "ASAP (as simple as
+possible) but not simpler" where code in brace enclosed blocks
+generated a closure.
 
 LULL
 
 October 2015: wrote Python code to play with implementing Python-style
-argument passing!
+argument passing.
 
-LULL
-
-Late January 2016: started work on interpreter for jsparse.py output
+Late January 2016: started work on asap.py:
+	interpreter for jsparse.py JSON output
+	(recursively performing lazy evaluation).
 
 Early February 2016:
 	jsparse.js running in asap.py interpreter (native Python types)
 
 Mid February 2016: Python mockup of techniques for Continuations
 		from Kent Dybvig's dissertation
-		"Three Implementation Models for Scheme"
-		https://www.cs.unm.edu/~williams/cs491/three-imp.pdf
+		["Three Implementation Models for Scheme" (pdf)](https://www.cs.unm.edu/~williams/cs491/three-imp.pdf)
 	last modifications to ppo.js (PrattParser as object)
 
 Late February 2016: last changes to jsparse.py
@@ -61,3 +62,7 @@ Mid April 2021:
 Late April 2021:
 	ppo.js using Class.new, called ppoc.js self compiling
 	import & pyimport restored to working order
+
+Early May 2021:
+	code checked into
+	[github xxl repository](https://github.com/philbudne/xxl/).
