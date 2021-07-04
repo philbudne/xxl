@@ -1041,7 +1041,6 @@ Object.setprop(const.UNOPS, _mkdict({
 Object.setprop(const.LHSOPS, _mkdict({
     '.': obj_setprop                # same as setprop!!
 }))
-Object.setprop(const.NULLISH, false_value)
 
 ################ Class -- base type for Classes (a MetaClass)
 
@@ -1858,7 +1857,6 @@ Null.setprop(const.METHODS, _mkdict({
 Null.setprop(const.BINOPS, _mkdict({
     '(': null_call
 }))
-Null.setprop(const.NULLISH, true_value)
 
 ################ Nullish
 
@@ -2063,7 +2061,6 @@ Undefined.setprop(const.METHODS, _mkdict({
 Undefined.setprop(const.BINOPS, _mkdict({
     '(': undef_call
 }))
-Undefined.setprop(const.NULLISH, true_value)
 
 ################################################################
 

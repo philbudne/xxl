@@ -2,31 +2,74 @@
 
 var __doc = """
 Implement JavaScript "Nullish coalescing operator" `??`,
-Logical nullish assignment" `??=`, and
+"Logical nullish assignment" `??=`, and
 "Optional chaining" `?.` operators
 in XXL.
 """;
 
 const _classes = __xxl.import("classes");
 
+_classes.Object.is_nullish = false;
+_classes.Null.is_nullish = _classes.Undefined.is_nullish = true;
+
 var __extend_parser = function (p) {
-    // "ordinary" infix operator (implemented by a method)
-    // NOTE! Both values are evaluated.
-    // See "OrIf" class in parser.xxl for how to implement short-circuit.
-    // *BUT* would need to implement ??= as well.
+    var push_thunk = function (vmcode, node) {
+	"""
+	create a thunk (closure) to evaluate node; push on stack
+	"""
+	var nodecode = p.VMCode.new();
+	// create scope???
+	node.gen(nodecode);
+	vmcode.emit_close(nodecode.finish(node), node); // create closure
+	vmcode.emit_push(node); // push closure
+    };
+
+    ////////////////
+    // "Nullish coalescing operator" `??`
+
+    // a "special form" a binop that passes a closure for RHS
+    // (only evaluates RHS if LHS is nullish)
+
     p.Nullish = Class.new({
 	name: "Nullish",
 	supers: [p.InfixR],
+	methods: {
+	    gen: function (this, vmcode) {
+		push_thunk(vmcode, this.second);
+		this.first.gen(vmcode);
+		vmcode.emit_binop("??", this);
+	    }
+	}
     });
     p.Nullish.lbp = p.PLOR;
     p.add_symbol_class("??", p.Nullish);
 
-    _classes.Object.__binops["??"] = function (l, r) {
-	return(l.is_nullish ? r : l); // see const.NULLISH
+    // a special form: passes thunk for RHS!!
+    _classes.Object.__binops["??"] = function (l, rfun) {
+	return(l.is_nullish ? rfun() : l);
     };
 
-    // NOTE!!! Always does assignment!
-    p.add_assignop("AssignNullish",  "??=", "??");
+    ////////////////
+    // "Logical nullish assignment" `??=`
+
+    // NOTE! Always performs assignment.
+    p.NullishAssign = Class.new({
+	name: "NullishAssign",
+	supers: [p.Assign],
+	methods: {
+	    gen: function (this, vmcode) {
+		// XXX eval children of LHS once?
+		push_thunk(vmcode, this.second); // RHS thunk !!!
+		this.first.gen(vmcode);		// LHS value
+		vmcode.emit_binop("??", this);
+		this.first.gen_lhs(vmcode);	// store in LHS
+	    }
+	}
+    });
+    p.add_symbol_class("??=", p.NullishAssign);
+
+    ////////////////
+    // "Optional chaining" `?.` operator
 
     p.NullishDot = Class.new({
 	name: "NullishDot",
@@ -62,9 +105,18 @@ if (__modinfo.main) {
     try(0, "ERROR");
 
     // things that always "truthy"
-    try(true, "ERROR");
     try(1, "ERROR");
+    try(true, "ERROR");
+    try("str", "ERROR");
 
     try(null?.zzz, "null?.something is nullish");
     try(undefined?.zzz, "undefined?.something is nullish");
+
+    // make sure it's the right kind of nullish!
+    if (null?.zzz !== undefined) {
+	__xxl.print("ERROR: null?.something !== undefined");
+    }
+    if (undefined?.zzz !== undefined) {
+	__xxl.print("ERROR: undefined?.something !== undefined");
+    }
 }
