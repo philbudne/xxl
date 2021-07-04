@@ -14,7 +14,6 @@ var __extend_parser = function (p) {
 	    std: function (this) {	// parse as statement
 		p.advance("(");
 		this.first = p.expression(0);
-		__xxl.print("switch", this.first);
 		var slist = [];
 		p.advance(")");
 		p.advance("{");
