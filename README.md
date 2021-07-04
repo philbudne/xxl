@@ -33,9 +33,13 @@ Tested under Python 3.7.9 and PyPy3 7.3.1 (needs `export PYTHONIOENCODING=utf8`)
 
 * [Creating a Class](doc/create-class.md) -- how to create a new Class
 
-* [Adding a statement](src/lib/ext/do.xxl) -- example of adding a "do" statement
+* [Adding a statement]
+    * [extension for "do" statement](src/lib/ext/do.xxl)
+    * [extension for "switch" statement](src/lib/ext/switch.xxl)
 
-* [Adding an operator](doc/adding-operator.md) -- example of adding an operator
+* [Adding an operator]
+    + [example of adding "^" operator](doc/adding-operator.md)
+    * [extension adding "nullish" operators](src/lib/ext/nullish.xxl)
 
 * [Priorities](doc/priorities.md) -- a loose ordering of design priorities
 
