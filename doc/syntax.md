@@ -143,14 +143,14 @@ STRING: «'» [ANYTHING_EXCEPT_NEWLINE_OR_SINGLE_QUOTE]… «'» |
    Once a NAME has been used as a statement keyword, it is reserved,
    and may not be used as a variable in that scope, or any nested scope.
 
-* MOST operators (except "?", ASSIGNOPS, BOOLOPs)
+* MOST operators (except "?", "||", "&&", ASSIGNOPS)
         are methods looked up at runtime.
 
 * All compile errors are fatal.
 
 * Extra ";" are not accepted (and none are optional).
 
-* "return" is *NOT* a statement, it's a variable containing a
+* "return" is *NOT* a statement, it's a const containing a
         continuation (EVERY call is a "call with current continuation"),
         and "return(value)" must be used.
 
@@ -159,20 +159,20 @@ STRING: «'» [ANYTHING_EXCEPT_NEWLINE_OR_SINGLE_QUOTE]… «'» |
 
 * Statements and blocks may be labeled with NAME ":"
 
-        The label will appear as a variable containing a continuation
+        The label will appear as a const containing a continuation
         to leave the labeled construct.
 
         (labling a statement will cause it to be wrapped in a closure
          that contains the new variable; all blocks are already closures).
 
-        Calling the leave label on a "while" loop is equivalent to "break"
+        Calling the leave label on a "while" STATEMENT is equivalent to "break"
 
         Calling the leave label on the BLOCK of a "while" loop is "continue"
 
 * All instances have a class
 
-        available with .getclass
-        modifiable with .setclass
+        available with .getclass() method
+        modifiable with .setclass() method(!)
 
 * All classes have one or more superclasses, except Object, which has none.
 
@@ -192,7 +192,7 @@ Only "false", "null", and zero are false(y)
 
         Class implements the "new" method.
 
-        All Classes are subclasses of Class.
+        All Classes are subclasses of Class (created with "Class.new")
 
 New instances of a class are created with MyClass.new(....),
         which calls the metaclass (typ. "Class") new method with the class
@@ -224,3 +224,14 @@ Variables MUST be declared using "var", "const", or as function arguments.
 
 NOTE! Enforcement of "const" is currently implemented only in the parser,
         and const values in other Modules can be changed!!
+
+All imported files (including the "main" file, specified on the command line)
+	have their own scope (a child of the "root" scope that contains
+	"__xxl", "true", "false", "null", and "undefined").
+
+Each module namespace has a __modinfo Object, of class ModInfo with:
+	* main -- true for the main (command line) module
+	* module -- a Module object with the module scope available as properies
+		(__xxl.import returns this Module Object).
+	* file -- the path of the file loaded into the module
+	* parser -- the Parser object used to parse source code.
