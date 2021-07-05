@@ -33,11 +33,11 @@ Tested under Python 3.7.9 and PyPy3 7.3.1 (needs `export PYTHONIOENCODING=utf8`)
 
 * [Creating a Class](doc/create-class.md) -- how to create a new Class
 
-* [Adding a statement]
+* Adding a statement
     * [extension for "do" statement](src/lib/ext/do.xxl)
     * [extension for "switch" statement](src/lib/ext/switch.xxl)
 
-* [Adding an operator]
+* Adding an operator
     + [example of adding "^" operator](doc/adding-operator.md)
     * [extension adding "nullish" operators](src/lib/ext/nullish.xxl)
 
