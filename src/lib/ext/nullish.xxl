@@ -83,7 +83,7 @@ var __extend_parser = function (p) {
 	like `l.r`, but guards against nullish values
 	and returns `undefined`.
 	"""
-	return((l.is_nullish) ? undefined : l.getprop(r));
+	return(l.is_nullish ? undefined : l.getprop(r));
     };
 }; // __extend_parser
 
