@@ -1364,7 +1364,7 @@ var Parser = Class.new({
 			    }
 			    p.advance();
 			    if (!what) {
-				if (p.check(",")) {
+				if (p.check(",") || p.check("}")) {
 				    what = "Set";
 				}
 				else if (p.check(":")) {
