@@ -314,6 +314,40 @@ if (__modinfo.main) {		// once only
     };
 
     ////////////////
+    // Set
+
+    classes.Set.__methods['init'] = function (this, arg) {
+	"""
+	init method for Set.  arg passed to this.update().
+	"""
+	this.__init0();
+	if (arg) {
+	    this.update(arg);
+	}
+    };
+
+    classes.Set.__methods['update'] = function (this, arg) {
+	"""
+	Update `this` using `arg.iter()`
+	"""
+	if (!arg.instance_of(classes.Iterable)) {
+            __xxl.uerror(this.getclass().name + ".update needs iterable");
+	}
+	// If arg is Set, call __update?
+	var iter = arg.iter();
+	while (true) {
+	    this.add(iter.next(return));
+	}
+    };
+
+    classes.Set.__methods['repr'] = function (this) {
+	"""
+	return representation of Set
+	"""
+	return("{" + ", ".join(this.map(repr)) + "}");
+    };
+
+    ////////////////
     // SingletonClass
 
     classes.SingletonClass = Class.new({

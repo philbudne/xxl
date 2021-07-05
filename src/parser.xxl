@@ -1350,18 +1350,34 @@ var Parser = Class.new({
 		methods: {
 		    nud: function (this) { // { key: value .... }
 			var a = [];
-			var n;
-			var v;
+			var what; // undecided
+			var n;	// name/key
+			var v;	// value
 		      leave_while:
 			while (!p.check("}")) {
 			    n = p.ctoken();
 			    if (n.arity != "name"
 				&& n.arity != "literal") {
-				n.error("Dict key must be name or number");
+				n.error(
+				    (what ? what : "Set/Dict") +
+				     " key must be name or number");
 			    }
 			    p.advance();
-			    p.advance(":");
-			    n.first = p.expression(0);
+			    if (!what) {
+				if (p.check(",")) {
+				    what = "Set";
+				}
+				else if (p.check(":")) {
+				    what = "Dict";
+				}
+				else {
+				    p.ctoken().error("syntax error");
+				}
+			    }
+			    if (what == "Dict") {
+				p.advance(":");
+				n.first = p.expression(0);
+			    }
 			    a.append(n);
 			    if (p.check("}")) {
 				leave_while();
@@ -1370,6 +1386,7 @@ var Parser = Class.new({
 			}
 			p.advance("}");
 			this.first = a;
+			this.second = what ? what : "Dict"; // {} is Dict
 			this.arity = "unary";
 			return(this);
 		    }, // nud
@@ -1393,22 +1410,34 @@ var Parser = Class.new({
 			    // create block closure & invoke
 			    vmcode.emit_bclose_call(bcode, this);
 			}
-			else {	// unary { attr: value }
-			    // first is list of lit/name keys,
-			    // each with a value expression on "first"
-			    vmcode.emit_new("Dict", this);
-			    this.first.for_each(
-				function (item) {
-				    // value to store
-				    vmcode.gen_push(item.first);
-				    // key
-				    vmcode.emit_push_lit(item.value, this);
-				    // get dict back in AC
-				    vmcode.emit_temp(this);
-				    vmcode.emit_lhsop("[", this);
-				}
-			    ); // for_each
-			    vmcode.emit_pop_temp(this);
+			else {	// unary { attr: value ... } or { setitem ... }
+			    vmcode.emit_new(this.second, this);
+			    if (this.second == "Dict") {
+				// first is list of lit/name keys,
+				// each with a value expression on "first"
+				this.first.for_each(
+				    function (item) {
+					// value to store
+					vmcode.gen_push(item.first);
+					// key
+					vmcode.emit_push_lit(item.value, this);
+					// get dict back in AC
+					vmcode.emit_temp(this);
+					vmcode.emit_lhsop("[", this);
+				    }
+				); // for_each
+			    } // Dict
+			    else { // Set
+				this.first.for_each(
+				    function (item) {
+					vmcode.emit_push_lit(item.value, this);
+					vmcode.emit_temp(this); // get Set in AC
+					vmcode.emit_binop_lit(".", "add", this);
+					vmcode.emit_call(1, this);
+				    }
+				);
+			    } // Set
+			    vmcode.emit_pop_temp(this); // leave Dict/Set in AC
 			} // unary
 		    } // gen
 		} // methods

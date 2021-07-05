@@ -662,6 +662,8 @@ Str = defclass(PClass, 'Str', [PyIterable],
                doc="Built-in immutable Unicode string Class")
 Dict  = defclass(PClass, 'Dict', [PyIterable],
                  doc="Built-in dictionary mapping Class")
+Set  = defclass(PClass, 'Set', [PyIterable],
+                doc="Built-in unordered collection of unique elements.")
 
 # non-iterable:
 Number = defclass(PClass, 'Number', [PObject],
@@ -1276,7 +1278,7 @@ List.setprop(const.METHODS, _mkdict({
 ################ PyIterable
 
 # subclass of Iterable, PObject
-# superclass of List, Dict, Str!
+# superclass of List, Dict, Str, Set!
 # also created by mkiterable, used in:
 #       Dict.{item,key,value}s()
 #       Object.props()
@@ -1668,6 +1670,24 @@ Number.setprop(const.BINOPS, _mkdict({
     '>': gt,
     '<': lt,
 }))
+
+################ Set
+
+@pyfunc
+def set__init0(this):
+    """
+    Called by Set.init (in bootstrap.xxl).
+    Dodges needing private metaclass for Set.
+    """
+    this.value = set()
+    return null_value
+
+Set.setprop(const.METHODS, _mkdict({
+    '__init0': set__init0,
+    'len': pobj_len
+}))
+
+# XXX define '+', '-', '&', '|' binops!!?
 
 ################ Str
 
@@ -2332,6 +2352,19 @@ def def_wrappers(cname, ptype, methods):
         def_wrapper(pmname, mname)
 
 ################
+
+def_wrappers('Set', set, ['add', 'clear', 'copy',
+                          'difference', 'difference_update', 'discard',
+                          'intersection', 'intersection_update',
+                          ('isdisjoint', 'is_disjoint'),
+                          ('issubset', 'is_subset'),
+                          ('issuperset', 'is_superset'),
+                          'pop', 'remove',
+                          'symmetric_difference',
+                          'symmetric_difference_update',
+                          'union',
+                          'update'])
+
 # XXX need Bytes for "encode" output
 def_wrappers('Str', str, ['capitalize',
                           ('casefold', 'case_fold'),
@@ -2361,7 +2394,8 @@ def_wrappers('Str', str, ['capitalize',
                          ('upper', 'to_upper'),
                           'zfill'])
 
-# XXX def more classes mere
+
+# XXX def more classes here
 ################################################################
 
 # earlier?!!!!!

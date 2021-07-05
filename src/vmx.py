@@ -844,6 +844,8 @@ class NewInstr(VMInstr1):
             v = {}
         elif self.value == 'List':
             v = []
+        elif self.value == 'Set':
+            v = set()
         else:
             VMError("new Instr unknown type %s" % self.value)
         vm.temp = classes.new_by_name(self.value, v)

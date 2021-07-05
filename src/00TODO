@@ -1,3 +1,5 @@
+** BUG: allow Dict.new(), List.new()
+
 ** BUG: "nullish coalescing operator" ?? evals RHS regardless;
 	fix by generating block closure for RHS, passing to ?? method???
 
@@ -38,8 +40,6 @@ FEATURES (or extensions)
 ========================
 NOTE! many of these are just thoughts, possibly bad ones!
 
-Set
-Object: dir() method?? Return Set??
 load compressed vmx (JSON) files and/or use some faster serialization library!!
 make obj_get of unknown property an error
 	(depended on by .std lookup)
