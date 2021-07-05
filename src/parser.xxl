@@ -75,7 +75,7 @@ var VMCode = Class.new({
 	finish: function (this, sym) {
 	    if (sym === null) {
 		// here from end of "gen" function, used by parser.xxl "main"
-		this.emit_exit();
+		this.emit_exit(); // emits EOF "return"
 	    }
 	    else {
 		// no more return statement, it has ceased to be.
@@ -173,7 +173,7 @@ var VMCode = Class.new({
 	    this._emit([sym.where, "return"]);
 	},
 	emit_exit: function (this) {
-	    // VM exit; return to caller of VM.start()
+	    // VM exit; return to "boot0" which contains exit instr
 	    this._emit(["EOF", "return"]);
 	},
 	emit_binop: function (this, op, sym) {
@@ -1669,7 +1669,7 @@ var Parser = Class.new({
 // move to compile.xxl?
 //	(regression test will need to do "-P x.vmx")
 //
-// compile an XXL file, return VMX (VM metadata and code) JSON
+// main program to compile an XXL file, return VMX (VM metadata and code) JSON
 // for regression testing, creating .vmx files (parser.vmx, bootstrap.vmx)
 
 // NOTE!
@@ -1686,7 +1686,7 @@ var Parser = Class.new({
 var gen = function (stmts) {	// tree is list of top level stmts/exprs
     var vmcode = VMCode.new();
     vmcode.gen_stmts(stmts);
-    return(vmcode.finish(null));
+    return(vmcode.finish(null)); // emit final return
 }; // gen()
 
 var dump_parser = function (p) {
