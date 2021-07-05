@@ -71,9 +71,6 @@ create wrapper Class for CObjects with real invoke method,
 truthiness: check for is_true property, then to_bool method??
 	(default to_bool method returns property value)
 
-Helper to declare PyFunc wrappers for methods???
-	take string of argument types to expect/translate
-
 tokenizer that takes string (any iterable?) for input
 	(could use for "eval")
 
@@ -82,11 +79,13 @@ tokenizer that takes string (any iterable?) for input
 
 pyimport => PyObject.new??
 
-Parser doc formatter;
+parser.vmx --dump
+    format HTML table?
     walk symbol_classes, display docstrings, precedence
     format table for symbol_classes?
 
-Complain about unused/unread variables (when exiting scope?)
+Complain about unused/unread variables in compiler
+	(when exiting scope?)
 
 Can lexer operator/name dichotomy be eliminated????
 	(to allow unicode to start either operator or name)
@@ -97,6 +96,7 @@ Can lexer operator/name dichotomy be eliminated????
 	allow { and } as combining characters?
 		(to allow {{ }} for frozen Dict?)
 		would need "{ }" for empty Dict lit.
+		OR only combine like characters!!!
 
 XXXop opcodes, PyFunc.invoke do not consume vm.args
 	("clargs" needed for spread args; clear needed in "call")
