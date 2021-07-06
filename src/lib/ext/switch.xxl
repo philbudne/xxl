@@ -51,7 +51,7 @@ var __extend_parser = function (p) {
 	    },
 	    gen: function (this, vmcode) { // gen
 		var swcode = p.VMCode.new(); // switch VMcode block
-
+		swcode.emit_scope(null, this); // scope for switch
 		swcode.emit_var(CASEVAR, this); // create variable for value
 		this.first.gen(swcode);		// evaluate switch expr
 		swcode.emit_store(CASEVAR, this); // store in variable
@@ -108,7 +108,7 @@ __extend_parser(__modinfo.parser); // needed to parse test below
 
 if (__modinfo.main) {
     var f = function(x) {
-      break:
+      break:			// NOTE!! MUST declare break manually!!!
 	switch (x) {
 	default:
 	case 1:
