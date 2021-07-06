@@ -1,4 +1,4 @@
-## eXtensible eXperimenal Language version Zero (XXL/0) [*](#intended-jokes)
+## eXtensible eXperimenal Language version Zero (XXL/0) [(*)](#intended-jokes)
 
 A self-hosting extensible language, VM/type system in Python3.
 
@@ -55,7 +55,7 @@ Tested under Python 3.7.9 and PyPy3 7.3.1 (needs `export PYTHONIOENCODING=utf8`)
 
 * [Prehistory](doc/prehistory.md) -- early influences and pre-github history
 
-#### Intended jokes
+#### (*) Intended jokes
 
 * PL/1 was IBM's "One Language to Rule Them All" for System/360
      (the one computer architecture anyone would ever need).
