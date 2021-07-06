@@ -6,3 +6,5 @@ __xxl.print(d["hello"]);
 __xxl.print(d[123]);
 
 __xxl.print({1:2}, {1:2,}, {1:2, 3:4}, {1:2, 3:4,});
+
+__xxl.print({}.getclass().new());

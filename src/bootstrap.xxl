@@ -212,11 +212,10 @@ if (__modinfo.main) {		// once only
 	"""
 	init method for Dict.  arg passed to this.update().
 	"""
-	if (!arg.instance_of(classes.Iterable)) {
-            __xxl.uerror(this.getclass().name + ".init needs iterable");
-	}
 	this.__init0();
-	this.update(arg);
+	if (arg) {
+	    this.update(arg);
+	}
     };
 
     classes.Dict.__methods['update'] = function (this, arg) {
@@ -225,6 +224,9 @@ if (__modinfo.main) {		// once only
 	List w/ two elements: `this[l[0]] = l[1];`
 	Non-list: `this[item] = arg[item];`
 	"""
+	if (!arg.instance_of(classes.Iterable)) {
+            __xxl.uerror(this.getclass().name + ".update needs iterable");
+	}
 	// Update if arg is Dict, call __update?
 	var iter = arg.iter();
 	while (true) {
@@ -265,18 +267,9 @@ if (__modinfo.main) {		// once only
 	init method for List: takes Iterable
 	"""
 	this.__init0();
-	if (!arg.instance_of(classes.Iterable) && !arg.iter) {
-	    __xxl.uerror(this.getclass().name + ".init needs Iterable");
+	if (arg) {
+	    this.extend(arg);
 	}
-	this.extend(arg);
-    };
-
-    var repr = function (x) { return(x.repr()); };
-    classes.List.__methods['repr'] = function (this) {
-	"""
-	Return representation of `this` List as Str.
-	"""
-	return("[" + ", ".join(this.map(repr)) + "]");
     };
 
     classes.List.__methods['extend'] = function (this, iterable) {
@@ -285,10 +278,21 @@ if (__modinfo.main) {		// once only
 	and iterate appending values to `this`;
 	Returns `null`
 	"""
+	if (!iterable.instance_of(classes.Iterable)) {
+	    __xxl.uerror(this.getclass().name + ".extend needs Iterable");
+	}
 	var iter = iterable.iter();
 	while (true) {
 	    this.append(iter.next(return));
 	}
+    };
+
+    var repr = function (x) { return(x.repr()); };
+    classes.List.__methods['repr'] = function (this) {
+	"""
+	Return representation of `this` List as Str.
+	"""
+	return("[" + ", ".join(this.map(repr)) + "]");
     };
 
     ////////////////

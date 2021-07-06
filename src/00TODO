@@ -1,5 +1,3 @@
-** BUG: allow Dict.new(), List.new()
-
 ** BUG: "nullish coalescing operator" ?? evals RHS regardless;
 	fix by generating block closure for RHS, passing to ?? method???
 
