@@ -1,4 +1,4 @@
-{"v": 1.0, "fn": "parser.xxl", "mt": 1625525847.3003902, "sz": 51099}
+{"v": 1.0, "fn": "parser.xxl", "mt": 1625535530.9212027, "sz": 51127}
 [["60:1", "var", "__doc"],
  ["60:15", "lit", "Extensible Parser/Compiler for XXL."],
  ["60:1", "store", "__doc"],
