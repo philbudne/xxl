@@ -1,6 +1,3 @@
-** BUG: "nullish coalescing operator" ?? evals RHS regardless;
-	fix by generating block closure for RHS, passing to ?? method???
-
 *** BUG: Only CPObjects can be used as Dict keys
 	fix in github branch cobj-dict-key
 	parser.vmx on parser.xxl slowdown 5.27s => 5.798
@@ -10,7 +7,8 @@
 *** BUG: can overwrite "const" values in a Module!!!
 	need descriptors (slots) ??
 
-BUG: "var else;" doesn't stop "if .... else"
+BUG:	"var else;" doesn't stop "if .... else"
+	case.xxl does not reserve "case" or "default"
 
 TEST
 ====
