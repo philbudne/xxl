@@ -692,7 +692,7 @@ var PrattParser = Class.new({
 		}
 	    });
 
-	    p.ReadOnly = Class.new({ // not Const -- keep that for Stmt
+	    p.ReadOnly = Class.new({ // not named Const -- keep that for Stmt
 		name: "ReadOnly",
 		supers: [p.Name],
 		methods: {
@@ -701,7 +701,7 @@ var PrattParser = Class.new({
 		    }
 		},
 		props: {
-		    lvalue: false // override from Name
+		    lvalue: false // override from Name (make illegal on LHS)
 		}
 	    });
 
