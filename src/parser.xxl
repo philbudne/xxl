@@ -1674,8 +1674,11 @@ var Parser = Class.new({
 
 	    this.need_advance = true; // pump needs priming
 	},
+
 	parse: function (this, fname) {	// parse whole file
 	    this.start_parse(fname);
+	    // parse & execute statements one at a time (for extensions)
+	    // save as a series of calls to closures???
 	    var s = this.statements();
 	    this.advance(this.END);
 	    this.scope = this.scope.pop();
