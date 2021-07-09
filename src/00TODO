@@ -1,3 +1,7 @@
+*** BUG: __xxl.import always calls main __modinfo._import
+
+	bootstrap: always define "import" in current namespace???
+
 *** BUG: Only CPObjects can be used as Dict keys
 	fix in github branch cobj-dict-key
 	parser.vmx on parser.xxl slowdown 5.27s => 5.798
