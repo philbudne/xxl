@@ -267,21 +267,6 @@ class VM:
         for return_location in fp_backtrace_list(self.fp):
             sys.stderr.write(" return to %s\n" % return_location)
 
-    # helper (inline once settled?)
-    # make method of OpInstr parent class??
-    def call_op(self, optype, inst):
-        """
-        Invoke a method for an operator.
-
-        caller (Instr) has set up self.args (Python list in forward order)
-        `optype` Python string, one of UNOPS, BINOPS, LHSOPS
-        `inst.value` Python string for operator to look up
-        object in self.ac
-        """
-        m = classes.find_op(self.ac, optype, inst.value)
-        # XXX always create frame?
-        m.invoke(self)
-
     def push(self, val):
         """
         push onto saguro/cactus/spaghetti stack,
@@ -464,8 +449,9 @@ class BinOpInstr(VMInstr1):
     def step(self, vm):
         arg = vm.pop()
         # NOTE: find_op does not return BoundMethod:
-        vm.args = [vm.ac, arg]
-        vm.call_op(const.BINOPS, self)
+        vm.args = [vm.ac, arg]  # explicitly pass "this" object
+        m = classes.find_op(vm.ac, const.BINOPS, self.value)
+        m.invoke(vm)            # XXX always create frame???
 
     def prof(self, vm, secs):
         super().prof(vm, secs)
@@ -485,13 +471,14 @@ class BinOpLitInstr(BinOpInstr): # NOTE! inherits special "prof" method!
     __slots__ = ['lit']
     def __init__(self, fn, where, op, lit):
         # convert to Class when code is loaded
-        super().__init__(fn, where, op) # vm.call_op expects op in "value"
+        super().__init__(fn, where, op) # keep op in ".value" field
         self.lit = classes.wrap(lit)
 
     def step(self, vm):
         # NOTE: find_op does not return BoundMethod:
-        vm.args = [vm.ac, self.lit]
-        vm.call_op(const.BINOPS, self)
+        vm.args = [vm.ac, self.lit] # explicitly pass "this" object
+        m = classes.find_op(vm.ac, const.BINOPS, self.value)
+        m.invoke(vm)            # XXX always create frame???
 
     def json(self):
         return [self.fn_where(), self.name, self.value, self.lit]
@@ -512,8 +499,9 @@ class LHSOpInstr(VMInstr1):
         arg1 = vm.pop()         # index or property
         arg2 = vm.pop()         # value to store
         # NOTE: find_op does not return BoundMethod:
-        vm.args = [vm.ac, arg1, arg2]
-        vm.call_op(const.LHSOPS, self)
+        vm.args = [vm.ac, arg1, arg2] # explicitly pass "this" object
+        m = classes.find_op(vm.ac, const.LHSOPS, self.value)
+        m.invoke(vm)            # XXX always create frame???
 
 @reginstr
 class UnOpInstr(VMInstr1):
@@ -527,8 +515,9 @@ class UnOpInstr(VMInstr1):
 
     def step(self, vm):
         # NOTE: find_op does not return BoundMethod:
-        vm.args = [vm.ac]
-        vm.call_op(const.UNOPS, self)
+        vm.args = [vm.ac]       # pass "this" object
+        m = classes.find_op(vm.ac, const.UNOPS, self.value)
+        m.invoke(vm)            # XXX always create frame???
 
 @reginstr
 class CloseInstr(VMInstr1):
