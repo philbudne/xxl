@@ -723,7 +723,8 @@ undef_value = CObject(Undefined)
 true_value = _new_pobj(Bool, True)
 false_value = _new_pobj(Bool, False)
 
-GETPROP_NONE = null_value
+GETPROP_NONE = null_value       # now safe to call CObject.getprop!!!!
+
 def getprop_ok(x):
     """
     check a getprop return value
@@ -929,7 +930,7 @@ def find_op(obj, optype, op):
     `op` is Python string for operator
     NOTE!! Does *NOT* return BoundMethod!!
         called from XxxOpInstrs 99.999% of time
-        (only exception is CObject.invoke)
+        (only exception is CObject.invoke for '(')
     """
     #print("find_op", obj, optype, op)
     c = c0 = obj.getclass()
@@ -938,12 +939,12 @@ def find_op(obj, optype, op):
     seen.add(c)
     while True:
         ops = c.getprop(optype)
-        if ops and ops != null_value:
+        if ops is not null_value:
             if op in ops.getvalue():
                 return ops.getvalue()[op]
 
         supers = c.getprop(const.SUPERS)
-        if supers and supers != null_value:
+        if supers is not null_value:
             # XXX check if List
             for s in supers.getvalue():
                 if s not in seen:
