@@ -2285,11 +2285,9 @@ def defmodule(name, mod):
     # XXX indexed by Python str:
     md.getvalue()[name] = mod
 
-classes_module = None           # XXX TEMP?
-
 def classes_init(argv, parser_vmx):
     """
-    call once on startup; initializae "root" scope, including __xxl object
+    call once on startup; initialize "root" scope, including __xxl object
     """
 
     # init root_scope
@@ -2305,10 +2303,9 @@ def classes_init(argv, parser_vmx):
     # UTTERLY VILE: either hide in a "make_internal_module"
     #   or do it more cleanly!!!!
     #   declare classes_module up top???????????
-    global classes_module       # XXX TEMP?
     classes_module, _ = new_module(None)
     classes_module.scope = classes_scope # XXX YUK
-    # NOTE: below crushes __modinfo!!!??? (do we care???)
+    # NOTE: below crushes classes_module __modinfo!!!??? (do we care???)
     classes_module.props = classes_scope.vars # XXX XXX DOUBLY SO
     defmodule('classes', classes_module)      # XXX __classes?
 
