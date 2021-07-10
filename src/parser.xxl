@@ -445,7 +445,7 @@ var PrattParser = Class.new({
 	    this.scope._define(class.new(where, name, arity));
 	},
 
-	defname_internal: function(this, where, name, read_only) {
+	_defname_internal: function(this, where, name, read_only) {
 	    """
 	    define `name` (arrived at w/o a Symbol) in current scope.
 
@@ -474,7 +474,7 @@ var PrattParser = Class.new({
 
 	predef: function (this, name, read_only) {
 	    """predefine Str `name` as a Name or ReadOnly"""
-	    this.defname_internal("predefined", name, read_only);
+	    this._defname_internal("predefined", name, read_only);
 	},
 
 	expression: function (this, rbp) {
@@ -1291,7 +1291,7 @@ var Parser = Class.new({
 
 			// define read-only var for continuation
 			// (without "shadow" warnings)
-			p.defname_internal(this.where, "return", true);
+			p._defname_internal(this.where, "return", true);
 			var t = p.ctoken();
 			if (t.arity == "name") { // function NAME?
 			    // NOTE!! name (currently) defined only
