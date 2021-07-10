@@ -1,0 +1,2 @@
+// import a file that imports a parser extension
+__xxl.import("test/045-import-do.xxl");

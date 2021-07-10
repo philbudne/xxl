@@ -1,0 +1,11 @@
+// -*-js-*-
+
+// import a parser extension
+__xxl.import("lib/ext/do.xxl");
+
+// and use it!
+var i = 4;
+do {
+    __xxl.print(i);
+    i -= 1;
+} while (i > 0);
