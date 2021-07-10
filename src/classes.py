@@ -232,8 +232,8 @@ class CContinuation(CCallable):
         elif l == 0:
             vm.ac = null_value
         else:
-            raise UError("Too many args (%d) to Continuation" % len(vm.args))
-        # after args check, for backtrace to caller!!
+            vm.save_frame(True) # show caller in backtrace!!
+            raise UError("Too many args (%d) to %r" % (len(vm.args), self))
         vm.restore_frame(self.fp) # just like ReturnInstr
 
     def args(self):
