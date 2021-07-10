@@ -44,13 +44,10 @@ class VMError(Exception):
     exception class for VM instruction errors
     """
 
-# VM frame pointer register "fp" points to a Frame, implementing a
-# "parent pointer" (aka cactus/saguro/spaghetti) stack.
-
-# In Python 3.7.9, namedtuple faster than class, and immutable!
-# Regular tuple is even faster, but less scrutable.
+# VM frame pointer register "fp" points to a frame tuple,
+# implementing a "parent pointer" (aka cactus/saguro/spaghetti) stack.
 # XXX save vm.args for backtrace?
-Frame = collections.namedtuple('Frame', 'cb,pc,scope,fp,fn,where,show')
+F_CB, F_PC, F_SCOPE, F_FP, F_FN, F_WHERE, F_SHOW = 0, 1, 2, 3, 4, 5, 6
 
 # called from fp_backtrace (below), CContinuation.defn
 def fp_where(fp):
@@ -59,7 +56,7 @@ def fp_where(fp):
 
     (calls Instr fn_where method)
     """
-    return fp.cb[fp.pc].fn_where()
+    return fp[F_CB][fp[F_PC]].fn_where()
 
 # called from VM.backtrace, CContinuation.backtrace
 def fp_backtrace_list(fp):
@@ -68,9 +65,9 @@ def fp_backtrace_list(fp):
     """
     ret = []
     while fp:
-        if fp.show:
+        if fp[F_SHOW]:
             ret.append(fp_where(fp))
-        fp = fp.fp
+        fp = fp[F_FP]
     return ret
 
 class VM:
@@ -255,8 +252,8 @@ class VM:
         #       would allow Python callees to use same VM???
         # called from CBClosure.invoke w/ show=False
         # XXX save self.args for backtraces??
-        self.fp = Frame(self.cb, self.pc, self.scope, self.fp,
-                        self.ir.fn, self.ir.where, show)
+        self.fp = (self.cb, self.pc, self.scope, self.fp,
+                   self.ir.fn, self.ir.where, show)
 
     def backtrace(self):        # XXX take file to write to?
         """
