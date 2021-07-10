@@ -363,7 +363,7 @@ class CPyFunc(CCallable):
 
     def invoke(self, vm):
         vm.ac = self.func(*vm.args)
-        assert(isinstance(vm.ac, CObject))
+        #assert(isinstance(vm.ac, CObject))
 
     def __call__(self, *args):
         """
