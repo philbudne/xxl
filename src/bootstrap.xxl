@@ -226,10 +226,9 @@ if (true) {			// private variables
 	    """
 	    return representation of Dict
 	    """
-	    var items = [];
-	    this.for_each(
+	    var items = this.map(
 		function (key) {
-		    items.append(key.repr() + ": " + this[key].repr());
+		    return(key.repr() + ": " + this[key].repr());
 		}
 	    );
 	    return("{" + ", ".join(items) + "}");
