@@ -284,12 +284,9 @@ class VM:
     def restore_frame(self, frame):
         """
         "return" using saved frame pointer
-        helper used by ReturnInstr and CContinuation
+        helper used by ReturnInstr and CContinuation.invoke
         """
-        self.cb = frame.cb
-        self.pc = frame.pc
-        self.scope = frame.scope
-        self.fp = frame.fp
+        self.cb, self.pc, self.scope, self.fp, _, _, _ = frame
 
 ################################################################
 # VM instructions
