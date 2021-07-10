@@ -88,9 +88,9 @@ else:
     fname = "-"
 
 if not parser:
-        # _COULD_ choose parser based on source file name!!!
-        #  (bootstrap could read a file with SUFFIX => VMXFILE mappings)
-        parser = os.environ.get('XXL_PARSER', 'parser.vmx') # XXX lib dir
+    # _COULD_ choose parser based on source file name!!!
+    #  (bootstrap could read a file with SUFFIX => VMXFILE mappings)
+    parser = os.environ.get('XXL_PARSER', 'parser.vmx') # XXX lib dir
 
 classes.classes_init(argv=argv, parser_vmx=parser)
 
