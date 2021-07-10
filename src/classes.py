@@ -478,14 +478,16 @@ def _mkdict(vals):
     """
     ONLY USE TO CONSTRUCT BASE TYPES!
     """
-    assert(not __initialized)
+    if __initialized:
+        return new_by_name('Dict', vals)
     return _new_pobj(Dict, vals)
 
 def _mklist(vals):
     """
     ONLY USE TO CONSTRUCT BASE TYPES!
     """
-    assert(not __initialized)
+    if __initialized:
+        return new_by_name('List', vals)
     return _new_pobj(List, vals)
 
 def _mkstr(s):
@@ -499,9 +501,8 @@ def _mkstr(s):
 
 def _mkobj(props):
     """
-    used to create __xxl object, lexer tokens
+    used to create lexer tokens
     """
-    #assert(not __initialized)
     o = CObject(Object)
     o.props.update(props)
     return o
@@ -668,6 +669,8 @@ Set  = defclass(PClass, 'Set', [PyIterable],
 # non-iterable:
 Number = defclass(PClass, 'Number', [PObject],
                   doc="Built-in int/float wrapper Class")
+
+__initialized = True            # new_by_name for Dict, Str, List now safe
 
 ################
 # Str, List now exist:
@@ -2122,8 +2125,6 @@ def new_modinfo(main, module, fname, parser_vmx=None):
     if XXL_DEBUG_BOOTSTRAP:
         mi.setprop(const.MODINFO_DEBUG_BOOTSTRAP, true_value)
 
-    scope = module.scope
-
     if fname is not None:
         mi.setprop(const.MODINFO_FILE, mkstr(fname))
 
@@ -2160,6 +2161,7 @@ def new_module(fname, main=False, parser_vmx=None):
     mod = CModule(scope)
 
     scope.defvar(const.DOC, null_value)
+    scope.defvar('__xxl', undef_value)
 
     if fname:
         # XXX Dict indexed by Python str
@@ -2211,9 +2213,29 @@ def modinfo_assemble(this, tree, srcfile):
     #   (any variables created are globals):
     return CClosure(code, mod.scope)
 
+DEBUG_IMPORT = False
+
+@pyfunc
+def modinfo__import(this, filename):
+    """
+    worker function for __xxl.import()
+    (defined in bootstrap.xxl)
+    """
+    fname = filename.getvalue() # XXX getstr???
+    if DEBUG_IMPORT:
+        print("xxl__import", fname, file=sys.stderr)
+
+    # returns (mod,boot) tuple:
+    mod_boot = new_module(fname=fname)
+    if DEBUG_IMPORT:
+        print("mod_boot", mod_boot, file=sys.stderr)
+
+    return wrap(mod_boot) # turns 2-tuple into List
+
 ModInfo.setprop(const.METHODS, _mkdict({
-    'load_vmx': modinfo_load_vmx, # create Closure from .vmx file
-    'assemble': modinfo_assemble  # create Closure from List of instruction Lists
+    'load_vmx': modinfo_load_vmx,  # create Closure from .vmx file
+    'assemble': modinfo_assemble,  # create Closure from List of instruction Lists
+    '_import': modinfo__import     # import primitive: can't be in XXLObject!
 }))
 
 ################################################################
@@ -2298,8 +2320,7 @@ def classes_init(argv, parser_vmx):
     root_scope.defvar('undefined', undef_value)
     root_scope.defvar('Class', Class)
 
-    # create __xxl object
-    xxlobj.create_xxl_object(root_scope, argv=argv, parser_vmx=parser_vmx)
+    xxlobj.create_xxl_class(argv=argv, parser_vmx=parser_vmx)
 
     # UTTERLY VILE: either hide in a "make_internal_module"
     #   or do it more cleanly!!!!
@@ -2360,8 +2381,7 @@ def_wrappers('Set', set, ['add', 'clear', 'copy',
                           'pop', 'remove',
                           'symmetric_difference',
                           'symmetric_difference_update',
-                          'union',
-                          'update'])
+                          'union']) # update in bootstrap.xxl
 
 # XXX need Bytes for "encode" output
 def_wrappers('Str', str, ['capitalize',
@@ -2392,11 +2412,8 @@ def_wrappers('Str', str, ['capitalize',
                          ('upper', 'to_upper'),
                           'zfill'])
 
+# more classes here?
 
-# XXX def more classes here
 ################################################################
-
-# earlier?!!!!!
-__initialized = True        # don't allow _mkXXX any more
 
 classes_scope.defvar(const.DOC, mkstr("Built-in Classes for XXL"))

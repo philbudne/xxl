@@ -1,6 +1,4 @@
-*** BUG: __xxl.import always calls main __modinfo._import
-
-	bootstrap: always define "import" in current namespace???
+Add test of import("lib/ext/do.xxl") and import of that test!!!!!
 
 *** BUG: Only CPObjects can be used as Dict keys
 	fix in github branch cobj-dict-key

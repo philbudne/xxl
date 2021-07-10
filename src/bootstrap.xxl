@@ -12,477 +12,498 @@ if (__modinfo.booting) {
 }
 __modinfo.booting = true;
 
-if (__modinfo.main) {		// once only
+if (true) {			// private variables
+    // __xxl.import not available until __xxl created and function defined!!
+    var classes = __modinfo._import("classes")[0];
+
+    if (__modinfo.main) {		// once only
+	////////////////////////////////////////////////////////////////
+	// native code methods for built-in Classes
+
+	////////////////
+	// Object
+
+	// default this.to_str() to this.repr():
+	classes.Object.__methods['to_str'] = function (this) {
+	    """
+	    Default to_str method: calls this.repr().
+	    """
+	    return(this.repr());
+	};
+
+	////////////////
+	// Class
+
+	// default 'new' method!!
+	classes.Class.__methods['new'] = function (this_class, ...args) {
+	    """
+	    Default metaclass (Class) new method;
+	    Manually invoked as SomeClass.new.
+	    Calls this_class.create to create obj,
+	    and then calls obj.init().
+	    """
+	    var obj = this_class.create();
+	    obj.init(...args);
+	    return(obj);
+	};
+
+	////////////////
+	// Bool
+
+	classes.Bool.new = function (x) { // static method!
+	    """
+	    Return truthiness of `x` (as Bool).
+	    NOTE!! A static method, not a metaclass method!!!
+	    """
+	    // XXX could invoke to_bool method?! or "!(!x)"
+	    return(x ? true : false);
+	};
+
+	////////////////
+	// Iterable (subclasses w/ .iter() and .reversed() methods)
+
+	var Iterable = classes.Iterable;
+
+	Iterable.__methods['for_each'] = function (this, func) {
+	    """
+	    Create Iterator from `this`, call `func` with each value.
+	    """
+	    var iter = this.iter();
+	    while (true) {
+		func(iter.next(return));
+	    }
+	};
+
+	Iterable.__methods['each_for'] = function (this, func) {
+	    """
+	    Create reverse Iterator from `this`, call `func` with each value.
+	    returns `null`
+	    """
+	    var iter = this.reversed();
+	    while (true) {
+		func(iter.next(return));
+	    }
+	};
+
+	Iterable.__methods['iter'] = function (this, func) {
+	    """
+	    Default `iter` method for `Iterable` mixin; fatal error.
+	    """
+	    __xxl.uerror("Iterable.iter method not overridden");
+	};
+
+	Iterable.__methods['map'] = function (this, func) {
+	    """
+	    Create Iterator from `this`;
+	    Return List of results of `func` passed each iterator item.
+	    """
+	    var iter = this.iter();
+	    var ret = [];
+	  break_while:
+	    while (true) {
+		ret.append(func(iter.next(break_while)));
+	    }
+	    return(ret);
+	};
+
+	// ignore entries where func returns `ignore` value
+	Iterable.__methods['map2'] = function (this, func, ignore) {
+	    """
+	    Return List of results of `func` passed each iterator item,
+	    ignores any returns with value `ignore` (defaults to `null`).
+	    """
+	    var iter = this.iter();
+	    var ret = [];
+	  break_while:
+	    while (true) {
+		var x = func(iter.next(break_while));
+		if (x != ignore) {
+		    ret.append(x);
+		}
+	    }
+	    return(ret);
+	};
+
+	classes.Iterable.__methods['reversed'] = function (this) {
+	    """
+	    Creates List from `this`, returns reverse PyIterator.
+	    """
+	    var l = classes.List.new(this);
+	    return(l.reversed());
+	};
+
+	classes.Iterable.__methods['sorted'] = function (this, reverse) {
+	    """
+	    Return sorted List of values from iterator (creates List first).
+	    `reverse` is Bool to sort in reverse order (defaults to `false`).
+	    """
+	    var l = classes.List.new(this);
+	    return(l.sorted(reverse));
+	};
+
+	////////////////
+	// Dict
+
+	classes.Dict.__methods['init'] = function (this, arg) {
+	    """
+	    init method for Dict.  arg passed to this.update().
+	    """
+	    this.__init0();
+	    if (arg) {
+		this.update(arg);
+	    }
+	};
+
+	classes.Dict.__methods['update'] = function (this, arg) {
+	    """
+	    Update `this` using `arg.iter()` legal iterator values:
+	    List w/ two elements: `this[l[0]] = l[1];`
+	    Non-list: `this[item] = arg[item];`
+	    """
+	    if (!arg.instance_of(classes.Iterable)) {
+		__xxl.uerror(this.getclass().name + ".update needs iterable");
+	    }
+	    // Update if arg is Dict, call __update?
+	    var iter = arg.iter();
+	    while (true) {
+		var item = iter.next(return);
+		// if first item, set sentinal?
+		// make sure all following items of same size/shape??
+		if (item.instance_of(classes.List)) {
+		    if (item.len() != 2) {
+			__xxl.uerror(this.getclass().name +
+				     ".update got List w/ len != 2");
+		    }
+		    this[item[0]] = item[1];
+		}
+		else {
+		    this[item] = arg[item];
+		}
+	    }
+	};
+
+	classes.Dict.__methods['repr'] = function (this) {
+	    """
+	    return representation of Dict
+	    """
+	    var items = [];
+	    this.for_each(
+		function (key) {
+		    items.append(key.repr() + ": " + this[key].repr());
+		}
+	    );
+	    return("{" + ", ".join(items) + "}");
+	};
+
+	////////////////
+	// List
+
+	classes.List.__methods['init'] = function (this, arg) {
+	    """
+	    init method for List: takes Iterable
+	    """
+	    this.__init0();
+	    if (arg) {
+		this.extend(arg);
+	    }
+	};
+
+	classes.List.__methods['extend'] = function (this, iterable) {
+	    """
+	    Create an iterator from `iterable`,
+	    and iterate appending values to `this`;
+	    Returns `null`
+	    """
+	    if (!iterable.instance_of(classes.Iterable)) {
+		__xxl.uerror(this.getclass().name + ".extend needs Iterable");
+	    }
+	    var iter = iterable.iter();
+	    while (true) {
+		this.append(iter.next(return));
+	    }
+	};
+
+	var repr = function (x) { return(x.repr()); };
+	classes.List.__methods['repr'] = function (this) {
+	    """
+	    Return representation of `this` List as Str.
+	    """
+	    return("[" + ", ".join(this.map(repr)) + "]");
+	};
+
+	////////////////
+	// Null
+
+	classes.Null.new = function (x) { // static method!
+	    """
+	    Return `null` value
+	    NOTE!! A static method, not a metaclass method!!!
+	    """
+	    return(null);
+	};
+
+	////////////////
+	// Number
+
+	classes.Number.new = function (x) { // static method!
+	    """
+	    Convert `x` to a `Number`
+	    NOTE!! A static method, not a metaclass method!!!
+	    """
+	    return(x.to_number());
+	};
+
+	////////////////
+	// Set
+
+	classes.Set.__methods['init'] = function (this, arg) {
+	    """
+	    init method for Set.  arg passed to this.update().
+	    """
+	    this.__init0();
+	    if (arg) {
+		this.update(arg);
+	    }
+	};
+
+	classes.Set.__methods['update'] = function (this, arg) {
+	    """
+	    Update `this` using `arg.iter()`
+	    """
+	    if (!arg.instance_of(classes.Iterable)) {
+		__xxl.uerror(this.getclass().name + ".update needs iterable");
+	    }
+	    // If arg is Set, call __update?
+	    var iter = arg.iter();
+	    while (true) {
+		this.add(iter.next(return));
+	    }
+	};
+
+	classes.Set.__methods['repr'] = function (this) {
+	    """
+	    return representation of Set
+	    """
+	    return("{" + ", ".join(this.map(repr)) + "}");
+	};
+
+	////////////////
+	// SingletonClass
+
+	classes.SingletonClass = Class.new({
+	    name: "SingletonClass",
+	    supers: [Class],	// a metaclass!
+	    doc: """
+		Metaclass for Classes with singleton values.
+		Invoke classes.SingletonClass.new instead of Class.new
+		to create a singleton Class.
+		""",
+	    methods: {
+		new: function (this_class, ...args) {
+		    """
+		    SingletonClass new method:
+		    invoke to create a new class with a single value.
+		    First time: calls `this_class.create` to create obj,
+		    then calls obj.init(); After: returns previous value.
+		    """
+		    var obj = this_class.__it; // see const.SINGLE
+		    if (!obj) {		   // XXX check if === undef?
+			obj = this_class.__it = this_class.create();
+			obj.init(...args);
+		    }
+		    return(obj);
+		}
+	    }
+	});
+
+	////////////////
+	// Str
+
+	classes.Str.__methods['join'] = function (this, iterable) {
+	    """
+	    Concatenate strings from `iterable` using `this` as the separator.
+	    """
+	    if (iterable.instance_of(classes.PyIterable)) {
+		return(this.__join(iterable)); // unwrap and join
+	    }
+	    else if (iterable.instance_of(classes.Iterable)) {
+		var list = classes.List.new(iterable);
+		return(this.__join(list));
+	    }
+	    else {
+		__xxl.uerror(this.getclass().name + ".join needs Iterable");
+	    }
+	};
+
+	classes.Str.new = function (arg) { // static method!
+	    """
+	    Str Class new (static) method; calls arg.to_str method
+	    """
+	    return(arg.to_str());
+	};
+
+	////////////////
+	// Undefined
+
+	classes.Undefined.new = function (x) { // static method!
+	    """
+	    Return `undefined` value
+	    NOTE!! A static method, not a metaclass method!!!
+	    """
+	    return(undefined);
+	};
+
+	////////////////
+	// XXLObject
+
+	// use static member func (~sigh~ no __xxl object yet)
+	// COULD delay, but "error" function needed ASAP!
+	var py_sys = classes.XXLObject.pyimport("sys");
+
+	var str = function (x) {
+	    return(x.to_str());
+	};
+
+	var __print = function (file, l) {
+	    file.write(" ".join(l.map(str)) + "\n");
+	};
+
+	classes.XXLObject.print = function (...args) {
+	    """
+	    print args (as strings) to stdout
+	    """
+	    __print(py_sys.stdout, args);
+	};
+
+	classes.XXLObject.error = function (...args) {
+	    """
+	    print args (as strings) to stderr
+	    """
+	    __print(py_sys.stderr, args);
+	    py_sys.stderr.flush();	// needed under PyPy3 7.3.1??
+	};
+    } // main (once only)
+
     ////////////////////////////////////////////////////////////////
-    // __xxl (simple object) was once private per-module
-    // (now defined in root scope)
+    // always
+
+    var error = classes.XXLObject.error;
+
+    var debug_boot;
+    var debug_import;
+    if (__modinfo.debug_bootstrap) { // from environment XXL_DEBUG_BOOTSTRAP
+	debug_boot = function(...args) {
+	    error("bootstrap", __modinfo.file, ...args);
+	};
+	debug_import = error;	// XXX have separate control?
+    }
+    else {
+	debug_boot = debug_import = function(...args) { };
+    }
+
+    debug_boot("STARTING");
+
+    ////////////////
+    // __xxl (formerly System) was once private simple object,
+    // then public (root_scope) simple object, now instance
+    // of XXLObject class (so can have private __xxl.import method)
+
+    // cannot call until Class.new defined!
+    __xxl = classes.XXLObject.new(); // instance, per Module
+
+    debug_boot(__modinfo, __xxl);
 
     __xxl.import = function (name) { // XXX take optional args (as Dict?)
 	"""
 	Import a source file, VM instruction (.vmx) file, or internal module.
-	Calls Module.__extend_parser(importer_parser), if found.
+	Calls NewModule.__extend_parser(importer_parser), if found.
 	Returns Module.
+	NOTE: per-instance member function (not a method)
+		for access to local __modinfo.parser.
 	"""
-	return(__modinfo._import(name));
-    };
 
-    ////////////////
-    // print
-    var py_sys = __xxl.pyimport("sys");
+	var path = __xxl._find_in_lib_path(name);
+	debug_import(__modinfo.file, "import", name, path, __modinfo, __xxl);
 
-    var str = function (x) {
-	return(x.to_str());
-    };
-
-    var __print = function (file, l) {
-	file.write(" ".join(l.map(str)) + "\n");
-    };
-
-    __xxl.print = function (...args) {
-	"""
-	print args (as strings) to stdout
-	"""
-	__print(py_sys.stdout, args);
-    };
-
-    __xxl.error = function (...args) {
-	"""
-	print args (as strings) to stderr
-	"""
-	__print(py_sys.stderr, args);
-	py_sys.stderr.flush();	// needed under PyPy3 7.3.1??
-    };
-
-    ////////////////////////////////////////////////////////////////
-    // native code methods for built-in Classes
-
-    // __xxl.import not available until ModInfo._import defined!
-    var classes = __xxl._import("classes")[0];
-
-    ////////////////
-    // ModInfo
-
-    classes.ModInfo.__methods['_import'] = function (this, name) {
-	"""
-	Helper for __xxl.import.
-	ModInfo Method for access to importer's __modinfo.parser
-	"""
 	// _find_in_lib_path takes optional list of suffixes to try
-	var rets = __xxl._import(__xxl._find_in_lib_path(name));
-	var mod  = rets[0]; // Module
-	var boot = rets[1]; // Closure for bootstrap.vmx(!) (first time only)
+	var mod_boot = __modinfo._import(path);
+	var mod  = mod_boot[0]; // Module
+	var boot = mod_boot[1]; // Closure for bootstrap.vmx(!) (first time only)
 
 	if (boot) {
+	    debug_import(__modinfo.file, "import", name, "calling bootstrap", boot);
 	    boot(); // start execution of bootstrap.vmx in new Module!
 	}
 
 	// check for parser extensions at "well known" name:
 	var xp = mod.__extend_parser;
-	if (xp) {			// XXX ignore if asked?
-	    xp(this.parser);
+	var mp = __modinfo.parser;
+	if (xp || mp) {
+	    debug_import(__modinfo.file, "import", name, "__extend_parser", xp, "mp", mp);
+	}
+	if (xp && mp) {		// optionally ignore?
+	    xp(mp);
 	}
 	return(mod);
-    };
+    }; // __xxl.import
 
-    ////////////////
-    // Object
+    debug_boot("__modinfo.module", __modinfo.module);
+    debug_boot("__modinfo.main", __modinfo.main);
 
-    // default this.to_str() to this.repr():
-    classes.Object.__methods['to_str'] = function (this) {
-	"""
-	Default to_str method: calls this.repr().
-	"""
-	return(this.repr());
-    };
+    if (__modinfo.file) {
+	// import should have already called __xxl._find_in_lib_path
+	var file = __modinfo.file;
 
-    ////////////////
-    // Class
-
-    // default 'new' method!!
-    classes.Class.__methods['new'] = function (this_class, ...args) {
-	"""
-	Default metaclass (Class) new method;
-	Manually invoked as SomeClass.new.
-	Calls this_class.create to create obj,
-	and then calls obj.init().
-	"""
-	var obj = this_class.create();
-	obj.init(...args);
-	return(obj);
-    };
-
-    ////////////////
-    // Bool
-
-    classes.Bool.new = function (x) { // static method!
-	"""
-	Return truthiness of `x` (as Bool).
-	NOTE!! A static method, not a metaclass method!!!
-	"""
-	// XXX could invoke to_bool method?! or "!(!x)"
-	return(x ? true : false);
-    };
-
-    ////////////////
-    // Iterable (subclasses w/ .iter() and .reversed() methods)
-
-    var Iterable = classes.Iterable;
-
-    Iterable.__methods['for_each'] = function (this, func) {
-	"""
-	Create Iterator from `this`, call `func` with each value.
-	"""
-	var iter = this.iter();
-	while (true) {
-	    func(iter.next(return));
-	}
-    };
-
-    Iterable.__methods['each_for'] = function (this, func) {
-	"""
-	Create reverse Iterator from `this`, call `func` with each value.
-	returns `null`
-	"""
-	var iter = this.reversed();
-	while (true) {
-	    func(iter.next(return));
-	}
-    };
-
-    Iterable.__methods['iter'] = function (this, func) {
-	"""
-	Default `iter` method for `Iterable` mixin; fatal error.
-	"""
-	__xxl.uerror("Iterable.iter method not overridden");
-    };
-
-    Iterable.__methods['map'] = function (this, func) {
-	"""
-	Create Iterator from `this`;
-	Return List of results of `func` passed each iterator item.
-	"""
-	var iter = this.iter();
-	var ret = [];
-      break_while:
-	while (true) {
-	    ret.append(func(iter.next(break_while)));
-	}
-	return(ret);
-    };
-
-    // ignore entries where func returns `ignore` value
-    Iterable.__methods['map2'] = function (this, func, ignore) {
-	"""
-	Return List of results of `func` passed each iterator item,
-	ignores any returns with value `ignore` (defaults to `null`).
-	"""
-	var iter = this.iter();
-	var ret = [];
-      break_while:
-	while (true) {
-	    var x = func(iter.next(break_while));
-	    if (x != ignore) {
-		ret.append(x);
-	    }
-	}
-	return(ret);
-    };
-
-    classes.Iterable.__methods['reversed'] = function (this) {
-	"""
-	Creates List from `this`, returns reverse PyIterator.
-	"""
-	var l = classes.List.new(this);
-	return(l.reversed());
-    };
-
-    classes.Iterable.__methods['sorted'] = function (this, reverse) {
-	"""
-	Return sorted List of values from iterator (creates List first).
-	`reverse` is Bool to sort in reverse order (defaults to `false`).
-	"""
-	var l = classes.List.new(this);
-	return(l.sorted(reverse));
-    };
-
-    ////////////////
-    // Dict
-
-    classes.Dict.__methods['init'] = function (this, arg) {
-	"""
-	init method for Dict.  arg passed to this.update().
-	"""
-	this.__init0();
-	if (arg) {
-	    this.update(arg);
-	}
-    };
-
-    classes.Dict.__methods['update'] = function (this, arg) {
-	"""
-	Update `this` using `arg.iter()` legal iterator values:
-	List w/ two elements: `this[l[0]] = l[1];`
-	Non-list: `this[item] = arg[item];`
-	"""
-	if (!arg.instance_of(classes.Iterable)) {
-            __xxl.uerror(this.getclass().name + ".update needs iterable");
-	}
-	// Update if arg is Dict, call __update?
-	var iter = arg.iter();
-	while (true) {
-	    var item = iter.next(return);
-	    // if first item, set sentinal?
-	    // make sure all following items of same size/shape??
-	    if (item.instance_of(classes.List)) {
-		if (item.len() != 2) {
-		    __xxl.uerror(this.getclass().name +
-				 ".update got List w/ len != 2");
-		}
-		this[item[0]] = item[1];
-	    }
-	    else {
-		this[item] = arg[item];
-	    }
-	}
-    };
-
-    classes.Dict.__methods['repr'] = function (this) {
-	"""
-	return representation of Dict
-	"""
-	var items = [];
-	this.for_each(
-	    function (key) {
-		items.append(key.repr() + ": " + this[key].repr());
-	    }
-	);
-	return("{" + ", ".join(items) + "}");
-    };
-
-    ////////////////
-    // List
-
-    classes.List.__methods['init'] = function (this, arg) {
-	"""
-	init method for List: takes Iterable
-	"""
-	this.__init0();
-	if (arg) {
-	    this.extend(arg);
-	}
-    };
-
-    classes.List.__methods['extend'] = function (this, iterable) {
-	"""
-	Create an iterator from `iterable`,
-	and iterate appending values to `this`;
-	Returns `null`
-	"""
-	if (!iterable.instance_of(classes.Iterable)) {
-	    __xxl.uerror(this.getclass().name + ".extend needs Iterable");
-	}
-	var iter = iterable.iter();
-	while (true) {
-	    this.append(iter.next(return));
-	}
-    };
-
-    var repr = function (x) { return(x.repr()); };
-    classes.List.__methods['repr'] = function (this) {
-	"""
-	Return representation of `this` List as Str.
-	"""
-	return("[" + ", ".join(this.map(repr)) + "]");
-    };
-
-    ////////////////
-    // Null
-
-    classes.Null.new = function (x) { // static method!
-	"""
-	Return `null` value
-	NOTE!! A static method, not a metaclass method!!!
-	"""
-	return(null);
-    };
-
-    ////////////////
-    // Number
-
-    classes.Number.new = function (x) { // static method!
-	"""
-	Convert `x` to a `Number`
-	NOTE!! A static method, not a metaclass method!!!
-	"""
-	return(x.to_number());
-    };
-
-    ////////////////
-    // Set
-
-    classes.Set.__methods['init'] = function (this, arg) {
-	"""
-	init method for Set.  arg passed to this.update().
-	"""
-	this.__init0();
-	if (arg) {
-	    this.update(arg);
-	}
-    };
-
-    classes.Set.__methods['update'] = function (this, arg) {
-	"""
-	Update `this` using `arg.iter()`
-	"""
-	if (!arg.instance_of(classes.Iterable)) {
-            __xxl.uerror(this.getclass().name + ".update needs iterable");
-	}
-	// If arg is Set, call __update?
-	var iter = arg.iter();
-	while (true) {
-	    this.add(iter.next(return));
-	}
-    };
-
-    classes.Set.__methods['repr'] = function (this) {
-	"""
-	return representation of Set
-	"""
-	return("{" + ", ".join(this.map(repr)) + "}");
-    };
-
-    ////////////////
-    // SingletonClass
-
-    classes.SingletonClass = Class.new({
-	name: "SingletonClass",
-	supers: [Class],	// a metaclass!
-	doc: """
-	    Metaclass for Classes with singleton values.
-	    Invoke classes.SingletonClass.new instead of Class.new
-	    to create a singleton Class.
-	    """,
-	methods: {
-	    new: function (this_class, ...args) {
-		"""
-		SingletonClass new method:
-		invoke to create a new class with a single value.
-		First time: calls `this_class.create` to create obj,
-		then calls obj.init(); After: returns previous value.
-		"""
-		var obj = this_class.__it; // see const.SINGLE
-		if (!obj) {		   // XXX check if === undef?
-		    obj = this_class.__it = this_class.create();
-		    obj.init(...args);
-		}
-		return(obj);
-	    }
-	}
-    });
-
-    ////////////////
-    // Str
-
-    classes.Str.__methods['join'] = function (this, iterable) {
-	"""
-	Concatenate strings from `iterable` using `this` as the separator.
-	"""
-	if (iterable.instance_of(classes.PyIterable)) {
-	    return(this.__join(iterable)); // unwrap and join
-	}
-	else if (iterable.instance_of(classes.Iterable)) {
-	    var list = classes.List.new(iterable);
-	    return(this.__join(list));
-	}
+	if (file.ends_with(".vmx")) {
+	    var f2 = __xxl._find_in_lib_path(file);
+	    debug_boot("load_vmx", f2);
+	    __modinfo.load_vmx(f2)(); // load vmx as Closure and invoke
+	    debug_boot("load_vmx FINISHED");
+	} // .vmx
 	else {
-	    __xxl.uerror(this.getclass().name + ".join needs Iterable");
-	}
-    };
+	    var parser_vmx = __modinfo.parser_vmx || __xxl.parser_vmx;
+	    debug_boot("__modinfo.parser_vmx", __modinfo.parser_vmx);
+	    debug_boot("__xxl.parser_vmx", __xxl.parser_vmx);
+	    debug_boot("using", parser_vmx);
+	    var pm = __xxl.import(parser_vmx); // parser module
+	    var p = pm.Parser.new();	   // make new Parser instance
+	    __modinfo.parser = p;	// make visible to parser extensions
+	    debug_boot(__modinfo, __xxl, p);
 
-    classes.Str.new = function (arg) { // static method!
-	"""
-	Str Class new (static) method; calls arg.to_str method
-	"""
-	return(arg.to_str());
-    };
+	    p.start_parse(file);
+	    var interactive = p.interactive;
+	    while (!p.check_end()) continue: { // check for EOF
+		// parse one statement into abstact syntax tree of Symbols
+		var ast;
+		if (interactive) {
+		    ast = p.statement_error(); // returns null on error
+		    if (!ast) {
+			p.reset();	// (try to) reset Parser state
+			continue();
+		    }
+		}
+		else {
+		    ast = p.statement();
+		}
 
-    ////////////////
-    // Undefined
+		// generate VM code
+		var vmcode = pm.VMCode.new();
+		ast.gen(vmcode);
+		var insts = vmcode.finish(ast); // List of instruction Lists
 
-    classes.Undefined.new = function (x) { // static method!
-	"""
-	Return `undefined` value
-	NOTE!! A static method, not a metaclass method!!!
-	"""
-	return(undefined);
-    };
-
-} // main (once only)
-
-if (__modinfo.debug_bootstrap) { // from environment XXL_DEBUG_BOOTSTRAP
-    __xxl.error("bootstrap", __modinfo.file, "__modinfo.module", __modinfo.module);
-    __xxl.error("bootstrap", __modinfo.file, "__modinfo.main", __modinfo.main);
-}
-
-if (__modinfo.file) {
-    // import should have already called __xxl._find_in_lib_path
-    var file = __modinfo.file;
-
-    if (file.ends_with(".vmx")) {
-	var f2 = __xxl._find_in_lib_path(file);
-	if (__modinfo.debug_bootstrap) {
-	    __xxl.error("bootstrap", file, "load_vmx", f2);
-	}
-	__modinfo.load_vmx(f2)(); // load vmx as Closure and invoke
-	if (__modinfo.debug_bootstrap) {
-	    __xxl.error("bootstrap", file, "load_vmx finished");
-	}
-    } // .vmx
-    else {
-	var parser_vmx = __modinfo.parser_vmx || __xxl.parser_vmx;
-	if (__modinfo.debug_bootstrap) {
-	    __xxl.error("bootstrap", file, "__modinfo.parser_vmx", __modinfo.parser_vmx);
-	    __xxl.error("bootstrap", file, "__xxl.parser_vmx", __xxl.parser_vmx);
-	    __xxl.error("bootstrap", file, "parser_vmx", parser_vmx);
-	}
-	var pm = __xxl.import(parser_vmx); // parser module
-	var p = pm.Parser.new();	   // make new Parser instance
-	__modinfo.parser = p;	// make visible to parser extensions
-
-	p.start_parse(file);
-	var interactive = p.interactive;
-	while (!p.check_end()) continue: { // check for EOF
-	    // parse one statement into abstact syntax tree of Symbols
-	    var ast;
-	    if (interactive) {
-		ast = p.statement_error(); // returns null on error
-		if (!ast) {
-		    p.reset();	// (try to) reset Parser state
-		    continue();
+		// generate Closure in module initial scope and invoke
+		var result = __modinfo.assemble(insts, file)();
+		if (interactive) {	  // input from tty?
+		    p.reset_prompt(); // change prompt to start of statement
+		    __xxl.print(result); // output statement result
 		}
 	    }
-	    else {
-		ast = p.statement();
-	    }
+	    debug_boot("parse/execute FINISHED");
+	} // not .vmx
+    } // if (__modinfo.file)
+    else {
+	__xxl.uerror("bootstrap: no file to load");
+    }
+} // always
 
-	    // generate VM code
-	    var vmcode = pm.VMCode.new();
-	    ast.gen(vmcode);
-	    var insts = vmcode.finish(ast); // List of instruction Lists
-
-	    // generate Closure in module initial scope and invoke
-	    var result = __modinfo.assemble(insts, file)();
-	    if (interactive) {	  // input from tty?
-		p.reset_prompt(); // change prompt to start of statement
-		__xxl.print(result); // output statement result
-	    }
-	}
-	if (__modinfo.debug_bootstrap) {
-	    __xxl.error("bootstrap", file, "parse/execute finished");
-	}
-    } // not .vmx
-} // if (__modinfo.file)
-else {
-    __xxl.uerror("bootstrap: no file to load");
-}
 __modinfo.booting = false;

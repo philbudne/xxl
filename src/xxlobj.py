@@ -34,10 +34,6 @@ import scopes
 import const
 import vmx
 
-XXLOBJ = '__xxl'
-
-DEBUG_IMPORT = False
-
 ################################################################
 # functions
 
@@ -334,55 +330,33 @@ def xxl_pyimport(module):
     m = importlib.import_module(module.getvalue()) # XXX getstr?
     return classes.wrap(m)         # make PyObject
 
-################
-
-DEBUG_IMPORT = False
-
-@classes.pyfunc
-def xxl__import(filename):
-    """
-    worker function for __xxl.import()
-    (defined in bootstrap.xxl)
-    """
-    fname = filename.getvalue() # XXX getstr???
-    if DEBUG_IMPORT:
-        print("xxl__import", fname, file=sys.stderr)
-
-    # returns (mod,boot) tuple:
-    mod_boot = classes.new_module(fname=fname)
-    if DEBUG_IMPORT:
-        print("mod_boot", mod_boot, file=sys.stderr)
-
-    return classes.wrap(mod_boot) # turns 2-tuple into List
-
 ################################################################
 
-# called only from classes.new_module: create XXLOBJ Object
-# XXX move to internal "xxl" module??
-def create_xxl_object(iscope, argv, parser_vmx):
-    xxl_obj = classes._mkobj({}) # XXX
-    iscope.defvar(XXLOBJ, xxl_obj)
+def create_xxl_class(argv, parser_vmx):
+    XXLObject = classes.defclass(classes.Class, 'XXLObject', [classes.Object],
+                                 doc="Class for __xxl object")
 
-    xxl_obj.setprop('uerror', xxl_uerror) # fatal error w/ backtrace
+    # NOTE! Everything a static method (evolved from simple object)
+    # (unlikely that anything NEEDS access to the module local __xxl object)
+
+    XXLObject.setprop('uerror', xxl_uerror) # fatal error w/ backtrace
 
     # debug functions (TEMP?!)
-    xxl_obj.setprop('break', xxl_break) # break to PDB
-    xxl_obj.setprop('backtrace', xxl_backtrace) # output backtrace to stderr
+    XXLObject.setprop('break', xxl_break) # break to PDB
+    XXLObject.setprop('backtrace', xxl_backtrace) # output backtrace to stderr
 
     # command line args, and exit:
-    xxl_obj.setprop('argv',  classes.wrap(argv)) # move to ModInfo??
-    xxl_obj.setprop('exit', xxl_exit)            # move to ModInfo??
+    XXLObject.setprop('argv',  classes.wrap(argv)) # move to ModInfo??
+    XXLObject.setprop('exit', xxl_exit)            # move to ModInfo??
 
     # for parser & bootstrap:
-    xxl_obj.setprop('parser_vmx', classes.mkstr(parser_vmx))
+    XXLObject.setprop('parser_vmx', classes.mkstr(parser_vmx))
     # private, subject to change:
-    xxl_obj.setprop('_tokenizer', xxl__tokenizer) # creates token generator
-    xxl_obj.setprop('_tree', xxl__tree)
-    xxl_obj.setprop('_vtree', xxl__vtree)
-    xxl_obj.setprop('_find_in_lib_path', xxl__find_in_lib_path)
+    XXLObject.setprop('_tokenizer', xxl__tokenizer) # creates token generator
+    XXLObject.setprop('_tree', xxl__tree)
+    XXLObject.setprop('_vtree', xxl__vtree)
+    XXLObject.setprop('_find_in_lib_path', xxl__find_in_lib_path)
 
     # external modules:
-    xxl_obj.setprop('_import', xxl__import) # import source module
-    xxl_obj.setprop('pyimport', xxl_pyimport) # import Python module
-
-    return xxl_obj
+    #XXLObject.setprop('_import', xxl__import) # import source module (helper)
+    XXLObject.setprop('pyimport', xxl_pyimport) # import Python module
