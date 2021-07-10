@@ -848,14 +848,14 @@ def find_in_supers(l, rv, default):
 
     while True:
         if supers is not null_value:
-            for s in supers.getvalue():  # XXX check
-                q.append(s)
-                seen.add(s)
+            slist = supers.value        # .getvalue, expect List
+            q.extend(slist)
+            seen.update(slist)
 
-        if not q:
+        if q:
+            c = q.pop(0)        # front of queue
+        else:
             break
-
-        c = q.pop(0)            # front of queue
 
         # NOTE!! doc.xxl also know that properties take precedence
         # over methods (would be moot w/ descriptors); search for MRO.
