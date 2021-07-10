@@ -8,6 +8,7 @@
 	need descriptors (slots) ??
 
 BUG:	"var else;" doesn't stop "if .... else"
+		check/advance check only "value"
 	case.xxl does not reserve "case" or "default"
 
 TEST
