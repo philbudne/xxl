@@ -1276,10 +1276,10 @@ var Parser = Class.new({
 				}
 				p.define(t); // define argument
 				if (!last) { // not ...args
-				    a.append(t);
+				    a.append(t.value); // save name
 				}
 				else {
-				    this.third = t; // ...formal name
+				    this.third = t.value; // ...formal name
 				    p.advance();
 				    leave_while();
 				}
@@ -1309,20 +1309,14 @@ var Parser = Class.new({
 			return(this);
 		    },
 		    gen: function (this, vmcode) {
-			var args = []; // could use map function
-			this.first.for_each(
-			    function (item) {
-				args.append(item.value);
-			    }
-			);
 			// generate VM code for function:
 			var fcode = VMCode.new();
 			// BEFORE ANY CALL/OP!! establish scope, pick up args
 			if (this.third) { // have ...rest argument?
-			    fcode.emit_args2(args, this.third.value, this);
+			    fcode.emit_args2(this.first, this.third, this);
 			}
 			else {
-			    fcode.emit_args(args, this);
+			    fcode.emit_args(this.first, this);
 			}
 			fcode.gen_stmts(this.second);
 			// create closure (code pointer and current scope)
