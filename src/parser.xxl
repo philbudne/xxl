@@ -55,7 +55,7 @@
 // using the original (TDOP) parser as the starting point for some new
 // project!!
 
-// XXX split up?? All imported modules would need to be pre-compiled (vmx files).
+// XXX split up?? All imported modules would need to be pre-compiled (vmx files)
 
 const __doc = "Extensible Parser/Compiler for XXL.";
 
@@ -98,8 +98,8 @@ var VMCode = Class.new({
 	gen_stmts: function (this, stmts) { // generate code for list of stmts
 	    stmts.for_each(
 		function (item) {
-		    // call this.gen_stmt to
-		    // emit optional "stmt" Instr for breakpoint/trace/profiling??
+		    // call this.gen_stmt to emit optional "stmt" Instr
+		    // for breakpoint/trace/profiling??
 		    item.gen(this);
 		}
 	    );
@@ -291,6 +291,15 @@ var VMCode = Class.new({
 var PrattParser = Class.new({
     name: "PrattParser",
     methods: {
+	add_symbol_class: function (this, str, symbol_class) {
+	    """
+	    Add an operator or statement Symbol class to parser.
+	    """
+	    // XXX assert symbol_class.instance_of(this.Symbol) ??
+	    // XXX assert str.instance_of("".getclass()) ????
+	    this.symbol_classes[str] = symbol_class;
+	},
+
 	start_parse: function (this, fname, prefix, suffix, fatal) {
 	    // XXX take error handler/callback/continuation!
 	    this.scope = this.Scope.new(null);
@@ -300,21 +309,14 @@ var PrattParser = Class.new({
 	    this.reset_prompt = ret[1]; // void function
 	    this.pointer = ret[2]; // func(line,pos); prints line w/ pointer
 	    this.interactive = ret[3]; // bool
-	    this.reset_tokenizer = ret[4];
+	    this.reset_tokenizer = ret[4]; // void function
 
 	    this._fatal = fatal || function () { __xxl.exit(1); };
 
 	    this._token = null;	// current Symbol object
+	    this.need_advance = true; // pump needs priming
 	},
 
-	add_symbol_class: function (this, str, symbol_class) {
-	    """
-	    Add an operator or statement Symbol class to parser.
-	    """
-	    // XXX assert symbol_class.instance_of(this.Symbol) ??
-	    // XXX assert str.instance_of("".getclass()) ????
-	    this.symbol_classes[str] = symbol_class;
-	},
 	_msg: function (this, where, prefix, token, msg) {
 	    __xxl.error(where, prefix, msg, token.repr()); // to stderr
 	    var l = where.split(':');
@@ -325,7 +327,7 @@ var PrattParser = Class.new({
 	},
 	_error: function (this, where, token, msg) {
 	    this._msg(where, "ERROR", token, msg);
-	    this._fatal();	// call error handler
+	    this._fatal();	// call error handler (default is exit(1))
 	},
 	_warning: function(this, where, token, msg) {
 	    this._msg(where, "WARNING", token, msg);
@@ -345,11 +347,14 @@ var PrattParser = Class.new({
 	    var d;			// definition (for name)
 	    // var id = v;
 	    if (a == "name") {
-		if ((d = this.scope.find_definition(v))) { // previously defined?
-		    c = d.getclass();
+		if ((d = this.scope.find_definition(v))) { // previously seen?
+		    c = d.getclass(); // could be variable or reserved word
 		}
 		else if (!(c = this.symbol_classes[v])) { // keyword?
-		    c = this.Symbol; // undefined on reference in expr
+		    // not previously used, or defined as a keyword.
+		    // "else" ends up here, as do variable/formal names
+		    // as they're first seen.
+		    c = this.Symbol; // undefined on reference in expr!!
 		}
 	    }
 	    else if (a == "operator") {
@@ -380,9 +385,9 @@ var PrattParser = Class.new({
 
 	ctoken: function (this) {
 	    """
-	    Check if deferred advance needed, and fetch token if needed.
-	    (was originally "check_advance", vs "cash_advance?!");
-	    advance no longer reads next token;
+	    Check if deferred advance needed, and fetch token (Symbol) if needed
+	    (was originally "check_advance", vs "cash_advance?!").
+	    Advance no longer reads next token;
 	     just marks new token is needed,
 	     so interactive REPL doesn't hang at end of stmt.
 	    Returns current token (Symbol)
@@ -402,6 +407,12 @@ var PrattParser = Class.new({
 	}, // check
 
 	advance: function (this, id) {
+	    """
+	    Checks that current token matches optional Str `id`.
+	    Doesn't actually read another token,
+	    just sets need_advance flag (unless need_advance already set!),
+	    so that REPL doesn't hang on `advance(";")`
+	    """
 	    if (id && !this.check(id)) { // may recurse w/ null id!
 		this._token.error("Expected " + id.repr() + " saw");
 	    }
@@ -425,21 +436,47 @@ var PrattParser = Class.new({
 	    }
 	    return(this._next_token);
 	},
+
+	_defname: function(this, where, name, arity, read_only) {
+	    """
+	    helper to define `name` in current scope.
+	    """
+	    var class = read_only ? this.ReadOnly : this.Name;
+	    this.scope._define(class.new(where, name, arity));
+	},
+
+	defname_internal: function(this, where, name, read_only) {
+	    """
+	    define `name` (arrived at w/o a Symbol) in current scope.
+
+	    NOTE!!! Does NOT check for multiple definitions or "shadowing"
+	    so ****NOT for use with user symbols***!!!
+	    """
+	    this._defname(where, name, "name", read_only);
+	},
+
 	define: function (this, sym, read_only) {
-	    // sym is a Parser Symbol instance
-	    // declare as a Name/ReadOnly in the current scope.
+	    """
+	    `sym` is a Parser Symbol instance.
+	    declare as a Name/ReadOnly in the current scope.
+	    """
 
 	    // had a call to scope.find_definition to get "prev" here.
 	    // sym.defn _seems_ like the right thing!
 
-	    var class = read_only ? this.ReadOnly : this.Name; // also in defname
+	    // give fatal error for duplicate (in same scope) before warning!
+	    this._defname(sym.where, sym.value, sym.arity, read_only);
 
-	    // give fatal error for duplicate (in same scope) first!
-	    this.scope._define(class.new(sym.where, sym.value, sym.arity));
-	    if (sym.defn) {
+	    if (sym.defn) {	// previous definition in an outer scope
 		sym.warning("shadows previous definition at " + sym.defn.where);
 	    }
 	},
+
+	predef: function (this, name, read_only) {
+	    """predefine Str `name` as a Name or ReadOnly"""
+	    this.defname_internal("predefined", name, read_only);
+	},
+
 	expression: function (this, rbp) {
 	    var t = this.ctoken();
 	    this.advance();
@@ -466,11 +503,18 @@ var PrattParser = Class.new({
 	    return(t.end_block || t.eof); // see also check_end
 	},
 
-	statement_error: function (this) {
-	    """returns null on parse error;"""
-	    // XXX save "return" in a var,
-	    // create a closure that calls it after cleanup??
-	    this._fatal = return;
+	statement_error: function (this, handler) {
+	    """
+	    Parse statement w/ error handler for REPL.
+	    calls handler, or returns null on parse error.
+	    """
+	    // If local cleanup desired, and no handler, could save "return"
+	    // in a var and create a closure that calls it after cleanup??
+
+	    // thought about saving old _fatal, and resetting afterwards
+	    // (which could use the aforementioned closure
+	    // to restore the old value on an error).
+	    this._fatal = handler || return;
 	    return(this.statement());
 	},
 
@@ -483,14 +527,12 @@ var PrattParser = Class.new({
 		var next = this.peek(); // peek at next token
 		if (next.check(":")) {
 		    // will be defined inside of a new scope (closure)
-		    if (n.reserved) { // XXX ???
+		    if (n.reserved) {
 			n.error(n.value.repr() + ' reserved');
 		    }
 		    if (labeled) { // nested labels?
-			// would generate nested closures! could just chain them on...
 			n.error("Statement already labeled");
 		    }
-		    // create Label node: creates new scope & defines label var in it
 		    var nn = this.Label.new(n.where, n.value, "name");
 		    nn.std();	// call Label.std (which calls this function)
 		    return(nn);
@@ -514,25 +556,10 @@ var PrattParser = Class.new({
 	    return(v);
 	}, // expression_statement
 
-	defname: function(this, where, name, read_only) {
-	    """
-	    define `name` (arrived at w/o a Symbol) in current scope.
-	    NOTE: does NOT check for multiple definitions or "shadowing"
-	    so not for use with user symbols.
-	    """
-	    var class = read_only ? this.ReadOnly : this.Name; // also in "define" method
-	    this.scope._define(class.new(where, name, "name"));
-	},
-
-	predef: function (this, name, read_only) {
-	    """predefine Str `name` as a Name or ReadOnly"""
-	    this.defname("@predef", name, read_only);
-	},
-
 	init: function (this_parser) {
-	    var p = this_parser; // brevity
+	    var p = this_parser; // brevity, "this" clarity
 
-	    p.VMCode = VMCode;	// for extensions
+	    p.VMCode = VMCode;	// for use by extensions
 
 	    p.symbol_classes = {}; // string to Symbol subclass
 
@@ -548,7 +575,7 @@ var PrattParser = Class.new({
 		    },
 		    _define: function (this, n) { // n is Symbol instance
 			var t = this.def[n.value];
-			if (t) {
+			if (t) { // previously defined in this scope??
 			    n.error((t.reserved
 				     ? "Reserved at "
 				     : "Previously defined at ")
@@ -558,8 +585,8 @@ var PrattParser = Class.new({
 			n.reserved = false;
 		    },
 		    find_definition: function (this, n) {
-			// n is string from lexer
-			// returns definition (Symbol instance)
+			// n is Str (from lexer)
+			// returns definition, if any (Symbol instance)
 			var e = this;
 			while (e) {
 			    var o = e.def[n];
@@ -571,10 +598,16 @@ var PrattParser = Class.new({
 			return(null);
 		    },
 		    pop: function (this) {
-			// discard top scope: returns old scope (new current scope)
+			"""
+			Discard top scope.
+			Returns old scope (new current scope)
+			"""
 			return(this.parent);
 		    },
-		    reserve: function (this, sym) { // mark name used as a keyword
+		    reserve: function (this, sym) {
+			"""
+			Mark name used as a keyword (cannot be used as variable).
+			"""
 			if (sym.arity != "name" || sym.reserved) {
 			    return();
 			}
@@ -587,8 +620,8 @@ var PrattParser = Class.new({
 			//  on Scope.new in Function.nud method)
 			//
 			// 2021-06-17 Trying to avoid calling find_definition
-			//  again by having _gtok stash lookup used to create Symbol
-			//  in sym.defn.
+			//  again by having _gtok stash lookup used to create
+			//  Symbol in sym.defn.
 			var t = sym.defn;
 			if (t) {
 			    if (t.reserved) {
@@ -615,8 +648,13 @@ var PrattParser = Class.new({
 	    // be done by explicitly passing the parser object to the
 	    // nud/led/std methods.
 
-	    // define as a Class member, since used as base Class
-	    // for other Classes defined in this init method.
+	    // Maybe have a method that defines Symbol class, and each subclass
+	    // to make it easier to subclass a Symbol before it's used to
+	    // as a base class??
+
+	    // Each class defined as a Class member, since used as base Class
+	    // for other Classes defined in this init method, and in extensions!!
+
 	    p.Symbol = Class.new({
 		name: "Symbol",
 		methods: {
@@ -637,7 +675,8 @@ var PrattParser = Class.new({
 		    },
 		    nud: function (this) {
 			"""
-			"null denotation" -- invoked by parser at the start of an expression.
+			"null denotation"
+			invoked by parser at the start of an expression.
 			"""
 			this.error(this.arity == "name" ?
 				   "Undefined symbol" : "Unexpected token");
@@ -665,7 +704,7 @@ var PrattParser = Class.new({
 		    },
 		    gen: function (this, vmcode) {
 			// XXX call gen_XXX based on this.arity???
-			this.error("No gen function");
+			this.error("No gen function"); // XXX show class name??
 		    }
 		}, // methods
 		props: {
@@ -697,7 +736,8 @@ var PrattParser = Class.new({
 		supers: [p.Name],
 		methods: {
 		    gen_lhs: function (this, vmcode) {
-			this.error("Should not happen (ReadOnly on LHS)"); // paranoia
+			// paranoia
+			this.error("Should not happen (ReadOnly on LHS)");
 		    }
 		},
 		props: {
@@ -1246,15 +1286,19 @@ var Parser = Class.new({
 		methods: {
 		    nud: function (this) {
 			var a = [];
-			p.scope = p.Scope.new(p.scope); // XXX pass true for func. scope?
-			p.defname(this.where, "return", true);
+			// XXX pass true for func. scope?
+			p.scope = p.Scope.new(p.scope);
+
+			// define read-only var for continuation
+			// (without "shadow" warnings)
+			p.defname_internal(this.where, "return", true);
 			var t = p.ctoken();
 			if (t.arity == "name") { // function NAME?
 			    // NOTE!! name (currently) defined only
 			    // INSIDE the function's scope, to allow
 			    // recursive functions declared in hashes.
 			    // Would need to make "function name ..." a legal
-			    //	statement expr. (setting .exp_stmt (as class member?))
+			    //	statement expr. (setting .exp_stmt)
 			    //  to allow bare "function" outside of expression.
 			    //  (would be moot point in pure expression language)
 			    this.name = t.value;
@@ -1270,13 +1314,13 @@ var Parser = Class.new({
 				    p.advance("...");
 				    last = true;
 				}
-				t = p.ctoken(); // XXX t2?
+				t = p.ctoken();
 				if (t.arity != "name") {
 				    t.error("Expected a parameter name");
 				}
-				p.define(t); // define argument
+				p.define(t); // define argument in scope
 				if (!last) { // not ...args
-				    a.append(t.value); // save name
+				    a.append(t.value); // save formal name
 				}
 				else {
 				    this.third = t.value; // ...formal name
@@ -1452,10 +1496,12 @@ var Parser = Class.new({
 			if (n.reserved) {
 			    n.error(n.value.repr() + " reserved");
 			}
-			var read_only = this.value == "const"; // true for "const" stmt
+			var read_only = this.value == "const";
 			p.define(n, read_only); // define variable
 			this.first = n;
 			p.advance(n.value); // consume variable name
+
+			// "const" requires value!!
 			if (p.check("=") || read_only) {
 			    p.advance("=");
 			    this.second = p.expression(0);
@@ -1485,14 +1531,18 @@ var Parser = Class.new({
 			p.advance(")");
 			this.second = p.block();
 
-			// this will cause REPL to block for next token. Sorry!
-			// node.js seems to avoid this, only continues on "} else ...."
-			// (could have a "peek" which won't look across lines?)
-			if (p.check("else")) { // XXX works even w/ prev "var else"
+			// XXX works even w/ prev "var else"!!!
+
+			// This will cause REPL to block for next token. Sorry!
+			// node.js seems to avoid this, only continues
+			// on "} else ...."  (could have a "peek"
+			// which won't look across lines?)
+			if (p.check("else")) { 
 			    p.scope.reserve(p.ctoken());
 			    p.advance("else");
-			    // XXX change "else if" exception (crock) to "elif"?
-			    this.third = p.check("if") ? p.statement() : p.block();
+			    // XXX change "else if" exception to "elif"?
+			    this.third = (p.check("if") ?
+					  p.statement() : p.block());
 			}
 			else {
 			    this.third = null;
@@ -1504,12 +1554,14 @@ var Parser = Class.new({
 			this.first.gen(vmcode); // condition
 			var not_true_label = vmcode.def_fwd_label();
 			vmcode.emit_ifnot(not_true_label, this);
-			this.second.gen(vmcode); // gen_stmt? should be LBrace??
+			// gen_stmt? should be LBrace??:
+			this.second.gen(vmcode);
 			if (this.third) { // have else?
 			    var end_label = vmcode.def_fwd_label();
 			    vmcode.emit_jrst(end_label, this);
 			    vmcode.drop_fwd_label(not_true_label);
-			    this.third.gen(vmcode); // else stmt(s) [vmcode.gen_stmt?]
+			    // else stmt(s) [vmcode.gen_stmt?]:
+			    this.third.gen(vmcode);
 			    vmcode.drop_fwd_label(end_label);
 			}
 			else {
@@ -1534,7 +1586,7 @@ var Parser = Class.new({
 			    n.error(n.value.repr() + " reserved.");
 			}
 			p.scope = p.Scope.new(p.scope);
-			p.define(n, true); // define variable for label as read-only
+			p.define(n, true); // define variable for label as R/O
 			this.arity = "statement";
 			this.first = n;
 			p.advance();
@@ -1570,7 +1622,7 @@ var Parser = Class.new({
 		    gen: function (this, vmcode) { // gen
 			// generate closure for body, w/ leave label, if any
 			var leave_sym = this.second.second;
-			var wcode = VMCode.new(); // start cody for body closure
+			var wcode = VMCode.new(); // code for block closure
 			wcode.emit_scope(leave_sym, this);
 			var top_branch_label = wcode.get_off();
 			this.first.gen(wcode); // condition
@@ -1651,6 +1703,7 @@ var Parser = Class.new({
 	start_parse: function (this, fname) { // get ready to parse
 	    // parens, brackets and braces are non-combining.
 	    // tempting to allow braces, but would require '{ }' for empty Dict!
+	    // (unless they only combined with their own kind '{{' and '}}')
 	    var oprs = '!@#$%^&*-=+<>\|:,./?~';
 	    // was: '=<>!+-*&|/%^.', '=<>&|.'
 	    this..start_parse(fname, oprs, oprs);
@@ -1665,8 +1718,6 @@ var Parser = Class.new({
 
 	    // set by new_module in classes.py
 	    this.predef("__modinfo");
-
-	    this.need_advance = true; // pump needs priming
 	},
 
 	parse: function (this, fname) {	// parse whole file
