@@ -255,10 +255,8 @@ class VM:
         #       would allow Python callees to use same VM???
         # called from CBClosure.invoke w/ show=False
         # XXX save self.args for backtraces??
-        self.fp = Frame(cb=self.cb, pc=self.pc, scope=self.scope, fp=self.fp,
-                        where=self.ir.where, fn=self.ir.fn, # for backtrace
-                        show=show
-        )
+        self.fp = Frame(self.cb, self.pc, self.scope, self.fp,
+                        self.ir.fn, self.ir.where, show)
 
     def backtrace(self):        # XXX take file to write to?
         """
