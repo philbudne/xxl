@@ -442,60 +442,60 @@ if (true) {			// private variables
     debug_boot("__modinfo.module", __modinfo.module);
     debug_boot("__modinfo.main", __modinfo.main);
 
-    if (__modinfo.file) {
-	// import should have already called __xxl._find_in_lib_path
-	var file = __modinfo.file;
-
-	if (file.ends_with(".vmx")) {
-	    var f2 = __xxl._find_in_lib_path(file);
-	    debug_boot("load_vmx", f2);
-	    __modinfo.load_vmx(f2)(); // load vmx as Closure and invoke
-	    debug_boot("load_vmx FINISHED");
-	} // .vmx
-	else {
-	    var parser_vmx = __modinfo.parser_vmx || __xxl.parser_vmx;
-	    debug_boot("__modinfo.parser_vmx", __modinfo.parser_vmx);
-	    debug_boot("__xxl.parser_vmx", __xxl.parser_vmx);
-	    debug_boot("using", parser_vmx);
-	    var pm = __xxl.import(parser_vmx); // parser module
-	    var p = pm.Parser.new();	   // make new Parser instance
-	    __modinfo.parser = p;	// make visible to parser extensions
-	    debug_boot(__modinfo, __xxl, p);
-
-	    p.start_parse(file);
-	    var interactive = p.interactive;
-	    while (!p.check_end()) continue: { // check for EOF
-		// parse one statement into abstact syntax tree of Symbols
-		var ast;
-		if (interactive) {
-		    ast = p.statement_error(); // returns null on error
-		    if (!ast) {
-			p.reset();	// (try to) reset Parser state
-			continue();
-		    }
-		}
-		else {
-		    ast = p.statement();
-		}
-
-		// generate VM code
-		var vmcode = pm.VMCode.new();
-		ast.gen(vmcode);
-		var insts = vmcode.finish(ast); // List of instruction Lists
-
-		// generate Closure in module initial scope and invoke
-		var result = __modinfo.assemble(insts, file)();
-		if (interactive) {	  // input from tty?
-		    p.reset_prompt(); // change prompt to start of statement
-		    __xxl.print(result); // output statement result
-		}
-	    }
-	    debug_boot("parse/execute FINISHED");
-	} // not .vmx
-    } // if (__modinfo.file)
-    else {
+    var file = __modinfo.file;
+    if (!file) {
 	__xxl.uerror("bootstrap: no file to load");
     }
+
+    // import should have already called __xxl._find_in_lib_path
+
+    if (file.ends_with(".vmx")) {
+	var f2 = __xxl._find_in_lib_path(file);
+	debug_boot("load_vmx", f2);
+	__modinfo.load_vmx(f2)(); // load vmx as Closure and invoke
+	debug_boot("load_vmx FINISHED");
+    } // .vmx
+    else {
+	var parser_vmx = __modinfo.parser_vmx || __xxl.parser_vmx;
+	debug_boot("__modinfo.parser_vmx", __modinfo.parser_vmx);
+	debug_boot("__xxl.parser_vmx", __xxl.parser_vmx);
+	debug_boot("using", parser_vmx);
+	var pm = __xxl.import(parser_vmx); // parser module
+	var p = pm.Parser.new();	   // make new Parser instance
+	__modinfo.parser = p;	// make visible to parser extensions
+	debug_boot(__modinfo, __xxl, p);
+
+	p.start_parse(file);
+	var interactive = p.interactive;
+	// XXX different loops??
+	while (!p.check_end()) continue: { // check for EOF
+	    // parse one statement into abstact syntax tree of Symbols
+	    var ast;
+	    if (interactive) {
+		ast = p.statement_error(); // returns null on error
+		if (!ast) {
+		    p.reset();	// reset Parser state
+		    continue();
+		}
+	    }
+	    else {
+		ast = p.statement();
+	    }
+
+	    // generate VM code
+	    var vmcode = pm.VMCode.new();
+	    ast.gen(vmcode);
+	    var insts = vmcode.finish(ast); // List of instruction Lists
+
+	    // generate Closure in module initial scope and invoke
+	    var result = __modinfo.assemble(insts, file)();
+	    if (interactive) {	  // input from tty?
+		p.reset_prompt(); // change prompt to start of statement
+		__xxl.print(result.repr()); // output statement result
+	    }
+	}
+	debug_boot("parse/execute FINISHED");
+    } // not .vmx
 } // always
 
 __modinfo.booting = false;
