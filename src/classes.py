@@ -95,8 +95,6 @@ class UError(Exception):
 # All such Python classes should start with the letter "C"
 #       (the variable ClassName should point to the Class object of that name)
 
-GETPROP_NONE = None
-
 class CObject:
     __slots__ = ['props', 'klass']
     hasvalue = False
@@ -121,7 +119,7 @@ class CObject:
         return Python string for object class name; used in __repr__
         """
         c = self.getclass()
-        if not getprop_ok(c):
+        if c is null_value:
             return "Unknown!"
 
         n = c.getprop(const.NAME).getvalue()
@@ -145,7 +143,7 @@ class CObject:
         self.props.pop(prop)
 
     def getprop(self, prop):
-        return self.props.get(prop, GETPROP_NONE)
+        return self.props.get(prop, null_value)
 
     def setprop(self, prop, value):
         self.props[prop] = value
@@ -726,15 +724,6 @@ undef_value = CObject(Undefined)
 true_value = _new_pobj(Bool, True)
 false_value = _new_pobj(Bool, False)
 
-GETPROP_NONE = null_value       # now safe to call CObject.getprop!!!!
-
-def getprop_ok(x):
-    """
-    check a getprop return value
-    """
-    assert(x is not None)
-    return x is not GETPROP_NONE  # see CObject.getprop
-
 ################
 
 # utility called by VM jumpn/jumpe: NOT a method/pyfunc
@@ -858,7 +847,7 @@ def find_in_supers(l, rv, default):
     seen = set()
 
     while True:
-        if getprop_ok(supers):
+        if supers is not null_value:
             for s in supers.getvalue():  # XXX check
                 q.append(s)
                 seen.add(s)
@@ -874,9 +863,9 @@ def find_in_supers(l, rv, default):
             return c.getprop(rv) # never BoundMethod
 
         methods = c.getprop(const.METHODS)
-        if getprop_ok(methods):
-            m = methods.getvalue().get(rv, GETPROP_NONE) # Dict
-            if getprop_ok(m):
+        if methods is not null_value:
+            m = methods.getvalue().get(rv, null_value) # Dict
+            if m is not null_value:
                 return CBoundMethod(l, m)
 
         supers = c.getprop(const.SUPERS)
@@ -900,9 +889,9 @@ def find_in_class(l, rv, default):
         return c.getprop(rv)
 
     methods = c.getprop(const.METHODS)
-    if getprop_ok(methods):
-        m = methods.getvalue().get(rv, GETPROP_NONE) # Dict
-        if getprop_ok(m):
+    if methods is not null_value:
+        m = methods.getvalue().get(rv, null_value) # Dict
+        if m is not null_value:
             return CBoundMethod(l, m)
 
     return find_in_supers(l, rv, default)
