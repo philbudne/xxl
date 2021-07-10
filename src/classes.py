@@ -930,22 +930,22 @@ def find_op(obj, optype, op):
     seen = set()
     seen.add(c)
     while True:
-        ops = c.getprop(optype)
+        ops = c.props.get(optype, null_value) # getprop
         if ops is not null_value:
-            if op in ops.getvalue():
+            if op in ops.value: # getvalue, expect Dict
                 return ops.getvalue()[op]
 
-        supers = c.getprop(const.SUPERS)
+        supers = c.props.get(const.SUPERS, null_value) # getprop
         if supers is not null_value:
-            # XXX check if List
-            for s in supers.getvalue():
+            for s in supers.value: # getvalue, expect List
                 if s not in seen:
                     q.append(s)
                     seen.add(s)
 
-        if not q:
+        try:                    # cheaper than "if not q: break"?
+            c = q.pop(0);
+        except IndexError:
             break
-        c = q.pop(0)
 
     raise UError("%s %s for %s not found" % ( \
         const.OPDICT2ENGLISH.get(optype,optype), op, obj.classname()))
