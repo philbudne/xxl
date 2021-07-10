@@ -53,11 +53,12 @@ if (true) {			// private variables
 	return(mod);
     }; // __xxl.import
 
-    var classes = __xxl.import("classes");
 
     if (__modinfo.main) {		// once only
 	////////////////////////////////////////////////////////////////
 	// native code methods for built-in Classes
+
+	var classes = __xxl.import("classes");
 
 	////////////////
 	// Object
