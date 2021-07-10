@@ -555,7 +555,7 @@ def subclass_of(this_class, bases):
         if c in bases:
             return True
         s = c.getprop(const.SUPERS)
-        if s is None or s is null_value:
+        if s is null_value:
             return False
         for x in s.getvalue():       # XXX check if List
             if x not in visited and check(x):
