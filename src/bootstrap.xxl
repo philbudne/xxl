@@ -1,7 +1,7 @@
 // -*-js-*-
 
 // The pre-compiled version of this file (bootstrap.vmx) is loaded
-// into every new module namespace [run from __modinfo._import, below!].
+// into every new module namespace [run from __xxl.import, below!].
 
 // First time loaded, defines native code methods and functions.
 // Always: Parses and executes source file (if any) one line at a time so that
@@ -13,8 +13,47 @@ if (__modinfo.booting) {
 __modinfo.booting = true;
 
 if (true) {			// private variables
-    // __xxl.import not available until __xxl created and function defined!!
-    var classes = __modinfo._import("classes")[0];
+    var debug_import = function (...args) { };
+
+    ////////////////
+    // __xxl (formerly System) was once private simple object,
+    // then public (root_scope) simple object, now instance
+    // of XXLObject class (so can have private __xxl.import method)
+
+    __xxl.import = function (name) { // XXX take optional args (as Dict?)
+	"""
+	Import a source file, VM instruction (.vmx) file, or internal module.
+	Calls NewModule.__extend_parser(importer_parser), if found.
+	Returns Module.
+	NOTE: per-instance member function (not a method)
+		for access to local __modinfo.parser.
+	"""
+
+	// _find_in_lib_path takes optional list of suffixes to try
+	var path = __xxl._find_in_lib_path(name);
+
+	debug_import(__modinfo.file, "import", name, "path", path);
+
+	var mod_boot = __xxl._import(path);
+	var mod  = mod_boot[0]; // Module
+	var boot = mod_boot[1]; // Closure for bootstrap.vmx(!)
+
+	if (boot) {		// on first import
+	    debug_import(__modinfo.file, "import", name, "calling", boot);
+	    boot(); // start execution of bootstrap.vmx in new Module!
+	}
+
+	// check for parser extensions at "well known" name in new module:
+	var xp = mod.__extend_parser;
+	if (xp) {
+	    var mp = __modinfo.parser; // importer's parser!
+	    debug_import(__modinfo.file, "import", name, "xp", xp, "mp", mp);
+	    xp(mp);
+	}
+	return(mod);
+    }; // __xxl.import
+
+    var classes = __xxl.import("classes");
 
     if (__modinfo.main) {		// once only
 	////////////////////////////////////////////////////////////////
@@ -356,9 +395,7 @@ if (true) {			// private variables
 	////////////////
 	// XXLObject
 
-	// use static member func (~sigh~ no __xxl object yet)
-	// COULD delay, but "error" function needed ASAP!
-	var py_sys = classes.XXLObject.pyimport("sys");
+	var py_sys = __xxl.pyimport("sys");
 
 	var str = function (x) {
 	    return(x.to_str());
@@ -387,65 +424,20 @@ if (true) {			// private variables
     ////////////////////////////////////////////////////////////////
     // always
 
-    var error = classes.XXLObject.error;
-
     var debug_boot;
-    var debug_import;
     if (__modinfo.debug_bootstrap) { // from environment XXL_DEBUG_BOOTSTRAP
 	debug_boot = function(...args) {
-	    error("bootstrap", __modinfo.file, ...args);
+	    __xxl.error("bootstrap", __modinfo.file, ...args);
 	};
-	debug_import = error;	// XXX have separate control?
+	debug_import = __xxl.error; // XXX have separate control?
     }
     else {
-	debug_boot = debug_import = function(...args) { };
+	debug_boot = function(...args) { };
     }
 
     debug_boot("STARTING");
 
-    ////////////////
-    // __xxl (formerly System) was once private simple object,
-    // then public (root_scope) simple object, now instance
-    // of XXLObject class (so can have private __xxl.import method)
-
-    // cannot call until Class.new defined!
-    __xxl = classes.XXLObject.new(); // instance, per Module
-
     debug_boot(__modinfo, __xxl);
-
-    __xxl.import = function (name) { // XXX take optional args (as Dict?)
-	"""
-	Import a source file, VM instruction (.vmx) file, or internal module.
-	Calls NewModule.__extend_parser(importer_parser), if found.
-	Returns Module.
-	NOTE: per-instance member function (not a method)
-		for access to local __modinfo.parser.
-	"""
-
-	var path = __xxl._find_in_lib_path(name);
-	debug_import(__modinfo.file, "import", name, path, __modinfo, __xxl);
-
-	// _find_in_lib_path takes optional list of suffixes to try
-	var mod_boot = __modinfo._import(path);
-	var mod  = mod_boot[0]; // Module
-	var boot = mod_boot[1]; // Closure for bootstrap.vmx(!) (first time only)
-
-	if (boot) {
-	    debug_import(__modinfo.file, "import", name, "calling bootstrap", boot);
-	    boot(); // start execution of bootstrap.vmx in new Module!
-	}
-
-	// check for parser extensions at "well known" name:
-	var xp = mod.__extend_parser;
-	var mp = __modinfo.parser;
-	if (xp || mp) {
-	    debug_import(__modinfo.file, "import", name, "__extend_parser", xp, "mp", mp);
-	}
-	if (xp && mp) {		// optionally ignore?
-	    xp(mp);
-	}
-	return(mod);
-    }; // __xxl.import
 
     debug_boot("__modinfo.module", __modinfo.module);
     debug_boot("__modinfo.main", __modinfo.main);

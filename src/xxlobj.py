@@ -125,6 +125,27 @@ def xxl__find_in_lib_path(fname, suffixes=None):
 
 ################
 
+DEBUG_IMPORT = False
+
+@classes.pyfunc
+def xxl__import(filename):
+    """
+    worker function for __xxl.import()
+    (defined in bootstrap.xxl)
+    """
+    fname = filename.getvalue() # XXX getstr???
+    if DEBUG_IMPORT:
+        print("xxl__import", fname, file=sys.stderr)
+
+    # returns (mod,boot) tuple:
+    mod_boot = classes.new_module(fname=fname)
+    if DEBUG_IMPORT:
+        print("mod_boot", mod_boot, file=sys.stderr)
+
+    return classes.wrap(mod_boot) # turns 2-tuple into List
+
+################
+
 # PLB: wrote a native replacement, but it's slooooow
 import jslex
 
@@ -358,5 +379,5 @@ def create_xxl_class(argv, parser_vmx):
     XXLObject.setprop('_find_in_lib_path', xxl__find_in_lib_path)
 
     # external modules:
-    #XXLObject.setprop('_import', xxl__import) # import source module (helper)
+    XXLObject.setprop('_import', xxl__import) # import source module (helper)
     XXLObject.setprop('pyimport', xxl_pyimport) # import Python module

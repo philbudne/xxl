@@ -2161,7 +2161,7 @@ def new_module(fname, main=False, parser_vmx=None):
     mod = CModule(scope)
 
     scope.defvar(const.DOC, null_value)
-    scope.defvar('__xxl', undef_value)
+    scope.defvar('__xxl', CObject(class_by_name('XXLObject')))
 
     if fname:
         # XXX Dict indexed by Python str
@@ -2213,29 +2213,9 @@ def modinfo_assemble(this, tree, srcfile):
     #   (any variables created are globals):
     return CClosure(code, mod.scope)
 
-DEBUG_IMPORT = False
-
-@pyfunc
-def modinfo__import(this, filename):
-    """
-    worker function for __xxl.import()
-    (defined in bootstrap.xxl)
-    """
-    fname = filename.getvalue() # XXX getstr???
-    if DEBUG_IMPORT:
-        print("xxl__import", fname, file=sys.stderr)
-
-    # returns (mod,boot) tuple:
-    mod_boot = new_module(fname=fname)
-    if DEBUG_IMPORT:
-        print("mod_boot", mod_boot, file=sys.stderr)
-
-    return wrap(mod_boot) # turns 2-tuple into List
-
 ModInfo.setprop(const.METHODS, _mkdict({
     'load_vmx': modinfo_load_vmx,  # create Closure from .vmx file
-    'assemble': modinfo_assemble,  # create Closure from List of instruction Lists
-    '_import': modinfo__import     # import primitive: can't be in XXLObject!
+    'assemble': modinfo_assemble # create Closure from List of inst. Lists
 }))
 
 ################################################################
