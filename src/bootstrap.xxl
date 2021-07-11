@@ -25,8 +25,8 @@ if (true) {			// private variables
 	Import a source file, VM instruction (.vmx) file, or internal module.
 	Calls NewModule.__extend_parser(importer_parser), if found.
 	Returns Module.
-	NOTE: per-instance member function (not a method)
-		for access to local __modinfo.parser.
+	NOTE: per-instance (Module) member function (not a method)
+		for access to Module __modinfo.parser.
 	"""
 
 	// _find_in_lib_path takes optional list of suffixes to try
