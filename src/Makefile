@@ -110,12 +110,13 @@ $(C):	$(VM) $(B) $(PARSER_SRC)
 # run ONLY before git checkin for main repo
 # (so clean checkouts get initial VM code)
 
-install-dist: $(TESTED) $(DIST_VMX_FILES) $(DIST_DOCS) .bootstrap
+DIST_FILES=$(TESTED) $(DIST_VMX_FILES) $(DIST_DOCS) .bootstrap
+install-dist: $(DIST_FILES)
 	cp $(DIST_VMX_FILES) $(DIST_DOCS) dist/
 
 # manually check if dist dir up to date (before git checkin)
 # skip first line in each VMX file (skip metadata)
-check-dist: $(PARSER_VMX)
+check-dist: $(DIST_FILES)
 	@for FILE in $(DIST_VMX_FILES); do \
 	    tail -n+2 $$FILE > .tmp.c; \
 	    tail -n+2 dist/$$FILE > .tmp.d; \
