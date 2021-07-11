@@ -834,11 +834,16 @@ def obj_setprop(l, r, value):
     return value                # lhsop MUST return value
 
 # NOTE! utility, not method
-# XXX return (obj, value) to avoid generating BoundMethod?
-def find_in_supers(l, rv, default):
+NOT_FOUND = (None, None)
+
+def _find_in_supers(l, rv):
     """
     Breadth first search of superclass methods/properties;
     `l` is CObject, `rv` is Python string for method/property name.
+    Returns:
+        (func, True) for method
+        (func, False) for function
+        (None, None) if not found
     """
     c = l.getclass()
 
@@ -860,24 +865,27 @@ def find_in_supers(l, rv, default):
         # NOTE!! doc.xxl also know that properties take precedence
         # over methods (would be moot w/ descriptors); search for MRO.
         if c.hasprop(rv):
-            return c.getprop(rv) # never BoundMethod
+            return (c.getprop(rv), False) # always function
 
         methods = c.getprop(const.METHODS)
         if methods is not null_value:
             m = methods.getvalue().get(rv, null_value) # Dict
             if m is not null_value:
-                return CBoundMethod(l, m)
+                return (m, True) # method
 
         supers = c.getprop(const.SUPERS)
 
-    return default
+    return NOT_FOUND
 
 # NOTE! utility, not method
 # XXX return (obj, value) to avoid generating BoundMethod?
-def find_in_class(l, rv, default):
+def _find_in_class(l, rv):
     """
     `rv` is Python string
-    may return BoundMethod
+    Returns:
+        (func, True) for method.
+        (func, False) for function.
+        (None, None) if not found.
     """
     # XXX XXX XXX use descriptors (objects w/ get/set methods) for methods
     #           class methods, members, (read-only members)???
@@ -886,15 +894,40 @@ def find_in_class(l, rv, default):
 
     # check for class property
     if c.hasprop(rv):
-        return c.getprop(rv)
+        return (c.getprop(rv), False)
 
     methods = c.getprop(const.METHODS)
     if methods is not null_value:
         m = methods.getvalue().get(rv, null_value) # Dict
         if m is not null_value:
-            return CBoundMethod(l, m)
+            return (m, True)
 
-    return find_in_supers(l, rv, default)
+    return _find_in_supers(l, rv)
+
+def find_in_class(l, rv, default):
+    """
+    `rv` is Python string
+    may return BoundMethod
+    """
+    func, method = _find_in_class(l, rv)
+    if method:
+        return CBoundMethod(l, func)
+    if func is not None:
+        return func
+    return default
+
+def find_in_supers(l, rv, default):
+    """
+    Breadth first search of superclass methods/properties;
+    `l` is CObject, `rv` is Python string for method/property name.
+    may return BoundMethod
+    """
+    func, method = _find_in_supers(l, rv)
+    if method:
+        return CBoundMethod(l, func)
+    if func is not None:
+        return func
+    return default
 
 @pyfunc
 def obj_getprop(l, r):
