@@ -29,17 +29,18 @@ Tested under Python 3.7.9 and PyPy3 7.3.1 (needs `export PYTHONIOENCODING=utf8`)
 
 <!-- DOUBLE BLEH: no way to link to HTML!?!! no relative link!!!!! -->
 <!-- also https://htmlpreview.github.io/ -->
+<!-- HTML file w/o "head" section is acceptable .md file?? -->
 * [Classes](https://raw.githack.com/philbudne/xxl/main/src/dist/classes.html) -- built in classes (machine generated HTML, *delivered by external CDN*)
 
-* [Creating a Class](doc/create-class.md) -- how to create a new Class
+* [Creating a new Class](doc/create-class.md)
 
-* Adding a statement
-    * [extension for "do" statement](src/lib/ext/do.xxl)
-    * [extension for "switch" statement](src/lib/ext/switch.xxl)
-
-* Adding an operator
+* Adding operators
     + [example of adding "^" operator](doc/adding-operator.md)
-    * [extension adding "nullish" operators](src/lib/ext/nullish.xxl)
+    + [extension adding "nullish" operators](src/lib/ext/nullish.xxl)
+
+* Adding statements
+    + [extension for "do" statement](src/lib/ext/do.xxl)
+    + [extension for "switch" statement](src/lib/ext/switch.xxl)
 
 * [Priorities](doc/priorities.md) -- a loose ordering of design priorities
 
