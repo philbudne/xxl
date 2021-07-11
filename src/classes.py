@@ -96,13 +96,14 @@ class UError(Exception):
 #       (the variable ClassName should point to the Class object of that name)
 
 class CObject:
-    __slots__ = ['props', 'klass']
+    __slots__ = ['props', 'klass', 'opcache']
     hasvalue = False
 
     def __init__(self, klass):
         # klass may only be None when creating initial Class (Object)
         self.setclass(klass)
         self.props = {}
+        self.opcache = {}
 
     def setclass(self, klass):
         self.klass = klass
@@ -936,8 +937,18 @@ def find_op(obj, optype, op):
         called from XxxOpInstrs 99.999% of time
         (only exception is CObject.invoke for '(')
     """
+    cache_entry = optype + op
+    if cache_entry in obj.opcache:
+        return obj.opcache[cache_entry]
+
     #print("find_op", obj, optype, op)
     c = c0 = obj.getclass()
+
+    class_cache_entry = 'class_' + cache_entry
+    if class_cache_entry in c.opcache:
+        op = obj.opcache[cache_entry] = c.opcache[class_cache_entry]
+        return op
+
     q = []
     seen = set()
     seen.add(c)
@@ -945,7 +956,9 @@ def find_op(obj, optype, op):
         ops = c.props.get(optype, null_value) # getprop
         if ops is not null_value:
             if op in ops.value: # getvalue, expect Dict
-                return ops.getvalue()[op]
+                val = ops.getvalue()[op]
+                obj.opcache[cache_entry] = c0.opcache[class_cache_entry] = val
+                return val
 
         supers = c.props.get(const.SUPERS, null_value) # getprop
         if supers is not null_value:
