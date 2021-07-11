@@ -103,7 +103,7 @@ class CObject:
         # klass may only be None when creating initial Class (Object)
         self.setclass(klass)
         self.props = {}
-        self.opcache = {}
+        self.opcache = {}       # XXX keep epoch counter for invalidation?
 
     def setclass(self, klass):
         self.klass = klass
