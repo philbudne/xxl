@@ -9,7 +9,7 @@ const re = __xxl.pyimport("re");
 const ADDR_RE = re.compile(" at 0x[0-9a-z]*");
 
 const SUPER_COLOR = "slategray"; // text color for superclass properties
-const BLACK = null;
+const BLACK = undefined;
 
 // XXX need general iterator for class and all supers
 

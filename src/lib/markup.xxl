@@ -6,7 +6,7 @@ var MarkUp = Class.new({
     name: "MarkUp",
     doc: "base class for marking up text",
     methods: {
-	init: function (this) { this._value = []; this.color = null; },
+	init: function (this) { this._value = []; this.color = undefined; },
 	render: function (this) {
 	    """
 	    return final result Str
