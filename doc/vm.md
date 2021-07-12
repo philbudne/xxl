@@ -1,7 +1,7 @@
 ## VM
 
 The original interpreter for what became "XXL"
-(then called ASAP for "As Small As Possible")
+(then called ASAP for "As Simple As Possible")
 evaluated the abstract syntax tree (AST)
 from the parser recursively.
 
