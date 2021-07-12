@@ -21,7 +21,7 @@ var __extend_parser = function (p) {
 		while (!p.check("}")) {
 		    var tok = p.ctoken();
 		    if (p.check("case")) {
-			p.scope.reserve(p.ctoken());
+			p.scope.reserve(tok);
 			p.advance();
 			tok.first = p.expression(0);
 			tok.case = true;
@@ -30,12 +30,12 @@ var __extend_parser = function (p) {
 			p.advance(":");
 		    }
 		    else if (p.check("default")) {
-			p.scope.reserve(p.ctoken());
+			p.scope.reserve(tok);
 			if (have_default) {
 			    tok.error("second default label in switch");
 			}
 			have_default = true;
-			tok.default = true;
+			tok.default = true; // XXX not visible in AST dump
 			// XXX set tok.arity?
 			slist.append(tok);
 			p.advance();
