@@ -888,7 +888,7 @@ def find_in_supers(l, rv, default):
 # XXX return (obj, value) to avoid generating BoundMethod?
 def find_in_class(l, rv, default):
     """
-    `rv` is Python string
+    `rv` is Python string for property (method) name
     may return BoundMethod
     """
     # XXX XXX XXX use descriptors (objects w/ get/set methods) for methods
