@@ -242,8 +242,8 @@ if (__modinfo.main) {
     var markup = __xxl.import("markup.xxl");
     var markup_class = markup.HTML;
     var i = 0;
-    if (__xxl.argv.len() > i && __xxl.argv[i] == "--markdown") {
-	markup_class = markup.MarkDown;
+    if (__xxl.argv.len() > i && __xxl.argv[i] == "--gh-markdown") {
+	markup_class = markup.GHMarkDown;
 	i += 1;
     }
     var module_name = __xxl.argv.len() > i ? __xxl.argv[i] : "classes";

@@ -185,8 +185,8 @@ code { font-family:Courier,monospace; font-size:1.25em; }
     }
 });
 
-var MarkDown = Class.new({
-    name: "MarkDown",
+var GHMarkDown = Class.new({
+    name: "GHMarkDown",
     doc: "MarkUp class for *github* MarkDown (.md) format (*mostly* HTML)",
     supers: [HTML],		// !!
     methods: {
@@ -197,25 +197,27 @@ var MarkDown = Class.new({
 	end_body: function (this) {
 	},
 
-// SIGH: markdown doesn't support `code` in header lines? use HTML!
-	// the following take multiple args, will space separate and APPEND.
-//	h1: function (this, ...args) { this.wrapnap("# ", args, "\n"); },
-//	h2: function (this, ...args) { this.wrapnap("## ", args, "\n"); },
-//	h3: function (this, ...args) { this.wrapnap("### ", args, "\n"); },
-//	h4: function (this, ...args) { this.wrapnap("#### ", args, "\n"); },
-//	h5: function (this, ...args) { this.wrapnap("##### ", args, "\n"); },
-//	hn: function (this, n, ...args) {
-//	    this.wrapnap("##########".slice(0,n) + " ", args, "\n");
-//	},
-
-	hr: function (this, ...args) { this.nappend("---\n\n"); }, // github was combining
-	p: function (this, ...args) { this.nappend("\n"); }, // paragraph
-	blockquote: function (this, ...args) {
-	    this.wrapnap("> ", args, "\n\n");
-	},
-
 	// code_block?
 	// (un)ordered_list (take list)??
+    }
+});
+
+// **UTTERLY** untested; here to preserve old code
+// (will generate typeface controls in headers)
+var MarkDown = Class.new({
+    name: "MarkDown",
+    doc: "MarkUp class for MarkDown (.md) format",
+    supers: [GHMarkDown],
+    methods: {
+	// the following take multiple args, will space separate and APPEND.
+	h1: function (this, ...args) { this.wrapnap("# ", args, "\n"); },
+	h2: function (this, ...args) { this.wrapnap("## ", args, "\n"); },
+	h3: function (this, ...args) { this.wrapnap("### ", args, "\n"); },
+	h4: function (this, ...args) { this.wrapnap("#### ", args, "\n"); },
+	h5: function (this, ...args) { this.wrapnap("##### ", args, "\n"); },
+	hn: function (this, n, ...args) {
+	    this.wrapnap("##########".slice(0,n) + " ", args, "\n");
+	},
 
 	// NOTE!! the following RETURN strings:
 	bold: function (this, ...words) {
@@ -229,7 +231,16 @@ var MarkDown = Class.new({
 	},
 	link: function (this, dest, ...words) {
 	    return(this.lwrap("[", words, "]") + "(" + dest + ")");
-	}
+	},
+
 	// use HTML ilink!
+
+	 // github was combining
+	hr: function (this, ...args) { this.nappend("\n---\n\n"); },
+	p: function (this, ...args) { this.nappend("\n"); }, // paragraph
+	blockquote: function (this, ...args) {
+	    this.wrapnap("> ", args, "\n\n");
+	},
     }
 });
+
