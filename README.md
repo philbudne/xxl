@@ -50,6 +50,8 @@ Tested under Python 3.7.9 and PyPy3 7.3.1 (needs `export PYTHONIOENCODING=utf8`)
 
 * [Style](doc/style.md) -- language style guide
 
+* [Virtual Machine](doc/vm.md) -- the ASAP Virtual Machine
+
 * [Contributing](doc/contributing.md) -- please read this before creating a bug report, or a pull request
 
 * [Bootstrapping](doc/bootstrapping.md) -- reminder on bootstrapping features
