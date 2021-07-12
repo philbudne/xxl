@@ -2,22 +2,24 @@
 
 A self-hosting extensible language, VM/type system in Python3.
 
-**WARNING** the code and laguage are *HIGHLY* fluid!
+**WARNING** the code and language are *HIGHLY* fluid!
 
 *Please consider this a toy, not suitable for serious projects,
 until further notice!!!*
 
-Tested under Python 3.7.9 and PyPy3 7.3.1 (needs `export PYTHONIOENCODING=utf8`).
+Tested under Python 3.7.9 and
+PyPy3 7.3.1 (needs `export PYTHONIOENCODING=utf8`).
 
 ### Overall:
 
 * Based on [Douglas Crockford's](http://crockford.com/)
-	[TDOP JavaScript parser](http://crockford.com/javascript/tdop/tdop.html)
+     [TDOP JavaScript parser](http://crockford.com/javascript/tdop/tdop.html)
 	based on [Vaughan Pratt's](http://boole.stanford.edu/pratt.html)
-	[Top Down Operator Precedence Parsing](http://web.archive.org/web/20151223215421/http://hall.org.ua/halls/wizzard/pdf/Vaughan.Pratt.TDOP.pdf) (PDF) technique.
+	[Top Down Operator Precedence Parsing](http://web.archive.org/web/20151223215421/http://hall.org.ua/halls/wizzard/pdf/Vaughan.Pratt.TDOP.pdf) (PDF)
+	technique.
 
 * JavaScript-like syntax, Python3-like types,
-	new statements, operators and classes can be created at runtime.
+	new statements, operators and classes can be added at runtime.
 
 * A sandbox for testing out ideas for "little languages"
 
