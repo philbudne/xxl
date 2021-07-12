@@ -694,7 +694,7 @@ class ArgsInstr(VMInstr1):
             if vm.args:            # actuals left?
                 val = vm.args.pop(0) # yes: pop a value
             else:
-                val = classes.null_value # no: use null
+                val = classes.undef_value # no: use undefined
             vm.scope.defvar(formal, val) # declare as variable
 
     def args(self):

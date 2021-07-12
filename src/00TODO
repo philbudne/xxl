@@ -10,7 +10,6 @@
 TEST
 ====
 test PyObject.props()
-__extend_parser
 
 CLEANUP
 =======
@@ -38,7 +37,6 @@ make obj_get of unknown property an error
 	(depended on by .std lookup)
 	add "has_prop" method? ?. operator?!!!
 	Object.has_method method?
-add "undefined" value (initial/default value for vars/args)??
 
 exceptions (using Continuations?)
 	resumable/non-resumable

@@ -127,7 +127,7 @@ it is always created ***just*** before a call.
 	`SCOPE` then is pointed to the new scope.
 	The new scope is given a `return` entry with a Continuation using the value of `FP`.
 	A variable is created in the new `SCOPE` for each name using the corresponding positional value
-	from `ARGS`.  If/when `ARGS` is empty, the remaining variable values will be null.
+	from `ARGS`.  If/when `ARGS` is empty, the remaining formal values will be `undefined`.
 	More entries in `ARGS` than in the formal parameter list is a fatal error.
 * `bccall` -- argument is a list of instructions to create a block Closure which is immediately called.
 	The new frame will not be visible in backtraces (`show` will be `false`).
