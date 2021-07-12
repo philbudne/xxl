@@ -110,7 +110,7 @@ $(C):	$(VM) $(B) $(PARSER_SRC)
 # run ONLY before git checkin for main repo
 # (so clean checkouts get initial VM code)
 
-DIST_FILES=$(TESTED) $(DIST_VMX_FILES) $(DIST_DOCS) .bootstrap
+DIST_FILES=$(TESTED) $(PARSER_VMX) $(DIST_DOCS) .bootstrap
 install-dist: $(DIST_FILES)
 	cp $(DIST_VMX_FILES) $(DIST_DOCS) dist/
 
