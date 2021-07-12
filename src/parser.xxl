@@ -351,10 +351,10 @@ var PrattParser = Class.new({
 		    c = d.getclass(); // could be variable or reserved word
 		}
 		else if (!(c = this.symbol_classes[v])) { // keyword?
-		    // not previously used, or defined as a keyword.
-		    // "else" ends up here, as do variable/formal names
-		    // as they're first seen.
-		    c = this.Symbol; // undefined on reference in expr!!
+		    // not a keyword and not defined (yet) as a variable.
+		    // property/method names (that aren't variable names)
+		    // end up here.
+		    c = this.Symbol; // undefined error on reference in expr!!
 		}
 	    }
 	    else if (a == "operator") {
@@ -1148,7 +1148,6 @@ var Parser = Class.new({
 		    },
 		    nud: function (this) {
 			var a = [];
-		      leave_while:
 			while (!p.check("]")) {
 			    a.append(p.expression(0));
 			    if (!p.check("]")) {
@@ -1530,8 +1529,6 @@ var Parser = Class.new({
 			this.first = p.expression(0);
 			p.advance(")");
 			this.second = p.block();
-
-			// XXX works even w/ prev "var else"!!!
 
 			// This will cause REPL to block for next token. Sorry!
 			// node.js seems to avoid this, only continues
