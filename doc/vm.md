@@ -66,8 +66,9 @@ Instruction execution is as follows:
 * `PC` is incremented
 * `IR.step(vm)` is called
 
-Calling a Closure pushes an entry on the `FP` (cactus) stack:
-`FP <- (CB, PC, SCOPE, FP, IR.filename, IR.line_pos)`.
+A call to a Closure pushes an entry on the `FP` (cactus) stack:
+`FP <- (CB, PC, SCOPE, FP, IR.filename, IR.line_pos, visible)`,
+where `visible` is `true` for function closures, and `false` for block closures.
 
 The new frame (`FP` value) will contain the `PC` index for the next instruction after the call.
 
@@ -77,16 +78,16 @@ and restores the VM state from the `FP` tuple ***exactly*** as the `return` inst
 
 ### The following instructions take no arguments:
 
-* `push` -- push AC onto the `stack SP <- (AC, SP)`
+* `push` -- push `AC` onto the `stack SP <- (AC, SP)`
 * `return` -- return, restoring `CB, PC, SCOPE and FP` from the
 	tuple referenced by `FP`
 	(generated only at the end of a list of instructions).
 * `exit` -- exit the VM.  Only used by internal bootstrap code.
 * `uscope` -- First intruction in an unlabled block closure instruction list.
 	create a new scope for a unlabeled block scope: `SCOPE <- new_scope(SCOPE)`.
-* `temp` -- copy `TEMP` to AC:  `AC <- TEMP`.
-* `pop_temp` -- load AC from `TEMP`, restore `TEMP` from stack: `AC <- TEMP; TEMP, TEMP <- SP`.
-* `append` -- append value in AC to the List in `TEMP`: `TEMP.append(AC)`
+* `temp` -- copy `TEMP` to `AC`:  `AC <- TEMP`.
+* `pop_temp` -- load `AC` from `TEMP`, restore `TEMP` from stack: `AC <- TEMP; TEMP, TEMP <- SP`.
+* `append` -- append value in `AC` to the List in `TEMP`: `TEMP.append(AC)`
 
 ### Instructions with zero args for calls using "spread arguments" `...expr`
 
@@ -98,25 +99,25 @@ it is always created ***just*** before a call.
 * `poparg` -- pop a single value from STACK and append to `ARGS`
 	(used for simple argument values).
 * `sprarg` -- used for `...expr`: pop a (List) value from STACK, and use to extend the `ARGS` list:
-	`arg, SP <- SP; ARGS.extend(arg)`.
-* `call0` -- call the object in AC, using contents of `ARGS` as the argument list.
+	`x, SP <- SP; ARGS.extend(x)`.
+* `call0` -- call the object in `AC`, using contents of `ARGS` as the argument list.
 
 ### Instructions with one argument:
 
-* `lit` -- loads a JSON Number or String literal. `AC <- arg0`.
+* `lit` -- loads a JSON Number or String literal. `AC <- arg`.
 * `load` -- use the String argument as the name of a variable to load
-	into AC using the `SCOPE` chain.
+	into `AC`, using the `SCOPE` chain.
 * `store` -- use the String argument as the name of a variable to store
-	AC using the `SCOPE` chain.
-* `unop` -- argument is a String for a unary operator to apply to AC.
-* `binop` -- argument is a String for a binary operator to apply to AC.
+	`AC` into, using the `SCOPE` chain.
+* `unop` -- argument is a String for a unary operator to apply to `AC`.
+* `binop` -- argument is a String for a binary operator to apply to `AC`.
 	the second (right) argument is popped from the stack.
-* `lhsop` -- argument is a String for a Left Hand Side binary operator to apply to AC.
+* `lhsop` -- argument is a String for a Left Hand Side binary operator to apply to `AC`.
 	the second (right) argument is popped from the stack.
 * `close` -- argument is a list of instructions to combine with SCOPE
-	to create a Closure object, left in AC.
-* `call` -- argument is the number of arguments to pop from stack and append to `ARGS`
-	(after clearing `ARGS` first).  AC points to an Object to call.
+	to create a Closure object, left in `AC`.
+* `call` -- argument is the number of arguments to pop from `STACK` and append to `ARGS`
+	(after first clearing `ARGS`).  `AC` points to an Object to call.
 * `var` -- argument is the name of a variable to create (with value undefined)
 	in the current SCOPE.
 * `args` -- first instruction in a function/method Closure.
@@ -133,11 +134,11 @@ it is always created ***just*** before a call.
 * `lscope` -- First instruction in an instruction list for a block closure with a leave label.
 	A new scope is created (see `args`).
 	The argument is the name of a variable to create and load with a Continuation
-	created from the current FP.
-* `jrst` -- argument is an integer PC (code base offset) value: `PC <- arg`
-* `jumpe` -- if AC contains a "falsey" value (null, undefined, false or zero),
-	load PC from argument.
-* `jumpn` -- if AC is not "falsey", load PC from argument.
+	created from the current `FP`.
+* `jrst` -- unconditional jump: argument is an integer code base offset value: `PC <- arg`
+* `jumpe` -- if `AC` contains a "falsey" value (null, undefined, false or zero),
+	load `PC` from argument.
+* `jumpn` -- if `AC` is not "falsey", load PC from argument.
 * `push_lit` -- pushes a JSON Number or String literal onto stack: `SP <- (value, SP)`
 * `new` -- `TEMP` is pushed on stack. argument is string "List", "Dict" or "Set" for a new Object to create,
 	and leave in `TEMP`: `SP <- (TEMP, SP); TEMP <- new_object`
