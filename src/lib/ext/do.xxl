@@ -13,10 +13,12 @@ var __extend_parser = function (p) {
 	    std: function (this) {	// parse as statement
 		this.first = p.block();
 		if (p.check("while")) {
+		    p.scope.reserve(p.ctoken());
 		    p.advance("while");
 		    this.third = true;
 		}
 		else if (p.check("until")) {
+		    p.scope.reserve(p.ctoken());
 		    p.advance("until");
 		    this.third = false;
 		}

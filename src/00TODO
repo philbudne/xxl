@@ -8,7 +8,6 @@
 	need descriptors (slots) ??
 
 BUG:	switch.xxl does not reserve "case" or "default"
-	do.xxl does not reserve "until"
 
 TEST
 ====
