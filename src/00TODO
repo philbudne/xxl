@@ -7,8 +7,6 @@
 *** BUG: can overwrite "const" values in a Module!!!
 	need descriptors (slots) ??
 
-BUG:	switch.xxl does not reserve "case" or "default"
-
 TEST
 ====
 test PyObject.props()
