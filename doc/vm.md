@@ -67,7 +67,7 @@ Instruction execution is as follows:
 * `IR.step(vm)` is called
 
 A call to a Closure pushes an entry on the `FP` (cactus) stack:
-`FP <- (CB, PC, SCOPE, FP, IR.filename, IR.line_pos, visible)`,
+`FP ← (CB, PC, SCOPE, FP, IR.filename, IR.line_pos, visible)`,
 where `visible` is `true` for function closures, and `false` for block closures.
 
 The new frame (`FP` value) will contain the `PC` index for the next instruction after the call.
@@ -78,15 +78,15 @@ and restores the VM state from the `FP` tuple ***exactly*** as the `return` inst
 
 ### The following instructions take no arguments:
 
-* `push` -- push `AC` onto the `stack SP <- (AC, SP)`
+* `push` -- push `AC` onto the `stack SP ← (AC, SP)`
 * `return` -- return, restoring `CB, PC, SCOPE and FP` from the
 	tuple referenced by `FP`
 	(generated only at the end of a list of instructions).
 * `exit` -- exit the VM.  Only used by internal bootstrap code.
 * `uscope` -- First intruction in an unlabled block closure instruction list.
-	create a new scope for a unlabeled block scope: `SCOPE <- new_scope(SCOPE)`.
-* `temp` -- copy `TEMP` to `AC`:  `AC <- TEMP`.
-* `pop_temp` -- load `AC` from `TEMP`, restore `TEMP` from stack: `AC <- TEMP; TEMP, TEMP <- SP`.
+	create a new scope for a unlabeled block scope: `SCOPE ← new_scope(SCOPE)`.
+* `temp` -- copy `TEMP` to `AC`:  `AC ← TEMP`.
+* `pop_temp` -- load `AC` from `TEMP`, restore `TEMP` from stack: `AC ← TEMP; TEMP, TEMP ← SP`.
 * `append` -- append value in `AC` to the List in `TEMP`: `TEMP.append(AC)`
 
 ### Instructions with zero args for calls using "spread arguments" `...expr`
@@ -99,12 +99,12 @@ it is always created ***just*** before a call.
 * `poparg` -- pop a single value from STACK and append to `ARGS`
 	(used for simple argument values).
 * `sprarg` -- used for `...expr`: pop a (List) value from STACK, and use to extend the `ARGS` list:
-	`x, SP <- SP; ARGS.extend(x)`.
+	`x, SP ← SP; ARGS.extend(x)`.
 * `call0` -- call the object in `AC`, using contents of `ARGS` as the argument list.
 
 ### Instructions with one argument:
 
-* `lit` -- loads a JSON Number or String literal. `AC <- arg`.
+* `lit` -- loads a JSON Number or String literal. `AC ← arg`.
 * `load` -- use the String argument as the name of a variable to load
 	into `AC`, using the `SCOPE` chain.
 * `store` -- use the String argument as the name of a variable to store
@@ -135,7 +135,8 @@ it is always created ***just*** before a call.
 	A new scope is created (see `args`).
 	The argument is the name of a variable to create and load with a Continuation
 	created from the current `FP`.
-* `jrst` -- unconditional jump: argument is an integer code base offset value: `PC <- arg`
+* `jrst` -- unconditional jump: argument is an integer code base offset value:
+	`PC ← arg`
 	*(Jump and ReSTore flags is the fastest unconditional jump instruction
 	  on the PDP-10)*
 
@@ -146,9 +147,11 @@ it is always created ***just*** before a call.
 * `jumpn` -- if `AC` is not "falsey", load PC from argument.
 	*(`JUMPN AC,DEST` is the PDP-10 instruction for compare AC to zero
 	  and jump if not equal)*
-* `push_lit` -- pushes a JSON Number or String literal onto stack: `SP <- (value, SP)`
-* `new` -- `TEMP` is pushed on stack. argument is string "List", "Dict" or "Set" for a new Object to create,
-	and leave in `TEMP`: `SP <- (TEMP, SP); TEMP <- new_object`
+* `push_lit` -- pushes a JSON Number or String literal onto stack:
+	`SP ← (value, SP)`
+* `new` -- `TEMP` is pushed on stack. argument is string "List",
+	"Dict" or "Set" for a new Object to create,
+	and leave in `TEMP`: `SP ← (TEMP, SP); TEMP ← new_object`
 
 ### Instructions with two arguments:
 
