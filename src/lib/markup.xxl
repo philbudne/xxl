@@ -6,7 +6,7 @@ var MarkUp = Class.new({
     name: "MarkUp",
     doc: "base class for marking up text",
     methods: {
-	init: function (this) { this._value = []; this.color = undefined; },
+	init: function (this) { this._value = []; this.color = this.BLACK; },
 	render: function (this) {
 	    """
 	    return final result Str
@@ -61,7 +61,11 @@ var MarkUp = Class.new({
 	quote: function (this, text) {
 	    return(text);
 	}
-    } // methods
+    }, // methods
+    props: {
+	BLACK: null,
+	SUPER: "slategray"	// color for methods/ops from a superclass
+    }
 });
 
 var HTML = Class.new({
@@ -77,21 +81,19 @@ var HTML = Class.new({
 	    this.as_class(HTML)..init();
 	},
 	_twrap: function (this, tag, list, props) {
-	    if (props) {
-		if (props.len() == 0) {
-		    props = null;
-		}
-		else {
-		    props.insert(0, ' ');
-		}
+	    if (!props) {
+		props = [];
 	    }
-	    var open = "<" + tag + " ".join(props ? props : []) + ">";
+	    else if (props.len() > 0) {
+		props.insert(0, ''); // space after tag name
+	    }
+	    var open = "<" + tag + " ".join(props) + ">";
 	    var close = "</" + tag + ">";
 	    return(this.lwrap(open, list, close));
 	},
 	_hn: function (this, n, list) {
 	    var props = [];
-	    if (this.color) {
+	    if (this.color != this.BLACK) {
 		props.append('color="' + this.color + '"');
 	    }
 	    this.nappend(this._twrap( "h" + n.to_str(), list, props));
@@ -137,11 +139,19 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 	},
 
 	start_color: function (this, color) {
+	    """
+	    change text color (headers too!)
+	    """
+	    // markdown files can't be styled with CSS!
+	    // _could_ use <span style="color:COLOR">??
+	    color = color || this.BLACK;
+__xxl.error("start_color", color, "prev", this.color, color != this.color);
 	    if (color != this.color) {
-		this.append('</font>');
+		if (this.color != this.BLACK) {
+		    this.append('</font>');
+		}
 		this.color = color;
-		//this.append('<span style="color:' + color + '">');
-		if (color) {
+		if (color != this.BLACK) {
 		    this.append('<font color="' + color + '">');
 		}
 	    }
@@ -179,8 +189,10 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 var MarkDown = Class.new({
     name: "MarkDown",
     doc: "MarkUp class for MarkDown (.md) format!",
-    supers: [HTML],
+    supers: [HTML],		// !!
     methods: {
+	head: function (this) {
+	},
 	start_body: function (this) {
 	},
 	end_body: function (this) {

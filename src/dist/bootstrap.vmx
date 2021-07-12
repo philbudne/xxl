@@ -1,4 +1,4 @@
-{"v": 1.0, "fn": "bootstrap.xxl", "mt": 1625971545.5467522, "sz": 12946}
+{"v": 1.0, "fn": "bootstrap.xxl", "mt": 1626111163.8399322, "sz": 12990}
 [["10:5", "load", "__modinfo"],
  ["10:14", "binop_lit", ".", "booting"],
  ["10:1", "jumpe", 4],
@@ -133,7 +133,7 @@
        ["71:6", "load", "return"],
        ["71:12", "call", 1],
        ["67:39", "return"]],
-   "\n\t    Default to_str method: calls this.repr().\n\t    "],
+   "\n\t    Default `to`_str method: calls `this.repr()`.\n\t    "],
      ["67:26", "push"],
      ["67:27", "push_lit", "to_str"],
      ["67:2", "load", "classes"],
@@ -159,7 +159,7 @@
        ["87:6", "load", "return"],
        ["87:12", "call", 1],
        ["78:35", "return"]],
-   "\n\t    Default metaclass (Class) new method;\n\t    Manually invoked as SomeClass.new.\n\t    Calls this_class.create to create obj,\n\t    and then calls obj.init().\n\t    "],
+   "\n\t    Default metaclass (Class) new method;\n\t    Manually invoked as `SomeClass.new`.\n\t    Calls `this_class.create` to create obj,\n\t    and then calls `obj.init()` (ie; the `SomeClass.init` method).\n\t    "],
      ["78:25", "push"],
      ["78:26", "push_lit", "new"],
      ["78:2", "load", "classes"],

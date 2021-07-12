@@ -8,12 +8,11 @@ const re = __xxl.pyimport("re");
 
 const ADDR_RE = re.compile(" at 0x[0-9a-z]*");
 
-const SUPER_COLOR = "slategray"; // text color for superclass properties
-const BLACK = undefined;
-
-// XXX need general iterator for class and all supers
+// XXX maybe do partial ordering of Classes, and display from roots up??
+// XXX need general iterator for class and all supers (???)
 
 var callable = function (c) {
+    // check for __args and/or __defn methods instead??
     return(c.instance_of(classes.Callable));
 };
 
@@ -95,7 +94,7 @@ var mufunc = function (mu, level, type, name, func, not_own_method) {
     `level` is header level, `name` is opr/function name, `func` is Callable.
     """
     var args = func.__args() || "(?)"; // get string for argument names
-    mu.start_color(not_own_method ? SUPER_COLOR : BLACK);
+    mu.start_color(not_own_method ? mu.SUPER : mu.BLACK);
     // apply (HTML entity) quoting for operators
     mu.hn(level, type, mu.code(mu.quote(name), args));
     var defn = func.__defn() || "?"; // get class and definition location
@@ -146,7 +145,7 @@ var muclass = function (mu, class) {
 		 function (ditem) { // ditem => [member_name, value]
 		     var name = ditem[0]; // method name or operator string
 		     var value = ditem[1];
-		     mu.start_color(class.hasprop(name) ? BLACK : SUPER_COLOR);
+		     mu.start_color(class.hasprop(name) ? mu.BLACK : mu.SUPER);
 		     muvalue(mu, 3, "Member", name, value);
 		 } // function (ditem)
 	     ); // for_each member
@@ -160,17 +159,21 @@ var mumodule = function (mu, module_name) {
     `module_name` is name to import.
     """
     var mod = __xxl.import(module_name);
-
-    mu.head(module_name + " | " + (mod.__doc ? mod.__doc.to_str() : "Mystery Module"));
+    var mod_doc = mod.__doc;
+    if (!mod_doc || mod_doc == "") {
+	__xxl.error("NOTE: Module", module_name, "has no __doc string");
+	mod_doc = module_name;
+    }
+    mu.head(module_name + " | " + mod_doc.to_str());
     mu.start_body();
     mu.h1("Module", mu.code(module_name));
     mu.p();
     mudoc(mu, mod);
     // not yet working:
     // mu.p();
-    // mu.start_color(SUPER_COLOR);
+    // mu.start_color(mu.SUPER);
     // mu.append("(inherited methods in this color)");
-    // mu.start_color(BLACK);
+    // mu.start_color(mu.BLACK);
 
     // iterate over sorted names in Module
     var vars = [];
@@ -181,7 +184,7 @@ var mumodule = function (mu, module_name) {
 	    }
 	    var x = mod.getprop(name);
 	    if (x.instance_of(classes.Class)) {
-		mu.start_color(BLACK);
+		mu.start_color(mu.BLACK);
 		mu.hr();
 		mu.make_anchor("class-" + name);
 
@@ -214,7 +217,7 @@ var mumodule = function (mu, module_name) {
 	    }
 	}
     );
-    mu.start_color(BLACK);
+    mu.start_color(mu.BLACK);
     if (vars.len() == 0) {
 	return();
     }
@@ -224,7 +227,7 @@ var mumodule = function (mu, module_name) {
     vars.for_each(
 	function (name) {
 	    var x = mod.getprop(name);
-	    if (x.instance_of(classes.Callable)) {
+	    if (callable(x)) {
 		mufunc(mu, 3, name, x);
 	    }
 	    else {
