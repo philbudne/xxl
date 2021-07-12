@@ -1231,6 +1231,22 @@ PObject.setprop(const.BINOPS, _mkdict({
     '!=': pobj_differ
 }))
 
+# common for List and Str
+@pyfunc
+def pobj_slice(this, start, end=None):
+    """
+    return a subrange (slice) of `this`
+    starting at position `start`
+    ending at position `end` (defaults to remainder)
+    """
+    startv = start.getvalue()   # XXX getint?
+    if end is not None:
+        endv = end.getvalue()   # XXX getint?
+        ret = this.value[startv:endv]
+    else:
+        ret = this.value[startv:]
+    return _new_pobj(this.getclass(), ret)
+
 ################ Callable base class
 
 @pyfunc
@@ -1272,12 +1288,6 @@ Continuation.setprop(const.METHODS, _mkdict({
 
 # for_each, each_for, map, map2 in bootstrap.xxl
 Iterable.setprop(const.METHODS, _mkdict({
-}))
-
-################ List
-
-# init, repr, extend in bootstrap.xxl
-List.setprop(const.METHODS, _mkdict({
 }))
 
 ################ PyIterable
@@ -1471,12 +1481,12 @@ def list_put(l, r, value):
 
 # str, repr, for_each, each_for, map, map2 from Iterable (in bootstrap.xxl)
 List.setprop(const.METHODS, _mkdict({
+    '__init0': list__init0,
     'append': list_append,
     'insert': list_insert,
     'len': pobj_len,
     'pop': list_pop,
-    # XXX slice(start[,end]) (return range of elements)
-    '__init0': list__init0,
+    'slice': pobj_slice,
 }))
 List.setprop(const.BINOPS, _mkdict({
     '[': list_get
@@ -1719,21 +1729,6 @@ def str_get(l, r):              # [] operator
     return _new_pobj(l.getclass(), l.value[r.getvalue()])
 
 @pyfunc
-def str_slice(this, start, end=None):
-    """
-    return a substring (slice) of `this`
-    starting at position `start`
-    ending at position `end` (defaults to rest of string
-    """
-    startv = start.getvalue()        # XXX check if int
-    if end is not None:
-        endv = end.getvalue()            # XXX check if int
-        ret = this.value[startv:endv]
-    else:
-        ret = this.value[startv:]
-    return _new_pobj(this.getclass(), ret)
-
-@pyfunc
 def str_split(this, sep=None, limit=None):
     """
     Return a List of the words in the string,
@@ -1837,7 +1832,7 @@ Str.setprop(const.METHODS, _mkdict({
     '__join': str__join,
     'len': pobj_len,
     'ord': str_ord,
-    'slice': str_slice,
+    'slice': pobj_slice,
     'split': str_split,
     'starts_with': str_starts_with,
     'strip': str_strip,
