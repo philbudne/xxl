@@ -145,7 +145,6 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 	    // markdown files can't be styled with CSS!
 	    // _could_ use <span style="color:COLOR">??
 	    color = color || this.BLACK;
-__xxl.error("start_color", color, "prev", this.color, color != this.color);
 	    if (color != this.color) {
 		if (this.color != this.BLACK) {
 		    this.append('</font>');
@@ -188,17 +187,17 @@ __xxl.error("start_color", color, "prev", this.color, color != this.color);
 
 var MarkDown = Class.new({
     name: "MarkDown",
-    doc: "MarkUp class for MarkDown (.md) format!",
+    doc: "MarkUp class for *github* MarkDown (.md) format (*mostly* HTML)",
     supers: [HTML],		// !!
     methods: {
-	head: function (this) {
+	head: function (this, ...title) {
 	},
 	start_body: function (this) {
 	},
 	end_body: function (this) {
 	},
 
-// SIGH: markdown doesn't support formatting in header lines: use HTML
+// SIGH: markdown doesn't support `code` in header lines? use HTML!
 	// the following take multiple args, will space separate and APPEND.
 //	h1: function (this, ...args) { this.wrapnap("# ", args, "\n"); },
 //	h2: function (this, ...args) { this.wrapnap("## ", args, "\n"); },
