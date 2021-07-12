@@ -218,8 +218,11 @@ class CContinuation(CCallable):
     A Callable instance backed by a native (VM) Continuation
     NOTE: opaque (no Class methods to expose innards) for now
     """
+    __slots__ = ['fp']
+
     def __init__(self, fp):
-        super().__init__(Continuation)
+        self.klass = Continuation
+        self.props = {}
         self.fp = fp
 
     def __repr__(self):
@@ -262,8 +265,11 @@ class CClosure(CCallable):
     A Callable instance backed by a Closure (VM code + scope)
     NOTE: opaque (no Class methods to expose innards) for now
     """
+    __slots__ = ['code', 'scope']
+
     def __init__(self, code, scope, doc=None):
-        super().__init__(Closure)
+        self.klass = Closure
+        self.props = {}
         self.code = code
         self.scope = scope
         # PLB: I _HATE_ the Python ternary
@@ -319,8 +325,11 @@ class CBoundMethod(CCallable):
         without creating a BoundMethod Object!!!???
     NOTE: opaque (no Class methods to expose innards) for now
     """
+    __slots__ = ['obj', 'method']
+
     def __init__(self, obj, method):
-        super().__init__(BoundMethod)
+        self.klass = BoundMethod
+        self.props = {}
         self.obj = obj
         self.method = method
 
@@ -345,9 +354,11 @@ class CPyFunc(CCallable):
     """
     A Callable instance backed by a Python function
     """
-    __slots__ = ['func']
+    __slots__ = ['func', 'argfunc']
+
     def __init__(self, func, argfunc=None):
-        super().__init__(PyFunc)
+        self.klass = PyFunc
+        self.props = {}
         # detect pyfunc() calls on a pre-decorated function
         if isinstance(func, CPyFunc):
             # Python programming error, want Python backtrace:
@@ -446,7 +457,8 @@ class CPyIterator(CPObject):
     wrapper around a Python iterator
     """
     def __init__(self, iterator):
-        super().__init__(PyIterator)
+        self.klass = PyIterator
+        self.props = {}
         self.value = iterator
 
     def __str__(self):
@@ -2088,6 +2100,7 @@ Module.setprop('modules', _mkdict({})) # Class variable
 
 class CModule(CObject):
     __slots__ = ['scope', 'modinfo']
+
     def __init__(self, scope):
         super().__init__(Module)
         self.scope = scope      # HIDDEN!
