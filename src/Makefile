@@ -61,7 +61,8 @@ $(ABIDENTICAL): $(A) $(B)
 
 ################
 
-classes.html: classes.py .bootstrap lib/doc.xxl lib/markup.xxl $(TESTED)
+# bootstrap.xxl dependency for base class methods!
+classes.html: classes.py bootstrap.xxl lib/doc.xxl lib/markup.xxl
 	./$(XXL) lib/doc.xxl classes > classes.html
 
 # uncomment to enable timing
