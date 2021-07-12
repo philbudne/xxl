@@ -136,9 +136,16 @@ it is always created ***just*** before a call.
 	The argument is the name of a variable to create and load with a Continuation
 	created from the current `FP`.
 * `jrst` -- unconditional jump: argument is an integer code base offset value: `PC <- arg`
+	*(Jump and ReSTore flags is the fastest unconditional jump instruction
+	  on the PDP-10)*
+
 * `jumpe` -- if `AC` contains a "falsey" value (null, undefined, false or zero),
 	load `PC` from argument.
+	*(`JUMPE AC,DEST` is the PDP-10 instruction for compare AC to zero
+	  and jump if equal)*
 * `jumpn` -- if `AC` is not "falsey", load PC from argument.
+	*(`JUMPN AC,DEST` is the PDP-10 instruction for compare AC to zero
+	  and jump if not equal)*
 * `push_lit` -- pushes a JSON Number or String literal onto stack: `SP <- (value, SP)`
 * `new` -- `TEMP` is pushed on stack. argument is string "List", "Dict" or "Set" for a new Object to create,
 	and leave in `TEMP`: `SP <- (TEMP, SP); TEMP <- new_object`
