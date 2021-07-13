@@ -852,7 +852,7 @@ def obj_setprop(l, r, value):
 
 # NOTE! utility, not method
 # XXX return (obj, value) to avoid generating BoundMethod?
-def find_in_supers(l, rv, default):
+def find_in_supers(l, rv, default, caching=True):
     """
     Breadth first search of superclass methods/properties;
     `l` is CObject, `rv` is Python string for method/property name.
@@ -883,8 +883,9 @@ def find_in_supers(l, rv, default):
         if methods is not null_value:
             m = methods.value.get(rv, null_value) # Dict
             if m is not null_value:
-                cache_line = '__method:' + rv
-                c0.cache[cache_line] = m
+                if caching:
+                    cache_line = '__method:' + rv
+                    c0.cache[cache_line] = m
                 return CBoundMethod(l, m)
 
         supers = c.getprop(const.SUPERS)
@@ -991,7 +992,7 @@ def obj_get_in_supers(this, prop):
     Looks for `prop` as property or method of superclasses of `this`;
     can be used w/ `this.as_class(MyClass)..method`.
     """
-    return find_in_supers(this, prop.getvalue(), undef_value)
+    return find_in_supers(this, prop.getvalue(), undef_value, False)
 
 # once upon a time class was stored as '__class' property,
 # but it was messy when cloning.
