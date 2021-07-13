@@ -42,6 +42,7 @@ exceptions (using Continuations)
 	resumable/non-resumable???
 	VM register for exception handler?? add to frame???
 		Exception.raise() method a PyVMFunc
+			capture current FP (Continuation???)
 
 "in" operator for iterables?
 	"has" method???
