@@ -96,14 +96,18 @@ class UError(Exception):
 #       (the variable ClassName should point to the Class object of that name)
 
 class CObject:
-    __slots__ = ['props', 'klass', 'opcache']
+    __slots__ = ['props', 'klass', 'cache']
     hasvalue = False
 
     def __init__(self, klass):
         # klass may only be None when creating initial Class (Object)
         self.setclass(klass)
         self.props = {}
-        self.opcache = {}       # XXX keep epoch counter for invalidation?
+        # NOTE! cache only written for Class objects
+        # (if per-object caching, including BoundMethods) is desired
+        # need to keep a global serial number in each object, and increment it
+        # to invalidate all cache entries.
+        self.cache = {}
 
     def setclass(self, klass):
         self.klass = klass
@@ -853,7 +857,7 @@ def find_in_supers(l, rv, default):
     Breadth first search of superclass methods/properties;
     `l` is CObject, `rv` is Python string for method/property name.
     """
-    c = l.getclass()
+    c = c0 = l.getclass()
 
     supers = c.getprop(const.SUPERS)
     q = []                      # queue
@@ -877,8 +881,10 @@ def find_in_supers(l, rv, default):
 
         methods = c.getprop(const.METHODS)
         if methods is not null_value:
-            m = methods.getvalue().get(rv, null_value) # Dict
+            m = methods.value.get(rv, null_value) # Dict
             if m is not null_value:
+                cache_line = '__method:' + rv
+                c0.cache[cache_line] = m
                 return CBoundMethod(l, m)
 
         supers = c.getprop(const.SUPERS)
@@ -901,10 +907,16 @@ def find_in_class(l, rv, default):
     if c.hasprop(rv):
         return c.getprop(rv)
 
+    cache_line = '__method:' + rv
+    if cache_line in c.cache: # XXX change name?
+        m = c.cache[cache_line]
+        return CBoundMethod(l, m)
+
     methods = c.getprop(const.METHODS)
     if methods is not null_value:
-        m = methods.getvalue().get(rv, null_value) # Dict
+        m = methods.value.get(rv, null_value) # Dict
         if m is not null_value:
+            c.cache[cache_line] = m
             return CBoundMethod(l, m)
 
     return find_in_supers(l, rv, default)
@@ -937,16 +949,13 @@ def find_op(obj, optype, op):
         called from XxxOpInstrs 99.999% of time
         (only exception is CObject.invoke for '(')
     """
-    cache_entry = optype + op
-    if cache_entry in obj.opcache:
-        return obj.opcache[cache_entry]
 
     #print("find_op", obj, optype, op)
     c = c0 = obj.getclass()
 
-    class_cache_entry = 'class_' + cache_entry
-    if class_cache_entry in c.opcache:
-        op = obj.opcache[cache_entry] = c.opcache[class_cache_entry]
+    cache_line = optype + op
+    if cache_line in c.cache:
+        op = c.cache[cache_line]
         return op
 
     q = []
@@ -957,7 +966,7 @@ def find_op(obj, optype, op):
         if ops is not null_value:
             if op in ops.value: # getvalue, expect Dict
                 val = ops.getvalue()[op]
-                obj.opcache[cache_entry] = c0.opcache[class_cache_entry] = val
+                c0.cache[cache_line] = val
                 return val
 
         supers = c.props.get(const.SUPERS, null_value) # getprop
@@ -1119,21 +1128,27 @@ def class_call(this_class, *args):
     raise UError("Called %s Class! Did you mean %s.new?" % (name, name))
 
 @pyfunc
-def class_subclass_of(this, c):
+def class_subclass_of(this_class, c):
     """
-    Return `true` if Class `this` is a subclass of
+    Return `true` if Class `this_class` is a subclass of
     Class (or List of Classes) `c`
     """
     if subclass_of(c.getclass(), List):
         c = c.getvalue()             # XXX getlist
     else:
         c = [c]                 # make Python list
-    return mkbool(subclass_of(this, c))
+    return mkbool(subclass_of(this_class, c))
+
+@pyfunc
+def class_clear_cache(this_class):
+    this_class.cache = {}
+    return null_value
 
 # Class: a meta-class: all Classes are instances of a meta-class
 # (Class.new creates a new Class)
 Class.setprop(const.METHODS, _mkdict({
     # Class.new in bootstrap.vmx
+    'clear_cache': class_clear_cache,
     const.CREATE: class_create,
     const.INIT: class_init,     # Class.new creates new Classes
     # NOTE: "name" is a member, not a method!
