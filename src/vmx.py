@@ -855,7 +855,7 @@ def convert_instrs(il, fn):
     return [convert_one_instr(x, fn) for x in il]
 
 # called by classes.new_module (w/ bootstrap.vmx) and ModInfo.load_vmx method
-def load_vm_json(fname, iscope):
+def load_vm_json(fname):
     with open(fname) as f:
         l = f.readline()
 

@@ -2175,7 +2175,7 @@ def new_module(fname, main=False, parser_vmx=None):
                                                            'bootstrap.vmx'))
 
     # XXX handle Exceptions for I/O, bad JSON, bad instructions
-    code = vmx.load_vm_json(bootstrap_vmx, mod.scope)
+    code = vmx.load_vm_json(bootstrap_vmx)
 
     boot = CClosure(code, mod.scope) # CClosure with bootstrap_vmx code
 
@@ -2192,7 +2192,7 @@ def modinfo_load_vmx(this, fname):
     Returns Closure in __modinfo.module top level scope.
     """
     mod = this.getprop(const.MODINFO_MODULE) # XXX check return
-    code = vmx.load_vm_json(fname.getvalue(), mod.scope) # XXX getstr
+    code = vmx.load_vm_json(fname.getvalue()) # XXX getstr
     return CClosure(code, mod.scope)
 
 @pyfunc
