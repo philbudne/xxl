@@ -38,10 +38,10 @@ make obj_get of unknown property an error
 	add "has_prop" method? ?. operator?!!!
 	Object.has_method method?
 
-exceptions (using Continuations?)
-	resumable/non-resumable
-	Have "try" create scope with "raise" variable.
-	silently pass "raise" variable?
+exceptions (using Continuations)
+	resumable/non-resumable???
+	VM register for exception handler?? add to frame???
+		Exception.raise() method a PyVMFunc
 
 "in" operator for iterables?
 	"has" method???
