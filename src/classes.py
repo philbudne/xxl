@@ -1135,13 +1135,16 @@ def class_subclass_of(this_class, c):
     Class (or List of Classes) `c`
     """
     if subclass_of(c.getclass(), List):
-        c = c.getvalue()             # XXX getlist
+        c = c.getvalue()        # XXX getlist
     else:
         c = [c]                 # make Python list
     return mkbool(subclass_of(this_class, c))
 
 @pyfunc
 def class_clear_cache(this_class):
+    """
+    Clear the per-Class cache of methods and operators.
+    """
     this_class.cache = {}
     return null_value
 

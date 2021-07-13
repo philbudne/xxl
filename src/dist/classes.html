@@ -36,7 +36,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Return `true` if object `l` has own (Str) property `r` (not interited).</blockquote>
 <h3 color="slategray">Method <code>init (l, value)</code></h3>
-<i>PyFunc at classes.py:1210 (pobj_init)</i>
+<i>PyFunc at classes.py:1213 (pobj_init)</i>
 <p>
 <blockquote>default PObject init method (fatal error)</blockquote>
 <h3 color="slategray">Method <code>instance_of (this, c)</code></h3>
@@ -52,11 +52,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>returns an Iterable for (String) property names of `this` Object</blockquote></font>
 <h3>Method <code>repr (this)</code></h3>
-<i>PyFunc at classes.py:1951 (bool_str)</i>
+<i>PyFunc at classes.py:1954 (bool_str)</i>
 <p>
 <blockquote>return Str representation: &quot;true&quot; or &quot;false&quot;</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>reprx (this)</code></h3>
-<i>PyFunc at classes.py:1203 (pobj_reprx)</i>
+<i>PyFunc at classes.py:1206 (pobj_reprx)</i>
 <p>
 <blockquote>for debug: show Class name, and Python repr</blockquote>
 <h3 color="slategray">Method <code>setclass (this, klass)</code></h3>
@@ -79,11 +79,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object unary logical &quot;not&quot; operator; returns `true` if `x` is &quot;falsey&quot; (false, zero, null, or undefined)</blockquote>
 <h3 color="slategray">Binary <code>!= (l, r)</code></h3>
-<i>PyFunc at classes.py:1235 (pobj_differ)</i>
+<i>PyFunc at classes.py:1238 (pobj_differ)</i>
 <p>
 <blockquote>Check if value of PObject `l` is not the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">Binary <code>!== (l, r)</code></h3>
-<i>PyFunc at classes.py:1235 (pobj_differ)</i>
+<i>PyFunc at classes.py:1238 (pobj_differ)</i>
 <p>
 <blockquote>Check if value of PObject `l` is not the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">Binary <code>( (this_class, ...args)</code></h3>
@@ -99,11 +99,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object `..` operator; for calling superclass methods Looks for `prop` as property or method of superclasses of `this`; can be used w/ `this.as_class(MyClass)..method`.</blockquote>
 <h3 color="slategray">Binary <code>== (l, r)</code></h3>
-<i>PyFunc at classes.py:1226 (pobj_ident)</i>
+<i>PyFunc at classes.py:1229 (pobj_ident)</i>
 <p>
 <blockquote>Check if value of PObject `l` is the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">Binary <code>=== (l, r)</code></h3>
-<i>PyFunc at classes.py:1226 (pobj_ident)</i>
+<i>PyFunc at classes.py:1229 (pobj_ident)</i>
 <p>
 <blockquote>Check if value of PObject `l` is the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">LHS <code>. (l, r, value)</code></h3>
@@ -123,7 +123,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <h3 color="slategray">Method <code>clear_cache (this_class)</code></h3>
 <i>PyFunc at classes.py:1143 (class_clear_cache)</i>
 <p>
-<blockquote></blockquote>
+<blockquote>Clear the per-Class cache of methods and operators.</blockquote>
 <h3 color="slategray">Method <code>create (this_class, ...args)</code></h3>
 <i>PyFunc at classes.py:1077 (class_create)</i>
 <p>
@@ -333,7 +333,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <h3>Method <code>clear_cache (this_class)</code></h3>
 <i>PyFunc at classes.py:1143 (class_clear_cache)</i>
 <p>
-<blockquote></blockquote>
+<blockquote>Clear the per-Class cache of methods and operators.</blockquote>
 <h3>Method <code>create (this_class, ...args)</code></h3>
 <i>PyFunc at classes.py:1077 (class_create)</i>
 <p>
@@ -446,7 +446,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <h3 color="slategray">Method <code>clear_cache (this_class)</code></h3>
 <i>PyFunc at classes.py:1143 (class_clear_cache)</i>
 <p>
-<blockquote></blockquote>
+<blockquote>Clear the per-Class cache of methods and operators.</blockquote>
 <h3 color="slategray">Method <code>create (this_class, ...args)</code></h3>
 <i>PyFunc at classes.py:1077 (class_create)</i>
 <p>
@@ -686,19 +686,19 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return `true` if Object `this` is an instance of Class (or List of Classes) `c`</blockquote></font>
 <h3>Method <code>items (this)</code></h3>
-<i>PyFunc at classes.py:1422 (dict_items)</i>
+<i>PyFunc at classes.py:1425 (dict_items)</i>
 <p>
 <blockquote>Return PyIterable for [key, value] value pairs.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>iter (this)</code></h3>
-<i>PyFunc at classes.py:1331 (pyiterable_iter)</i>
+<i>PyFunc at classes.py:1334 (pyiterable_iter)</i>
 <p>
 <blockquote>Return forward iterator.</blockquote></font>
 <h3>Method <code>keys (this)</code></h3>
-<i>PyFunc at classes.py:1429 (dict_keys)</i>
+<i>PyFunc at classes.py:1432 (dict_keys)</i>
 <p>
 <blockquote>Return PyIterable for Dict keys.</blockquote>
 <h3>Method <code>len (this)</code></h3>
-<i>PyFunc at classes.py:1180 (pobj_len)</i>
+<i>PyFunc at classes.py:1183 (pobj_len)</i>
 <p>
 <blockquote>returns length (of String, List or Dict)</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>map (this, func)</code></h3>
@@ -710,7 +710,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).</blockquote></font>
 <h3>Method <code>pop (obj, key)</code></h3>
-<i>PyFunc at classes.py:1415 (dict_pop)</i>
+<i>PyFunc at classes.py:1418 (dict_pop)</i>
 <p>
 <blockquote>Remove Dict item with specified `key`.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>props (this)</code></h3>
@@ -718,7 +718,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>returns an Iterable for (String) property names of `this` Object</blockquote>
 <h3 color="slategray">Method <code>range (...args)</code></h3>
-<i>PyFunc at classes.py:1362 (pyiterable_range)</i>
+<i>PyFunc at classes.py:1365 (pyiterable_range)</i>
 <p>
 <blockquote>Static method: returns PyIterable for an integer range; iter() method generates fresh Iterators. range(10): returns Iterable for 0..9; range(1,10): returns Iterable for 1..9; range(1,10,2): returns Iterable for odd numbers 1..9</blockquote></font>
 <h3>Method <code>repr (this)</code></h3>
@@ -726,11 +726,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return representation of Dict</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>reprx (this)</code></h3>
-<i>PyFunc at classes.py:1203 (pobj_reprx)</i>
+<i>PyFunc at classes.py:1206 (pobj_reprx)</i>
 <p>
 <blockquote>for debug: show Class name, and Python repr</blockquote>
 <h3 color="slategray">Method <code>reversed (this)</code></h3>
-<i>PyFunc at classes.py:1338 (pyiterable_reversed)</i>
+<i>PyFunc at classes.py:1341 (pyiterable_reversed)</i>
 <p>
 <blockquote>Return reverse iterator.</blockquote>
 <h3 color="slategray">Method <code>setclass (this, klass)</code></h3>
@@ -742,7 +742,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object setprop method/operator store `value` as `r` (String) property of object `l`</blockquote>
 <h3 color="slategray">Method <code>sorted (this, reverse)</code></h3>
-<i>PyFunc at classes.py:1347 (pyiterable_sorted)</i>
+<i>PyFunc at classes.py:1350 (pyiterable_sorted)</i>
 <p>
 <blockquote>Return sorted List of iterator values. `reverse` is Bool to sort in reverse order (defaults to `false`).</blockquote>
 <h3 color="slategray">Method <code>to_str (this)</code></h3>
@@ -754,7 +754,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Update `this` using `arg.iter()` legal iterator values: List w/ two elements: `this[l[0]] = l[1];` Non-list: `this[item] = arg[item];`</blockquote>
 <h3>Method <code>values (this)</code></h3>
-<i>PyFunc at classes.py:1436 (dict_values)</i>
+<i>PyFunc at classes.py:1439 (dict_values)</i>
 <p>
 <blockquote>Return PyIterable for Dict values.</blockquote>
 <h3>Member <code>name</code></h3>
@@ -765,11 +765,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object unary logical &quot;not&quot; operator; returns `true` if `x` is &quot;falsey&quot; (false, zero, null, or undefined)</blockquote>
 <h3 color="slategray">Binary <code>!= (l, r)</code></h3>
-<i>PyFunc at classes.py:1235 (pobj_differ)</i>
+<i>PyFunc at classes.py:1238 (pobj_differ)</i>
 <p>
 <blockquote>Check if value of PObject `l` is not the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">Binary <code>!== (l, r)</code></h3>
-<i>PyFunc at classes.py:1235 (pobj_differ)</i>
+<i>PyFunc at classes.py:1238 (pobj_differ)</i>
 <p>
 <blockquote>Check if value of PObject `l` is not the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">Binary <code>( (this_class, ...args)</code></h3>
@@ -785,15 +785,15 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object `..` operator; for calling superclass methods Looks for `prop` as property or method of superclasses of `this`; can be used w/ `this.as_class(MyClass)..method`.</blockquote>
 <h3 color="slategray">Binary <code>== (l, r)</code></h3>
-<i>PyFunc at classes.py:1226 (pobj_ident)</i>
+<i>PyFunc at classes.py:1229 (pobj_ident)</i>
 <p>
 <blockquote>Check if value of PObject `l` is the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">Binary <code>=== (l, r)</code></h3>
-<i>PyFunc at classes.py:1226 (pobj_ident)</i>
+<i>PyFunc at classes.py:1229 (pobj_ident)</i>
 <p>
 <blockquote>Check if value of PObject `l` is the same Python Object as value of PObject `r`</blockquote></font>
 <h3>Binary <code>[ (l, r)</code></h3>
-<i>PyFunc at classes.py:1397 (dict_getitem)</i>
+<i>PyFunc at classes.py:1400 (dict_getitem)</i>
 <p>
 <blockquote>`l[r]`</blockquote><font color="slategray">
 <h3 color="slategray">LHS <code>. (l, r, value)</code></h3>
@@ -801,7 +801,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object setprop method/operator store `value` as `r` (String) property of object `l`</blockquote></font>
 <h3>LHS <code>[ (l, r, value)</code></h3>
-<i>PyFunc at classes.py:1388 (dict_putitem)</i>
+<i>PyFunc at classes.py:1391 (dict_putitem)</i>
 <p>
 <blockquote>`l[r] = value`</blockquote>
 <hr>
@@ -936,7 +936,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Built-in mutable sequence Class</blockquote>
 <h3>Method <code>append (this, item)</code></h3>
-<i>PyFunc at classes.py:1469 (list_append)</i>
+<i>PyFunc at classes.py:1472 (list_append)</i>
 <p>
 <blockquote>append `item`.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>as_class (this, klass)</code></h3>
@@ -976,7 +976,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>init method for List: takes Iterable</blockquote>
 <h3>Method <code>insert (l, index, object)</code></h3>
-<i>PyFunc at classes.py:1494 (list_insert)</i>
+<i>PyFunc at classes.py:1497 (list_insert)</i>
 <p>
 <blockquote>Insert `object` at `index` (0 is first, -1 is last); Returns `null`.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>instance_of (this, c)</code></h3>
@@ -984,11 +984,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return `true` if Object `this` is an instance of Class (or List of Classes) `c`</blockquote>
 <h3 color="slategray">Method <code>iter (this)</code></h3>
-<i>PyFunc at classes.py:1331 (pyiterable_iter)</i>
+<i>PyFunc at classes.py:1334 (pyiterable_iter)</i>
 <p>
 <blockquote>Return forward iterator.</blockquote></font>
 <h3>Method <code>len (this)</code></h3>
-<i>PyFunc at classes.py:1180 (pobj_len)</i>
+<i>PyFunc at classes.py:1183 (pobj_len)</i>
 <p>
 <blockquote>returns length (of String, List or Dict)</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>map (this, func)</code></h3>
@@ -1000,7 +1000,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).</blockquote></font>
 <h3>Method <code>pop (l, index)</code></h3>
-<i>PyFunc at classes.py:1477 (list_pop)</i>
+<i>PyFunc at classes.py:1480 (list_pop)</i>
 <p>
 <blockquote>Remove and return item at `index` (default last).</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>props (this)</code></h3>
@@ -1008,7 +1008,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>returns an Iterable for (String) property names of `this` Object</blockquote>
 <h3 color="slategray">Method <code>range (...args)</code></h3>
-<i>PyFunc at classes.py:1362 (pyiterable_range)</i>
+<i>PyFunc at classes.py:1365 (pyiterable_range)</i>
 <p>
 <blockquote>Static method: returns PyIterable for an integer range; iter() method generates fresh Iterators. range(10): returns Iterable for 0..9; range(1,10): returns Iterable for 1..9; range(1,10,2): returns Iterable for odd numbers 1..9</blockquote></font>
 <h3>Method <code>repr (this)</code></h3>
@@ -1016,11 +1016,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Return representation of `this` List as Str.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>reprx (this)</code></h3>
-<i>PyFunc at classes.py:1203 (pobj_reprx)</i>
+<i>PyFunc at classes.py:1206 (pobj_reprx)</i>
 <p>
 <blockquote>for debug: show Class name, and Python repr</blockquote>
 <h3 color="slategray">Method <code>reversed (this)</code></h3>
-<i>PyFunc at classes.py:1338 (pyiterable_reversed)</i>
+<i>PyFunc at classes.py:1341 (pyiterable_reversed)</i>
 <p>
 <blockquote>Return reverse iterator.</blockquote>
 <h3 color="slategray">Method <code>setclass (this, klass)</code></h3>
@@ -1032,11 +1032,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object setprop method/operator store `value` as `r` (String) property of object `l`</blockquote></font>
 <h3>Method <code>slice (this, start, end)</code></h3>
-<i>PyFunc at classes.py:1264 (pobj_slice)</i>
+<i>PyFunc at classes.py:1267 (pobj_slice)</i>
 <p>
 <blockquote>return a subrange (slice) of `this` starting at position `start` ending at position `end` (defaults to remainder)</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>sorted (this, reverse)</code></h3>
-<i>PyFunc at classes.py:1347 (pyiterable_sorted)</i>
+<i>PyFunc at classes.py:1350 (pyiterable_sorted)</i>
 <p>
 <blockquote>Return sorted List of iterator values. `reverse` is Bool to sort in reverse order (defaults to `false`).</blockquote>
 <h3 color="slategray">Method <code>to_str (this)</code></h3>
@@ -1051,11 +1051,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object unary logical &quot;not&quot; operator; returns `true` if `x` is &quot;falsey&quot; (false, zero, null, or undefined)</blockquote>
 <h3 color="slategray">Binary <code>!= (l, r)</code></h3>
-<i>PyFunc at classes.py:1235 (pobj_differ)</i>
+<i>PyFunc at classes.py:1238 (pobj_differ)</i>
 <p>
 <blockquote>Check if value of PObject `l` is not the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">Binary <code>!== (l, r)</code></h3>
-<i>PyFunc at classes.py:1235 (pobj_differ)</i>
+<i>PyFunc at classes.py:1238 (pobj_differ)</i>
 <p>
 <blockquote>Check if value of PObject `l` is not the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">Binary <code>( (this_class, ...args)</code></h3>
@@ -1071,15 +1071,15 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object `..` operator; for calling superclass methods Looks for `prop` as property or method of superclasses of `this`; can be used w/ `this.as_class(MyClass)..method`.</blockquote>
 <h3 color="slategray">Binary <code>== (l, r)</code></h3>
-<i>PyFunc at classes.py:1226 (pobj_ident)</i>
+<i>PyFunc at classes.py:1229 (pobj_ident)</i>
 <p>
 <blockquote>Check if value of PObject `l` is the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">Binary <code>=== (l, r)</code></h3>
-<i>PyFunc at classes.py:1226 (pobj_ident)</i>
+<i>PyFunc at classes.py:1229 (pobj_ident)</i>
 <p>
 <blockquote>Check if value of PObject `l` is the same Python Object as value of PObject `r`</blockquote></font>
 <h3>Binary <code>[ (l, r)</code></h3>
-<i>PyFunc at classes.py:1486 (list_get)</i>
+<i>PyFunc at classes.py:1489 (list_get)</i>
 <p>
 <blockquote>`l[r]`</blockquote><font color="slategray">
 <h3 color="slategray">LHS <code>. (l, r, value)</code></h3>
@@ -1087,7 +1087,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object setprop method/operator store `value` as `r` (String) property of object `l`</blockquote></font>
 <h3>LHS <code>[ (l, r, value)</code></h3>
-<i>PyFunc at classes.py:1502 (list_put)</i>
+<i>PyFunc at classes.py:1505 (list_put)</i>
 <p>
 <blockquote>`l[r] = value`</blockquote>
 <hr>
@@ -1101,7 +1101,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return an Object of Class `klass`, sharing properties with `this`. Use for calling superclass methods: `this.as_class(MyClass)..method`.</blockquote></font>
 <h3>Method <code>assemble (this, tree, srcfile)</code></h3>
-<i>PyFunc at classes.py:2227 (modinfo_assemble)</i>
+<i>PyFunc at classes.py:2230 (modinfo_assemble)</i>
 <p>
 <blockquote>Assemble List of Lists representing VM code. `tree`: List of Lists. `srcfile`: source of code (for output only). Returns Closure in __modinfo.module top level scope.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>delprop (this, name)</code></h3>
@@ -1129,7 +1129,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return `true` if Object `this` is an instance of Class (or List of Classes) `c`</blockquote></font>
 <h3>Method <code>load_vmx (this, fname)</code></h3>
-<i>PyFunc at classes.py:2217 (modinfo_load_vmx)</i>
+<i>PyFunc at classes.py:2220 (modinfo_load_vmx)</i>
 <p>
 <blockquote>Load compiled `.vmx` file; Returns Closure in __modinfo.module top level scope.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>props (this)</code></h3>
@@ -1208,7 +1208,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <h3 color="slategray">Method <code>clear_cache (this_class)</code></h3>
 <i>PyFunc at classes.py:1143 (class_clear_cache)</i>
 <p>
-<blockquote></blockquote>
+<blockquote>Clear the per-Class cache of methods and operators.</blockquote>
 <h3 color="slategray">Method <code>create (this_class, ...args)</code></h3>
 <i>PyFunc at classes.py:1077 (class_create)</i>
 <p>
@@ -1330,7 +1330,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return Class for `this`</blockquote>
 <h3 color="slategray">Method <code>getprop (l, r)</code></h3>
-<i>PyFunc at classes.py:1912 (nullish_getprop)</i>
+<i>PyFunc at classes.py:1915 (nullish_getprop)</i>
 <p>
 <blockquote>`.` method for Nullish (null, undefined) values. Fatal error if unknown property. Allows all Object methods (JavaScript is stricter, Python is not).</blockquote>
 <h3 color="slategray">Method <code>hasprop (l, r)</code></h3>
@@ -1338,7 +1338,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Return `true` if object `l` has own (Str) property `r` (not interited).</blockquote>
 <h3 color="slategray">Method <code>init (l, value)</code></h3>
-<i>PyFunc at classes.py:1210 (pobj_init)</i>
+<i>PyFunc at classes.py:1213 (pobj_init)</i>
 <p>
 <blockquote>default PObject init method (fatal error)</blockquote>
 <h3 color="slategray">Method <code>instance_of (this, c)</code></h3>
@@ -1354,11 +1354,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>returns an Iterable for (String) property names of `this` Object</blockquote></font>
 <h3>Method <code>repr (this)</code></h3>
-<i>PyFunc at classes.py:1889 (null_str)</i>
+<i>PyFunc at classes.py:1892 (null_str)</i>
 <p>
 <blockquote>to_string/repr method for Null Class: returns &quot;null&quot;</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>reprx (this)</code></h3>
-<i>PyFunc at classes.py:1203 (pobj_reprx)</i>
+<i>PyFunc at classes.py:1206 (pobj_reprx)</i>
 <p>
 <blockquote>for debug: show Class name, and Python repr</blockquote>
 <h3 color="slategray">Method <code>setclass (this, klass)</code></h3>
@@ -1366,7 +1366,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>set Class for `this`!!</blockquote>
 <h3 color="slategray">Method <code>setprop (l, r, value)</code></h3>
-<i>PyFunc at classes.py:1930 (nullish_setprop)</i>
+<i>PyFunc at classes.py:1933 (nullish_setprop)</i>
 <p>
 <blockquote>Nullish Object setprop method/operator</blockquote>
 <h3 color="slategray">Method <code>to_str (this)</code></h3>
@@ -1381,19 +1381,19 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object unary logical &quot;not&quot; operator; returns `true` if `x` is &quot;falsey&quot; (false, zero, null, or undefined)</blockquote>
 <h3 color="slategray">Binary <code>!= (l, r)</code></h3>
-<i>PyFunc at classes.py:1235 (pobj_differ)</i>
+<i>PyFunc at classes.py:1238 (pobj_differ)</i>
 <p>
 <blockquote>Check if value of PObject `l` is not the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">Binary <code>!== (l, r)</code></h3>
-<i>PyFunc at classes.py:1235 (pobj_differ)</i>
+<i>PyFunc at classes.py:1238 (pobj_differ)</i>
 <p>
 <blockquote>Check if value of PObject `l` is not the same Python Object as value of PObject `r`</blockquote></font>
 <h3>Binary <code>( (this, ...args)</code></h3>
-<i>PyFunc at classes.py:1896 (null_call)</i>
+<i>PyFunc at classes.py:1899 (null_call)</i>
 <p>
 <blockquote>`(` method for `null` value (fatal error)</blockquote><font color="slategray">
 <h3 color="slategray">Binary <code>. (l, r)</code></h3>
-<i>PyFunc at classes.py:1912 (nullish_getprop)</i>
+<i>PyFunc at classes.py:1915 (nullish_getprop)</i>
 <p>
 <blockquote>`.` method for Nullish (null, undefined) values. Fatal error if unknown property. Allows all Object methods (JavaScript is stricter, Python is not).</blockquote>
 <h3 color="slategray">Binary <code>.. (this, prop)</code></h3>
@@ -1401,11 +1401,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object `..` operator; for calling superclass methods Looks for `prop` as property or method of superclasses of `this`; can be used w/ `this.as_class(MyClass)..method`.</blockquote>
 <h3 color="slategray">Binary <code>== (l, r)</code></h3>
-<i>PyFunc at classes.py:1226 (pobj_ident)</i>
+<i>PyFunc at classes.py:1229 (pobj_ident)</i>
 <p>
 <blockquote>Check if value of PObject `l` is the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">Binary <code>=== (l, r)</code></h3>
-<i>PyFunc at classes.py:1226 (pobj_ident)</i>
+<i>PyFunc at classes.py:1229 (pobj_ident)</i>
 <p>
 <blockquote>Check if value of PObject `l` is the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">LHS <code>. (l, r, value)</code></h3>
@@ -1431,7 +1431,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return Class for `this`</blockquote></font>
 <h3>Method <code>getprop (l, r)</code></h3>
-<i>PyFunc at classes.py:1912 (nullish_getprop)</i>
+<i>PyFunc at classes.py:1915 (nullish_getprop)</i>
 <p>
 <blockquote>`.` method for Nullish (null, undefined) values. Fatal error if unknown property. Allows all Object methods (JavaScript is stricter, Python is not).</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>hasprop (l, r)</code></h3>
@@ -1463,7 +1463,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>set Class for `this`!!</blockquote></font>
 <h3>Method <code>setprop (l, r, value)</code></h3>
-<i>PyFunc at classes.py:1930 (nullish_setprop)</i>
+<i>PyFunc at classes.py:1933 (nullish_setprop)</i>
 <p>
 <blockquote>Nullish Object setprop method/operator</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>to_str (this)</code></h3>
@@ -1490,7 +1490,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>default Object `(` binop (fatal error)</blockquote></font>
 <h3>Binary <code>. (l, r)</code></h3>
-<i>PyFunc at classes.py:1912 (nullish_getprop)</i>
+<i>PyFunc at classes.py:1915 (nullish_getprop)</i>
 <p>
 <blockquote>`.` method for Nullish (null, undefined) values. Fatal error if unknown property. Allows all Object methods (JavaScript is stricter, Python is not).</blockquote><font color="slategray">
 <h3 color="slategray">Binary <code>.. (this, prop)</code></h3>
@@ -1506,7 +1506,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Test if `l` and `r` refer to the same Object</blockquote></font>
 <h3>LHS <code>. (l, r, value)</code></h3>
-<i>PyFunc at classes.py:1930 (nullish_setprop)</i>
+<i>PyFunc at classes.py:1933 (nullish_setprop)</i>
 <p>
 <blockquote>Nullish Object setprop method/operator</blockquote>
 <hr>
@@ -1536,7 +1536,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Return `true` if object `l` has own (Str) property `r` (not interited).</blockquote>
 <h3 color="slategray">Method <code>init (l, value)</code></h3>
-<i>PyFunc at classes.py:1210 (pobj_init)</i>
+<i>PyFunc at classes.py:1213 (pobj_init)</i>
 <p>
 <blockquote>default PObject init method (fatal error)</blockquote>
 <h3 color="slategray">Method <code>instance_of (this, c)</code></h3>
@@ -1552,11 +1552,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>returns an Iterable for (String) property names of `this` Object</blockquote>
 <h3 color="slategray">Method <code>repr (this)</code></h3>
-<i>PyFunc at classes.py:1195 (pobj_repr)</i>
+<i>PyFunc at classes.py:1198 (pobj_repr)</i>
 <p>
 <blockquote>return less human-friendly string representation of `this` (use Python repr function on value)</blockquote>
 <h3 color="slategray">Method <code>reprx (this)</code></h3>
-<i>PyFunc at classes.py:1203 (pobj_reprx)</i>
+<i>PyFunc at classes.py:1206 (pobj_reprx)</i>
 <p>
 <blockquote>for debug: show Class name, and Python repr</blockquote>
 <h3 color="slategray">Method <code>setclass (this, klass)</code></h3>
@@ -1568,15 +1568,15 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object setprop method/operator store `value` as `r` (String) property of object `l`</blockquote></font>
 <h3>Method <code>to_float (this)</code></h3>
-<i>PyFunc at classes.py:1665 (num_to_float)</i>
+<i>PyFunc at classes.py:1668 (num_to_float)</i>
 <p>
 <blockquote>If value is a float, return `this` If value is an int, return a new Number object</blockquote>
 <h3>Method <code>to_int (this)</code></h3>
-<i>PyFunc at classes.py:1675 (num_to_int)</i>
+<i>PyFunc at classes.py:1678 (num_to_int)</i>
 <p>
 <blockquote>If value is an int, return `this` If value is a float, return a new Number object</blockquote>
 <h3>Method <code>to_number (this)</code></h3>
-<i>PyFunc at classes.py:1685 (num_to_number)</i>
+<i>PyFunc at classes.py:1688 (num_to_number)</i>
 <p>
 <blockquote>identity method; returns `this`</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>to_str (this)</code></h3>
@@ -1591,23 +1591,23 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object unary logical &quot;not&quot; operator; returns `true` if `x` is &quot;falsey&quot; (false, zero, null, or undefined)</blockquote></font>
 <h3>Unary <code>- (x)</code></h3>
-<i>PyFunc at classes.py:1532 (neg)</i>
+<i>PyFunc at classes.py:1535 (neg)</i>
 <p>
 <blockquote>Return negative of `x`</blockquote>
 <h3>Unary <code>~ (this)</code></h3>
-<i>PyFunc at classes.py:1658 (bitnot)</i>
+<i>PyFunc at classes.py:1661 (bitnot)</i>
 <p>
 <blockquote>return bitwise (binary) &quot;not&quot; (complement) of `this`</blockquote>
 <h3>Binary <code>!= (l, r)</code></h3>
-<i>PyFunc at classes.py:1595 (ne)</i>
+<i>PyFunc at classes.py:1598 (ne)</i>
 <p>
 <blockquote>return `true` if value of `l` is different from the value of `r`</blockquote><font color="slategray">
 <h3 color="slategray">Binary <code>!== (l, r)</code></h3>
-<i>PyFunc at classes.py:1235 (pobj_differ)</i>
+<i>PyFunc at classes.py:1238 (pobj_differ)</i>
 <p>
 <blockquote>Check if value of PObject `l` is not the same Python Object as value of PObject `r`</blockquote></font>
 <h3>Binary <code>&amp; (l, r)</code></h3>
-<i>PyFunc at classes.py:1632 (bitand)</i>
+<i>PyFunc at classes.py:1635 (bitand)</i>
 <p>
 <blockquote>return bitwise (binary) &quot;and&quot; (conjunction) of `l` and `r`</blockquote><font color="slategray">
 <h3 color="slategray">Binary <code>( (l, ...args)</code></h3>
@@ -1615,15 +1615,15 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>default Object `(` binop (fatal error)</blockquote></font>
 <h3>Binary <code>* (l, r)</code></h3>
-<i>PyFunc at classes.py:1563 (mul)</i>
+<i>PyFunc at classes.py:1566 (mul)</i>
 <p>
 <blockquote>multiply `l` and `r`</blockquote>
 <h3>Binary <code>+ (l, r)</code></h3>
-<i>PyFunc at classes.py:1539 (add)</i>
+<i>PyFunc at classes.py:1542 (add)</i>
 <p>
 <blockquote>add `l` and `r`</blockquote>
 <h3>Binary <code>- (l, r)</code></h3>
-<i>PyFunc at classes.py:1552 (sub)</i>
+<i>PyFunc at classes.py:1555 (sub)</i>
 <p>
 <blockquote>subtract `r` from `l`</blockquote><font color="slategray">
 <h3 color="slategray">Binary <code>. (l, r)</code></h3>
@@ -1635,35 +1635,35 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object `..` operator; for calling superclass methods Looks for `prop` as property or method of superclasses of `this`; can be used w/ `this.as_class(MyClass)..method`.</blockquote></font>
 <h3>Binary <code>/ (l, r)</code></h3>
-<i>PyFunc at classes.py:1576 (div)</i>
+<i>PyFunc at classes.py:1579 (div)</i>
 <p>
 <blockquote>Divide `l` by `r`; always creates float.</blockquote>
 <h3>Binary <code>&lt; (l, r)</code></h3>
-<i>PyFunc at classes.py:1610 (lt)</i>
+<i>PyFunc at classes.py:1613 (lt)</i>
 <p>
 <blockquote>return `true` if value of `l` is &lt; the value of `r`</blockquote>
 <h3>Binary <code>&lt;= (l, r)</code></h3>
-<i>PyFunc at classes.py:1617 (le)</i>
+<i>PyFunc at classes.py:1620 (le)</i>
 <p>
 <blockquote>return `true` if value of `l` is &lt;= the value of `r`</blockquote>
 <h3>Binary <code>== (l, r)</code></h3>
-<i>PyFunc at classes.py:1587 (eq)</i>
+<i>PyFunc at classes.py:1590 (eq)</i>
 <p>
 <blockquote>return `true` if value of `l` is the same as value of `r`</blockquote><font color="slategray">
 <h3 color="slategray">Binary <code>=== (l, r)</code></h3>
-<i>PyFunc at classes.py:1226 (pobj_ident)</i>
+<i>PyFunc at classes.py:1229 (pobj_ident)</i>
 <p>
 <blockquote>Check if value of PObject `l` is the same Python Object as value of PObject `r`</blockquote></font>
 <h3>Binary <code>&gt; (l, r)</code></h3>
-<i>PyFunc at classes.py:1624 (gt)</i>
+<i>PyFunc at classes.py:1627 (gt)</i>
 <p>
 <blockquote>return `true` if value of `l` is &gt; the value of `r` (implemented as `!(l &lt;= r)`)</blockquote>
 <h3>Binary <code>&gt;= (l, r)</code></h3>
-<i>PyFunc at classes.py:1603 (ge)</i>
+<i>PyFunc at classes.py:1606 (ge)</i>
 <p>
 <blockquote>return `true` if value of `l` is &gt;= the value of `r`</blockquote>
 <h3>Binary <code>| (l, r)</code></h3>
-<i>PyFunc at classes.py:1645 (bitor)</i>
+<i>PyFunc at classes.py:1648 (bitor)</i>
 <p>
 <blockquote>return bitwise (binary) &quot;or&quot; (union) of `l` and `r`</blockquote><font color="slategray">
 <h3 color="slategray">LHS <code>. (l, r, value)</code></h3>
@@ -1780,9 +1780,9 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <h3 color="slategray">Method <code>clear_cache (this_class)</code></h3>
 <i>PyFunc at classes.py:1143 (class_clear_cache)</i>
 <p>
-<blockquote></blockquote></font>
+<blockquote>Clear the per-Class cache of methods and operators.</blockquote></font>
 <h3>Method <code>create (this_class)</code></h3>
-<i>PyFunc at classes.py:1165 (pclass_create)</i>
+<i>PyFunc at classes.py:1168 (pclass_create)</i>
 <p>
 <blockquote>&#x27;create&#x27; method for PClass metaclass makes an instance of this_class backed by a CPObject used to create PClass subclass objects (Number, List, Dict, Bool, Null)</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>delprop (this, name)</code></h3>
@@ -1907,7 +1907,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Return `true` if object `l` has own (Str) property `r` (not interited).</blockquote></font>
 <h3>Method <code>init (l, value)</code></h3>
-<i>PyFunc at classes.py:1210 (pobj_init)</i>
+<i>PyFunc at classes.py:1213 (pobj_init)</i>
 <p>
 <blockquote>default PObject init method (fatal error)</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>instance_of (this, c)</code></h3>
@@ -1919,11 +1919,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>returns an Iterable for (String) property names of `this` Object</blockquote></font>
 <h3>Method <code>repr (this)</code></h3>
-<i>PyFunc at classes.py:1195 (pobj_repr)</i>
+<i>PyFunc at classes.py:1198 (pobj_repr)</i>
 <p>
 <blockquote>return less human-friendly string representation of `this` (use Python repr function on value)</blockquote>
 <h3>Method <code>reprx (this)</code></h3>
-<i>PyFunc at classes.py:1203 (pobj_reprx)</i>
+<i>PyFunc at classes.py:1206 (pobj_reprx)</i>
 <p>
 <blockquote>for debug: show Class name, and Python repr</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>setclass (this, klass)</code></h3>
@@ -1946,11 +1946,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object unary logical &quot;not&quot; operator; returns `true` if `x` is &quot;falsey&quot; (false, zero, null, or undefined)</blockquote></font>
 <h3>Binary <code>!= (l, r)</code></h3>
-<i>PyFunc at classes.py:1235 (pobj_differ)</i>
+<i>PyFunc at classes.py:1238 (pobj_differ)</i>
 <p>
 <blockquote>Check if value of PObject `l` is not the same Python Object as value of PObject `r`</blockquote>
 <h3>Binary <code>!== (l, r)</code></h3>
-<i>PyFunc at classes.py:1235 (pobj_differ)</i>
+<i>PyFunc at classes.py:1238 (pobj_differ)</i>
 <p>
 <blockquote>Check if value of PObject `l` is not the same Python Object as value of PObject `r`</blockquote><font color="slategray">
 <h3 color="slategray">Binary <code>( (l, ...args)</code></h3>
@@ -1966,11 +1966,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object `..` operator; for calling superclass methods Looks for `prop` as property or method of superclasses of `this`; can be used w/ `this.as_class(MyClass)..method`.</blockquote></font>
 <h3>Binary <code>== (l, r)</code></h3>
-<i>PyFunc at classes.py:1226 (pobj_ident)</i>
+<i>PyFunc at classes.py:1229 (pobj_ident)</i>
 <p>
 <blockquote>Check if value of PObject `l` is the same Python Object as value of PObject `r`</blockquote>
 <h3>Binary <code>=== (l, r)</code></h3>
-<i>PyFunc at classes.py:1226 (pobj_ident)</i>
+<i>PyFunc at classes.py:1229 (pobj_ident)</i>
 <p>
 <blockquote>Check if value of PObject `l` is the same Python Object as value of PObject `r`</blockquote><font color="slategray">
 <h3 color="slategray">LHS <code>. (l, r, value)</code></h3>
@@ -1990,7 +1990,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <h3 color="slategray">Method <code>clear_cache (this_class)</code></h3>
 <i>PyFunc at classes.py:1143 (class_clear_cache)</i>
 <p>
-<blockquote></blockquote>
+<blockquote>Clear the per-Class cache of methods and operators.</blockquote>
 <h3 color="slategray">Method <code>create (this_class, ...args)</code></h3>
 <i>PyFunc at classes.py:1077 (class_create)</i>
 <p>
@@ -2125,7 +2125,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Return `true` if object `l` has own (Str) property `r` (not interited).</blockquote>
 <h3 color="slategray">Method <code>init (l, value)</code></h3>
-<i>PyFunc at classes.py:1210 (pobj_init)</i>
+<i>PyFunc at classes.py:1213 (pobj_init)</i>
 <p>
 <blockquote>default PObject init method (fatal error)</blockquote>
 <h3 color="slategray">Method <code>instance_of (this, c)</code></h3>
@@ -2133,7 +2133,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return `true` if Object `this` is an instance of Class (or List of Classes) `c`</blockquote></font>
 <h3>Method <code>iter (this)</code></h3>
-<i>PyFunc at classes.py:1331 (pyiterable_iter)</i>
+<i>PyFunc at classes.py:1334 (pyiterable_iter)</i>
 <p>
 <blockquote>Return forward iterator.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>map (this, func)</code></h3>
@@ -2149,19 +2149,19 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>returns an Iterable for (String) property names of `this` Object</blockquote>
 <h3 color="slategray">Method <code>range (...args)</code></h3>
-<i>PyFunc at classes.py:1362 (pyiterable_range)</i>
+<i>PyFunc at classes.py:1365 (pyiterable_range)</i>
 <p>
 <blockquote>Static method: returns PyIterable for an integer range; iter() method generates fresh Iterators. range(10): returns Iterable for 0..9; range(1,10): returns Iterable for 1..9; range(1,10,2): returns Iterable for odd numbers 1..9</blockquote>
 <h3 color="slategray">Method <code>repr (this)</code></h3>
-<i>PyFunc at classes.py:1195 (pobj_repr)</i>
+<i>PyFunc at classes.py:1198 (pobj_repr)</i>
 <p>
 <blockquote>return less human-friendly string representation of `this` (use Python repr function on value)</blockquote>
 <h3 color="slategray">Method <code>reprx (this)</code></h3>
-<i>PyFunc at classes.py:1203 (pobj_reprx)</i>
+<i>PyFunc at classes.py:1206 (pobj_reprx)</i>
 <p>
 <blockquote>for debug: show Class name, and Python repr</blockquote></font>
 <h3>Method <code>reversed (this)</code></h3>
-<i>PyFunc at classes.py:1338 (pyiterable_reversed)</i>
+<i>PyFunc at classes.py:1341 (pyiterable_reversed)</i>
 <p>
 <blockquote>Return reverse iterator.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>setclass (this, klass)</code></h3>
@@ -2173,7 +2173,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object setprop method/operator store `value` as `r` (String) property of object `l`</blockquote></font>
 <h3>Method <code>sorted (this, reverse)</code></h3>
-<i>PyFunc at classes.py:1347 (pyiterable_sorted)</i>
+<i>PyFunc at classes.py:1350 (pyiterable_sorted)</i>
 <p>
 <blockquote>Return sorted List of iterator values. `reverse` is Bool to sort in reverse order (defaults to `false`).</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>to_str (this)</code></h3>
@@ -2188,11 +2188,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object unary logical &quot;not&quot; operator; returns `true` if `x` is &quot;falsey&quot; (false, zero, null, or undefined)</blockquote>
 <h3 color="slategray">Binary <code>!= (l, r)</code></h3>
-<i>PyFunc at classes.py:1235 (pobj_differ)</i>
+<i>PyFunc at classes.py:1238 (pobj_differ)</i>
 <p>
 <blockquote>Check if value of PObject `l` is not the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">Binary <code>!== (l, r)</code></h3>
-<i>PyFunc at classes.py:1235 (pobj_differ)</i>
+<i>PyFunc at classes.py:1238 (pobj_differ)</i>
 <p>
 <blockquote>Check if value of PObject `l` is not the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">Binary <code>( (this_class, ...args)</code></h3>
@@ -2208,11 +2208,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object `..` operator; for calling superclass methods Looks for `prop` as property or method of superclasses of `this`; can be used w/ `this.as_class(MyClass)..method`.</blockquote>
 <h3 color="slategray">Binary <code>== (l, r)</code></h3>
-<i>PyFunc at classes.py:1226 (pobj_ident)</i>
+<i>PyFunc at classes.py:1229 (pobj_ident)</i>
 <p>
 <blockquote>Check if value of PObject `l` is the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">Binary <code>=== (l, r)</code></h3>
-<i>PyFunc at classes.py:1226 (pobj_ident)</i>
+<i>PyFunc at classes.py:1229 (pobj_ident)</i>
 <p>
 <blockquote>Check if value of PObject `l` is the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">LHS <code>. (l, r, value)</code></h3>
@@ -2230,7 +2230,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return an Object of Class `klass`, sharing properties with `this`. Use for calling superclass methods: `this.as_class(MyClass)..method`.</blockquote>
 <h3 color="slategray">Method <code>create (this_class)</code></h3>
-<i>PyFunc at classes.py:1165 (pclass_create)</i>
+<i>PyFunc at classes.py:1168 (pclass_create)</i>
 <p>
 <blockquote>&#x27;create&#x27; method for PClass metaclass makes an instance of this_class backed by a CPObject used to create PClass subclass objects (Number, List, Dict, Bool, Null)</blockquote>
 <h3 color="slategray">Method <code>delprop (this, name)</code></h3>
@@ -2258,7 +2258,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Return `true` if object `l` has own (Str) property `r` (not interited).</blockquote>
 <h3 color="slategray">Method <code>init (l, value)</code></h3>
-<i>PyFunc at classes.py:1210 (pobj_init)</i>
+<i>PyFunc at classes.py:1213 (pobj_init)</i>
 <p>
 <blockquote>default PObject init method (fatal error)</blockquote>
 <h3 color="slategray">Method <code>instance_of (this, c)</code></h3>
@@ -2266,7 +2266,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return `true` if Object `this` is an instance of Class (or List of Classes) `c`</blockquote>
 <h3 color="slategray">Method <code>iter (this)</code></h3>
-<i>PyFunc at classes.py:1331 (pyiterable_iter)</i>
+<i>PyFunc at classes.py:1334 (pyiterable_iter)</i>
 <p>
 <blockquote>Return forward iterator.</blockquote>
 <h3 color="slategray">Method <code>map (this, func)</code></h3>
@@ -2278,11 +2278,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).</blockquote>
 <h3 color="slategray">Method <code>props (this)</code></h3>
-<i>PyFunc at classes.py:2021 (pyobj_props)</i>
+<i>PyFunc at classes.py:2024 (pyobj_props)</i>
 <p>
 <blockquote>return dir() of wrapped Python object</blockquote>
 <h3 color="slategray">Method <code>range (...args)</code></h3>
-<i>PyFunc at classes.py:1362 (pyiterable_range)</i>
+<i>PyFunc at classes.py:1365 (pyiterable_range)</i>
 <p>
 <blockquote>Static method: returns PyIterable for an integer range; iter() method generates fresh Iterators. range(10): returns Iterable for 0..9; range(1,10): returns Iterable for 1..9; range(1,10,2): returns Iterable for odd numbers 1..9</blockquote>
 <h3 color="slategray">Method <code>repr (this)</code></h3>
@@ -2294,7 +2294,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>for debug: show Class, and Python value (which may include id?)</blockquote>
 <h3 color="slategray">Method <code>reversed (this)</code></h3>
-<i>PyFunc at classes.py:1338 (pyiterable_reversed)</i>
+<i>PyFunc at classes.py:1341 (pyiterable_reversed)</i>
 <p>
 <blockquote>Return reverse iterator.</blockquote>
 <h3 color="slategray">Method <code>setclass (this, klass)</code></h3>
@@ -2306,7 +2306,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object setprop method/operator store `value` as `r` (String) property of object `l`</blockquote>
 <h3 color="slategray">Method <code>sorted (this, reverse)</code></h3>
-<i>PyFunc at classes.py:1347 (pyiterable_sorted)</i>
+<i>PyFunc at classes.py:1350 (pyiterable_sorted)</i>
 <p>
 <blockquote>Return sorted List of iterator values. `reverse` is Bool to sort in reverse order (defaults to `false`).</blockquote>
 <h3 color="slategray">Method <code>to_str (this)</code></h3>
@@ -2333,7 +2333,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>`(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!</blockquote>
 <h3 color="slategray">Binary <code>. (l, r)</code></h3>
-<i>PyFunc at classes.py:2004 (pyobj_getprop)</i>
+<i>PyFunc at classes.py:2007 (pyobj_getprop)</i>
 <p>
 <blockquote>PyObject `.` binop -- proxies to Python object getattr</blockquote>
 <h3 color="slategray">Binary <code>.. (this, prop)</code></h3>
@@ -2349,7 +2349,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Test if `l` and `r` refer to the same Object</blockquote>
 <h3 color="slategray">Binary <code>[ (l, r)</code></h3>
-<i>PyFunc at classes.py:2028 (pyobj_getitem)</i>
+<i>PyFunc at classes.py:2031 (pyobj_getitem)</i>
 <p>
 <blockquote>PyObject `[` binop</blockquote>
 <h3 color="slategray">LHS <code>. (l, r, value)</code></h3>
@@ -2399,7 +2399,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return `true` if Object `this` is an instance of Class (or List of Classes) `c`</blockquote></font>
 <h3>Method <code>iter (this)</code></h3>
-<i>PyFunc at classes.py:2058 (pyiterator_iter)</i>
+<i>PyFunc at classes.py:2061 (pyiterator_iter)</i>
 <p>
 <blockquote>Returns `this.` https://docs.python.org/3/library/stdtypes.html#typeiter says an iterator should have an __iter__ method.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>map (this, func)</code></h3>
@@ -2411,7 +2411,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).</blockquote></font>
 <h3>Method <code>next (this, finished_continuation)</code></h3>
-<i>PyFunc at classes.py:2068 (pyiterator_next)</i>
+<i>PyFunc at classes.py:2071 (pyiterator_next)</i>
 <p>
 <blockquote>Returns next value; calls `finished_continuation` (eg; block leave label or `return`) to call when iterator exhausted.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>props (this)</code></h3>
@@ -2496,7 +2496,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return an Object of Class `klass`, sharing properties with `this`. Use for calling superclass methods: `this.as_class(MyClass)..method`.</blockquote>
 <h3 color="slategray">Method <code>create (this_class)</code></h3>
-<i>PyFunc at classes.py:1165 (pclass_create)</i>
+<i>PyFunc at classes.py:1168 (pclass_create)</i>
 <p>
 <blockquote>&#x27;create&#x27; method for PClass metaclass makes an instance of this_class backed by a CPObject used to create PClass subclass objects (Number, List, Dict, Bool, Null)</blockquote>
 <h3 color="slategray">Method <code>delprop (this, name)</code></h3>
@@ -2524,7 +2524,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Return `true` if object `l` has own (Str) property `r` (not interited).</blockquote>
 <h3 color="slategray">Method <code>init (l, value)</code></h3>
-<i>PyFunc at classes.py:1210 (pobj_init)</i>
+<i>PyFunc at classes.py:1213 (pobj_init)</i>
 <p>
 <blockquote>default PObject init method (fatal error)</blockquote>
 <h3 color="slategray">Method <code>instance_of (this, c)</code></h3>
@@ -2532,7 +2532,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return `true` if Object `this` is an instance of Class (or List of Classes) `c`</blockquote>
 <h3 color="slategray">Method <code>iter (this)</code></h3>
-<i>PyFunc at classes.py:2058 (pyiterator_iter)</i>
+<i>PyFunc at classes.py:2061 (pyiterator_iter)</i>
 <p>
 <blockquote>Returns `this.` https://docs.python.org/3/library/stdtypes.html#typeiter says an iterator should have an __iter__ method.</blockquote>
 <h3 color="slategray">Method <code>map (this, func)</code></h3>
@@ -2544,11 +2544,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).</blockquote>
 <h3 color="slategray">Method <code>next (this, finished_continuation)</code></h3>
-<i>PyFunc at classes.py:2068 (pyiterator_next)</i>
+<i>PyFunc at classes.py:2071 (pyiterator_next)</i>
 <p>
 <blockquote>Returns next value; calls `finished_continuation` (eg; block leave label or `return`) to call when iterator exhausted.</blockquote>
 <h3 color="slategray">Method <code>props (this)</code></h3>
-<i>PyFunc at classes.py:2021 (pyobj_props)</i>
+<i>PyFunc at classes.py:2024 (pyobj_props)</i>
 <p>
 <blockquote>return dir() of wrapped Python object</blockquote>
 <h3 color="slategray">Method <code>repr (this)</code></h3>
@@ -2599,7 +2599,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>`(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!</blockquote>
 <h3 color="slategray">Binary <code>. (l, r)</code></h3>
-<i>PyFunc at classes.py:2004 (pyobj_getprop)</i>
+<i>PyFunc at classes.py:2007 (pyobj_getprop)</i>
 <p>
 <blockquote>PyObject `.` binop -- proxies to Python object getattr</blockquote>
 <h3 color="slategray">Binary <code>.. (this, prop)</code></h3>
@@ -2615,7 +2615,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Test if `l` and `r` refer to the same Object</blockquote>
 <h3 color="slategray">Binary <code>[ (l, r)</code></h3>
-<i>PyFunc at classes.py:2028 (pyobj_getitem)</i>
+<i>PyFunc at classes.py:2031 (pyobj_getitem)</i>
 <p>
 <blockquote>PyObject `[` binop</blockquote>
 <h3 color="slategray">LHS <code>. (l, r, value)</code></h3>
@@ -2649,7 +2649,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Return `true` if object `l` has own (Str) property `r` (not interited).</blockquote></font>
 <h3>Method <code>init (l, value)</code></h3>
-<i>PyFunc at classes.py:1210 (pobj_init)</i>
+<i>PyFunc at classes.py:1213 (pobj_init)</i>
 <p>
 <blockquote>default PObject init method (fatal error)</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>instance_of (this, c)</code></h3>
@@ -2657,7 +2657,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return `true` if Object `this` is an instance of Class (or List of Classes) `c`</blockquote></font>
 <h3>Method <code>props (this)</code></h3>
-<i>PyFunc at classes.py:2021 (pyobj_props)</i>
+<i>PyFunc at classes.py:2024 (pyobj_props)</i>
 <p>
 <blockquote>return dir() of wrapped Python object</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>repr (this)</code></h3>
@@ -2696,11 +2696,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Test if `l` and `r` refer to different Objects</blockquote></font>
 <h3>Binary <code>( (this, ...args)</code></h3>
-<i>PyFunc at classes.py:2036 (pyobj_call)</i>
+<i>PyFunc at classes.py:2039 (pyobj_call)</i>
 <p>
 <blockquote></blockquote>
 <h3>Binary <code>. (l, r)</code></h3>
-<i>PyFunc at classes.py:2004 (pyobj_getprop)</i>
+<i>PyFunc at classes.py:2007 (pyobj_getprop)</i>
 <p>
 <blockquote>PyObject `.` binop -- proxies to Python object getattr</blockquote><font color="slategray">
 <h3 color="slategray">Binary <code>.. (this, prop)</code></h3>
@@ -2716,7 +2716,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Test if `l` and `r` refer to the same Object</blockquote></font>
 <h3>Binary <code>[ (l, r)</code></h3>
-<i>PyFunc at classes.py:2028 (pyobj_getitem)</i>
+<i>PyFunc at classes.py:2031 (pyobj_getitem)</i>
 <p>
 <blockquote>PyObject `[` binop</blockquote><font color="slategray">
 <h3 color="slategray">LHS <code>. (l, r, value)</code></h3>
@@ -2736,7 +2736,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <h3 color="slategray">Method <code>clear_cache (this_class)</code></h3>
 <i>PyFunc at classes.py:1143 (class_clear_cache)</i>
 <p>
-<blockquote></blockquote>
+<blockquote>Clear the per-Class cache of methods and operators.</blockquote>
 <h3 color="slategray">Method <code>create (this_class, ...args)</code></h3>
 <i>PyFunc at classes.py:1077 (class_create)</i>
 <p>
@@ -2843,7 +2843,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Built-in unordered collection of unique elements.</blockquote>
 <h3>Method <code>add (...args)</code></h3>
-<i>PyFunc at classes.py:2371 (add)</i>
+<i>PyFunc at classes.py:2374 (add)</i>
 <p>
 <blockquote>Add an element to a set. This has no effect if the element is already present.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>as_class (this, klass)</code></h3>
@@ -2851,11 +2851,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return an Object of Class `klass`, sharing properties with `this`. Use for calling superclass methods: `this.as_class(MyClass)..method`.</blockquote></font>
 <h3>Method <code>clear (...args)</code></h3>
-<i>PyFunc at classes.py:2371 (clear)</i>
+<i>PyFunc at classes.py:2374 (clear)</i>
 <p>
 <blockquote>Remove all elements from this set.</blockquote>
 <h3>Method <code>copy (...args)</code></h3>
-<i>PyFunc at classes.py:2371 (copy)</i>
+<i>PyFunc at classes.py:2374 (copy)</i>
 <p>
 <blockquote>Return a shallow copy of a set.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>delprop (this, name)</code></h3>
@@ -2863,15 +2863,15 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Delete property `name` from Object `this` (only effects `this` -- never Class or superclasses)</blockquote></font>
 <h3>Method <code>difference (...args)</code></h3>
-<i>PyFunc at classes.py:2371 (difference)</i>
+<i>PyFunc at classes.py:2374 (difference)</i>
 <p>
 <blockquote>Return the difference of two or more sets as a new set. (i.e. all elements that are in this set but not the others.)</blockquote>
 <h3>Method <code>difference_update (...args)</code></h3>
-<i>PyFunc at classes.py:2371 (difference_update)</i>
+<i>PyFunc at classes.py:2374 (difference_update)</i>
 <p>
 <blockquote>Remove all elements of another set from this set.</blockquote>
 <h3>Method <code>discard (...args)</code></h3>
-<i>PyFunc at classes.py:2371 (discard)</i>
+<i>PyFunc at classes.py:2374 (discard)</i>
 <p>
 <blockquote>Remove an element from a set if it is a member. If the element is not a member, do nothing.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>each_for (this, func)</code></h3>
@@ -2903,31 +2903,31 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return `true` if Object `this` is an instance of Class (or List of Classes) `c`</blockquote></font>
 <h3>Method <code>intersection (...args)</code></h3>
-<i>PyFunc at classes.py:2371 (intersection)</i>
+<i>PyFunc at classes.py:2374 (intersection)</i>
 <p>
 <blockquote>Return the intersection of two sets as a new set. (i.e. all elements that are in both sets.)</blockquote>
 <h3>Method <code>intersection_update (...args)</code></h3>
-<i>PyFunc at classes.py:2371 (intersection_update)</i>
+<i>PyFunc at classes.py:2374 (intersection_update)</i>
 <p>
 <blockquote>Update a set with the intersection of itself and another.</blockquote>
 <h3>Method <code>is_disjoint (...args)</code></h3>
-<i>PyFunc at classes.py:2371 (is_disjoint)</i>
+<i>PyFunc at classes.py:2374 (is_disjoint)</i>
 <p>
 <blockquote>Return True if two sets have a null intersection.</blockquote>
 <h3>Method <code>is_subset (...args)</code></h3>
-<i>PyFunc at classes.py:2371 (is_subset)</i>
+<i>PyFunc at classes.py:2374 (is_subset)</i>
 <p>
 <blockquote>Report whether another set contains this set.</blockquote>
 <h3>Method <code>is_superset (...args)</code></h3>
-<i>PyFunc at classes.py:2371 (is_superset)</i>
+<i>PyFunc at classes.py:2374 (is_superset)</i>
 <p>
 <blockquote>Report whether this set contains another set.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>iter (this)</code></h3>
-<i>PyFunc at classes.py:1331 (pyiterable_iter)</i>
+<i>PyFunc at classes.py:1334 (pyiterable_iter)</i>
 <p>
 <blockquote>Return forward iterator.</blockquote></font>
 <h3>Method <code>len (this)</code></h3>
-<i>PyFunc at classes.py:1180 (pobj_len)</i>
+<i>PyFunc at classes.py:1183 (pobj_len)</i>
 <p>
 <blockquote>returns length (of String, List or Dict)</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>map (this, func)</code></h3>
@@ -2939,7 +2939,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Return List of results of `func` passed each iterator item, ignores any returns with value `ignore` (defaults to `null`).</blockquote></font>
 <h3>Method <code>pop (...args)</code></h3>
-<i>PyFunc at classes.py:2371 (pop)</i>
+<i>PyFunc at classes.py:2374 (pop)</i>
 <p>
 <blockquote>Remove and return an arbitrary set element. Raises KeyError if the set is empty.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>props (this)</code></h3>
@@ -2947,11 +2947,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>returns an Iterable for (String) property names of `this` Object</blockquote>
 <h3 color="slategray">Method <code>range (...args)</code></h3>
-<i>PyFunc at classes.py:1362 (pyiterable_range)</i>
+<i>PyFunc at classes.py:1365 (pyiterable_range)</i>
 <p>
 <blockquote>Static method: returns PyIterable for an integer range; iter() method generates fresh Iterators. range(10): returns Iterable for 0..9; range(1,10): returns Iterable for 1..9; range(1,10,2): returns Iterable for odd numbers 1..9</blockquote></font>
 <h3>Method <code>remove (...args)</code></h3>
-<i>PyFunc at classes.py:2371 (remove)</i>
+<i>PyFunc at classes.py:2374 (remove)</i>
 <p>
 <blockquote>Remove an element from a set; it must be a member. If the element is not a member, raise a KeyError.</blockquote>
 <h3>Method <code>repr (this)</code></h3>
@@ -2959,11 +2959,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return representation of Set</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>reprx (this)</code></h3>
-<i>PyFunc at classes.py:1203 (pobj_reprx)</i>
+<i>PyFunc at classes.py:1206 (pobj_reprx)</i>
 <p>
 <blockquote>for debug: show Class name, and Python repr</blockquote>
 <h3 color="slategray">Method <code>reversed (this)</code></h3>
-<i>PyFunc at classes.py:1338 (pyiterable_reversed)</i>
+<i>PyFunc at classes.py:1341 (pyiterable_reversed)</i>
 <p>
 <blockquote>Return reverse iterator.</blockquote>
 <h3 color="slategray">Method <code>setclass (this, klass)</code></h3>
@@ -2975,15 +2975,15 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object setprop method/operator store `value` as `r` (String) property of object `l`</blockquote>
 <h3 color="slategray">Method <code>sorted (this, reverse)</code></h3>
-<i>PyFunc at classes.py:1347 (pyiterable_sorted)</i>
+<i>PyFunc at classes.py:1350 (pyiterable_sorted)</i>
 <p>
 <blockquote>Return sorted List of iterator values. `reverse` is Bool to sort in reverse order (defaults to `false`).</blockquote></font>
 <h3>Method <code>symmetric_difference (...args)</code></h3>
-<i>PyFunc at classes.py:2371 (symmetric_difference)</i>
+<i>PyFunc at classes.py:2374 (symmetric_difference)</i>
 <p>
 <blockquote>Return the symmetric difference of two sets as a new set. (i.e. all elements that are in exactly one of the sets.)</blockquote>
 <h3>Method <code>symmetric_difference_update (...args)</code></h3>
-<i>PyFunc at classes.py:2371 (symmetric_difference_update)</i>
+<i>PyFunc at classes.py:2374 (symmetric_difference_update)</i>
 <p>
 <blockquote>Update a set with the symmetric difference of itself and another.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>to_str (this)</code></h3>
@@ -2991,7 +2991,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Default `to`_str method: calls `this.repr()`.</blockquote></font>
 <h3>Method <code>union (...args)</code></h3>
-<i>PyFunc at classes.py:2371 (union)</i>
+<i>PyFunc at classes.py:2374 (union)</i>
 <p>
 <blockquote>Return the union of sets as a new set. (i.e. all elements that are in either set.)</blockquote>
 <h3>Method <code>update (this, arg)</code></h3>
@@ -3006,11 +3006,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object unary logical &quot;not&quot; operator; returns `true` if `x` is &quot;falsey&quot; (false, zero, null, or undefined)</blockquote>
 <h3 color="slategray">Binary <code>!= (l, r)</code></h3>
-<i>PyFunc at classes.py:1235 (pobj_differ)</i>
+<i>PyFunc at classes.py:1238 (pobj_differ)</i>
 <p>
 <blockquote>Check if value of PObject `l` is not the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">Binary <code>!== (l, r)</code></h3>
-<i>PyFunc at classes.py:1235 (pobj_differ)</i>
+<i>PyFunc at classes.py:1238 (pobj_differ)</i>
 <p>
 <blockquote>Check if value of PObject `l` is not the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">Binary <code>( (this_class, ...args)</code></h3>
@@ -3026,11 +3026,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object `..` operator; for calling superclass methods Looks for `prop` as property or method of superclasses of `this`; can be used w/ `this.as_class(MyClass)..method`.</blockquote>
 <h3 color="slategray">Binary <code>== (l, r)</code></h3>
-<i>PyFunc at classes.py:1226 (pobj_ident)</i>
+<i>PyFunc at classes.py:1229 (pobj_ident)</i>
 <p>
 <blockquote>Check if value of PObject `l` is the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">Binary <code>=== (l, r)</code></h3>
-<i>PyFunc at classes.py:1226 (pobj_ident)</i>
+<i>PyFunc at classes.py:1229 (pobj_ident)</i>
 <p>
 <blockquote>Check if value of PObject `l` is the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">LHS <code>. (l, r, value)</code></h3>
@@ -3050,7 +3050,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <h3 color="slategray">Method <code>clear_cache (this_class)</code></h3>
 <i>PyFunc at classes.py:1143 (class_clear_cache)</i>
 <p>
-<blockquote></blockquote>
+<blockquote>Clear the per-Class cache of methods and operators.</blockquote>
 <h3 color="slategray">Method <code>create (this_class, ...args)</code></h3>
 <i>PyFunc at classes.py:1077 (class_create)</i>
 <p>
@@ -3161,23 +3161,23 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return an Object of Class `klass`, sharing properties with `this`. Use for calling superclass methods: `this.as_class(MyClass)..method`.</blockquote></font>
 <h3>Method <code>capitalize (self)</code></h3>
-<i>PyFunc at classes.py:2371 (capitalize)</i>
+<i>PyFunc at classes.py:2374 (capitalize)</i>
 <p>
 <blockquote>Return a capitalized version of the string. More specifically, make the first character have upper case and the rest lower case.</blockquote>
 <h3>Method <code>case_fold (self)</code></h3>
-<i>PyFunc at classes.py:2371 (case_fold)</i>
+<i>PyFunc at classes.py:2374 (case_fold)</i>
 <p>
 <blockquote>Return a version of the string suitable for caseless comparisons.</blockquote>
 <h3>Method <code>center (self, width, fillchar)</code></h3>
-<i>PyFunc at classes.py:2371 (center)</i>
+<i>PyFunc at classes.py:2374 (center)</i>
 <p>
 <blockquote>Return a centered string of length width. Padding is done using the specified fill character (default is a space).</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>chr (i)</code></h3>
-<i>PyFunc at classes.py:1852 (str_chr)</i>
+<i>PyFunc at classes.py:1855 (str_chr)</i>
 <p>
 <blockquote>Return a Unicode string of one character with ordinal i; 0 &lt;= i &lt;= 0x10ffff</blockquote></font>
 <h3>Method <code>count (...args)</code></h3>
-<i>PyFunc at classes.py:2371 (count)</i>
+<i>PyFunc at classes.py:2374 (count)</i>
 <p>
 <blockquote>S.count(sub[, start[, end]]) -&gt; int Return the number of non-overlapping occurrences of substring sub in string S[start:end].  Optional arguments start and end are interpreted as in slice notation.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>delprop (this, name)</code></h3>
@@ -3189,15 +3189,15 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Create reverse Iterator from `this`, call `func` with each value. returns `null`</blockquote></font>
 <h3>Method <code>ends_with (this, suff)</code></h3>
-<i>PyFunc at classes.py:1776 (str_ends_with)</i>
+<i>PyFunc at classes.py:1779 (str_ends_with)</i>
 <p>
 <blockquote>Return `true` if `this` ends with the suffix `suff`, `false` otherwise.</blockquote>
 <h3>Method <code>expand_tabs (self, tabsize)</code></h3>
-<i>PyFunc at classes.py:2371 (expand_tabs)</i>
+<i>PyFunc at classes.py:2374 (expand_tabs)</i>
 <p>
 <blockquote>Return a copy where all tab characters are expanded using spaces. If tabsize is not given, a tab size of 8 characters is assumed.</blockquote>
 <h3>Method <code>find (...args)</code></h3>
-<i>PyFunc at classes.py:2371 (find)</i>
+<i>PyFunc at classes.py:2374 (find)</i>
 <p>
 <blockquote>S.find(sub[, start[, end]]) -&gt; int Return the lowest index in S where substring sub is found, such that sub is contained within S[start:end].  Optional arguments start and end are interpreted as in slice notation. Return -1 on failure.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>for_each (this, func)</code></h3>
@@ -3205,7 +3205,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Create Iterator from `this`, call `func` with each value.</blockquote></font>
 <h3>Method <code>format (...args)</code></h3>
-<i>PyFunc at classes.py:2371 (format)</i>
+<i>PyFunc at classes.py:2374 (format)</i>
 <p>
 <blockquote>S.format(*args, **kwargs) -&gt; str Return a formatted version of S, using substitutions from args and kwargs. The substitutions are identified by braces (&#x27;{&#x27; and &#x27;}&#x27;).</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>getclass (this)</code></h3>
@@ -3221,11 +3221,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Return `true` if object `l` has own (Str) property `r` (not interited).</blockquote></font>
 <h3>Method <code>index (...args)</code></h3>
-<i>PyFunc at classes.py:2371 (index)</i>
+<i>PyFunc at classes.py:2374 (index)</i>
 <p>
 <blockquote>S.index(sub[, start[, end]]) -&gt; int Return the lowest index in S where substring sub is found, such that sub is contained within S[start:end].  Optional arguments start and end are interpreted as in slice notation. Raises ValueError when the substring is not found.</blockquote>
 <h3>Method <code>init (l, value)</code></h3>
-<i>PyFunc at classes.py:1210 (pobj_init)</i>
+<i>PyFunc at classes.py:1213 (pobj_init)</i>
 <p>
 <blockquote>default PObject init method (fatal error)</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>instance_of (this, c)</code></h3>
@@ -3233,55 +3233,55 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return `true` if Object `this` is an instance of Class (or List of Classes) `c`</blockquote></font>
 <h3>Method <code>is_alnum (self)</code></h3>
-<i>PyFunc at classes.py:2371 (is_alnum)</i>
+<i>PyFunc at classes.py:2374 (is_alnum)</i>
 <p>
 <blockquote>Return True if the string is an alpha-numeric string, False otherwise. A string is alpha-numeric if all characters in the string are alpha-numeric and there is at least one character in the string.</blockquote>
 <h3>Method <code>is_alpha (self)</code></h3>
-<i>PyFunc at classes.py:2371 (is_alpha)</i>
+<i>PyFunc at classes.py:2374 (is_alpha)</i>
 <p>
 <blockquote>Return True if the string is an alphabetic string, False otherwise. A string is alphabetic if all characters in the string are alphabetic and there is at least one character in the string.</blockquote>
 <h3>Method <code>is_ascii (self)</code></h3>
-<i>PyFunc at classes.py:2371 (is_ascii)</i>
+<i>PyFunc at classes.py:2374 (is_ascii)</i>
 <p>
 <blockquote>Return True if all characters in the string are ASCII, False otherwise. ASCII characters have code points in the range U+0000-U+007F. Empty string is ASCII too.</blockquote>
 <h3>Method <code>is_decimal (self)</code></h3>
-<i>PyFunc at classes.py:2371 (is_decimal)</i>
+<i>PyFunc at classes.py:2374 (is_decimal)</i>
 <p>
 <blockquote>Return True if the string is a decimal string, False otherwise. A string is a decimal string if all characters in the string are decimal and there is at least one character in the string.</blockquote>
 <h3>Method <code>is_digit (self)</code></h3>
-<i>PyFunc at classes.py:2371 (is_digit)</i>
+<i>PyFunc at classes.py:2374 (is_digit)</i>
 <p>
 <blockquote>Return True if the string is a digit string, False otherwise. A string is a digit string if all characters in the string are digits and there is at least one character in the string.</blockquote>
 <h3>Method <code>is_identifier (self)</code></h3>
-<i>PyFunc at classes.py:2371 (is_identifier)</i>
+<i>PyFunc at classes.py:2374 (is_identifier)</i>
 <p>
 <blockquote>Return True if the string is a valid Python identifier, False otherwise. Call keyword.iskeyword(s) to test whether string s is a reserved identifier, such as &quot;def&quot; or &quot;class&quot;.</blockquote>
 <h3>Method <code>is_lower (self)</code></h3>
-<i>PyFunc at classes.py:2371 (is_lower)</i>
+<i>PyFunc at classes.py:2374 (is_lower)</i>
 <p>
 <blockquote>Return True if the string is a lowercase string, False otherwise. A string is lowercase if all cased characters in the string are lowercase and there is at least one cased character in the string.</blockquote>
 <h3>Method <code>is_numeric (self)</code></h3>
-<i>PyFunc at classes.py:2371 (is_numeric)</i>
+<i>PyFunc at classes.py:2374 (is_numeric)</i>
 <p>
 <blockquote>Return True if the string is a numeric string, False otherwise. A string is numeric if all characters in the string are numeric and there is at least one character in the string.</blockquote>
 <h3>Method <code>is_printable (self)</code></h3>
-<i>PyFunc at classes.py:2371 (is_printable)</i>
+<i>PyFunc at classes.py:2374 (is_printable)</i>
 <p>
 <blockquote>Return True if the string is printable, False otherwise. A string is printable if all of its characters are considered printable in repr() or if it is empty.</blockquote>
 <h3>Method <code>is_space (self)</code></h3>
-<i>PyFunc at classes.py:2371 (is_space)</i>
+<i>PyFunc at classes.py:2374 (is_space)</i>
 <p>
 <blockquote>Return True if the string is a whitespace string, False otherwise. A string is whitespace if all characters in the string are whitespace and there is at least one character in the string.</blockquote>
 <h3>Method <code>is_title (self)</code></h3>
-<i>PyFunc at classes.py:2371 (is_title)</i>
+<i>PyFunc at classes.py:2374 (is_title)</i>
 <p>
 <blockquote>Return True if the string is a title-cased string, False otherwise. In a title-cased string, upper- and title-case characters may only follow uncased characters and lowercase characters only cased ones.</blockquote>
 <h3>Method <code>is_upper (self)</code></h3>
-<i>PyFunc at classes.py:2371 (is_upper)</i>
+<i>PyFunc at classes.py:2374 (is_upper)</i>
 <p>
 <blockquote>Return True if the string is an uppercase string, False otherwise. A string is uppercase if all cased characters in the string are uppercase and there is at least one cased character in the string.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>iter (this)</code></h3>
-<i>PyFunc at classes.py:1331 (pyiterable_iter)</i>
+<i>PyFunc at classes.py:1334 (pyiterable_iter)</i>
 <p>
 <blockquote>Return forward iterator.</blockquote></font>
 <h3>Method <code>join (this, iterable)</code></h3>
@@ -3289,11 +3289,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Concatenate strings from `iterable` using `this` as the separator.</blockquote>
 <h3>Method <code>len (this)</code></h3>
-<i>PyFunc at classes.py:1180 (pobj_len)</i>
+<i>PyFunc at classes.py:1183 (pobj_len)</i>
 <p>
 <blockquote>returns length (of String, List or Dict)</blockquote>
 <h3>Method <code>ljust (self, width, fillchar)</code></h3>
-<i>PyFunc at classes.py:2371 (ljust)</i>
+<i>PyFunc at classes.py:2374 (ljust)</i>
 <p>
 <blockquote>Return a left-justified string of length width. Padding is done using the specified fill character (default is a space).</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>map (this, func)</code></h3>
@@ -3309,7 +3309,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Str Class new (static) method; calls arg.to_str method</blockquote></font>
 <h3>Method <code>ord (this)</code></h3>
-<i>PyFunc at classes.py:1794 (str_ord)</i>
+<i>PyFunc at classes.py:1797 (str_ord)</i>
 <p>
 <blockquote>Return the Unicode code point for a one-character string `this`</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>props (this)</code></h3>
@@ -3317,35 +3317,35 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>returns an Iterable for (String) property names of `this` Object</blockquote>
 <h3 color="slategray">Method <code>range (...args)</code></h3>
-<i>PyFunc at classes.py:1362 (pyiterable_range)</i>
+<i>PyFunc at classes.py:1365 (pyiterable_range)</i>
 <p>
 <blockquote>Static method: returns PyIterable for an integer range; iter() method generates fresh Iterators. range(10): returns Iterable for 0..9; range(1,10): returns Iterable for 1..9; range(1,10,2): returns Iterable for odd numbers 1..9</blockquote></font>
 <h3>Method <code>replace (self, old, new, count)</code></h3>
-<i>PyFunc at classes.py:2371 (replace)</i>
+<i>PyFunc at classes.py:2374 (replace)</i>
 <p>
 <blockquote>Return a copy with all occurrences of substring old replaced by new. count Maximum number of occurrences to replace. -1 (the default value) means replace all occurrences. If the optional argument count is given, only the first count occurrences are replaced.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>repr (this)</code></h3>
-<i>PyFunc at classes.py:1195 (pobj_repr)</i>
+<i>PyFunc at classes.py:1198 (pobj_repr)</i>
 <p>
 <blockquote>return less human-friendly string representation of `this` (use Python repr function on value)</blockquote>
 <h3 color="slategray">Method <code>reprx (this)</code></h3>
-<i>PyFunc at classes.py:1203 (pobj_reprx)</i>
+<i>PyFunc at classes.py:1206 (pobj_reprx)</i>
 <p>
 <blockquote>for debug: show Class name, and Python repr</blockquote>
 <h3 color="slategray">Method <code>reversed (this)</code></h3>
-<i>PyFunc at classes.py:1338 (pyiterable_reversed)</i>
+<i>PyFunc at classes.py:1341 (pyiterable_reversed)</i>
 <p>
 <blockquote>Return reverse iterator.</blockquote></font>
 <h3>Method <code>rfind (...args)</code></h3>
-<i>PyFunc at classes.py:2371 (rfind)</i>
+<i>PyFunc at classes.py:2374 (rfind)</i>
 <p>
 <blockquote>S.rfind(sub[, start[, end]]) -&gt; int Return the highest index in S where substring sub is found, such that sub is contained within S[start:end].  Optional arguments start and end are interpreted as in slice notation. Return -1 on failure.</blockquote>
 <h3>Method <code>rsplit (self, sep, maxsplit)</code></h3>
-<i>PyFunc at classes.py:2371 (rsplit)</i>
+<i>PyFunc at classes.py:2374 (rsplit)</i>
 <p>
 <blockquote>Return a list of the words in the string, using sep as the delimiter string. sep The delimiter according which to split the string. None (the default value) means split according to any whitespace, and discard empty strings from the result. maxsplit Maximum number of splits to do. -1 (the default value) means no limit. Splits are done starting at the end of the string and working to the front.</blockquote>
 <h3>Method <code>rstrip (self, chars)</code></h3>
-<i>PyFunc at classes.py:2371 (rstrip)</i>
+<i>PyFunc at classes.py:2374 (rstrip)</i>
 <p>
 <blockquote>Return a copy of the string with trailing whitespace removed. If chars is given and not None, remove characters in chars instead.</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>setclass (this, klass)</code></h3>
@@ -3357,59 +3357,59 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object setprop method/operator store `value` as `r` (String) property of object `l`</blockquote></font>
 <h3>Method <code>slice (this, start, end)</code></h3>
-<i>PyFunc at classes.py:1264 (pobj_slice)</i>
+<i>PyFunc at classes.py:1267 (pobj_slice)</i>
 <p>
 <blockquote>return a subrange (slice) of `this` starting at position `start` ending at position `end` (defaults to remainder)</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>sorted (this, reverse)</code></h3>
-<i>PyFunc at classes.py:1347 (pyiterable_sorted)</i>
+<i>PyFunc at classes.py:1350 (pyiterable_sorted)</i>
 <p>
 <blockquote>Return sorted List of iterator values. `reverse` is Bool to sort in reverse order (defaults to `false`).</blockquote></font>
 <h3>Method <code>split (this, sep, limit)</code></h3>
-<i>PyFunc at classes.py:1760 (str_split)</i>
+<i>PyFunc at classes.py:1763 (str_split)</i>
 <p>
 <blockquote>Return a List of the words in the string, using sep as the delimiter string (default to `null` -- any whitespace). Limit to `limit` return values (defaults to -1 -- no limit)</blockquote>
 <h3>Method <code>split_lines (self, keepends)</code></h3>
-<i>PyFunc at classes.py:2371 (split_lines)</i>
+<i>PyFunc at classes.py:2374 (split_lines)</i>
 <p>
 <blockquote>Return a list of the lines in the string, breaking at line boundaries. Line breaks are not included in the resulting list unless keepends is given and true.</blockquote>
 <h3>Method <code>starts_with (this, pref)</code></h3>
-<i>PyFunc at classes.py:1801 (str_starts_with)</i>
+<i>PyFunc at classes.py:1804 (str_starts_with)</i>
 <p>
 <blockquote>Return `true` if `this` starts with prefix `pref, `false` otherwise.</blockquote>
 <h3>Method <code>strip (this)</code></h3>
-<i>PyFunc at classes.py:1815 (str_strip)</i>
+<i>PyFunc at classes.py:1818 (str_strip)</i>
 <p>
 <blockquote>Return a copy of the string with leading and trailing whitespace removed.</blockquote>
 <h3>Method <code>swap_case (self)</code></h3>
-<i>PyFunc at classes.py:2371 (swap_case)</i>
+<i>PyFunc at classes.py:2374 (swap_case)</i>
 <p>
 <blockquote>Convert uppercase characters to lowercase and lowercase characters to uppercase.</blockquote>
 <h3>Method <code>to_float (this)</code></h3>
-<i>PyFunc at classes.py:1822 (str_to_float)</i>
+<i>PyFunc at classes.py:1825 (str_to_float)</i>
 <p>
 <blockquote>Convert string to a floating point Number</blockquote>
 <h3>Method <code>to_int (this, base)</code></h3>
-<i>PyFunc at classes.py:1829 (str_to_int)</i>
+<i>PyFunc at classes.py:1832 (str_to_int)</i>
 <p>
 <blockquote>Convert string to integer Number. Int `base` defaults to zero (accept 0xXXX, 0oOOO, 0bBBB).</blockquote>
 <h3>Method <code>to_lower (self)</code></h3>
-<i>PyFunc at classes.py:2371 (to_lower)</i>
+<i>PyFunc at classes.py:2374 (to_lower)</i>
 <p>
 <blockquote>Return a copy of the string converted to lowercase.</blockquote>
 <h3>Method <code>to_number (this)</code></h3>
-<i>PyFunc at classes.py:1841 (str_to_number)</i>
+<i>PyFunc at classes.py:1844 (str_to_number)</i>
 <p>
 <blockquote>Convert string to a Number</blockquote>
 <h3>Method <code>to_str (this)</code></h3>
-<i>PyFunc at classes.py:1808 (str_str)</i>
+<i>PyFunc at classes.py:1811 (str_str)</i>
 <p>
 <blockquote>Identity method</blockquote>
 <h3>Method <code>to_upper (self)</code></h3>
-<i>PyFunc at classes.py:2371 (to_upper)</i>
+<i>PyFunc at classes.py:2374 (to_upper)</i>
 <p>
 <blockquote>Return a copy of the string converted to uppercase.</blockquote>
 <h3>Method <code>zfill (self, width)</code></h3>
-<i>PyFunc at classes.py:2371 (zfill)</i>
+<i>PyFunc at classes.py:2374 (zfill)</i>
 <p>
 <blockquote>Pad a numeric string with zeros on the left, to fill a field of the given width. The string is never truncated.</blockquote>
 <h3>Member <code>name</code></h3>
@@ -3420,11 +3420,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object unary logical &quot;not&quot; operator; returns `true` if `x` is &quot;falsey&quot; (false, zero, null, or undefined)</blockquote></font>
 <h3>Binary <code>!= (l, r)</code></h3>
-<i>PyFunc at classes.py:1595 (ne)</i>
+<i>PyFunc at classes.py:1598 (ne)</i>
 <p>
 <blockquote>return `true` if value of `l` is different from the value of `r`</blockquote><font color="slategray">
 <h3 color="slategray">Binary <code>!== (l, r)</code></h3>
-<i>PyFunc at classes.py:1235 (pobj_differ)</i>
+<i>PyFunc at classes.py:1238 (pobj_differ)</i>
 <p>
 <blockquote>Check if value of PObject `l` is not the same Python Object as value of PObject `r`</blockquote>
 <h3 color="slategray">Binary <code>( (this_class, ...args)</code></h3>
@@ -3432,7 +3432,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>`(` binop for Class -- fatal error (but common mistake if you have Python fingers) -- tells you to use .new method!!</blockquote></font>
 <h3>Binary <code>+ (x, y)</code></h3>
-<i>PyFunc at classes.py:1738 (str_concat)</i>
+<i>PyFunc at classes.py:1741 (str_concat)</i>
 <p>
 <blockquote>String concatenation</blockquote><font color="slategray">
 <h3 color="slategray">Binary <code>. (l, r)</code></h3>
@@ -3444,31 +3444,31 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Object `..` operator; for calling superclass methods Looks for `prop` as property or method of superclasses of `this`; can be used w/ `this.as_class(MyClass)..method`.</blockquote></font>
 <h3>Binary <code>&lt; (l, r)</code></h3>
-<i>PyFunc at classes.py:1610 (lt)</i>
+<i>PyFunc at classes.py:1613 (lt)</i>
 <p>
 <blockquote>return `true` if value of `l` is &lt; the value of `r`</blockquote>
 <h3>Binary <code>&lt;= (l, r)</code></h3>
-<i>PyFunc at classes.py:1617 (le)</i>
+<i>PyFunc at classes.py:1620 (le)</i>
 <p>
 <blockquote>return `true` if value of `l` is &lt;= the value of `r`</blockquote>
 <h3>Binary <code>== (l, r)</code></h3>
-<i>PyFunc at classes.py:1587 (eq)</i>
+<i>PyFunc at classes.py:1590 (eq)</i>
 <p>
 <blockquote>return `true` if value of `l` is the same as value of `r`</blockquote><font color="slategray">
 <h3 color="slategray">Binary <code>=== (l, r)</code></h3>
-<i>PyFunc at classes.py:1226 (pobj_ident)</i>
+<i>PyFunc at classes.py:1229 (pobj_ident)</i>
 <p>
 <blockquote>Check if value of PObject `l` is the same Python Object as value of PObject `r`</blockquote></font>
 <h3>Binary <code>&gt; (l, r)</code></h3>
-<i>PyFunc at classes.py:1624 (gt)</i>
+<i>PyFunc at classes.py:1627 (gt)</i>
 <p>
 <blockquote>return `true` if value of `l` is &gt; the value of `r` (implemented as `!(l &lt;= r)`)</blockquote>
 <h3>Binary <code>&gt;= (l, r)</code></h3>
-<i>PyFunc at classes.py:1603 (ge)</i>
+<i>PyFunc at classes.py:1606 (ge)</i>
 <p>
 <blockquote>return `true` if value of `l` is &gt;= the value of `r`</blockquote>
 <h3>Binary <code>[ (l, r)</code></h3>
-<i>PyFunc at classes.py:1751 (str_get)</i>
+<i>PyFunc at classes.py:1754 (str_get)</i>
 <p>
 <blockquote>Str l[r] return `r`&#x27;th character of Str `l`</blockquote><font color="slategray">
 <h3 color="slategray">LHS <code>. (l, r, value)</code></h3>
@@ -3494,7 +3494,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>return Class for `this`</blockquote>
 <h3 color="slategray">Method <code>getprop (l, r)</code></h3>
-<i>PyFunc at classes.py:1912 (nullish_getprop)</i>
+<i>PyFunc at classes.py:1915 (nullish_getprop)</i>
 <p>
 <blockquote>`.` method for Nullish (null, undefined) values. Fatal error if unknown property. Allows all Object methods (JavaScript is stricter, Python is not).</blockquote>
 <h3 color="slategray">Method <code>hasprop (l, r)</code></h3>
@@ -3518,7 +3518,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>returns an Iterable for (String) property names of `this` Object</blockquote></font>
 <h3>Method <code>repr (this)</code></h3>
-<i>PyFunc at classes.py:2091 (undef_str)</i>
+<i>PyFunc at classes.py:2094 (undef_str)</i>
 <p>
 <blockquote>to_string/repr method for Undefined Class: returns `&quot;undefined&quot;`</blockquote><font color="slategray">
 <h3 color="slategray">Method <code>reprx (l)</code></h3>
@@ -3530,7 +3530,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>set Class for `this`!!</blockquote>
 <h3 color="slategray">Method <code>setprop (l, r, value)</code></h3>
-<i>PyFunc at classes.py:1930 (nullish_setprop)</i>
+<i>PyFunc at classes.py:1933 (nullish_setprop)</i>
 <p>
 <blockquote>Nullish Object setprop method/operator</blockquote>
 <h3 color="slategray">Method <code>to_str (this)</code></h3>
@@ -3553,11 +3553,11 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <p>
 <blockquote>Test if `l` and `r` refer to different Objects</blockquote></font>
 <h3>Binary <code>( (this, ...args)</code></h3>
-<i>PyFunc at classes.py:2098 (undef_call)</i>
+<i>PyFunc at classes.py:2101 (undef_call)</i>
 <p>
 <blockquote>`(` method for `undefined` value (fatal error). commonly happens when a bad method name is used, so output a &quot;helpful&quot; message.</blockquote><font color="slategray">
 <h3 color="slategray">Binary <code>. (l, r)</code></h3>
-<i>PyFunc at classes.py:1912 (nullish_getprop)</i>
+<i>PyFunc at classes.py:1915 (nullish_getprop)</i>
 <p>
 <blockquote>`.` method for Nullish (null, undefined) values. Fatal error if unknown property. Allows all Object methods (JavaScript is stricter, Python is not).</blockquote>
 <h3 color="slategray">Binary <code>.. (this, prop)</code></h3>
@@ -3597,7 +3597,7 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 <h3 color="slategray">Method <code>clear_cache (this_class)</code></h3>
 <i>PyFunc at classes.py:1143 (class_clear_cache)</i>
 <p>
-<blockquote></blockquote>
+<blockquote>Clear the per-Class cache of methods and operators.</blockquote>
 <h3 color="slategray">Method <code>create (this_class, ...args)</code></h3>
 <i>PyFunc at classes.py:1077 (class_create)</i>
 <p>
