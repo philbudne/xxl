@@ -276,7 +276,8 @@ Metaclasses are Classes that are used to create new classes.
 	with `Class` as a `super` class).
 
 * `SingletonClass`, declared in [bootstrap.xxl](../src/bootstrap.xxl)
-	is a metaclass for classes that will only ever have one instance;
-	such singleton classes can be declared by invoking
-	`SingletonClass.new` instead of `Class.new`.
+	is a metaclass for creating classes that will only ever have
+	one instance; singleton classes can be declared by
+	invoking `SingletonClass.new` instead of `Class.new`.
 
+* For clarity, use `this_class` instead of `this` in metaclass methods.
