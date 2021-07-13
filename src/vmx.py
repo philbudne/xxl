@@ -52,16 +52,17 @@ F_CB, F_PC, F_SCOPE, F_FP, F_FN, F_WHERE, F_SHOW = 0, 1, 2, 3, 4, 5, 6
 # called from fp_backtrace (below), CContinuation.defn
 def fp_where(fp):
     """
-    return "filename:line:col" for return frame
-
-    (calls Instr fn_where method)
+    Return "filename:line:col" for stack frame
     """
-    return fp[F_CB][fp[F_PC]].fn_where()
+    # gives CALLER location (from VM IR register at time of call)
+    return "%s:%s" % (fp[F_FN], fp[F_WHERE])
+    # gives return location (PC incremented before call)
+    #return fp[F_CB][fp[F_PC]].fn_where()
 
 # called from VM.backtrace, CContinuation.backtrace
 def fp_backtrace_list(fp):
     """
-    return Python list of str of return locations in fp stack
+    Return Python list of str of CALLER locations in fp stack
     """
     ret = []
     while fp:
@@ -260,7 +261,7 @@ class VM:
         Write return stack to stderr.
         """
         for return_location in fp_backtrace_list(self.fp):
-            sys.stderr.write(" return to %s\n" % return_location)
+            sys.stderr.write(" called from %s\n" % return_location)
 
     def push(self, val):
         """
