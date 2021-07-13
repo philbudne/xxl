@@ -291,17 +291,21 @@ class VM:
 
 def reginstr(inst_class):
     """
-    decorator for VMInst classes for reading in JSON representations
+    Decorator for VMInst classes for reading in JSON representations.
+    Registers the instruction class in `instr_class_by_name` for the
+    "assembler" (`convert_one_instr`) routine.
     """
+    assert issubclass(inst_class, VMInstr0)
     name = inst_class.name
     if name in instr_class_by_name:
-        raise VMError("duplicate entry for %s instruction" % name)
+        raise VMError("duplicate entry for %s instruction (%s)" %
+                      (name, instr_class))
     instr_class_by_name[name] = inst_class
-    return inst_class           # not wrapped by decorator
+    return inst_class           # unmodified class
 
 class VMInstr0:
     """
-    base class for VM instructions with zero arguments
+    Base class for VM instructions.
     """
     __slots__ = ['fn', 'where']
 
@@ -310,15 +314,21 @@ class VMInstr0:
         self.where = where
 
     def fn_where(self):         # for trace
+        """
+        Return str with "filename:line:position"
+        """
         return "%s:%s" % (self.fn, self.where)
 
-    def __repr__(self):
-        return str(self.json())
-
     def json(self):
+        """
+        Return a Python list representation of this instruction.
+        """
         return [self.fn_where(), self.name]
 
     def step(self, vm):
+        """
+        Perform (execute) this instruction.
+        """
         raise VMError("'%s' has no step method" % type(self).__name__)
 
     def prof(self, vm, elapsed):
@@ -326,11 +336,20 @@ class VMInstr0:
         vm.op_time[self.name] += elapsed
 
     def args(self):
-        return [""]
+        """
+        For instructions that can appear as the first instruction
+        in a Closure, return a Python list of str's for the
+        Closure argument names (used to implement the `Callable.__args`
+        method for use by doc.xxl, to generate documentation).
+        """
+        return []
+
+    def __repr__(self):
+        return str(self.json())
 
 class VMInstr1(VMInstr0):
     """
-    base for VM Instructions with one argument
+    Base for VM Instructions with one argument.
     """
     __slots__ = ['name', 'where', 'value']
 
@@ -343,7 +362,8 @@ class VMInstr1(VMInstr0):
 
 class VMInstr2(VMInstr0):
     """
-    base for VM Instructions with one argument
+    Base for VM Instructions with two arguments
+    (some may subclass an existing one-arg instruction).
     """
     __slots__ = ['name', 'where', 'v1', 'v2']
 
@@ -358,12 +378,12 @@ class VMInstr2(VMInstr0):
 @reginstr
 class LitInstr(VMInstr1):
     """
-    load literal (Number or Str) into AC
+    Load literal (Number or String) into AC.
     """
     name = "lit"
 
     def __init__(self, fn, where, value):
-        # convert to Class when code is loaded
+        # convert to CObject when code is loaded
         super().__init__(fn, where, classes.wrap(value))
 
     def step(self, vm):
@@ -384,7 +404,7 @@ class PushLitInstr(LitInstr):
 @reginstr
 class PushInstr(VMInstr0):
     """
-    save AC on stack
+    Save AC on stack.
     """
     name = "push"
 
