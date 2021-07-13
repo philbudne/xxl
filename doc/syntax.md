@@ -132,106 +132,151 @@ STRING: «'» [ANYTHING_EXCEPT_NEWLINE_OR_SINGLE_QUOTE]… «'» |
 
 ## lexical conventions:
 
-***NOTE***
+* **Any** NAME (identifier) may be declared as a variable, const, or
+   function argument, regardless of whether it has a statement syntax
+   defined.
 
-* Any NAME (identifier) may be declared as a variable (or function argument)
-   regardless of whether it has a statement syntax defined.
-
-   Once a NAME has been used as a variable, that statement is no
+   But once a NAME has been used as a variable, that statement is no
    longer available in that scope (or any nested scope).
 
    Once a NAME has been used as a statement keyword, it is reserved,
    and may not be used as a variable in that scope, or any nested scope.
+
+## Notes:
 
 * MOST operators (except "?", "||", "&&", ASSIGNOPS)
         are methods looked up at runtime.
 
 * All compile errors are fatal.
 
-* Extra ";" are not accepted (and none are optional).
+* Extra `;` are not accepted (and none are optional),
+	BUT extra commas at the end of List, Dict and Set literals
+	are accepted.
 
-* "return" is *NOT* a statement, it's a const containing a
+* `return` is *NOT* a statement, it's an implicitly declared const containing a
         continuation (EVERY call is a "call with current continuation"),
         and "return(value)" must be used.
 
 * All statement blocks inside braces are closures, with their own scope.
-        There is not (currently) any way to expose/pass those closures.
+        There is not (currently) any way to expose/pass those closures,
+	Although extensions can do so.
+
+	[lib/ext/nullish.xxl](../lib/ext/nullish.xxl) is an example
+	where the compiler generates a "thunk" to conditionally evaluate
+	the RHS of `??=`, which passed to an operator method routine.
 
 * Statements and blocks may be labeled with NAME ":"
 
-        The label will appear as a const containing a continuation
-        to leave the labeled construct.
+        Labling a statement will cause it to be wrapped in a closure
+	(all blocks are already closures).
+	Within the closure, the label is a "const" containing a
+        Continuation to leave the statement or block.
 
-        (labling a statement will cause it to be wrapped in a closure
-         that contains the new variable; all blocks are already closures).
+	Naming the label "leave_whatever_loop" or "continue_frobnitz_loop"
+	may improve clarity when nested loops are present.
 
         Calling the leave label on a "while" STATEMENT is equivalent to "break"
 
         Calling the leave label on the BLOCK of a "while" loop is "continue"
+
+## Type system:
 
 * All instances have a class
 
         available with .getclass() method
         modifiable with .setclass() method(!)
 
-* All classes have one or more superclasses, except Object, which has none.
+* All classes have one or more superclasses, except Object, which has none
+  (all classes are subclasses of Object).
 
-* Objects have properties.
+* Objects have named properties.
 
-        The Object class implements getprop/setprop methods, and "."
-        to access a compile time property name.  ".." is a
+        The Object class implements getprop/setprop methods, and the "."
+	operator to access or set a property value.  ".." is a
         method/member lookup operator that skips the object class (ie;
         lookup only in superclasses).
 
-Only "false", "null", and zero are false(y)
+* Only "false", "null", "undefined" and zero are false(y):
 
         (early on tried having all classes have an is_true
-        method called on each if/while, but the overhead was painful.
+        method called on each if/while, but the overhead was painful,
+	and ruined the `value = this || that;` idiom.
 
-"Class" is an instance of the metaclass "Class"
+* "Class" is an instance of the metaclass "Class"
 
         Class implements the "new" method.
 
         All Classes are subclasses of Class (created with "Class.new")
 
-New instances of a class are created with MyClass.new(....),
+* New instances of a class are created with MyClass.new(....),
         which calls the metaclass (typ. "Class") new method with the class
                 as the first argument
         and then calls the class "init" method (if any) to initialize
                 with the new instance (typ. named "this" as the first arg)
         the superclass init method can be called with "this..init(....)"
 
-The Object "__xxl" contains the following members:
-        import: a function to import another file (namespace returned as Object)
-        pyimport: a function to import a Python module as a PyObject
+* The Object "__xxl" contains the following members:
+
+        * import: function to import another file, returns a `Module` object.
+		(see below for more about Modules).
+        * pyimport: function to import a Python module as a `PyObject`
                 "." returns a wrapped value (Bool, Str, Number)
                 or another PyObj.  PyObj's are callable.
-        exit: a function, takes an int, exit process with integer status value
-        argv: a list of strings of arguments following the program path
-        uerror: a function, takes a string, causes fatal error
-        debug functions:
-                break: break to Python debugger, with optional value (available in pdb as x)
-                print: convert arguments to Str, concatenate and print to stdout
-                error: convert arguments to Str, concatenate and print to stderr
+        * exit: function, takes an int, exit process with integer status value.
+        * argv: a list of strings of arguments following the program path
+        * uerror: a function, takes a string, causes fatal error.
+        * debug functions:
+	 + break: break to Python debugger, with optional value (available in pdb as x)
+         + print: convert arguments to Str, concatenate and print to stdout
+	 + error: convert arguments to Str, concatenate and print to stderr
                 backtrace: print xxl return stack to stderr
 
-Base classes are available via `var classes = import("classes");`
+* Base classes are available via `var classes = import("classes");`
 
-All "{" STMT... "}" code blocks have their own variable scope
+[Machine generated HTML documentation on `classes` Module](https://raw.githack.com/philbudne/xxl/main/src/dist/classes.html) -- *delivered by external CDN*
+
+* All "{" STMT... "}" code blocks have their own variable scope
         and are implemented as closures.
 
-Variables MUST be declared using "var", "const", or as function arguments.
+* Variables MUST be declared using "var", "const", or as function arguments.
 
 NOTE! Enforcement of "const" is currently implemented only in the parser,
         and const values in other Modules can be changed!!
 
-All imported files (including the "main" file, specified on the command line)
-	have their own scope (a child of the "root" scope that contains
-	"__xxl", "true", "false", "null", and "undefined").
+## Modules
 
-Each module namespace has a __modinfo Object, of class ModInfo with:
-	* main -- true for the main (command line) module
-	* module -- a Module object with the module scope available as properies
-		(__xxl.import returns this Module Object).
+Every imported Module (including the "main" file, specified on the
+	command line) have their own top level scope (a child of the
+	"root" scope that initially contains `true`, `false`, `null`, 
+	`undefined`, and `Class`.
+
+Each module namespace has a __modinfo Object, of class ModInfo with properties:
+	* main -- `true` for the main (command line) module, else `false`
+	* module -- the corresponding Module object with the
+		module top level scope available as properies
 	* file -- the path of the file loaded into the module
 	* parser -- the Parser object used to parse source code.
+
+## Metaclasses
+
+Metaclasses are Classes that are used to create new classes.
+
+* The base metaclass is `Class`; `Class.new` is the normal
+	way to create a new class.
+
+* Any subclass of a metaclass is a metaclass
+	(`Class` is a subclass of itself!).
+
+* Metaclasses subclassed from `Class` get their `new` method from `Class`.
+
+* Metaclass names should end with the word "Class"
+
+* New metaclasses (with their own `new`, and other Class methods)
+	can be created by subclassing `Class` (ie; calling `Class.new`
+	with `Class` as a `super` class).
+
+* `SingletonClass`, declared in [bootstrap.xxl](../src/bootstrap.xxl)
+	is a metaclass for classes that will only ever have one instance;
+	such singleton classes can be declared by invoking
+	`SingletonClass.new` instead of `Class.new`.
+
