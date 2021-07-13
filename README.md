@@ -7,9 +7,6 @@ A self-hosting extensible language, VM/type system in Python3.
 *Please consider this a toy, not suitable for serious projects,
 until further notice!!!*
 
-Tested under Python 3.7.9 and
-PyPy3 7.3.1 (needs `export PYTHONIOENCODING=utf8`).
-
 ### Overall:
 
 * Based on [Douglas Crockford's](http://crockford.com/)
@@ -60,6 +57,11 @@ PyPy3 7.3.1 (needs `export PYTHONIOENCODING=utf8`).
 
 * [Prehistory](doc/prehistory.md) -- early influences and pre-github history
 
+#### Tested under
+
+* CPython 3.7.9 (FreeBSD) and 3.8.10 (Linux).
+* PyPy3 7.3.1 (set `PYTHONIOENCODING` to `utf8` to pass regression tests).
+
 #### Intended jokes
 
 * PL/1 was IBM's "One Language to Rule Them All" for System/360
@@ -69,10 +71,10 @@ PyPy3 7.3.1 (needs `export PYTHONIOENCODING=utf8`).
      language which had no reserved words, and all numeric
      variables were declared with their precision.
 
+     XXL is intended to be the smallest possible core language,
+     one that no one "needs" to use.
+
 * The first extensible language I heard of was Harvard's PPL
      [Polymorphic Programming Language](https://en.wikipedia.org/wiki/Polymorphic_Programming_Language).
-
-* Intended to be the smallest possible core language,
-     one that no one "needs" to use.
 
 * XXL is the U.S. clothing size two sizes larger than "large".
