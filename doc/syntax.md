@@ -217,18 +217,18 @@ STRING: «'» [ANYTHING_EXCEPT_NEWLINE_OR_SINGLE_QUOTE]… «'» |
 
 * The Object "__xxl" contains the following members:
 
-        * import: function to import another file, returns a `Module` object.
-		(see below for more about Modules).
-        * pyimport: function to import a Python module as a `PyObject`
-                "." returns a wrapped value (Bool, Str, Number)
-                or another PyObj.  PyObj's are callable.
-        * exit: function, takes an int, exit process with integer status value.
-        * argv: a list of strings of arguments following the program path
-        * uerror: a function, takes a string, causes fatal error.
-        * debug functions:
-	 + break: break to Python debugger, with optional value (available in pdb as x)
-         + print: convert arguments to Str, concatenate and print to stdout
-	 + error: convert arguments to Str, concatenate and print to stderr
+    * import: function to import another file, returns a `Module` object.
+	(see below for more about Modules).
+    * pyimport: function to import a Python module as a `PyObject`;
+	    "." returns a wrapped value (Bool, Str, Number)
+	    or another PyObj.  PyObj's are callable.
+    * exit: function, takes an int, exit process with integer status value.
+    * argv: a list of strings of arguments following the program path
+    * uerror: a function, takes a string, causes fatal error.
+    * debug functions:
+        + break: break to Python debugger, with optional value (available in pdb as x)
+        + print: convert arguments to Str, concatenate and print to stdout
+        + error: convert arguments to Str, concatenate and print to stderr
                 backtrace: print xxl return stack to stderr
 
 * Base classes are available via `var classes = import("classes");`
