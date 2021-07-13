@@ -228,7 +228,7 @@ var mumodule = function (mu, module_name) {
 	function (name) {
 	    var x = mod.getprop(name);
 	    if (callable(x)) {
-		mufunc(mu, 3, name, x);
+		mufunc(mu, 3, '', name, x);
 	    }
 	    else {
 		muvalue(mu, 3, '', name, x);
