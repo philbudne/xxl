@@ -7,9 +7,9 @@
 *** BUG: can overwrite "const" values in a Module!!!
 	need descriptors (slots) ??
 
-TEST
-====
-test PyObject.props()
+================================================================
+NOTE! many of these are just thoughts, possibly bad ones!
+================================================================
 
 CLEANUP
 =======
@@ -17,44 +17,52 @@ split Number into Float and Int??
 	Have Int initializer take optional radix
 test if implementing VM as chain of if's (on ints)
 	instead step on Instr objects is faster
+	(enough to warrant splitting functionality
+	across different place)
+
 split up parser.xxl (into pratt,xlparser,vmcode??)
+
 Make Scopes transparent??  Subclass of Dict??
 	__xxl.current_scope()??
 	Scope.parent()??
+
 Make callable objects (more) transparent??
 	Closure.get{code,scope,args}()??
 	BoundMethod.get{object,function}()??
-	Closure.getframe() => Frame object w/ where, scope, code, pc, parent methods?
+	Continuation.getframe()
+		Frame object w/ where, scope, code, pc, parent methods?
+		OR getwhere, getscope, getcode, getpc, getparent ->Continuation
+
 implement methods, class members, class methods via descriptors???
-reenable MethodInstr (binop_lit_call?); avoid BoundMethod!!
+	reenable MethodInstr (binop_lit_call?); avoid BoundMethod!!
+
+	https://docs.python.org/3/reference/datamodel.html#implementing-descriptors
+	https://www.python.org/dev/peps/pep-0252/#specification-of-the-attribute-descriptor-api
 
 FEATURES (or extensions)
 ========================
-NOTE! many of these are just thoughts, possibly bad ones!
 
 load compressed vmx (JSON) files and/or use some faster serialization library!!
-make obj_get of unknown property an error
-	(depended on by .std lookup)
-	add "has_prop" method? ?. operator?!!!
-	Object.has_method method?
+
+make obj_getprop of unknown property an error???
+	add "has_prop", "has_method" methods?
 
 exceptions (using Continuations)
-	resumable/non-resumable???
+	resumable vs non-resumable???
 	VM register for exception handler?? add to frame???
 		Exception.raise() method a PyVMFunc
-			capture current FP (Continuation???)
+			capture current FP (Continuation???) for traceback.
 
-"in" operator for iterables?
-	"has" method???
+"in" operator for iterables?  "contains" method??
 
-port VM to rpython?!
+port VM to rpython?! _vmx.c?????
 
 make function name () .... define name in local scope?????
 	close2 patches -- need to make "function foo() {}" a valid expr stmt
 	ALWAYS put name into CClosure for debug/trace???
 
 make a full expression language??
-	optionally (via a subclass?)
+	optionally (via a Parser subclass?)
 	stmt value already available in vm AC
 
 create wrapper Class for CObjects with real invoke method,
@@ -160,14 +168,14 @@ type wrapping:
 		revisit wrapping return values in CPyFunc.invoke
 			(tail calls to "new")
 
-Always create a FooClass metaclass when creating Class Foo?
+Automatic metaclass creation?????
+    Always create a FooClass metaclass when creating Class Foo?
 	populate with "class_methods" for methods????
 
-	Class.new({name: "Foo", ... }) would need to create
+	MetaClass.new({name: "Foo", ... }) would need to create
 		Class._new({name: "FooClass", supers: [this_class]})
-		and return instance of FooClass!!!
 
-create metaclasses for Bool, Null, Number, Str, Undefined with
+    create metaclasses for Bool, Null, Number, Str, Undefined with
 	private 'new' methods?
 	(have defclass always create metaclass name + 'Class'???)
 
@@ -175,7 +183,7 @@ Dict update: use __update if arg is a Dict?
 
 Have List.__extend: have List.extend call for List argument?
 
-Implement List '+' op using "extend"??
+Implement List '+' op?
 
 Add Symbol.json method for dumping ASTs, rather than obj2python_json crockery?
 	could include non-standard object field names
@@ -207,3 +215,12 @@ Makefile:
 
 Replace TEMP register w/ __tN variables in scope?
 	execute code in a block closure??
+
+Implement send, close (throw?!!) in lib/generator.ccl
+	https://docs.python.org/3/reference/expressions.html#generator-methods
+
+Implement async/await style coroutines?
+	https://docs.python.org/3/reference/datamodel.html#coroutine-objects
+	https://docs.python.org/3/reference/datamodel.html#asynchronous-iterators
+
+Implement "with"??
