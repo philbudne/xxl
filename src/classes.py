@@ -238,11 +238,11 @@ class CContinuation(CCallable):
         if l == 1:
             vm.ac = vm.args[0]  # return value
         elif l == 0:
-            vm.ac = null_value
+            vm.ac = null_value  # XXX undefined??
         else:
-            vm.save_frame(True) # show caller in backtrace!!
+            # before restore_frame, to show CALLER!!
             raise UError("Too many args (%d) to %r" % (len(vm.args), self))
-        vm.restore_frame(self.fp) # just like ReturnInstr
+        vm.restore_frame(self.fp) # ***JUST*** like ReturnInstr
 
     def args(self):
         """
@@ -1307,7 +1307,7 @@ Callable.setprop(const.METHODS, _mkdict({
 @pyfunc
 def continuation__backtrace_list(this):
     """
-    return List of return locations on Continuation stack.
+    return List of Str return locations on Continuation stack.
     """
     return wrap(this.backtrace())
 
