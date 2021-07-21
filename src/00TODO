@@ -56,7 +56,9 @@ exceptions (using Continuations)
 		Exception.raise() method a PyVMFunc
 			capture current FP (Continuation???) for traceback.
 
-"in" operator for iterables?  "contains" method??
+"contains" method for List/Str/Dict/Set??
+	lib/ext/in.xxl to add "in" operator??
+		x in y ==> y.contains(x)
 
 port VM to rpython?! _vmx.c?????
 
