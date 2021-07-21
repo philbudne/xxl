@@ -4,6 +4,9 @@ var __doc = """
 EXTENSION: switch statement
 """;
 
+// *BEWARE*! uses Symbol.default, Symbol.case properties
+//	which will not be dumped!!
+
 var __extend_parser = function (p) {
     const CASEVAR = '-*-case-*-';
 
@@ -17,34 +20,33 @@ var __extend_parser = function (p) {
 		var slist = [];
 		p.advance(")");
 		p.advance("{");
-		var have_default = false;
+		var prev_default;
 		while (!p.check("}")) {
 		    var tok = p.ctoken();
 		    if (p.check("case")) {
 			p.reserve(tok);
 			p.advance();
 			tok.first = p.expression(0);
-			tok.case = true;
+			tok.case = true; // XXX not visible in AST dump
 			// XXX set tok.arity?
-			slist.append(tok);
 			p.advance(":");
 		    }
 		    else if (p.check("default")) {
 			p.reserve(tok);
-			if (have_default) {
-			    tok.error("second default label in switch");
+			if (prev_default) {
+			    tok.error("previous default label at " +
+				      prev_default.where);
 			}
-			have_default = true;
+			prev_default = tok;
 			tok.default = true; // XXX not visible in AST dump
 			// XXX set tok.arity?
-			slist.append(tok);
 			p.advance();
 			p.advance(":");
 		    }
 		    else {
-			var s = p.statement();
-			slist.append(s);
+			tok = p.statement();
 		    }
+		    slist.append(tok);
 		}
 		p.advance("}");
 		this.second = slist;
