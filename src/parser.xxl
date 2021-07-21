@@ -326,32 +326,36 @@ var PrattParser = Class.new({
 	    }
 	},
 	_error: function (this, where, token, msg) {
+	    """Internal helper to format fatal error message."""
 	    this._msg(where, "ERROR", token, msg);
 	    this._fatal();	// call error handler (default is exit(1))
 	},
 	_warning: function(this, where, token, msg) {
+	    """Internal helper to format warning message."""
 	    this._msg(where, "WARNING", token, msg);
 	},
 	_t_error: function(this, t, msg) {
-	    """
-	    Token error (for _gtok); `t` is a token from tokenizer.
-	    """
+	    """Token error (for _gtok); `t` is a token from tokenizer."""
 	    this._error(t.where, t.value, msg);
 	    // NOTREACHED
 	},
 	_gtok: function (this) {
-	    var t = this.get_token();
+	    """
+	    Internal helper: fetch next token, and create Symbol object.
+	    Parse routines should call ctoken, check, peek, advance.
+	    """
+	    var t = this.get_token(); // get lexer token
 	    var v = t.value;
-	    var a = t.type;		// arity (name,number,string,operator)
-	    var c;			// class
-	    var d;			// definition (for name)
+	    var a = t.type; // arity (name,number,string,operator,EOF,ERROR)
+	    var c;	    // class
+	    var d;	    // definition (for name)
 	    // var id = v;
 	    if (a == "name") {
 		if ((d = this.scope.find_definition(v))) { // previously seen?
 		    c = d.getclass(); // could be variable or reserved word
 		}
 		else if (!(c = this.symbol_classes[v])) { // keyword?
-		    // not a keyword and not defined (yet) as a variable.
+		    // not a keyword and not (yet) defined as a variable.
 		    // property/method names (that aren't variable names)
 		    // end up here.
 		    c = this.Symbol; // undefined error on reference in expr!!
@@ -364,7 +368,7 @@ var PrattParser = Class.new({
 		}
 	    }
 	    else if (a == "string" || a == "number") {
-		c = this.Lit;	// XXX separate classes, opcodes for Str/Number?
+		c = this.Lit;
 		a = "literal";
 		// id = this.LIT;
 	    }
@@ -376,21 +380,22 @@ var PrattParser = Class.new({
 		this._t_error(t, t.msg);
 	    }
 	    else {
-		this._t_error(t, "Unexpected token");
+		this._t_error(t, "Unknown token type " + a);
 	    }
 	    var s = c.new(t.where, v, a); // Symbol
-	    s.defn = d;	    // PLB 2021-06-17 (try to avoid repeating)
+	    s.defn = d;	   // save to avoid repeating lookup in define
 	    return(s);
 	}, // _gtok
 
 	ctoken: function (this) {
 	    """
-	    Check if deferred advance needed, and fetch token (Symbol) if needed
+	    Return current token (Symbol).
+
+	    Check if deferred advance needed, and fetch new token if needed
 	    (was originally "check_advance", vs "cash_advance?!").
 	    Advance no longer reads next token;
-	     just marks new token is needed,
+	     just marks new token is needed via need_advance,
 	     so interactive REPL doesn't hang at end of stmt.
-	    Returns current token (Symbol)
 	    """
 	    if (this.need_advance) {
 		this.advance();
@@ -409,11 +414,10 @@ var PrattParser = Class.new({
 	advance: function (this, id) {
 	    """
 	    Checks that current token matches optional Str `id`.
-	    Doesn't actually read another token,
-	    just sets need_advance flag (unless need_advance already set!),
-	    so that REPL doesn't hang on `advance(";")`
+	    If need_advance is false, just set flag and return
+	     so that REPL doesn't hang on `advance(";")`
 	    """
-	    if (id && !this.check(id)) { // may recurse w/ null id!
+	    if (id && !this.check(id)) { // ctoken will call us w/ null id!
 		this._token.error("Expected " + id.repr() + " saw");
 	    }
 	    if (!this.need_advance) {
@@ -661,8 +665,10 @@ var PrattParser = Class.new({
 	    // Each class defined as a Class member, since used as base Class
 	    // for other Classes defined in this init method, and in extensions!!
 
+	    // Symbol nodes created for (as yet) undeclared identifiers.
 	    p.Symbol = Class.new({
 		name: "Symbol",
+		doc: "Base class for parser AST nodes.",
 		methods: {
 		    init: function (this, where, value, arity) {
 			this.where = where; // fname:line:charnum
@@ -671,13 +677,11 @@ var PrattParser = Class.new({
 			// XXX set reserved??
 		    },
 		    check: function (this, value) {
+			"""check if symbol matches `value`"""
 			// .id field originally existed w/ same value as .value
 			// EXCEPT was "(literal)" for literals
-			// COULD be reinstated
-			// (with optional 4th arg to Symbol.init)
-			// *IFF* someone needs check/advance(p.LIT)
-			return(this.arity != "literal" &&
-			       this.value == value);
+			// NOTE: Lit.check always returns false.
+			return(this.value == value);
 		    },
 		    nud: function (this) {
 			"""
@@ -755,6 +759,10 @@ var PrattParser = Class.new({
 		name: "Lit",
 		supers: [p.Symbol],
 		methods: {
+		    check: function (this, value) {
+			"""Lit never matches in 'check' or 'advance'."""
+			return(false);
+		    },
 		    nud: function (this) {
 			// reserve only works for arity == "name", and
 			// should only be here with arity == "literal"!!!
