@@ -477,6 +477,11 @@ var PrattParser = Class.new({
 	    this._defname_internal("predefined", name, read_only);
 	},
 
+	reserve: function (this, token) {
+	    """mark `token` (defaults to `Parser.ctoken()`) as reserved"""
+	    this.scope.reserve(token || this.ctoken());
+	},
+
 	expression: function (this, rbp) {
 	    var t = this.ctoken();
 	    this.advance();
@@ -541,7 +546,7 @@ var PrattParser = Class.new({
 	    var std = n.std;
 	    if (std) {
 		this.advance();
-		this.scope.reserve(n);
+		this.reserve(n);
 		return(std());
 	    }
 	    return(this.expression_statement());
@@ -606,7 +611,8 @@ var PrattParser = Class.new({
 		    },
 		    reserve: function (this, sym) {
 			"""
-			Mark name used as a keyword (cannot be used as variable).
+			Mark name used as a keyword as reserved
+			cannot be used as variable in this (or any nested scope).
 			"""
 			if (sym.arity != "name" || sym.reserved) {
 			    return();
@@ -614,7 +620,7 @@ var PrattParser = Class.new({
 			// NOTE!! In original (JavaScript) parser,
 			// scope was per-function, and original code
 			// was "var t = this.def[sym.value];"
-			// BUT, scope is now per-block
+			// BUT, XXL scope is per-block
 			// (and there isn't CURRENTLY a way to only search
 			//  to start of current function scope see comment
 			//  on Scope.new in Function.nud method)
@@ -750,7 +756,9 @@ var PrattParser = Class.new({
 		supers: [p.Symbol],
 		methods: {
 		    nud: function (this) {
-			p.scope.reserve(this);
+			// reserve only works for arity == "name", and
+			// should only be here with arity == "literal"!!!
+			p.reserve(this);
 			return(this);
 		    },
 		    gen: function (this, vmcode) {
@@ -1044,7 +1052,7 @@ var Parser = Class.new({
 		supers: [p.Symbol],
 		methods: {
 		    nud: function (this) {
-			p.scope.reserve(this);
+			p.reserve(this); // in case keyword
 			this.first = p.expression(p.PPFX); // XXX member for rbp?
 			this.arity = "unary";
 			return(this);
@@ -1535,7 +1543,7 @@ var Parser = Class.new({
 			// on "} else ...."  (could have a "peek"
 			// which won't look across lines?)
 			if (p.check("else")) { 
-			    p.scope.reserve(p.ctoken());
+			    p.reserve();
 			    p.advance("else");
 			    // XXX change "else if" exception to "elif"?
 			    this.third = (p.check("if") ?
