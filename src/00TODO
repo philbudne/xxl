@@ -15,6 +15,7 @@ CLEANUP
 =======
 split Number into Float and Int??
 	Have Int initializer take optional radix
+	need idiv operator (can't use //!)
 
 test if implementing VM as chain of if's (on ints)
 	instead step on Instr objects is faster
@@ -50,11 +51,12 @@ load compressed vmx (JSON) files and/or use some faster serialization library!!
 make obj_getprop of unknown property an error???
 	add "has_prop", "has_method" methods?
 
-exceptions (using Continuations)
-	resumable vs non-resumable???
-	VM register for exception handler?? add to frame???
-		Exception.raise() method a PyVMFunc
-			capture current FP (Continuation???) for traceback.
+exceptions
+	VM register for exception handler??
+		add to frame (change "visible" to tri-state?)
+	Exception.raise() method a PyVMFunc
+	capture current FP (as Continuation???) for traceback.
+		resumable vs non-resumable?
 
 "contains" method for List/Str/Dict/Set??
 	lib/ext/in.xxl to add "in" operator??
@@ -235,4 +237,3 @@ Implement async/await style coroutines?
 	https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
 
 Implement "with"?????
-
