@@ -169,14 +169,25 @@ var mumodule = function (mu, module_name) {
     mu.h1("Module", mu.code(module_name));
     mu.p();
     mudoc(mu, mod);
-    // not yet working:
-    // mu.p();
-    // mu.start_color(mu.SUPER);
-    // mu.append("(inherited methods in this color)");
-    // mu.start_color(mu.BLACK);
 
-    // iterate over sorted names in Module
-    var vars = [];
+    const link_class_if_known = function (c) {
+	"""
+	Take Class object, if defined in this file,
+	return hyper link to definition, else return plain name.
+	"""
+	var cname = c.name;
+	if (mod.hasprop(cname) && mod.getprop(cname) === c) {
+	    return(mu.ilink("class-" + cname, cname));
+	}
+	else {
+	    return(cname);
+	}
+    };
+
+    // iterate over sorted names in Module, split into classes, vars, func
+    var vals = [];
+    var funcs = [];
+    var classnames = [];
     mod..props().sorted().for_each(
 	function (name) {
 	    if (name.starts_with("_")) {
@@ -184,58 +195,95 @@ var mumodule = function (mu, module_name) {
 	    }
 	    var x = mod.getprop(name);
 	    if (x.instance_of(classes.Class)) {
+		classnames.append(name);
+	    } // is a (meta)Class
+	    else if (callable(x)) {
+		funcs.append(name);
+	    }
+	    else {
+		vals.append(name);
+	    }
+	}
+    );
+
+    const directory = function(what, list, prefix) {
+	if (list.len() == 0) {
+	    return();
+	}
+	mu.h2(what);
+	mu.ul(
+	    list.map(
+		function (name) {
+		    return(mu.ilink(prefix + name, name));
+		}
+	    )
+	);
+    };
+
+    // XXX put in an unordered list???
+    directory("Classes", classnames, "class-");
+    directory("Functions", funcs, "func-");
+    directory("Values", vals, "val-");
+
+    if (classnames.len() > 0) {
+	mu.start_color(mu.BLACK);
+	mu.hr();
+	mu.h2("Classes");
+	mu.p();
+	// not yet working:
+	// mu.p();
+	// mu.start_color(mu.SUPER);
+	// mu.append("(inherited methods in this color)");
+	// mu.start_color(mu.BLACK);
+	classnames.for_each(
+	    function (name) {
+		var x = mod.getprop(name);
 		mu.start_color(mu.BLACK);
 		mu.hr();
 		mu.make_anchor("class-" + name);
 
-		var link_class_if_known = function (c) {
-		    """
-		    Take Class object, return link to (hopeful) definition
-		    (if defined in this file), else return plain name.
-		    """
-		    var cname = c.name;
-		    // must be defined at top level;
-		    if (mod.hasprop(cname) && mod.getprop(cname) === c) {
-			return(mu.ilink("class-" + cname, cname));
-		    }
-		    else {
-			return(cname);
-		    }
-		};
-
 		var metaclass = x.getclass();
-		mu.h2(mu.code(link_class_if_known(metaclass)), // metaclass name (typ. Class)
-		      mu.code(name), "subclass of",	       // class name
-		      mu.code(",".join(x.__supers.map(link_class_if_known)))
+		mu.h2(
+		    mu.code(link_class_if_known(metaclass)), // typ. "Class"
+		    mu.code(name),
+		    "subclass of", // class name
+		    // superclasses:
+		    mu.code(",".join(x.__supers.map(link_class_if_known)))
 		); // h2
-
 		mu.p();
 		muclass(mu, x);
-	    } // is a (meta)Class
-	    else {
-		vars.append(name);
 	    }
-	}
-    );
+	); // classes.for_each
+    } // classes.len() > 0
+
     mu.start_color(mu.BLACK);
-    if (vars.len() == 0) {
-	return();
-    }
-    mu.hr();
-    mu.h2("Variables");
-    mu.p();
-    vars.for_each(
-	function (name) {
-	    var x = mod.getprop(name);
-	    if (callable(x)) {
+    if (funcs.len() > 0) {
+	mu.hr();
+	mu.h2("Functions");
+	mu.p();
+	funcs.for_each(
+	    function (name) {
+		var x = mod.getprop(name);
+		mu.make_anchor("func-" + name);
 		mufunc(mu, 3, '', name, x);
+		mu.p();
 	    }
-	    else {
+	); // funcs.for_each
+    } // funcs.len() > 0
+
+    if (vals.len() > 0) {
+	mu.hr();
+	mu.h2("Values");
+	mu.p();
+	vals.for_each(
+	    function (name) {
+		var x = mod.getprop(name);
+		mu.make_anchor("val-" + name);
 		muvalue(mu, 3, '', name, x);
+		mu.p();
 	    }
-	    mu.p();
-	}
-    ); // vars.for_each
+	); // vals.for_each
+    } // vals.len() > 0
 };
 
 if (__modinfo.main) {

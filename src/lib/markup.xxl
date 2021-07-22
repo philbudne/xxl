@@ -157,9 +157,21 @@ code { font-family:Courier,monospace; font-size:1.25em; }
 	},
 
 	// code_block?
-	// (un)ordered_list (take list)??
 
+	ul: function (this, elts) {
+	    """make unordered list of `elts`"""
+	    this.nappend("<ul>");
+	    elts.for_each(
+		function (elt) {
+		    this.nappend("<li>" + elt); // twrap??
+		}
+	    );
+	    this.nappend("</ul>");
+	},
+
+	////////////////////////////////////////////////////////////////
 	// NOTE!! the following RETURN strings:
+
 	bold: function (this, ...words) {
 	    return(this._twrap("b", words));
 	},
