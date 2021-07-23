@@ -152,7 +152,7 @@ var muclass = function (mu, class) {
 
 var mumodule = function (mu, module_name) {
     """
-    Import and up a module.
+    Import and mark up a module.
     `module_name` is name to import.
     """
     var mod = __xxl.import(module_name);
@@ -166,20 +166,6 @@ var mumodule = function (mu, module_name) {
     mu.h1("Module", mu.code(module_name));
     mu.p();
     mudoc(mu, mod);
-
-    const link_class_if_known = function (c) {
-	"""
-	Take Class object, if defined in this file,
-	return hyper link to definition, else return plain name.
-	"""
-	var cname = c.name;
-	if (mod.hasprop(cname) && mod.getprop(cname) === c) {
-	    return(mu.ilink("class-" + cname, cname));
-	}
-	else {
-	    return(cname);
-	}
-    };
 
     // iterate over sorted names in Module, split into classes, vars, func
     var vals = [];
@@ -225,6 +211,20 @@ var mumodule = function (mu, module_name) {
     directory("Functions", funcs, "func-");
     directory("Values", vals, "val-");
 
+    const link_class_if_known = function (c) {
+	"""
+	Take Class object, if defined in this module,
+	return hyperlink to definition, else return plain name.
+	"""
+	var cname = c.name;
+	if (mod.hasprop(cname) && mod.getprop(cname) === c) {
+	    return(mu.ilink("class-" + cname, cname));
+	}
+	else {
+	    return(cname);
+	}
+    };
+
     if (classnames.len() > 0) {
 	mu.start_color(mu.BLACK);
 	mu.hr();
@@ -246,7 +246,7 @@ var mumodule = function (mu, module_name) {
 		mu.h2(
 		    mu.code(link_class_if_known(metaclass)), // typ. "Class"
 		    mu.code(name),
-		    "subclass of", // class name
+		    "subclass of",
 		    // superclasses:
 		    mu.code(",".join(x.__supers.map(link_class_if_known)))
 		); // h2
