@@ -8,9 +8,6 @@ const re = __xxl.pyimport("re");
 
 const ADDR_RE = re.compile(" at 0x[0-9a-z]*");
 
-// XXX maybe do partial ordering of Classes, and display from roots up??
-// XXX need general iterator for class and all supers (???)
-
 var callable = function (c) {
     // check for __args and/or __defn methods instead??
     return(c.instance_of(classes.Callable));
@@ -207,6 +204,9 @@ var mumodule = function (mu, module_name) {
     );
 
     const directory = function(what, list, prefix) {
+	"""
+	output a directory section as an unordered list
+	"""
 	if (list.len() == 0) {
 	    return();
 	}
@@ -214,7 +214,7 @@ var mumodule = function (mu, module_name) {
 	mu.ul(
 	    list.map(
 		function (name) {
-		    return(mu.ilink(prefix + name, name));
+		    return(mu.ilink(prefix + name, mu.code(name)));
 		}
 	    )
 	);
