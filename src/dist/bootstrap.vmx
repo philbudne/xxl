@@ -1,4 +1,4 @@
-{"v": 1.0, "fn": "bootstrap.xxl", "mt": 1626111163.8399322, "sz": 12990}
+{"v": 1.0, "fn": "bootstrap.xxl", "mt": 1627102032.6422486, "sz": 13024}
 [["10:5", "load", "__modinfo"],
  ["10:14", "binop_lit", ".", "booting"],
  ["10:1", "jumpe", 4],
@@ -108,7 +108,7 @@
      ["53:2", "load", "return"],
      ["53:8", "call", 1],
      ["23:20", "return"]],
-  "\n\tImport a source file, VM instruction (.vmx) file, or internal module.\n\tCalls NewModule.__extend_parser(importer_parser), if found.\n\tReturns Module.\n\tNOTE: per-instance (Module) member function (not a method)\n\t\tfor access to Module __modinfo.parser.\n\t"],
+  "\n\tImport a source file, VM instruction (.vmx) file, or internal module.\n\tCalls NewModule.__extend_parser(importer_parser), if _extend_parser\n\tfunction found. Returns Module.\n\tNOTE: per-instance (Module) member function (not a method)\n\t\tfor access to Module __modinfo.parser.\n\t"],
    ["23:10", "push"],
    ["23:10", "push_lit", "import"],
    ["23:5", "load", "__xxl"],

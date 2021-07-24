@@ -18,13 +18,13 @@ if (true) {			// private variables
     ////////////////
     // __xxl (formerly System) was once private simple object,
     // then public (root_scope) simple object, now instance
-    // of XXLObject class (so can have private __xxl.import method)
+    // of XXLObject class (so can have private __xxl.import member function).
 
     __xxl.import = function (name) { // XXX take optional args (as Dict?)
 	"""
 	Import a source file, VM instruction (.vmx) file, or internal module.
-	Calls NewModule.__extend_parser(importer_parser), if found.
-	Returns Module.
+	Calls NewModule.__extend_parser(importer_parser), if _extend_parser
+	function found. Returns Module.
 	NOTE: per-instance (Module) member function (not a method)
 		for access to Module __modinfo.parser.
 	"""
