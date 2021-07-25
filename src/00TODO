@@ -1,5 +1,3 @@
-Module.modules dict needs conversion to Str keys??
-
 *** BUG: can overwrite "const" values in a Module!!!
 	need descriptors (slots) ??
 
