@@ -8,3 +8,21 @@ __xxl.print(d[123]);
 __xxl.print({1:2}, {1:2,}, {1:2, 3:4}, {1:2, 3:4,});
 
 __xxl.print({}.getclass().new());
+
+// added 2021-07-25:
+const classes = __xxl.import("classes");
+
+// make sure Module.modules indexed by Str
+__xxl.print(classes === classes.Module.modules['classes']);
+
+d[undefined] = "hello"; // undefined not a PObject
+__xxl.print(d[undefined]);
+
+var C = classes.Class.new({name: "C"});
+var c = C.new();
+d[c] = "world";
+__xxl.print(d[c]);
+
+// fatal:
+//d[ [1,2] ] = 1;
+//d[d] = 1;

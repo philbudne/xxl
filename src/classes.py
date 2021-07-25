@@ -186,6 +186,9 @@ class CPObject(CObject):
         return str(self.value)
 
     def __hash__(self):
+        if not self.value.__hash__:
+            # avoid error calling None!
+            raise UError('%s not hashable' % self.classname())
         return self.value.__hash__()
 
     def __eq__(self, other):
@@ -1093,7 +1096,7 @@ def class_init(this_class, props):
     """
     # XXX check props is a Dict!
     for key, val in props.getvalue().items():
-        # XXX depends on key as Python str
+        # XXX check key is a Str!
         # XXX check val is a Dict!
         kv = key.getvalue()
         if kv == 'props':
@@ -2181,13 +2184,16 @@ def new_module(fname, main=False, parser_vmx=None):
     returns (CModule, None) if previously loaded (or internal Module)
     """
 
-    md = Module.getprop('modules') # Module Dict/directory (Class variable)
+    if fname:
+        sfname = mkstr(fname)
+    else:
+        sfname = []             # should not be used! illegal as dict key!
 
-    # XXX Dict indexed by Python str
-    if fname and fname in md.getvalue(): # previously loaded?
-        # XXX Dict indexed by Python str
-        # XXX FIXME
-        return md.getvalue()[fname], None # yes; return it, no bootstrap needed
+    md = Module.getprop('modules') # Module Dict/directory (Class variable)
+    mdd = md.getvalue()            # module directory dict
+
+    if fname and sfname in mdd:  # previously loaded?
+        return mdd[sfname], None # yes; return it, no bootstrap needed
 
     scope = scopes.Scope(root_scope) # create base scope for module
     mod = CModule(scope)
@@ -2196,9 +2202,7 @@ def new_module(fname, main=False, parser_vmx=None):
     scope.defvar('__xxl', CObject(class_by_name('XXLObject')))
 
     if fname:
-        # XXX Dict indexed by Python str
-        # XXX FIXME
-        md.getvalue()[fname] = mod   # save as previously loaded
+        mdd[sfname] = mod   # save as previously loaded
 
     mi = new_modinfo(main=main, module=mod, fname=fname, parser_vmx=parser_vmx)
     mod.modinfo = mi
@@ -2318,8 +2322,7 @@ def defmodule(name, mod):
     """
     assert(isinstance(mod, CModule))
     md = Module.getprop('modules') # module Dict
-    # XXX indexed by Python str:
-    md.getvalue()[name] = mod
+    md.getvalue()[mkstr(name)] = mod
 
 def classes_init(argv, parser_vmx):
     """
@@ -2380,7 +2383,7 @@ def def_wrappers(cname, ptype, methods):
             wrapper.__name__ = _mname # crock for CPyFunc.defn()
             pf = CPyFunc(wrapper, pmethod) # second arg crock for CPyFunc.args()
             pf.setprop(const.DOC, _mkstr(pmethod.__doc__ or ""))
-            mdict.value[mname] = pf # XXX NOTE Python str key
+            mdict.value[mkstr(mname)] = pf
         def_wrapper(pmname, mname)
 
 ################
