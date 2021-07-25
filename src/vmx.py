@@ -375,16 +375,23 @@ class VMInstr2(VMInstr0):
     def json(self):
         return [self.fn_where(), self.name, self.v1, self.v2]
 
-@reginstr
-class LitInstr(VMInstr1):
+class WrapInstr1(VMInstr1):
     """
-    Load literal (Number or String) into AC.
+    base for VM Instructions with one argument, wrapped on input
     """
-    name = "lit"
 
     def __init__(self, fn, where, value):
         # convert to CObject when code is loaded
         super().__init__(fn, where, classes.wrap(value))
+
+################
+
+@reginstr
+class LitInstr(WrapInstr1):
+    """
+    load literal (Number or Str) into AC
+    """
+    name = "lit"
 
     def step(self, vm):
         vm.ac = self.value
@@ -448,7 +455,7 @@ class LoadInstr(VMInstr1):
         vm.ac = vm.scope.lookup(self.value)
 
 @reginstr
-class BinOpInstr(VMInstr1):
+class BinOpInstr(WrapInstr1):
     """
     execute (RHS) binary operator for object in AC
 
@@ -483,8 +490,8 @@ class BinOpLitInstr(BinOpInstr): # NOTE! inherits special "prof" method!
 
     __slots__ = ['lit']
     def __init__(self, fn, where, op, lit):
+        super().__init__(fn, where, op) # vm.call_op expects op in "value"
         # convert to Class when code is loaded
-        super().__init__(fn, where, op) # keep op in ".value" field
         self.lit = classes.wrap(lit)
 
     def step(self, vm):
@@ -497,7 +504,7 @@ class BinOpLitInstr(BinOpInstr): # NOTE! inherits special "prof" method!
         return [self.fn_where(), self.name, self.value, self.lit]
 
 @reginstr
-class LHSOpInstr(VMInstr1):
+class LHSOpInstr(WrapInstr1):
     """
     execute (LHS) binary operator for object in AC
     pops RHS operand (index/property) from stack
@@ -517,7 +524,7 @@ class LHSOpInstr(VMInstr1):
         m.invoke(vm)            # XXX always create frame???
 
 @reginstr
-class UnOpInstr(VMInstr1):
+class UnOpInstr(WrapInstr1):
     """
     execute unary operator for object in AC
     sets VM args to [AC]

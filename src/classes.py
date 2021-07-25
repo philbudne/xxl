@@ -137,7 +137,7 @@ class CObject:
         # will raise UError if op not found:
         # NOTE!! find_op does not return BoundMethod
         #       (called 99.999% of time from XxxOpInstrs)
-        m = find_op(self, const.BINOPS, '(')
+        m = find_op(self, const.BINOPS, OPEN_PAREN)
         vm.args.insert(0, self) # OK, another place where THIS is passed
         m.invoke(vm)
 
@@ -185,8 +185,6 @@ class CPObject(CObject):
             return str(self.value).lower()
         return str(self.value)
 
-    # someday allow Dict to be indexed by any CObject?
-    #   (except List!)
     def __hash__(self):
         return self.value.__hash__()
 
@@ -493,9 +491,10 @@ def _mkdict(vals):
     """
     ONLY USE TO CONSTRUCT BASE TYPES!
     """
+    nv = {_mkstr(k): v for k, v in vals.items()}
     if __initialized:
-        return new_by_name('Dict', vals)
-    return _new_pobj(Dict, vals)
+        return new_by_name('Dict', nv)
+    return _new_pobj(Dict, nv)
 
 def _mklist(vals):
     """
@@ -852,12 +851,13 @@ def obj_setprop(l, r, value):
 
 # NOTE! utility, not method
 # XXX return (obj, value) to avoid generating BoundMethod?
-def find_in_supers(l, rv, default, caching=True):
+def find_in_supers(l, r, default, caching=True):
     """
     Breadth first search of superclass methods/properties;
-    `l` is CObject, `rv` is Python string for method/property name.
+    `l` is CObject, `r` is Str for method/property name.
     """
     c = c0 = l.getclass()
+    rv = r.value                # XXX getstr?
 
     supers = c.getprop(const.SUPERS)
     q = []                      # queue
@@ -881,10 +881,10 @@ def find_in_supers(l, rv, default, caching=True):
 
         methods = c.getprop(const.METHODS)
         if methods is not null_value:
-            m = methods.value.get(rv, null_value) # Dict
+            m = methods.value.get(r, null_value) # Dict
             if m is not null_value:
                 if caching:
-                    cache_line = '__method:' + rv
+                    cache_line = '__method:' + r.value
                     c0.cache[cache_line] = m
                 return CBoundMethod(l, m)
 
@@ -894,15 +894,17 @@ def find_in_supers(l, rv, default, caching=True):
 
 # NOTE! utility, not method
 # XXX return (obj, value) to avoid generating BoundMethod?
-def find_in_class(l, rv, default):
+def find_in_class(l, r, default):
     """
-    `rv` is Python string for property (method) name
+    `r` is Str
     may return BoundMethod
     """
     # XXX XXX XXX use descriptors (objects w/ get/set methods) for methods
     #           class methods, members, (read-only members)???
     #           all kept in "props"?!!!!!!
     c = l.getclass()
+    rv = r.getvalue()
+    #print("find_in_class", repr(l), repr(r))
 
     # check for class property
     if c.hasprop(rv):
@@ -915,12 +917,12 @@ def find_in_class(l, rv, default):
 
     methods = c.getprop(const.METHODS)
     if methods is not null_value:
-        m = methods.value.get(rv, null_value) # Dict
+        m = methods.value.get(r, null_value) # Dict
         if m is not null_value:
             c.cache[cache_line] = m
             return CBoundMethod(l, m)
 
-    return find_in_supers(l, rv, default)
+    return find_in_supers(l, r, default)
 
 @pyfunc
 def obj_getprop(l, r):
@@ -928,33 +930,33 @@ def obj_getprop(l, r):
     Object getprop method/operator
     return `r` (String) property of object `l`
     """
-    rv = r.getvalue()              # XXX must be Str
+    rv = r.getvalue()           # XXX check is Str
     if l.hasprop(rv):
         return l.getprop(rv)
-    return find_in_class(l, rv, undef_value) # may return BoundMethod
+    return find_in_class(l, r, undef_value) # may return BoundMethod
 
 @pyfunc
 def obj_hasprop(l, r):
     """
     Return `true` if object `l` has own (Str) property `r` (not interited).
     """
-    return mkbool(l.hasprop(r.getvalue())) # XXX getstr
+    # XXX check r is Str
+    return mkbool(l.hasprop(r.getvalue()))
 
 def find_op(obj, optype, op):
     """
     Utility (not method)
     `obj` is CObject
     `optype` is Python string: UNOPS, BINOPS, or LHSOPS
-    `op` is Python string for operator
+    `op` is Str for operator
     NOTE!! Does *NOT* return BoundMethod!!
         called from XxxOpInstrs 99.999% of time
         (only exception is CObject.invoke for '(')
     """
-
-    #print("find_op", obj, optype, op)
+    #print("find_op", obj, repr(optype), repr(op))
     c = c0 = obj.getclass()
 
-    cache_line = optype + op
+    cache_line = optype + op.value
     if cache_line in c.cache:
         op = c.cache[cache_line]
         return op
@@ -990,9 +992,9 @@ def obj_get_in_supers(this, prop):
     """
     Object `..` operator; for calling superclass methods
     Looks for `prop` as property or method of superclasses of `this`;
-    can be used w/ `this.as_class(MyClass)..method`.
+    can be used as: `this.as_class(MyClass)..method`.
     """
-    return find_in_supers(this, prop.getvalue(), undef_value, False)
+    return find_in_supers(this, prop, undef_value, False)
 
 # once upon a time class was stored as '__class' property,
 # but it was messy when cloning.
@@ -1093,12 +1095,14 @@ def class_init(this_class, props):
     for key, val in props.getvalue().items():
         # XXX depends on key as Python str
         # XXX check val is a Dict!
-        if key == 'props':
+        kv = key.getvalue()
+        if kv == 'props':
             # XXX check for overlap with methods?
             # XXX use descriptors for methods/members?!!!
-            this_class.props.update(val.getvalue()) # XXX getdict
+            for pk, pv in val.getvalue().items():
+                this_class.setprop(pk.value, pv)
             continue
-        ikey = const.CLASS_PROPS.get(key)
+        ikey = const.CLASS_PROPS.get(kv)
         if not ikey:
             metaclassname = this_class.classname()
             raise UError("Unknown %s property %s" % (metaclassname, key))
@@ -1393,8 +1397,7 @@ def dict_putitem(l, r, value):
     """
     `l[r] = value`
     """
-    entry = r.getvalue()             # XXX
-    l.value[entry] = value
+    l.value[r] = value
     return value                # lhsop MUST return value
 
 @pyfunc
@@ -1402,8 +1405,7 @@ def dict_getitem(l, r):
     """
     `l[r]`
     """
-    entry = r.getvalue()             # XXX
-    ret = l.value.get(entry, null_value)
+    ret = l.value.get(r, null_value)
     return ret
 
 @pyfunc
@@ -1420,7 +1422,7 @@ def dict_pop(obj, key):
     """
     Remove Dict item with specified `key`.
     """
-    return obj.getvalue().pop(key.getvalue()) # XXX check arg has value!!!
+    return obj.getvalue().pop(key)
 
 @pyfunc
 def dict_items(this):
@@ -1920,14 +1922,14 @@ def nullish_getprop(l, r):
 
     Allows all Object methods (JavaScript is stricter, Python is not).
     """
-    rv = r.getvalue()              # XXX must be Str
-    if l.hasprop(rv):
-        return l.getprop(rv)
+    # XXX check is Str
+    if l.hasprop(r):
+        return l.getprop(r)
 
     ILLEGAL_VALUE = nullish_getprop           # can NEVER be seen
-    val = find_in_class(l, rv, ILLEGAL_VALUE) # may return BoundMethod
+    val = find_in_class(l, r, ILLEGAL_VALUE) # may return BoundMethod
     if val is ILLEGAL_VALUE:
-        raise UError("unknown property '%s' of %s" % (rv, l.classname()))
+        raise UError("unknown property '%s' of %s" % (r.value, l.classname()))
     return val
 
 @pyfunc
@@ -1998,7 +2000,7 @@ def unwrap(x):
         if isinstance(x, list): # XXX handle any iterable?
             return [unwrap(y) for y in x]
         elif isinstance(x, dict): # XXX handle any mapping?
-            return {key: unwrap(val) for key, val in x.items()} # keys Python
+            return {unwrap(key): unwrap(val) for key, val in x.items()} # keys Python
         return x
     if x is undef_value:
         return None
@@ -2011,14 +2013,14 @@ def pyobj_getprop(l, r):
     """
     # XXX r must be Str
     #   for access to Object properties?
-    rv = r.getvalue()                # XXX getstr
+    rv = r.getvalue()                  # XXX check Str
     if hasattr(l.value, rv):
         v = getattr(l.value, rv) # get Python object attribute
     elif l.hasprop(rv):  # check Object properties (most likely empty)
         v = l.getprop(rv)
     else:
         # allow 'to_str' method so Object can be printed!!
-        v = find_in_class(l, rv, undef_value) # may return BoundMethod
+        v = find_in_class(l, r, undef_value) # may return BoundMethod
     return wrap(v)
 
 @pyfunc
@@ -2033,7 +2035,7 @@ def pyobj_getitem(l, r):
     """
     PyObject `[` binop
     """
-    v = l.value[r.getvalue()]        # XXX unwrap(r)??
+    v = l.value[r.getvalue()]   # XXX index PyObject w/ Python value??
     return wrap(v)
 
 @pyfunc
@@ -2184,6 +2186,7 @@ def new_module(fname, main=False, parser_vmx=None):
     # XXX Dict indexed by Python str
     if fname and fname in md.getvalue(): # previously loaded?
         # XXX Dict indexed by Python str
+        # XXX FIXME
         return md.getvalue()[fname], None # yes; return it, no bootstrap needed
 
     scope = scopes.Scope(root_scope) # create base scope for module
@@ -2194,6 +2197,7 @@ def new_module(fname, main=False, parser_vmx=None):
 
     if fname:
         # XXX Dict indexed by Python str
+        # XXX FIXME
         md.getvalue()[fname] = mod   # save as previously loaded
 
     mi = new_modinfo(main=main, module=mod, fname=fname, parser_vmx=parser_vmx)
@@ -2424,5 +2428,7 @@ def_wrappers('Str', str, ['capitalize',
 # more classes here?
 
 ################################################################
+
+OPEN_PAREN = mkstr('(')
 
 classes_scope.defvar(const.DOC, mkstr("Built-in Classes for XXL"))

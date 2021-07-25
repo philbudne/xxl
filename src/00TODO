@@ -1,8 +1,4 @@
-*** BUG: Only CPObjects can be used as Dict keys
-	fix in github branch cobj-dict-key
-	parser.vmx on parser.xxl slowdown 5.27s => 5.798
-	TODO:
-	-- Module.modules dict
+Module.modules dict needs conversion to Str keys??
 
 *** BUG: can overwrite "const" values in a Module!!!
 	need descriptors (slots) ??
