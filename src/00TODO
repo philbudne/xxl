@@ -19,8 +19,7 @@ split Number into Float and Int??
 
 test if implementing VM as chain of if's (on ints)
 	instead step on Instr objects is faster
-	(enough to warrant splitting functionality
-	across different place)
+	(enough to warrant delocalizing opcode info)
 
 split up parser.xxl (into pratt,xlparser,vmcode??)
 
@@ -29,11 +28,10 @@ Make Scopes transparent??  Subclass of Dict??
 	Scope.parent()??
 
 Make callable objects (more) transparent??
-	Closure.get{code,scope,args}()??
+	Closure.get{code,scope}()??
 	BoundMethod.get{object,function}()??
-	Continuation.getframe()
-		Frame object w/ where, scope, code, pc, parent methods?
-		OR getwhere, getscope, getcode, getpc, getparent ->Continuation
+	Continuation.get{where,scope,code,pc,parent}
+		getparent ->Continuation
 
 implement methods, class members, class methods via descriptors???
 	reenable MethodInstr (binop_lit_call?); avoid BoundMethod!!
