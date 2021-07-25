@@ -212,7 +212,7 @@ if (__modinfo.main) {
     if (test == "chan") {
 	var ch = Channel.new("ch", qlen);
 
-	// launch producers
+	// launch producer
 	thread_create(
 	    function () {	// producer
 		__xxl.print("in producer");
