@@ -1325,6 +1325,9 @@ Continuation.setprop(const.METHODS, _mkdict({
 
 ################ Iterable
 
+# mixin/protocol
+# Iterable classes must implement "iter" (Interator factory)
+
 # for_each, each_for, map, map2 in bootstrap.xxl
 Iterable.setprop(const.METHODS, _mkdict({
 }))
@@ -1350,8 +1353,7 @@ def pyiterable_reversed(this):
     """
     Return reverse iterator.
     """
-    # XXX handle TypeError for "not reversible" (dict pre Python 3.8)?
-    # XXX XXX make list, and reverse that??
+    # TypeError for "not reversible" (dict pre Python 3.8)
     return pyiterator(reversed(this.getvalue()))
 
 @pyfunc
@@ -1535,7 +1537,6 @@ List.setprop(const.LHSOPS, _mkdict({
 ################ Number
 
 # XXX TEMP? replace with Int and Real?
-# XXX XXX need to use "to_number" method on LHS (y) values??????!!!!!!
 
 @pyfunc
 def neg(x):
@@ -2074,19 +2075,20 @@ def pyiterator_iter(this):
     return this
 
 @pyvmfunc
-def pyiterator_next(vm, this, finished_continuation):
+def pyiterator_next(vm, this, finished):
     """
-    Returns next value; calls `finished_continuation`
-    (eg; block leave label or `return`) to call when iterator exhausted.
+    Returns next value; calls `finished`
+    (a block leave label or `return` Continuation)
+    to call when iterator exhausted.
     """
     try:
         return wrap(next(this.value))
     except StopIteration:
         # here to avoid check on each iteration:
-        if not isinstance(finished_continuation, CContinuation):
+        if not isinstance(finished, CContinuation):
             raise UError("iterator .next takes Continuation")
         vm.args = []            # will be defaulted to null
-        finished_continuation.invoke(vm) # alters VM state; RETURN IMMEDIATELY!
+        finished.invoke(vm)     # alters VM state; RETURN IMMEDIATELY!
     return null_value
 
 PyIterator.setprop(const.METHODS, _mkdict({
