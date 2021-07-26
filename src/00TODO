@@ -1,6 +1,11 @@
 *** BUG: can overwrite "const" values in a Module!!!
 	need descriptors (slots) ??
 
+doc.xxl
+	change `thing` to <code>thing</code>
+	treat blank line as <p>
+	change ```stuff``` to <pre>stuff</pre>
+
 ================================================================
 NOTE! many of these are just thoughts, possibly bad ones!
 ================================================================
@@ -99,12 +104,6 @@ Can lexer operator/name dichotomy be eliminated????
 
 XXXop opcodes, PyFunc.invoke do not consume vm.args
 	("clargs" needed for spread args; clear needed in "call")
-
-doc.xxl
-    HTML: use re's to change `thing` in docstrings to <code></code>
-    detect ```stuff``` and DON'T smush together???
-	treat blank line as HTML <p>
-	change ```stuff``` to HTML <pre>stuff</pre>
 
 Makefile:
 	bootstrap.vmx:
