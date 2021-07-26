@@ -6,6 +6,10 @@ doc.xxl
 	treat blank line as <p>
 	change ```stuff``` to <pre>stuff</pre>
 
+Call Python to XXL:
+	tail call: thing.invoke()?
+	tail call w/ Python callback
+
 ================================================================
 NOTE! many of these are just thoughts, possibly bad ones!
 ================================================================
