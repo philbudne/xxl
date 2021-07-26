@@ -25,9 +25,9 @@ When I returned, I translated Crockford's parser to Python to play
 with, called jsparse.py
 
 In December 2013 I made notes about a type system, and thoughts about
-"sc2k", a SNOBOL4 for the 2000's, entiled "ASAP (as simple as
-possible) but not simpler" where code in brace enclosed blocks
-generated a closure.
+"sc2k", a Snocone (rational SNOBOL4) for the 2000's, entiled "ASAP (as
+simple as possible, but not simpler)" where code in brace enclosed
+blocks generated a closure.
 
 LULL
 
