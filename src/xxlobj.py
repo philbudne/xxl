@@ -72,7 +72,7 @@ def xxl_uerror(msg):
 
 ################
 
-XXL_LIB_PATH = os.getenv('XXL_LIB_PATH',  const.XXL_LIB_PATH)\
+XXL_LIB_PATH = os.getenv('XXL_LIB_PATH', const.XXL_LIB_PATH)\
                  .split(os.path.pathsep)
 
 DEBUG_LIB_PATH = False
@@ -251,7 +251,7 @@ def format_instr(instr, indent=''):
 
     # here to handle "close" and "bccall" (instr[2] is a code list)
     nindent = indent + " "
-    ret = [indent, '["', instr[0], '", "', op, '",\n', nindent ]
+    ret = [indent, '["', instr[0], '", "', op, '",\n', nindent]
     ret.extend(format_code(instr[2], nindent))
     if op == "close" and len(instr) >= 4 and instr[3]: # now with doc string!!
         ret.append(',\n')
@@ -367,7 +367,7 @@ def create_xxl_class(argv, parser_vmx):
     XXLObject.setprop('backtrace', xxl_backtrace) # output backtrace to stderr
 
     # command line args, and exit:
-    XXLObject.setprop('argv',  classes.wrap(argv)) # move to ModInfo??
+    XXLObject.setprop('argv', classes.wrap(argv)) # move to ModInfo??
     XXLObject.setprop('exit', xxl_exit)            # move to ModInfo??
 
     # for parser & bootstrap:
