@@ -107,6 +107,8 @@ if (true) {			// private variables
 	Iterable.__methods['for_each'] = function (this, func) {
 	    """
 	    Create Iterator from `this`, call `func` with each value.
+	    Iterator `next` method calls `return` continuation when exhausted.
+	    returns `null`
 	    """
 	    var iter = this.iter();
 	    while (true) {
@@ -117,6 +119,7 @@ if (true) {			// private variables
 	Iterable.__methods['each_for'] = function (this, func) {
 	    """
 	    Create reverse Iterator from `this`, call `func` with each value.
+	    Iterator `next` method calls `return` continuation when exhausted.
 	    returns `null`
 	    """
 	    var iter = this.reversed();
