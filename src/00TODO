@@ -14,6 +14,14 @@ Call Python to XXL:
 NOTE! many of these are just thoughts, possibly bad ones!
 ================================================================
 
+Use Python type hints, check code with mypy
+
+Implement typing in XXL??
+
+move basic statements (if, while) to own files, load in bootstrap?
+
+__class_methods??
+
 CLEANUP
 =======
 split Number into Float and Int??
