@@ -5,12 +5,15 @@
 # 2021-05-04
 # Public Domain
 
-import sys                      # stderr
 import readline                 # enable editing in input()
+import sys                      # stderr
+from typing import Optional, TextIO, Union
+
+TokenValue = Union[str, int, float]
 
 # Produce simple token objects from a string.
 # A simple token object contains these members:
-#      type: 'name', 'string', 'number', 'operator', 'EOF', 'ERROR'
+#      type_: 'name', 'string', 'number', 'operator', 'EOF', 'ERROR'
 #      value: string or number value of the token
 #      from: index of first character of the token
 #      to: index of the last character + 1
@@ -40,7 +43,8 @@ NHEX_CHARS = { # number of hex chars for numeric escapes
 }
 
 class Token(object):
-    def __init__(self, type_, value, lineno, from_, to, msg=None):
+    def __init__(self, type_: str, value: TokenValue,
+                 lineno: int, from_: int, to: int, msg: Optional[str] = None):
         self.type_ = type_
         self.value = value
         self.from_ = from_
@@ -48,15 +52,15 @@ class Token(object):
         self.to = to
         self.msg = msg
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<Token %s %r l%d %d:%d>" % \
             (self.type_, self.value, self.lineno, self.from_, self.to)
 
 class Stream(object):
-    def __init__(self, f, interactive):
+    def __init__(self, f: TextIO, interactive: bool):
         self.f = f
         self.interactive = interactive
-        self.nextc = None
+        self.nextc: Optional[str] = None
         self.reset()
         self.line_ = 1
         self.reset_prompt()
@@ -64,24 +68,24 @@ class Stream(object):
         self.origline = self.prevline = -1
         self.advance()
 
-    def reset_prompt(self):
+    def reset_prompt(self) -> None:
         self.prompt = PROMPT1
 
-    def reset(self):
+    def reset(self) -> None:
         self.i = 0
         self.buf = ''
 
-    def change_prompt(self):
+    def change_prompt(self) -> None:
         self.prompt = PROMPT2
         #print("change", self.prompt)
 
-    def pos(self):
+    def pos(self) -> int:
         return self.i
 
-    def line(self):
+    def line(self) -> int:
         return self.line_
 
-    def getc(self):
+    def getc(self) -> str:
         """
         lowest level: return next character from file
         """
@@ -108,7 +112,7 @@ class Stream(object):
             if not self.buf:
                 return ''
 
-    def pointer(self, line, pos):
+    def pointer(self, line: int, pos: int) -> None:
         """
         output pointer to start of token to stderr
         """
@@ -136,7 +140,7 @@ class Stream(object):
         sys.stderr.write(''.join(point))
         sys.stderr.flush()      # needed w/ PyPy3 7.3.1
 
-    def advance(self):
+    def advance(self) -> None:
         """
         consume current character (self.ch) and reload
         """
@@ -150,14 +154,14 @@ class Stream(object):
             self.line_ += 1
             self.i = 0
 
-    def next(self):
+    def next(self) -> str:
         self.advance()
         return self.curr()
 
-    def curr(self):
+    def curr(self) -> str:
         return self.ch
 
-    def peek(self):
+    def peek(self) -> str:
         if self.nextc is None:
             self.nextc = self.getc()
         if self.nextc: 
@@ -165,46 +169,46 @@ class Stream(object):
         else:
             return ''
 
-def isalpha(c):
+def isalpha(c: str) -> bool:
     return c.isalpha() or c == '_'
 
-def isunicode(c):
+def isunicode(c: str) -> bool:
     """
     return True if `c` is a non-ASCII unicode code point
     """
     return c != '' and ord(c) >= 128
 
 class Tokenizer:
-    def __init__(self, f, prefix, suffix, interactive=False):
+    def __init__(self, f: TextIO, prefix: str, suffix: str,
+                 interactive: bool = False):
         self.prefix = prefix
         self.suffix = suffix
-        self.c = ''             # Current character.
         self.s = Stream(f, interactive)
         self.from_ = self.s.pos() # The index of the start of the token.
         self.line = self.s.line()
-        self.q = None           # The quote character.
+        self.q: Optional[str] = None # The quote character.
         self.reset_prompt()
-        self.c = self.s.curr()
+        self.c: str = self.s.curr()
 
-    def reset_prompt(self):
+    def reset_prompt(self) -> None:
         self.s.reset_prompt()
 
-    def reset(self):
+    def reset(self) -> None:
         self.s.reset()
         self.c = ' '
 
-    def make(self, type_, value):
+    def make(self, type_: str, value: TokenValue) -> Token:
         #print('make', type_, value, self.line, self.from_, file=sys.stderr)
         self.s.change_prompt()
         return Token(type_, value, self.line, self.from_, self.s.pos())
 
-    def make_error(self, value, msg):
+    def make_error(self, value: str, msg: str) -> Token:
         return Token('ERROR', value, self.line, self.from_, self.s.pos(), msg)
 
-    def pointer(self, line, pos):
+    def pointer(self, line: int, pos: int) -> None:
         self.s.pointer(line, pos)
 
-    def next(self):
+    def next(self) -> Token:
         while self.c:
             self.from_ = self.s.pos()
             self.line = self.s.line()
@@ -367,11 +371,10 @@ class Tokenizer:
                                                            "Unterminated string")
                                 h += self.c
                             try:
-                                self.c = int(h, 16)
+                                self.c = chr(int(h, 16))
                             except ValueError:
                                 return self.make_error(str_,
                                                        "Unterminated string")
-                            self.c = chr(self.c)
                         # end c in NHEX_CHARS
                     # end escapement
                     #print("appending", self.c)
@@ -420,11 +423,12 @@ if __name__ == "__main__":
         tokenizer = Tokenizer(open(sys.argv[1]), prefix, suffix, False)
     else:
         tokenizer = Tokenizer(sys.stdin, prefix, suffix, True)
-    t = 1
-    while t:
+    while True:
         t = tokenizer.next()
         print(t)
         if t:
             tokenizer.pointer(t.lineno, t.from_)
             if t.type_ == 'EOF':
                 break
+        else:
+            break
