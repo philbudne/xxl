@@ -23,34 +23,39 @@
 (the remains of terp.py)
 """
 
+from typing import Dict, Optional
+
 import classes                  # CContinuation, UError
+import frame
+
+VarsDict = Dict[str, classes.CObject]
 
 class Scope:
     """
     runtime scope.
     currently invisible (or at least opaque)
     """
-    def __init__(self, parent=None):
+    def __init__(self, parent: Optional["Scope"] = None) -> None:
         self.parent = parent
-        self.vars = {}
+        self.vars: VarsDict = {}
 
-    def new_scope(self):
+    def new_scope(self) -> "Scope":
         """
         create a scope using current scope as parent
         """
         return Scope(self)
 
-    def func_scope(self, fp):
+    def func_scope(self, fp: frame.Frame) -> "Scope":
         s = Scope(self)
         s.defvar('return', classes.CContinuation(fp))
         return s
 
-    def labeled_scope(self, fp, name): # Closure with leave label
+    def labeled_scope(self, fp: frame.Frame, name: str) -> "Scope": # Closure with leave label
         s = Scope(self)
         s.defvar(name, classes.CContinuation(fp))
         return s
 
-    def defvar(self, var, value):
+    def defvar(self, var: str, value: classes.CObject) -> None:
         """
         `var` is Python string
         `value` is CObject
@@ -61,8 +66,8 @@ class Scope:
     # XXX the compiler could tell us how far up the ("static") scope chain
     # the variable lives (and could assign numeric slot ids for variable
     # lookup to avoid dict)
-    def lookup(self, name):
-        s = self
+    def lookup(self, name: str) -> classes.CObject:
+        s: Optional[Scope] = self
         while s:
             if name in s.vars:
                 return s.vars[name]
@@ -70,12 +75,12 @@ class Scope:
         raise classes.UError("Unknown variable %s" % name) # SNH
 
     # see note above "lookup" (compiler could tell us stuff)
-    def store(self, name, val):
+    def store(self, name: str, val: classes.CObject) -> classes.CObject:
         """
         name: Python string
         val: CObject
         """
-        s = self
+        s: Optional[Scope] = self
         while s:
             if name in s.vars:
                 s.vars[name] = val
@@ -83,5 +88,5 @@ class Scope:
             s = s.parent
         raise classes.UError("Unknown variable %s" % name)
 
-    def get_vars(self):         # UGH! used by new_module
+    def get_vars(self) -> VarsDict:  # UGH! used by new_module
         return self.vars

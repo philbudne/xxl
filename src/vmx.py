@@ -30,50 +30,59 @@ Started from VM descriptions in
 """
 import sys                      # stderr
 import json
-import time
 import collections
+import time
+from typing import Any, Dict, List, Optional, TextIO, Tuple, Type, Union, TYPE_CHECKING
 
 import classes
 import xxlobj
 import const
+import frame
 import jslex                    # LexError
+import scopes
+
+if TYPE_CHECKING:
+    from classes import CObject
+
+ArgNames = List[str]
+IJSON = List[Any]               # FIXME!
+IValue = Union[int, str, "CObject"]
 
 # opcodes where inst[2] is code list, used in xxlobj.py:
 INST2CODE = ('close', 'bccall')
 
-instr_class_by_name = {}        # Instr classes by name
+instr_class_by_name: Dict[str, Type["VMInstr0"]] = {}  # Instr classes by name
 
 class VMError(Exception):
     """
     exception class for VM instruction errors
     """
 
-# VM frame pointer register "fp" points to a frame tuple,
-# implementing a "parent pointer" (aka cactus/saguro/spaghetti) stack.
-# XXX save vm.args for backtrace?
-F_CB, F_PC, F_SCOPE, F_FP, F_FN, F_WHERE, F_SHOW = 0, 1, 2, 3, 4, 5, 6
-
 # called from fp_backtrace (below), CContinuation.defn
-def fp_where(fp):
+def fp_where(fp: frame.Frame) -> str:
     """
     Return "filename:line:col" for stack frame
     """
     # gives CALLER location (from VM IR register at time of call)
-    return "%s:%s" % (fp[F_FN], fp[F_WHERE])
+    return "%s:%s" % (fp[frame.F_FN], fp[frame.F_WHERE])
     # gives return location (PC incremented before call)
-    #return fp[F_CB][fp[F_PC]].fn_where()
+    #return fp[frame.F_CB][fp[frame.F_PC]].fn_where()
 
 # called from VM.backtrace, CContinuation.backtrace
-def fp_backtrace_list(fp):
+def fp_backtrace_list(fp: Optional[frame.Frame]) -> List[str]:
     """
     Return Python list of str of CALLER locations in fp stack
     """
     ret = []
     while fp:
-        if fp[F_SHOW]:
+        if fp.show:
             ret.append(fp_where(fp))
-        fp = fp[F_FP]
+        fp = fp.fp
     return ret
+
+StackVal = Any                  # XXX
+Stack = Tuple[StackVal, "SP"]
+SP = Optional[Stack]
 
 class VM:
     """
@@ -87,15 +96,15 @@ class VM:
                  'op_count', 'op_time', 'stats', 'trace',
                  'bop_count', 'bop_time']
 
-    def __init__(self, stats, trace):
+    def __init__(self, stats: bool, trace: bool):
         self.run = False
-        self.ac = None          # CObject: Accumulator
-        self.sp = None          # Stack Pointer (value, next) tuples
-        self.cb = None          # Code Base (Python list of VMInstr)
-        self.scope = None       # Scope: Current scope
+        self.ac: Optional[classes.CObject] = None # CObject: Accumulator
+        self.sp: SP = None      # Stack Pointer (value, next) tuples
+        self.cb: Optional[frame.Code] = None # Code Base (Python list of VMInstr)
+        self.scope: Optional[scopes.Scope] = None # Scope: Current scope
         self.pc = 0             # int: offset into code base
-        self.ir = None          # VMInstr: Instruction Register
-        self.fp = None          # Frame: Frame pointer (for return)
+        self.ir: Optional[VMInstr0] = None          # VMInstr: Instruction Register
+        self.fp: Optional[frame.Frame] = None # Frame: Frame pointer (for return)
         self.temp = None        # holds new Dict/List
         self.stats = stats      # bool: enable timing
         self.trace = trace      # bool: enable tracing
@@ -105,9 +114,9 @@ class VM:
         # "args" opcode before ANY other call/op can occur (so never
         # needs to be preserved).  Other CObject subclasses may
         # consume directly.
-        self.args = []
+        self.args: List[classes.CObject] = []
 
-    def start(self, code, scope):
+    def start(self, code: frame.Code, scope: scopes.Scope) -> None:
         self.run = True         # cleared by 'exit' instr
         self.pc = 0
         self.cb = code
@@ -118,7 +127,7 @@ class VM:
         elif self.trace:
             return self._start_trace()
 
-        while self.run:
+        while self.run and self.cb:
             # XXX might be faster (avoid indexing a list) to
             #   create a "next" pointer on VM code "read-in"
             #   (run list in reverse;
@@ -128,7 +137,7 @@ class VM:
             self.pc += 1        # jumps will overwrite
             ir.step(self)       # execute instruction
 
-    def _getcols(self, f=sys.stdout):
+    def _getcols(self, f: TextIO = sys.stdout) -> int:
         try:
             import os
             import stat
@@ -144,10 +153,12 @@ class VM:
             import struct
             import termios
             rows, cols = struct.unpack(
-                'hh', fcntl.ioctl(f.fileno(), termios.TIOCGWINSZ, "\000"*8)[0:4]
+                'hh', fcntl.ioctl(f.fileno(),
+                                  termios.TIOCGWINSZ,
+                                  b"\000"*8)[0:4]
             )
             #print("cols", cols, "rows", rows)
-            return cols
+            return int(cols)
         except:
             pass
 
@@ -159,7 +170,7 @@ class VM:
             pass
         return 0
 
-    def _start_trace(self):
+    def _start_trace(self) -> None:
         cols = self._getcols()
         sep = ' | '
         #print("cols", cols)
@@ -172,7 +183,7 @@ class VM:
             # output to file, width unavailable, or tiny
             format = "%%s%s%%s" % sep
 
-        while self.run:
+        while self.run and self.cb:
             # NOTE! self.ir for debug.
             self.ir = ir = self.cb[self.pc] # instruction register
             self.pc += 1        # jumps will overwrite
@@ -180,19 +191,21 @@ class VM:
             irstr = str(ir)[1:-1] # remove []'s -- XXX remove quotes too???
             print(format % (irstr, str(self.ac)))
 
-    def _start_stats(self):
+    def _start_stats(self) -> None:
         # stats
-        self.op_count = {}
-        self.op_time = {}
-        self.bop_count = {}
-        self.bop_time = {}
+        CDict = Dict[str, int]
+        TDict = Dict[str, float]
+        self.op_count: CDict = {}
+        self.op_time: TDict = {}
+        self.bop_count: CDict = {}
+        self.bop_time: TDict = {}
 
         for op in instr_class_by_name.keys():
             self.op_count[op] = self.op_time[op] = 0
         trace = self.trace
         # XXX inside try, to catch SystemExit???
         # (so __xxl.exit() doesn't bypass stats)
-        while self.run:
+        while self.run and self.cb:
             self.ir = ir = self.cb[self.pc] # instruction register
             self.pc += 1        # jumps will overwrite
             t0 = time.time()
@@ -202,7 +215,8 @@ class VM:
             if trace:
                 print(ir, self.ac)
 
-        ttime = tcount = 0
+        ttime = 0.0
+        tcount = 0
         for op in instr_class_by_name:
             ttime += self.op_time[op]
             tcount += self.op_count[op]
@@ -223,7 +237,7 @@ class VM:
 
         print("", file=s)
         bcount = 0
-        btime = 0
+        btime = 0.0
         for op in self.bop_count:
             bcount += self.bop_count[op]
             btime += self.bop_time[op]
@@ -242,7 +256,7 @@ class VM:
 
             print(op, self.bop_count[op], pcount, ptime, ratio, file=s)
 
-    def dump_stack(self):
+    def dump_stack(self) -> None:
         """
         dump (call argument) stack for debugging
         """
@@ -251,49 +265,51 @@ class VM:
             print("  ", t[0])
             t = t[1]
 
-    def save_frame(self, show=True):
+    def save_frame(self, show: bool = True) -> None:
         # called from CClosure.invoke (always call before .invoke??)
         #       would need to call restore_frame inside all .invoke methods??
         #       would allow Python callees to use same VM???
         # called from CBClosure.invoke w/ show=False
         # XXX save self.args for backtraces??
-        self.fp = (self.cb, self.pc, self.scope, self.fp,
-                   self.ir.fn, self.ir.where, show)
+        assert self.ir is not None
+        self.fp = frame.Frame(self.cb, self.pc, self.scope, self.fp,
+                              self.ir.fn, self.ir.where, show)
 
-    def backtrace(self):        # XXX take file to write to?
+    def backtrace(self) -> None: # XXX take file to write to?
         """
         Write return stack to stderr.
         """
         for return_location in fp_backtrace_list(self.fp):
             sys.stderr.write(" called from %s\n" % return_location)
 
-    def push(self, val):
+    def push(self, val: StackVal) -> None:
         """
         push onto saguro/cactus/spaghetti stack,
         necessary for continuations.
         """
         self.sp = (val, self.sp) # MUST be immutable!
 
-    def pop(self):
+    def pop(self) -> StackVal:
         """
         pop from cactus stack
         moves pointer in chain,
         does not modify existing entries.
         """
+        assert self.sp is not None
         val, self.sp = self.sp  # unpack top of stack
         return val
 
-    def restore_frame(self, frame):
+    def restore_frame(self, fp: frame.Frame) -> None:
         """
         "return" using saved frame pointer
         helper used by ReturnInstr and CContinuation.invoke
         """
-        self.cb, self.pc, self.scope, self.fp, _, _, _ = frame
+        self.cb, self.pc, self.scope, self.fp, _, _, _ = fp
 
 ################################################################
 # VM instructions
 
-def reginstr(inst_class):
+def reginstr(inst_class: Type[VMInstr0]) -> Type[VMInstr0]:
     """
     Decorator for VMInst classes for reading in JSON representations.
     Registers the instruction class in `instr_class_by_name` for the
@@ -303,7 +319,7 @@ def reginstr(inst_class):
     name = inst_class.name
     if name in instr_class_by_name:
         raise VMError("duplicate entry for %s instruction (%s)" %
-                      (name, instr_class))
+                      (name, inst_class))
     instr_class_by_name[name] = inst_class
     return inst_class           # unmodified class
 
@@ -313,33 +329,35 @@ class VMInstr0:
     """
     __slots__ = ['fn', 'where']
 
-    def __init__(self, fn, where):
+    name: str
+
+    def __init__(self, fn: str, where: str):
         self.fn = fn
         self.where = where
 
-    def fn_where(self):         # for trace
+    def fn_where(self) -> str:  # for trace
         """
         Return str with "filename:line:position"
         """
         return "%s:%s" % (self.fn, self.where)
 
-    def json(self):
+    def json(self) -> IJSON:
         """
         Return a Python list representation of this instruction.
         """
         return [self.fn_where(), self.name]
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         """
         Perform (execute) this instruction.
         """
         raise VMError("'%s' has no step method" % type(self).__name__)
 
-    def prof(self, vm, elapsed):
+    def prof(self, vm: "VM", secs: float) -> None:
         vm.op_count[self.name] += 1
-        vm.op_time[self.name] += elapsed
+        vm.op_time[self.name] += secs
 
-    def args(self):
+    def args(self) -> ArgNames:
         """
         For instructions that can appear as the first instruction
         in a Closure, return a Python list of str's for the
@@ -348,7 +366,7 @@ class VMInstr0:
         """
         return []
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self.json())
 
 class VMInstr1(VMInstr0):
@@ -357,11 +375,11 @@ class VMInstr1(VMInstr0):
     """
     __slots__ = ['name', 'where', 'value']
 
-    def __init__(self, fn, where, value):
+    def __init__(self, fn: str, where: str, value: IValue):
         super().__init__(fn, where)
         self.value = value
 
-    def json(self):
+    def json(self) -> IJSON:
         return [self.fn_where(), self.name, self.value]
 
 class VMInstr2(VMInstr0):
@@ -371,12 +389,12 @@ class VMInstr2(VMInstr0):
     """
     __slots__ = ['name', 'where', 'v1', 'v2']
 
-    def __init__(self, fn, where, v1, v2):
+    def __init__(self, fn: str, where: str, v1: IValue, v2: IValue):
         super().__init__(fn, where)
         self.v1 = v1
         self.v2 = v2
 
-    def json(self):
+    def json(self) -> IJSON:
         return [self.fn_where(), self.name, self.v1, self.v2]
 
 class WrapInstr1(VMInstr1):
@@ -384,7 +402,7 @@ class WrapInstr1(VMInstr1):
     base for VM Instructions with one argument, wrapped on input
     """
 
-    def __init__(self, fn, where, value):
+    def __init__(self, fn: str, where: str, value: IValue):
         # convert to CObject when code is loaded
         super().__init__(fn, where, classes.wrap(value))
 
@@ -397,7 +415,7 @@ class LitInstr(WrapInstr1):
     """
     name = "lit"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         vm.ac = self.value
 
 @reginstr
@@ -409,7 +427,7 @@ class PushLitInstr(LitInstr):
 
     # __init__ from LitInstr
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         vm.push(self.value)
 
 @reginstr
@@ -419,7 +437,7 @@ class PushInstr(VMInstr0):
     """
     name = "push"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         vm.push(vm.ac)
 
 @reginstr
@@ -430,7 +448,7 @@ class TempInstr(VMInstr0):
     """
     name = "temp"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         vm.ac = vm.temp
 
 @reginstr
@@ -442,7 +460,7 @@ class PopTempInstr(VMInstr0):
     """
     name = "pop_temp"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         vm.ac = vm.temp
         vm.temp = vm.pop()
 
@@ -455,7 +473,11 @@ class LoadInstr(VMInstr1):
     """
     name = "load"
 
-    def step(self, vm):
+    def __init__(self, fn: str, where: str, value: str):
+        super().__init__(fn, where, value)
+
+    def step(self, vm: "VM") -> None:
+        assert vm.scope
         vm.ac = vm.scope.lookup(self.value)
 
 @reginstr
@@ -470,18 +492,20 @@ class BinOpInstr(WrapInstr1):
     """
     name = "binop"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         arg = vm.pop()
         # NOTE: find_op does not return BoundMethod:
+        assert vm.ac
         vm.args = [vm.ac, arg]  # explicitly pass "this" object
         m = classes.find_op(vm.ac, const.BINOPS, self.value)
         m.invoke(vm)            # XXX always create frame???
 
-    def prof(self, vm, secs):
+    def prof(self, vm: "VM", secs: float) -> None:
         super().prof(vm, secs)
-        op = self.value         # NOT a CObject!
+        op: str = self.value    # NOT a CObject!
         if op not in vm.bop_count:
-            vm.bop_count[op] = vm.bop_time[op] = 0
+            vm.bop_time[op] = 0.0
+            vm.bop_count[op] = 0
         vm.bop_count[op] += 1
         vm.bop_time[op] += secs
 
@@ -493,18 +517,19 @@ class BinOpLitInstr(BinOpInstr): # NOTE! inherits special "prof" method!
     name = "binop_lit"
 
     __slots__ = ['lit']
-    def __init__(self, fn, where, op, lit):
+    def __init__(self, fn: str, where: str, op: str, lit: str):
         super().__init__(fn, where, op) # vm.call_op expects op in "value"
         # convert to Class when code is loaded
         self.lit = classes.wrap(lit)
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         # NOTE: find_op does not return BoundMethod:
+        assert vm.ac
         vm.args = [vm.ac, self.lit] # explicitly pass "this" object
         m = classes.find_op(vm.ac, const.BINOPS, self.value)
         m.invoke(vm)            # XXX always create frame???
 
-    def json(self):
+    def json(self) -> IJSON:
         return [self.fn_where(), self.name, self.value, self.lit]
 
 @reginstr
@@ -519,10 +544,11 @@ class LHSOpInstr(WrapInstr1):
     """
     name = "lhsop"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         arg1 = vm.pop()         # index or property
         arg2 = vm.pop()         # value to store
         # NOTE: find_op does not return BoundMethod:
+        assert vm.ac
         vm.args = [vm.ac, arg1, arg2] # explicitly pass "this" object
         m = classes.find_op(vm.ac, const.LHSOPS, self.value)
         m.invoke(vm)            # XXX always create frame???
@@ -537,8 +563,9 @@ class UnOpInstr(WrapInstr1):
     """
     name = "unop"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         # NOTE: find_op does not return BoundMethod:
+        assert vm.ac
         vm.args = [vm.ac]       # pass "this" object
         m = classes.find_op(vm.ac, const.UNOPS, self.value)
         m.invoke(vm)            # XXX always create frame???
@@ -552,14 +579,16 @@ class CloseInstr(VMInstr1):
     name = "close"
     __slots__ = ['doc']
 
-    def __init__(self, fn, where, value, doc=None):
+    def __init__(self, fn: str, where: str,
+                 value: frame.Code,
+                 doc: Optional[str] = None):
         super().__init__(fn, where, convert_instrs(value, fn))
         self.doc = doc
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         vm.ac = classes.CClosure(self.value, vm.scope, self.doc)
 
-    def json(self):
+    def json(self) -> IJSON:
         return [self.fn_where(), self.name, self.value, self.doc]
 
 @reginstr
@@ -570,7 +599,7 @@ class BCCallInstr(CloseInstr):
     """
     name = "bccall"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         c = classes.CBClosure(self.value, vm.scope)
         c.invoke(vm)
 
@@ -586,7 +615,7 @@ class CallInstr(VMInstr1):
     """
     name = "call"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         nargs = self.value
         vm.args = []
         while nargs > 0:
@@ -598,6 +627,7 @@ class CallInstr(VMInstr1):
         # save_frame here, so same VM can be used for any invokes from 
         # Python code (and better tracebacks)?
         # CPyFunc (et al) would need to restore_frame at end of invoke method.
+        assert vm.ac
         vm.ac.invoke(vm)
 
 @reginstr
@@ -610,7 +640,7 @@ class ClearArgsInstr(VMInstr0):
     """
     name = "clargs"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         vm.args = []
 
 @reginstr
@@ -621,7 +651,7 @@ class PopArgInstr(VMInstr0):
     """
     name = "poparg"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         arg = vm.pop()          # pop argument
         #print("poparg", arg)
         vm.args.append(arg)
@@ -633,7 +663,7 @@ class SpreadArgInstr(VMInstr0):
     used for calls with spread arguments (...array)
     """
     name = "sprarg"
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         arg = vm.pop()            # pop argument
         #print("sparg", arg)
         vm.args.extend(arg.value) # XXX getlist
@@ -646,8 +676,9 @@ class Call0Instr(VMInstr0):
     """
     name = "call0"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         #print("call0", vm.args)
+        assert vm.ac
         vm.ac.invoke(vm)
 
 @reginstr
@@ -659,7 +690,8 @@ class AppendInstr(VMInstr0):
     """
     name = "append"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
+        assert vm.temp
         vm.temp.value.append(vm.ac)
 
 # No longer used for return statement (it no longer exists), BUT, is
@@ -673,7 +705,8 @@ class ReturnInstr(VMInstr0):
     """
     name = "return"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
+        assert vm.fp
         vm.restore_frame(vm.fp)
 
 @reginstr
@@ -684,7 +717,7 @@ class ExitInstr(VMInstr0):
     """
     name = "exit"               # XXX rename to "halt"???
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         #sys.stderr.write("exit\n")
         vm.run = False
 
@@ -696,10 +729,11 @@ class VarInstr(VMInstr1):
     """
     name = "var"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         # XXX maybe explicitly generate "load undefined",
         #       and remove assignment w/ initializer?
         vm.ac = classes.undef_value
+        assert vm.scope
         vm.scope.defvar(self.value, vm.ac)
 
 @reginstr
@@ -715,12 +749,14 @@ class ArgsInstr(VMInstr1):
     """
     name = "args"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         if len(vm.args) > len(self.value):
             raise classes.UError("too many arguments. got %d, expected %d" %
                                  (len(vm.args), len(self.value)))
         # NOTE: scope.func_scope() creates a cactus stack of scopes;
         #       defines 'return' as a Continuation to prev frame
+        assert vm.scope
+        assert vm.fp
         vm.scope = vm.scope.func_scope(vm.fp)
         for formal in self.value:  # loop for formals
             if vm.args:            # actuals left?
@@ -729,7 +765,7 @@ class ArgsInstr(VMInstr1):
                 val = classes.undef_value # no: use undefined
             vm.scope.defvar(formal, val) # declare as variable
 
-    def args(self):
+    def args(self) -> ArgNames:
         """
         return list of str for arguments, for docs
         """
@@ -750,10 +786,13 @@ class Args2Instr(VMInstr2):
     """
     name = "args2"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         # NOTE: scope.func_scope() creates a cactus stack of scopes
+        assert vm.scope
+        assert vm.fp
         vm.scope = vm.scope.func_scope(vm.fp)
         for formal in self.v1:       # loop for formals
+            val: classes.CObject
             if vm.args:              # actuals left?
                 val = vm.args.pop(0) # yes: pop a value
             else:
@@ -762,9 +801,10 @@ class Args2Instr(VMInstr2):
 
         # create List from remaining args
         l = classes.new_by_name('List', vm.args) # XXX want frozen?
+        assert vm.scope
         vm.scope.defvar(self.v2, l)  # declare as variable
 
-    def args(self):
+    def args(self) -> ArgNames:
         """
         return list of str for arguments, for docs
         """
@@ -777,8 +817,10 @@ class LScopeInstr(VMInstr1):
     """
     name = "lscope"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         # creates new scope, w/ named Continuation to leave it
+        assert vm.scope
+        assert vm.fp
         vm.scope = vm.scope.labeled_scope(vm.fp, self.value)
 
 @reginstr
@@ -788,7 +830,8 @@ class UScopeInstr(VMInstr0):
     """
     name = "uscope"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
+        assert vm.scope
         vm.scope = vm.scope.new_scope()
 
 @reginstr
@@ -800,7 +843,8 @@ class StoreInstr(VMInstr1):
     """
     name = "store"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
+        assert vm.scope
         vm.scope.store(self.value, vm.ac)
 
 @reginstr
@@ -812,7 +856,7 @@ class JrstInstr(VMInstr1):
     """
     name = "jrst"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         vm.pc = self.value
 
 @reginstr
@@ -824,7 +868,7 @@ class JumpNInstr(VMInstr1):
     """
     name = "jumpn"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         if classes.is_true(vm.ac):
             vm.pc = self.value
 
@@ -837,7 +881,7 @@ class JumpEInstr(VMInstr1):
     """
     name = "jumpe"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         if not classes.is_true(vm.ac):
             vm.pc = self.value
 
@@ -851,23 +895,22 @@ class NewInstr(VMInstr1):
     """
     name = "new"
 
-    def step(self, vm):
+    def step(self, vm: "VM") -> None:
         vm.push(vm.temp)
         if self.value == 'Dict':
-            v = {}
+            vm.temp = classes.new_by_name(self.value, {})
         elif self.value == 'List':
-            v = []
+            vm.temp = classes.new_by_name(self.value, [])
         elif self.value == 'Set':
-            v = set()
+            vm.temp = classes.new_by_name(self.value, set())
         else:
             VMError("new Instr unknown type %s" % self.value)
-        vm.temp = classes.new_by_name(self.value, v)
 
 ################
 # convert Python list into XxxInstr(ruction) instances
 # (this is the .vmx file assembler!)
 
-def convert_one_instr(i, fn):
+def convert_one_instr(i: List[str], fn: str) -> VMInstr0:
     """
     take single instruction in JSON form and assemble.
     i[0] is "line:char"
@@ -878,7 +921,7 @@ def convert_one_instr(i, fn):
     # create new instruction instance
     return instr_class_by_name[op](fn, *i)
 
-def convert_instrs(il, fn):
+def convert_instrs(il: IJSON, fn: str) -> frame.Code:
     """
     assemble a list of instructions in JSON form
     fn is filename
@@ -887,7 +930,7 @@ def convert_instrs(il, fn):
     return [convert_one_instr(x, fn) for x in il]
 
 # called by classes.new_module (w/ bootstrap.vmx) and ModInfo.load_vmx method
-def load_vm_json(fname):
+def load_vm_json(fname: str) -> frame.Code:
     with open(fname) as f:
         l = f.readline()
 
@@ -913,9 +956,8 @@ def load_vm_json(fname):
 ################
 
 # helper for ModInfo.assemble
-def assemble(scope, tree, srcfile):
+def assemble(tree: classes.CObject, srcfile: classes.CObject) -> frame.Code:
     """
-    Scope `scope` for Lit type name lookup
     List of Lists `tree` of instructions to assemble
     str `srcfile` source file name for trimming "where" fields
     """
@@ -928,16 +970,23 @@ def assemble(scope, tree, srcfile):
 ################
 
 # XXX make a VM method?!!!
-def run(boot, scope, stats, trace, xcept):
+def run(boot: classes.CClosure,
+        scope: scopes.Scope,
+        stats: bool,
+        trace: bool,
+        xcept: bool):
     """
     cold start (from xxl.py)
     `boot` is Closure w/ bootstrap.vmx code for main module
     """
     vm = VM(stats=stats, trace=trace)
 
-    user_errors = always_user_errors = (classes.UError,)
-    internal_errors = (VMError, AssertionError)
-    errors = (KeyboardInterrupt, Exception) # too many to list!
+    ExList = Tuple[Type[BaseException], ...]
+    always_user_errors: ExList = (classes.UError,)
+    user_errors = always_user_errors
+    internal_errors: ExList = (VMError, AssertionError)
+    errors: ExList = (KeyboardInterrupt, Exception) # too many to list!
+
     if xcept:                               # -x option
         internal_errors += errors           # show IR, Python traceback
     else:

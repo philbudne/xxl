@@ -99,7 +99,7 @@ class CObject:
     __slots__ = ['props', 'klass', 'cache']
     hasvalue = False
 
-    def __init__(self, klass):
+    def __init__(self, klass: CObject):
         # klass may only be None when creating initial Class (Object)
         self.setclass(klass)
         self.props = {}
@@ -109,17 +109,17 @@ class CObject:
         # to invalidate all cache entries.
         self.cache = {}
 
-    def setclass(self, klass):
+    def setclass(self, klass: CObject) -> CObject:
         self.klass = klass
         return klass
 
-    def getclass(self):
+    def getclass(self) -> CObject:
         """
         return CObject for object Class
         """
         return self.klass
 
-    def classname(self):
+    def classname(self) -> str:
         """
         return Python string for object class name; used in __repr__
         """
@@ -133,7 +133,7 @@ class CObject:
 
         return n
 
-    def invoke(self, vm):
+    def invoke(self, vm: vmx.VM) -> None:
         # will raise UError if op not found:
         # NOTE!! find_op does not return BoundMethod
         #       (called 99.999% of time from XxxOpInstrs)
@@ -141,10 +141,10 @@ class CObject:
         vm.args.insert(0, self) # OK, another place where THIS is passed
         m.invoke(vm)
 
-    def hasprop(self, prop):
+    def hasprop(self, prop) -> bool:
         return prop in self.props
 
-    def delprop(self, prop):
+    def delprop(self, prop) -> None:
         self.props.pop(prop)
 
     def getprop(self, prop):
@@ -597,7 +597,7 @@ _saved_docs = {}
 Str = None
 List = None
 
-def defclass(metaclass, name, supers=None, publish=True, doc=None):
+def defclass(metaclass, name, supers=None, publish=True, doc=None) -> CObject:
     """
     define a system Class
     `name` is Python string
@@ -803,20 +803,20 @@ def obj_reprx(l):
     return mkstr("<%s: %s>" % (l.classname(), repr(l)))
 
 @pyfunc
-def obj_ident(l, r):            # SNOBOL4 IDENT
+def obj_ident(l, r) -> CObject: # SNOBOL4 IDENT
     """
     Test if `l` and `r` refer to the same Object
     """
     return mkbool(l is r)
 
 @pyfunc
-def obj_differ(l, r):           # SNOBOL4 DIFFER
+def obj_differ(l, r) -> CObject: # SNOBOL4 DIFFER
     """
     Test if `l` and `r` refer to different Objects
     """
     return mkbool(l is not r)
 
-def _not(x):
+def _not(x) -> CObject:
     """
     not a pyfunc (may call at any time)
     takes CObject, returns CObject
@@ -825,7 +825,7 @@ def _not(x):
 
 # XXX do this in pobj_not? all other objects always true????
 @pyfunc
-def obj_not(x):
+def obj_not(x) -> CObject:
     """
     Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, zero, null, or undefined)
@@ -2175,7 +2175,8 @@ def new_modinfo(main, module, fname, parser_vmx=None):
 #       xxlobj.py xxl__import (__xxl._import function)
 # XXX should be moduleclass_new?!!
 # XXX take optional bootstrap_vmx arg??
-def new_module(fname, main=False, parser_vmx=None):
+def new_module(fname, main=False,
+               parser_vmx: Optional[str] = None) -> Tuple[CModule, Optional[CClosure]]:
     """
     `fname` is Python str (or None for internal Module)
     `main` is Python True for main program (from command line)
@@ -2245,11 +2246,11 @@ def modinfo_assemble(this, tree, srcfile):
     `srcfile`: source of code (for output only).
     Returns Closure in __modinfo.module top level scope.
     """
-    mod = this.getprop(const.MODINFO_MODULE) # XXX check
-    code = vmx.assemble(mod.scope, tree, srcfile)
+    code = vmx.assemble(tree, srcfile)
 
     # turn into Closure in scope
     #   (any variables created are globals):
+    mod = this.getprop(const.MODINFO_MODULE) # XXX check
     return CClosure(code, mod.scope)
 
 ModInfo.setprop(const.METHODS, _mkdict({
@@ -2272,7 +2273,7 @@ PyIterableObject = defclass(PClass, const.PYITERABLEOBJECT, [PyObject,PyIterable
     """)
 
 # XXX maybe take second arg PObject orig, and return if "value is orig.value"??
-def wrap(value):
+def wrap(value) -> CObject:
     """
     wrap a Python `value` in a language CObject
 
