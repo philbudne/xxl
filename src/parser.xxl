@@ -845,7 +845,7 @@ var PrattParser = Class.new({
 // subclass PrattParser for XXL/0
 // (smallest possible eXperimental/eXtensible Language)
 // "jokes":
-// * PL/1 was IBM's "One Language to Rule Them All" for __xxl/360
+// * PL/1 was IBM's "One Language to Rule Them All" for System/360
 //	(the one computer architecture anyone would ever need).
 //	PL/1 was meant to replace both FORTRAN for scientific code
 //	 and COBOL for business applications; it was a large
