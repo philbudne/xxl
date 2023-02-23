@@ -43,7 +43,7 @@ Early February 2016:
 
 Mid February 2016: Python mockup of techniques for Continuations
 		from Kent Dybvig's dissertation
-		["Three Implementation Models for Scheme" (pdf)](https://www.cs.unm.edu/~williams/cs491/three-imp.pdf)
+		["Three Implementation Models for Scheme" (pdf)](https://legacy.cs.indiana.edu/~dyb/papers/3imp.pdf)
 	last modifications to ppo.js (PrattParser as object)
 
 Late February 2016: last changes to jsparse.py

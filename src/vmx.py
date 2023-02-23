@@ -23,6 +23,10 @@ Simple VM for ASAP (As Simple As Possible) / XXL
 
 was vm.py, but renamed to vmx.py to allow passing "vm" args
 in all files
+
+Started from VM descriptions in
+["Three Implementation Models for Scheme" (pdf)](https://legacy.cs.indiana.edu/~dyb/papers/3imp.pdf)
+
 """
 import sys                      # stderr
 import json
