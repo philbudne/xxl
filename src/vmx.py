@@ -88,12 +88,13 @@ class VM:
                  'bop_count', 'bop_time']
 
     def __init__(self, stats, trace):
+        # [dybvig VM register]
         self.run = False
-        self.ac = None          # CObject: Accumulator
-        self.sp = None          # Stack Pointer (value, next) tuples
+        self.ac = None          # [a] CObject: Accumulator
+        self.sp = None          # [s] Stack Pointer (value, next) tuples [s]
+        self.scope = None       # [e] Scope: Current scope
+        self.pc = 0             # [x] int: offset into code base
         self.cb = None          # Code Base (Python list of VMInstr)
-        self.scope = None       # Scope: Current scope
-        self.pc = 0             # int: offset into code base
         self.ir = None          # VMInstr: Instruction Register
         self.fp = None          # Frame: Frame pointer (for return)
         self.temp = None        # holds new Dict/List
@@ -105,7 +106,7 @@ class VM:
         # "args" opcode before ANY other call/op can occur (so never
         # needs to be preserved).  Other CObject subclasses may
         # consume directly.
-        self.args = []
+        self.args = []          # [r]
 
     def start(self, code, scope):
         self.run = True         # cleared by 'exit' instr
