@@ -28,7 +28,7 @@ import sys                      # sys.exit
 import json
 import importlib                # for pyimport
 
-from typing import Any, List, NoReturn, Optional
+from typing import Any, List, NoReturn, Optional, Union
 
 # XXL:
 import classes
@@ -115,7 +115,7 @@ def find_in_lib_path(fname: str, suffixes: List[str] = []) -> str:
 
 @classes.pyfunc
 def xxl__find_in_lib_path(fname: classes.CObject,
-                          suffixes: Optional[List[classes.CObject]] = None) -> classes.CObject:
+                          suffixes: Optional[classes.CObject] = None) -> classes.CObject:
     """
     return full path of file in current dir, or in XXL_LIB_PATH
     """
@@ -175,7 +175,7 @@ def xxl__tokenizer(filename: classes.CObject,
     # XXX wrap in a PyObject (create token as namedtuple, return as list?)
 
     @classes.pyfunc
-    def next():
+    def next() -> classes.CObject:
         t = tokenizer.next()    # jslex.Token object
         if not t:
             return classes.null_value
@@ -205,7 +205,7 @@ def xxl__tokenizer(filename: classes.CObject,
 
     @classes.pyfunc
     def reset_tokenizer() -> classes.CObject:
-        t = tokenizer.reset()
+        tokenizer.reset()
         return classes.null_value
 
     return classes.wrap([next, reset_prompt, pointer,
@@ -219,14 +219,15 @@ def xxl_exit(status: Optional[classes.CObject] = None) -> NoReturn:
     Exit the interpreter.
     `status` defaults to zero.
     """
+    xstatus: Union[str, int]
     if status is None:
-        status = 0
+        xstatus = 0
     else:
         try:
-            status = status.getvalue()
+            xstatus = status.getvalue()
         except:
-            status = repr(status)
-    sys.exit(status)
+            xstatus = repr(status)
+    sys.exit(xstatus)
 
 ################
 
@@ -279,7 +280,8 @@ def format_code(code: List[Any], indent: str = '') -> List[str]:
     ret.append("]")
     return ret
 
-def trim_where(code: List[Any], fname: str) -> None:
+JCode = List[str]
+def trim_where(code: JCode, fname: str) -> None:
     """
     helper for xxl_vtree, assemble
     `code` is Python list of lists: ***MODIFIED IN PLACE!!!***
@@ -288,7 +290,7 @@ def trim_where(code: List[Any], fname: str) -> None:
     if not fname:
         return
     fnamelen = len(fname) + 1   # remove "fname:"
-    def helper(c):
+    def helper(c: JCode) -> None:
         for instr in c:
             if instr[0].startswith(fname):
                 instr[0] = instr[0][fnamelen:]
@@ -357,7 +359,7 @@ def xxl_pyimport(module: classes.CObject) -> classes.CObject:
 
 ################################################################
 
-def create_xxl_class(argv: List[str], parser_vmx: str):
+def create_xxl_class(argv: List[str], parser_vmx: str) -> None:
     XXLObject = classes.defclass(classes.Class, 'XXLObject', [classes.Object],
                                  doc="Class for __xxl object")
 

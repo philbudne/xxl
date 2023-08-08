@@ -499,7 +499,7 @@ def _mkdict(vals):
         return new_by_name('Dict', nv)
     return _new_pobj(Dict, nv)
 
-def _mklist(vals):
+def _mklist(vals) -> CObject:
     """
     ONLY USE TO CONSTRUCT BASE TYPES!
     """
@@ -507,7 +507,7 @@ def _mklist(vals):
         return new_by_name('List', vals)
     return _new_pobj(List, vals)
 
-def _mkstr(s):
+def _mkstr(s) -> CObject:
     """
     ONLY USE TO CONSTRUCT BASE TYPES!
     see mkstr
@@ -516,7 +516,7 @@ def _mkstr(s):
         return mkstr(s)
     return _new_pobj(Str, s)
 
-def _mkobj(props):
+def _mkobj(props) -> CObject:
     """
     used to create lexer tokens
     """
@@ -533,20 +533,20 @@ def class_by_name(name):
     assert(__initialized)
     return classes_scope.lookup(name)
 
-def new_by_name(name, value):
+def new_by_name(name, value) -> CObject:
     """
     create a new CPObject of class `name` w/ value `value`
     """
     ty = class_by_name(name)
     return _new_pobj(ty, value)
 
-def mkstr(s):
+def mkstr(s) -> CObject:
     """
     used to create Str from Python str, once up and running
     """
     return new_by_name('Str', s)
 
-def mknumber(n):
+def mknumber(n) -> CObject:
     """
     used to create Number from Python int/float, once up and running
     """
@@ -734,7 +734,8 @@ PyIterator = defclass(Class, 'PyIterator', [Object, Iterable],
 
 ################
 
-null_value = _null_value = _new_pobj(Null, None)
+null_value: CObject = _new_pobj(Null, None)
+_null_value = null_value
 
 undef_value = CObject(Undefined)
 

@@ -43,7 +43,7 @@ if TYPE_CHECKING:
     from classes import CObject
 
 ArgNames = List[str]
-Code = List["VMInst0"]
+Code = List["VMInstr0"]
 IJSON = List[Any]               # FIXME!
 IValue = Union[int, str, "CObject"]
 
@@ -72,9 +72,9 @@ def fp_where(fp: Frame) -> str:
     Return "filename:line:col" for stack frame
     """
     # gives CALLER location (from VM IR register at time of call)
-    return "%s:%s" % (fp[frame.function], fp[frame.where])
+    return "%s:%s" % (fp.function, fp.where)
     # gives return location (PC incremented before call)
-    #return fp[frame.cb][fp[frame.pc]].fn_where()
+    #return fp.cb[fp.pc].fn_where()
 
 # called from VM.backtrace, CContinuation.backtrace
 def fp_backtrace_list(fp: Optional[Frame]) -> List[str]:
@@ -174,9 +174,9 @@ class VM:
         self.cb: Optional[Code] = None # Code Base (Python list of VMInstr)
         self.scope: Optional[Scope] = None # Scope: Current scope
         self.pc = 0             # int: offset into code base
-        self.ir: Optional[VMInstr0] = None          # VMInstr: Instruction Register
+        self.ir: Optional[VMInstr0] = None # VMInstr: Instruction Register
         self.fp: Optional[Frame] = None # Frame: Frame pointer (for return)
-        self.temp = None        # holds new Dict/List
+        self.temp: Optional[CObject] = None # holds new Dict/List
         self.stats = stats      # bool: enable timing
         self.trace = trace      # bool: enable tracing
 
@@ -343,6 +343,7 @@ class VM:
         # called from CBClosure.invoke w/ show=False
         # XXX save self.args for backtraces??
         assert self.ir is not None
+        assert self.cb is not None
         self.fp = Frame(self.cb, self.pc, self.scope, self.fp,
                         self.ir.fn, self.ir.where, show)
 
