@@ -64,9 +64,9 @@ is a language CObject, and not just any Python object.
 
 # Python
 import os
+from typing import Optional, Tuple
 
 # XXL:
-import scopes
 import xxlobj
 import const
 import vmx
@@ -79,9 +79,9 @@ XXL_DEBUG_BOOTSTRAP = os.getenv('XXL_DEBUG_BOOTSTRAP', None)
 CWD = os.getcwd()               # current working directory
 CWD_SEP = CWD + os.sep
 
-root_scope = scopes.Scope()
+root_scope = vmx.Scope()
 
-classes_scope = scopes.Scope(root_scope) # scope for "classes" internal Module
+classes_scope = vmx.Scope(root_scope) # scope for "classes" internal Module
 
 __initialized = False
 
@@ -99,7 +99,7 @@ class CObject:
     __slots__ = ['props', 'klass', 'cache']
     hasvalue = False
 
-    def __init__(self, klass: CObject):
+    def __init__(self, klass: "CObject"):
         # klass may only be None when creating initial Class (Object)
         self.setclass(klass)
         self.props = {}
@@ -109,11 +109,11 @@ class CObject:
         # to invalidate all cache entries.
         self.cache = {}
 
-    def setclass(self, klass: CObject) -> CObject:
+    def setclass(self, klass: "CObject") -> "CObject":
         self.klass = klass
         return klass
 
-    def getclass(self) -> CObject:
+    def getclass(self) -> "CObject":
         """
         return CObject for object Class
         """
@@ -479,7 +479,7 @@ def pyiterator(iterator):
 
 ################################################################
 
-def _new_pobj(this_class, arg):
+def _new_pobj(this_class, arg) -> CObject:
     """
     FOR INTERNAL USE ONLY!!
     creates an interpreter Primitive Object of Class `this_class`
@@ -558,7 +558,7 @@ def mkiterable(i):
     return new_by_name('PyIterable', i)
 
 ################
-null_value = None               # forward
+_null_value = None               # forward
 
 def subclass_of(this_class, bases):
     """
@@ -572,7 +572,7 @@ def subclass_of(this_class, bases):
         if c in bases:
             return True
         s = c.getprop(const.SUPERS)
-        if s is null_value:
+        if s is _null_value:
             return False
         for x in s.getvalue():       # XXX check if List
             if x not in visited and check(x):
@@ -734,7 +734,7 @@ PyIterator = defclass(Class, 'PyIterator', [Object, Iterable],
 
 ################
 
-null_value = _new_pobj(Null, None)
+null_value = _null_value = _new_pobj(Null, None)
 
 undef_value = CObject(Undefined)
 
@@ -2198,7 +2198,7 @@ def new_module(fname, main=False,
     if fname and sfname in mdd:  # previously loaded?
         return mdd[sfname], None # yes; return it, no bootstrap needed
 
-    scope = scopes.Scope(root_scope) # create base scope for module
+    scope = vmx.Scope(root_scope) # create base scope for module
     mod = CModule(scope)
 
     scope.defvar(const.DOC, null_value)

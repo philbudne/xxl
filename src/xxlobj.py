@@ -32,7 +32,6 @@ from typing import Any, List, NoReturn, Optional
 
 # XXL:
 import classes
-import scopes
 import const
 import vmx
 

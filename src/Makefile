@@ -22,7 +22,7 @@ C=	c.vmx
 
 # VM sources:
 XXL=	xxl.py
-VM=	$(XXL) vmx.py classes.py const.py jslex.py xxlobj.py scopes.py
+VM=	$(XXL) vmx.py classes.py const.py jslex.py xxlobj.py
 
 # XXX XXX XXX run ./test.sh test suite?? when (using $(B))??
 

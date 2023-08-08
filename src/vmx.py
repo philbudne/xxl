@@ -32,21 +32,29 @@ import sys                      # stderr
 import json
 import collections
 import time
-from typing import Any, Dict, List, Optional, TextIO, Tuple, Type, Union, TYPE_CHECKING
+from typing import Any, Dict, List, NamedTuple, Optional, TextIO, Tuple, Type, Union, TYPE_CHECKING
 
 import classes
 import xxlobj
 import const
-import frame
 import jslex                    # LexError
-import scopes
 
 if TYPE_CHECKING:
     from classes import CObject
 
 ArgNames = List[str]
+Code = List["VMInst0"]
 IJSON = List[Any]               # FIXME!
 IValue = Union[int, str, "CObject"]
+
+class Frame(NamedTuple):
+     cb: Code                   # list of VMInstr
+     pc: int                    # offset into cb
+     scope: "Scope"
+     fp: "Frame"
+     function: str
+     where: str
+     show: bool
 
 # opcodes where inst[2] is code list, used in xxlobj.py:
 INST2CODE = ('close', 'bccall')
@@ -59,17 +67,17 @@ class VMError(Exception):
     """
 
 # called from fp_backtrace (below), CContinuation.defn
-def fp_where(fp: frame.Frame) -> str:
+def fp_where(fp: Frame) -> str:
     """
     Return "filename:line:col" for stack frame
     """
     # gives CALLER location (from VM IR register at time of call)
-    return "%s:%s" % (fp[frame.F_FN], fp[frame.F_WHERE])
+    return "%s:%s" % (fp[frame.function], fp[frame.where])
     # gives return location (PC incremented before call)
-    #return fp[frame.F_CB][fp[frame.F_PC]].fn_where()
+    #return fp[frame.cb][fp[frame.pc]].fn_where()
 
 # called from VM.backtrace, CContinuation.backtrace
-def fp_backtrace_list(fp: Optional[frame.Frame]) -> List[str]:
+def fp_backtrace_list(fp: Optional[Frame]) -> List[str]:
     """
     Return Python list of str of CALLER locations in fp stack
     """
@@ -83,6 +91,69 @@ def fp_backtrace_list(fp: Optional[frame.Frame]) -> List[str]:
 StackVal = Any                  # XXX
 Stack = Tuple[StackVal, "SP"]
 SP = Optional[Stack]
+
+VarsDict = Dict[str, "classes.CObject"]
+
+class Scope:
+    """
+    runtime scope.
+    currently invisible (or at least opaque)
+    """
+    def __init__(self, parent: Optional["Scope"] = None) -> None:
+        self.parent = parent
+        self.vars: VarsDict = {}
+
+    def new_scope(self) -> "Scope":
+        """
+        create a scope using current scope as parent
+        """
+        return Scope(self)
+
+    def func_scope(self, fp: Frame) -> "Scope":
+        s = Scope(self)
+        s.defvar('return', classes.CContinuation(fp))
+        return s
+
+    def labeled_scope(self, fp: Frame, name: str) -> "Scope": # Closure with leave label
+        s = Scope(self)
+        s.defvar(name, classes.CContinuation(fp))
+        return s
+
+    def defvar(self, var: str, value: "classes.CObject") -> None:
+        """
+        `var` is Python string
+        `value` is CObject
+        """
+        # duplicate var is fatal in compiler
+        self.vars[var] = value
+
+    # XXX the compiler could tell us how far up the ("static") scope chain
+    # the variable lives (and could assign numeric slot ids for variable
+    # lookup to avoid dict)
+    def lookup(self, name: str) -> "classes.CObject":
+        s: Optional[Scope] = self
+        while s:
+            if name in s.vars:
+                return s.vars[name]
+            s = s.parent
+        raise classes.UError("Unknown variable %s" % name) # SNH
+
+    # see note above "lookup" (compiler could tell us stuff)
+    def store(self, name: str, val: "classes.CObject") -> "classes.CObject":
+        """
+        name: Python string
+        val: CObject
+        """
+        s: Optional[Scope] = self
+        while s:
+            if name in s.vars:
+                s.vars[name] = val
+                return val
+            s = s.parent
+        raise classes.UError("Unknown variable %s" % name)
+
+    def get_vars(self) -> VarsDict:  # UGH! used by new_module
+        return self.vars
 
 class VM:
     """
@@ -98,13 +169,13 @@ class VM:
 
     def __init__(self, stats: bool, trace: bool):
         self.run = False
-        self.ac: Optional[classes.CObject] = None # CObject: Accumulator
+        self.ac: Optional["classes.CObject"] = None # CObject: Accumulator
         self.sp: SP = None      # Stack Pointer (value, next) tuples
-        self.cb: Optional[frame.Code] = None # Code Base (Python list of VMInstr)
-        self.scope: Optional[scopes.Scope] = None # Scope: Current scope
+        self.cb: Optional[Code] = None # Code Base (Python list of VMInstr)
+        self.scope: Optional[Scope] = None # Scope: Current scope
         self.pc = 0             # int: offset into code base
         self.ir: Optional[VMInstr0] = None          # VMInstr: Instruction Register
-        self.fp: Optional[frame.Frame] = None # Frame: Frame pointer (for return)
+        self.fp: Optional[Frame] = None # Frame: Frame pointer (for return)
         self.temp = None        # holds new Dict/List
         self.stats = stats      # bool: enable timing
         self.trace = trace      # bool: enable tracing
@@ -114,9 +185,9 @@ class VM:
         # "args" opcode before ANY other call/op can occur (so never
         # needs to be preserved).  Other CObject subclasses may
         # consume directly.
-        self.args: List[classes.CObject] = []
+        self.args: List["classes.CObject"] = []
 
-    def start(self, code: frame.Code, scope: scopes.Scope) -> None:
+    def start(self, code: Code, scope: Scope) -> None:
         self.run = True         # cleared by 'exit' instr
         self.pc = 0
         self.cb = code
@@ -272,8 +343,8 @@ class VM:
         # called from CBClosure.invoke w/ show=False
         # XXX save self.args for backtraces??
         assert self.ir is not None
-        self.fp = frame.Frame(self.cb, self.pc, self.scope, self.fp,
-                              self.ir.fn, self.ir.where, show)
+        self.fp = Frame(self.cb, self.pc, self.scope, self.fp,
+                        self.ir.fn, self.ir.where, show)
 
     def backtrace(self) -> None: # XXX take file to write to?
         """
@@ -299,7 +370,7 @@ class VM:
         val, self.sp = self.sp  # unpack top of stack
         return val
 
-    def restore_frame(self, fp: frame.Frame) -> None:
+    def restore_frame(self, fp: Frame) -> None:
         """
         "return" using saved frame pointer
         helper used by ReturnInstr and CContinuation.invoke
@@ -309,7 +380,7 @@ class VM:
 ################################################################
 # VM instructions
 
-def reginstr(inst_class: Type[VMInstr0]) -> Type[VMInstr0]:
+def reginstr(inst_class: Type["VMInstr0"]) -> Type["VMInstr0"]:
     """
     Decorator for VMInst classes for reading in JSON representations.
     Registers the instruction class in `instr_class_by_name` for the
@@ -580,7 +651,7 @@ class CloseInstr(VMInstr1):
     __slots__ = ['doc']
 
     def __init__(self, fn: str, where: str,
-                 value: frame.Code,
+                 value: Code,
                  doc: Optional[str] = None):
         super().__init__(fn, where, convert_instrs(value, fn))
         self.doc = doc
@@ -792,7 +863,7 @@ class Args2Instr(VMInstr2):
         assert vm.fp
         vm.scope = vm.scope.func_scope(vm.fp)
         for formal in self.v1:       # loop for formals
-            val: classes.CObject
+            val: "classes.CObject"
             if vm.args:              # actuals left?
                 val = vm.args.pop(0) # yes: pop a value
             else:
@@ -921,7 +992,7 @@ def convert_one_instr(i: List[str], fn: str) -> VMInstr0:
     # create new instruction instance
     return instr_class_by_name[op](fn, *i)
 
-def convert_instrs(il: IJSON, fn: str) -> frame.Code:
+def convert_instrs(il: IJSON, fn: str) -> Code:
     """
     assemble a list of instructions in JSON form
     fn is filename
@@ -930,7 +1001,7 @@ def convert_instrs(il: IJSON, fn: str) -> frame.Code:
     return [convert_one_instr(x, fn) for x in il]
 
 # called by classes.new_module (w/ bootstrap.vmx) and ModInfo.load_vmx method
-def load_vm_json(fname: str) -> frame.Code:
+def load_vm_json(fname: str) -> Code:
     with open(fname) as f:
         l = f.readline()
 
@@ -956,7 +1027,7 @@ def load_vm_json(fname: str) -> frame.Code:
 ################
 
 # helper for ModInfo.assemble
-def assemble(tree: classes.CObject, srcfile: classes.CObject) -> frame.Code:
+def assemble(tree: "classes.CObject", srcfile: "classes.CObject") -> Code:
     """
     List of Lists `tree` of instructions to assemble
     str `srcfile` source file name for trimming "where" fields
@@ -970,8 +1041,8 @@ def assemble(tree: classes.CObject, srcfile: classes.CObject) -> frame.Code:
 ################
 
 # XXX make a VM method?!!!
-def run(boot: classes.CClosure,
-        scope: scopes.Scope,
+def run(boot: "classes.CClosure",
+        scope: Scope,
         stats: bool,
         trace: bool,
         xcept: bool):
