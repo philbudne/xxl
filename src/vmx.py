@@ -44,14 +44,14 @@ if TYPE_CHECKING:
 
 ArgNames = List[str]
 Code = List["VMInstr0"]
-IJSON = List[Any]               # FIXME!
-IValue = Union[int, str, "CObject"]
+IJSON = List[Any]               # FIXME! Python JSON repr of instr
+IValue = Union[int, str, "CObject"] # instruction value
 
 class Frame(NamedTuple):
      cb: Code                   # list of VMInstr
      pc: int                    # offset into cb
      scope: "Scope"
-     fp: "Frame"
+     fp: Optional["Frame"]
      function: str
      where: str
      show: bool
@@ -342,8 +342,9 @@ class VM:
         #       would allow Python callees to use same VM???
         # called from CBClosure.invoke w/ show=False
         # XXX save self.args for backtraces??
-        assert self.ir is not None
         assert self.cb is not None
+        assert self.scope is not None
+        assert self.ir is not None
         self.fp = Frame(self.cb, self.pc, self.scope, self.fp,
                         self.ir.fn, self.ir.where, show)
 
