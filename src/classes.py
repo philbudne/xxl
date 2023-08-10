@@ -64,7 +64,7 @@ is a language CObject, and not just any Python object.
 
 # Python
 import os
-from typing import Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 # XXL:
 import xxlobj
@@ -127,7 +127,7 @@ class CObject:
         if c is null_value:
             return "Unknown!"
 
-        n = c.getprop(const.NAME).getvalue()
+        n = c.getprop(const.NAME).getvalue() # XXX getstr??
         if subclass_of(c, [Class]):
             return '%s: %s' % (n, self.getprop(const.NAME).getvalue())
 
@@ -153,13 +153,13 @@ class CObject:
     def setprop(self, prop: str, value: "CObject") -> None:
         self.props[prop] = value
 
-    def getvalue(self):
+    def getvalue(self) -> "CObject":
         raise UError("not a Python valued Object") # ValueError?!
 
-    def __str__(self):
+    def __str__(self) -> str:
         return repr(self)       # XXX ???
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<%s at %#x>' % (self.classname(), id(self))
 
 class CPObject(CObject):
@@ -178,45 +178,47 @@ class CPObject(CObject):
     def getvalue(self):
         return self.value
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.value is None:
             return "null"
         if isinstance(self.value, bool):
             return str(self.value).lower()
         return str(self.value)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         if not self.value.__hash__:
             # avoid error calling None!
             raise UError('%s not hashable' % self.classname())
         return self.value.__hash__()
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         # XXX raise ValueError?
         return hasattr(other,'value') and self.value == other.value
 
-    def __lt__(self, other):    # need for sorted iterator
+    def __lt__(self, other) -> bool:  # need for sorted iterator
         # XXX raise ValueError?
         return self.value < other.getvalue()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """show wrapped value"""
         return '<%s: %s at %#x>' % \
             (self.classname(), repr(self.value), id(self))
 
 ################
 
+Args = List[str]
+
 class CCallable(CObject):
     """
     Base class for directly callable CObjects.
     """
-    def invoke(self, vm):
+    def invoke(self, vm) -> None:
         raise Exception("invoke not overridden") # SNH -- Should Not Happen
 
-    def args(self):
+    def args(self) -> Args:
         raise Exception("args not overridden") # SNH
 
-    def defn(self):
+    def defn(self) -> str:
         raise Exception("defn not overridden") # SNH
 
 class CContinuation(CCallable):
@@ -224,17 +226,17 @@ class CContinuation(CCallable):
     A Callable instance backed by a native (VM) Continuation
     NOTE: opaque (no Class methods to expose innards) for now
     """
-    __slots__ = ['fp']
+    __slots__ = ['fp']          # XXX extend?
 
     def __init__(self, fp):
         self.klass = Continuation
         self.props = {}
         self.fp = fp
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<Continuation: %s>" % self.defn()
 
-    def invoke(self, vm):
+    def invoke(self, vm: vmx.VM) -> None:
         l = len(vm.args)
         if l == 1:
             vm.ac = vm.args[0]  # return value
@@ -245,13 +247,13 @@ class CContinuation(CCallable):
             raise UError("Too many args (%d) to %r" % (len(vm.args), self))
         vm.restore_frame(self.fp) # ***JUST*** like ReturnInstr
 
-    def args(self):
+    def args(self) -> Args:
         """
         for __args method: return Python list of str argument names
         """
         return ["value"]
 
-    def defn(self):
+    def defn(self) -> str:
         """
         Return Python str for "definition" location.
 
@@ -260,7 +262,7 @@ class CContinuation(CCallable):
         """
         return vmx.fp_where(self.fp)
 
-    def backtrace(self):
+    def backtrace(self) -> List[str]:
         """
         Return Python list of str
         """
@@ -271,7 +273,7 @@ class CClosure(CCallable):
     A Callable instance backed by a Closure (VM code + scope)
     NOTE: opaque (no Class methods to expose innards) for now
     """
-    __slots__ = ['code', 'scope']
+    __slots__ = ['code', 'scope'] # XXX extend?
 
     def __init__(self, code, scope, doc=None):
         self.klass = Closure
@@ -281,10 +283,10 @@ class CClosure(CCallable):
         # PLB: I _HATE_ the Python ternary
         self.setprop(const.DOC, doc and mkstr(doc) or null_value)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<Closure: %s>" % self.defn()
 
-    def invoke(self, vm):
+    def invoke(self, vm) -> None:
         vm.save_frame(True)     # show=True
         # 'return' Continuation will be generated from FP
         #       by "args" Instr (first Instr in code)
@@ -293,10 +295,10 @@ class CClosure(CCallable):
         vm.scope = self.scope
         # NOTE! vm.args picked up by "args" opcode!
 
-    def args(self):
+    def args(self) -> Args:
         return self.code[0].args() # ask first VM Instr about args!!
 
-    def defn(self):
+    def defn(self) -> str:
         return self.code[0].fn_where() # ask first VM Instr about location!
 
 class CBClosure(CClosure):
@@ -309,7 +311,7 @@ class CBClosure(CClosure):
     def __repr__(self):
         return "<BClosure: %s>" % self.defn()
 
-    def invoke(self, vm):
+    def invoke(self, vm) -> None:
         vm.save_frame(False)    # show=False
         # leave label Continuation will be generated from FP
         #       by ""[lu]scope" Instr (first Instr in code)
@@ -317,7 +319,7 @@ class CBClosure(CClosure):
         vm.cb = self.code
         vm.scope = self.scope
 
-    def args(self):
+    def args(self) -> Args:
         return [""]
 
     # inherit defn() from CClosure
@@ -342,15 +344,15 @@ class CBoundMethod(CCallable):
     def __repr__(self):
         return "<BoundMethod: %s %s>" % (repr(self.obj), self.method)
 
-    def invoke(self, vm):
+    def invoke(self, vm) -> None:
         # *this* is the main place "THIS" is explicitly passed!!!
         vm.args.insert(0, self.obj) # prepend saved "this" to arguments
         self.method.invoke(vm)      # returns value in AC
 
-    def args(self):
+    def args(self) -> Args:
         return self.method.args()[1:] # omit "this" arg
 
-    def defn(self):
+    def defn(self) -> str:
         return self.method.defn()
 
 # Calling Python functions (ie; primitive class methods) was orignally
@@ -378,7 +380,7 @@ class CPyFunc(CCallable):
         # was self.func.__name___
         return "<PyFunc: %s>" % self.defn()
 
-    def invoke(self, vm):
+    def invoke(self, vm) -> None:
         vm.ac = self.func(*vm.args)
         #assert(isinstance(vm.ac, CObject))
 
@@ -443,7 +445,7 @@ class CPyVMFunc(CPyFunc):
     """
     # __init__ method from PyFunc
 
-    def invoke(self, vm):
+    def invoke(self, vm) -> None:
         vm.args.insert(0, vm)   # prepend vm to arguments
         super().invoke(vm)
 
@@ -678,7 +680,7 @@ List = defclass(PClass, 'List', [PyIterable],
                 doc="Built-in mutable sequence Class")
 Str = defclass(PClass, 'Str', [PyIterable],
                doc="Built-in immutable Unicode string Class")
-Dict  = defclass(PClass, 'Dict', [PyIterable],
+CDict = defclass(PClass, 'Dict', [PyIterable],
                  doc="Built-in dictionary mapping Class")
 Set  = defclass(PClass, 'Set', [PyIterable],
                 doc="Built-in unordered collection of unique elements.")
@@ -947,7 +949,7 @@ def obj_hasprop(l, r) -> CObject:
     # XXX check r is Str
     return mkbool(l.hasprop(r.getvalue()))
 
-def find_op(obj, optype, op):
+def find_op(obj: CObject, optype: str, op: CObject) -> CCallable:
     """
     Utility (not method)
     `obj` is CObject
@@ -1451,7 +1453,7 @@ def dict_values(this):
     """
     return mkiterable(this.getvalue().values())
 
-Dict.setprop(const.METHODS, _mkdict({
+CDict.setprop(const.METHODS, _mkdict({
     '__init0': dict__init0,
     'items': dict_items,
     'keys': dict_keys,
@@ -1459,10 +1461,10 @@ Dict.setprop(const.METHODS, _mkdict({
     'pop': dict_pop,
     'values': dict_values,
 }))
-Dict.setprop(const.BINOPS, _mkdict({
+CDict.setprop(const.BINOPS, _mkdict({
     '[': dict_getitem
 }))
-Dict.setprop(const.LHSOPS, _mkdict({
+CDict.setprop(const.LHSOPS, _mkdict({
     '[': dict_putitem
 }))
 

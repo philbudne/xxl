@@ -28,7 +28,7 @@ import sys                      # sys.exit
 import json
 import importlib                # for pyimport
 
-from typing import Any, List, NoReturn, Optional, Union
+from typing import Any, List, NoReturn, Optional, Union, cast
 
 # XXL:
 import classes
@@ -120,10 +120,11 @@ def xxl__find_in_lib_path(fname: classes.CObject,
     return full path of file in current dir, or in XXL_LIB_PATH
     """
     if suffixes:
-        suff2 = [x.getvalue() for x in suffixes.getvalue()] # XXX unwrap?
+        suff2 = [x.getvalue() for x in cast(List,suffixes.getvalue())]
     else:
         suff2 = []
-    return classes.mkstr(find_in_lib_path(fname.getvalue(), suff2))
+    return classes.mkstr(find_in_lib_path(cast(str,fname.getvalue()), # XXX getstr?
+                                          suff2))
 
 ################
 
@@ -159,9 +160,9 @@ def xxl__tokenizer(filename: classes.CObject,
     returns a token generator:
     returns Objects, and then null
     """
-    fnstr: str = filename.getvalue() # getstr()?
-    pstr: str = prefix.getvalue()    # getstr()?
-    sstr: str = suffix.getvalue()    # getstr()?
+    fnstr = cast(str, filename.getvalue()) # getstr()?
+    pstr = cast(str, prefix.getvalue())    # getstr()?
+    sstr = cast(str, suffix.getvalue())    # getstr()?
     if fnstr == '-':
         f = sys.stdin
         print("XXL/0")
@@ -195,7 +196,8 @@ def xxl__tokenizer(filename: classes.CObject,
 
     @classes.pyfunc
     def pointer(line: classes.CObject, pos: classes.CObject) -> classes.CObject:
-        tokenizer.pointer(line.getvalue(), pos.getvalue()) # XXX getint
+        tokenizer.pointer(cast(int, line.getvalue()), # XXX getint?
+                          cast(int, pos.getvalue())) # XXX getint?
         return classes.null_value
 
     @classes.pyfunc
@@ -310,7 +312,7 @@ def xxl__vtree(t: classes.CObject, fname: classes.CObject = classes.null_value) 
     t2 = obj2python_json(t)     # convert to list of list of str
 
     if fname and fname is not classes.null_value:
-        fn = fname.getvalue()
+        fn = cast(str, fname.getvalue()) # XXX getstr?
         trim_where(t2, fn)
 
     return classes.mkstr(''.join(format_code(t2)))
