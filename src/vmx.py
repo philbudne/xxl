@@ -1047,7 +1047,7 @@ def run(boot: "classes.CClosure",
         scope: Scope,
         stats: bool,
         trace: bool,
-        xcept: bool):
+        xcept: bool) -> None:
     """
     cold start (from xxl.py)
     `boot` is Closure w/ bootstrap.vmx code for main module

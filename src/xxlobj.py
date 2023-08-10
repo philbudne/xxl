@@ -159,9 +159,9 @@ def xxl__tokenizer(filename: classes.CObject,
     returns a token generator:
     returns Objects, and then null
     """
-    fnstr = filename.getvalue() # getstr()?
-    pstr = prefix.getvalue()    # getstr()?
-    sstr = suffix.getvalue()    # getstr()?
+    fnstr: str = filename.getvalue() # getstr()?
+    pstr: str = prefix.getvalue()    # getstr()?
+    sstr: str = suffix.getvalue()    # getstr()?
     if fnstr == '-':
         f = sys.stdin
         print("XXL/0")
@@ -280,8 +280,7 @@ def format_code(code: List[Any], indent: str = '') -> List[str]:
     ret.append("]")
     return ret
 
-JCode = List[str]
-def trim_where(code: JCode, fname: str) -> None:
+def trim_where(code, fname: str) -> None:
     """
     helper for xxl_vtree, assemble
     `code` is Python list of lists: ***MODIFIED IN PLACE!!!***
@@ -290,7 +289,7 @@ def trim_where(code: JCode, fname: str) -> None:
     if not fname:
         return
     fnamelen = len(fname) + 1   # remove "fname:"
-    def helper(c: JCode) -> None:
+    def helper(c) -> None:
         for instr in c:
             if instr[0].startswith(fname):
                 instr[0] = instr[0][fnamelen:]

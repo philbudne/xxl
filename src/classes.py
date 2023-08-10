@@ -102,12 +102,12 @@ class CObject:
     def __init__(self, klass: "CObject"):
         # klass may only be None when creating initial Class (Object)
         self.setclass(klass)
-        self.props = {}
+        self.props: Dict[str, "CObject"] = {}
         # NOTE! cache only written for Class objects
         # (if per-object caching, including BoundMethods) is desired
         # need to keep a global serial number in each object, and increment it
         # to invalidate all cache entries.
-        self.cache = {}
+        self.cache: Dict[str, "CCallable"] = {}
 
     def setclass(self, klass: "CObject") -> "CObject":
         self.klass = klass
@@ -141,16 +141,16 @@ class CObject:
         vm.args.insert(0, self) # OK, another place where THIS is passed
         m.invoke(vm)
 
-    def hasprop(self, prop) -> bool:
+    def hasprop(self, prop: str) -> bool:
         return prop in self.props
 
-    def delprop(self, prop) -> None:
+    def delprop(self, prop: str) -> None:
         self.props.pop(prop)
 
-    def getprop(self, prop):
+    def getprop(self, prop: str) -> "CObject":
         return self.props.get(prop, null_value)
 
-    def setprop(self, prop, value):
+    def setprop(self, prop: str, value: "CObject") -> None:
         self.props[prop] = value
 
     def getvalue(self):
@@ -490,7 +490,7 @@ def _new_pobj(this_class, arg) -> CObject:
     o.value = arg
     return o
 
-def _mkdict(vals):
+def _mkdict(vals) -> CObject:
     """
     ONLY USE TO CONSTRUCT BASE TYPES!
     """
@@ -940,7 +940,7 @@ def obj_getprop(l, r):
     return find_in_class(l, r, undef_value) # may return BoundMethod
 
 @pyfunc
-def obj_hasprop(l, r):
+def obj_hasprop(l, r) -> CObject:
     """
     Return `true` if object `l` has own (Str) property `r` (not interited).
     """
@@ -1036,7 +1036,7 @@ def obj_call(l, *args):
     raise UError("%s does not have '(' binop" % l.classname())
 
 @pyfunc
-def obj_instance_of(this, c):
+def obj_instance_of(this, c) -> CObject:
     """
     return `true` if Object `this` is an instance of
     Class (or List of Classes) `c`
@@ -1137,7 +1137,7 @@ def class_call(this_class, *args):
     raise UError("Called %s Class! Did you mean %s.new?" % (name, name))
 
 @pyfunc
-def class_subclass_of(this_class, c):
+def class_subclass_of(this_class, c) -> CObject:
     """
     Return `true` if Class `this_class` is a subclass of
     Class (or List of Classes) `c`
@@ -1235,7 +1235,7 @@ def pobj__init0(this, value):
     raise UError("{} missing init0 method".format(this.classname()))
 
 @pyfunc
-def pobj_ident(l, r):
+def pobj_ident(l, r) -> CObject:
     """
     Check if value of PObject `l`
     is the same Python Object
@@ -1244,7 +1244,7 @@ def pobj_ident(l, r):
     return mkbool(r.hasvalue and l.value is r.value)
 
 @pyfunc
-def pobj_differ(l, r):
+def pobj_differ(l, r) -> CObject:
     """
     Check if value of PObject `l`
     is not the same Python Object
@@ -1595,7 +1595,7 @@ def div(l, r):
     return _new_pobj(l.getclass(), lv / rv)
 
 @pyfunc
-def eq(l, r):
+def eq(l, r) -> CObject:
     """
     return `true` if value of `l` is the same as value of `r`
     """
@@ -1603,7 +1603,7 @@ def eq(l, r):
     return mkbool(r.hasvalue and l.value == r.value)
 
 @pyfunc
-def ne(l, r):
+def ne(l, r) -> CObject:
     """
     return `true` if value of `l` is different from the value of `r`
     """
@@ -1611,28 +1611,28 @@ def ne(l, r):
     return mkbool(r.hasvalue and l.value != r.value)
 
 @pyfunc
-def ge(l, r):
+def ge(l, r) -> CObject:
     """
     return `true` if value of `l` is >= the value of `r`
     """
     return mkbool(l.value >= r.getvalue())
 
 @pyfunc
-def lt(l, r):
+def lt(l, r) -> CObject:
     """
     return `true` if value of `l` is < the value of `r`
     """
     return mkbool(l.value < r.getvalue())
 
 @pyfunc
-def le(l, r):
+def le(l, r) -> CObject:
     """
     return `true` if value of `l` is <= the value of `r`
     """
     return mkbool(l.value <= r.getvalue())
 
 @pyfunc
-def gt(l, r):
+def gt(l, r) -> CObject:
     """
     return `true` if value of `l` is > the value of `r`
     (implemented as `!(l <= r)`)
@@ -1640,7 +1640,7 @@ def gt(l, r):
     return mkbool(l.value > r.getvalue())
 
 @pyfunc
-def bitand(l, r):
+def bitand(l, r) -> CObject:
     """
     return bitwise (binary) "and" (conjunction) of `l` and `r`
     """
@@ -1653,7 +1653,7 @@ def bitand(l, r):
     return _new_pobj(l.getclass(), lv & rv)
 
 @pyfunc
-def bitor(l, r):
+def bitor(l, r) -> CObject:
     """
     return bitwise (binary) "or" (union) of `l` and `r`
     """
@@ -1666,14 +1666,14 @@ def bitor(l, r):
     return _new_pobj(l.getclass(), lv | rv)
 
 @pyfunc
-def bitnot(this):
+def bitnot(this) -> CObject:
     """
     return bitwise (binary) "not" (complement) of `this`
     """
     return _new_pobj(this.getclass(), ~this.getvalue())
 
 @pyfunc
-def num_to_float(this):
+def num_to_float(this) -> CObject:
     """
     If value is a float, return `this`
     If value is an int, return a new Number object
@@ -1683,7 +1683,7 @@ def num_to_float(this):
     return _new_pobj(this.getclass(), float(this.getvalue()))
 
 @pyfunc
-def num_to_int(this):
+def num_to_int(this) -> CObject:
     """
     If value is an int, return `this`
     If value is a float, return a new Number object
@@ -1693,7 +1693,7 @@ def num_to_int(this):
     return _new_pobj(this.getclass(), int(this.getvalue()))
 
 @pyfunc
-def num_to_number(this):
+def num_to_number(this) -> CObject:
     """
     identity method; returns `this`
     """
@@ -1728,7 +1728,7 @@ Number.setprop(const.BINOPS, _mkdict({
 ################ Set
 
 @pyfunc
-def set__init0(this):
+def set__init0(this) -> CObject:
     """
     Called by Set.init (in bootstrap.xxl).
     Dodges needing private metaclass for Set.
@@ -1746,7 +1746,7 @@ Set.setprop(const.METHODS, _mkdict({
 ################ Str
 
 @pyfunc
-def str_concat(x, y):
+def str_concat(x, y) -> CObject:
     """
     String concatenation
     """
@@ -1759,7 +1759,7 @@ def str_concat(x, y):
     return _new_pobj(x.getclass(), xv + yv)
 
 @pyfunc
-def str_get(l, r):              # [] operator
+def str_get(l, r) -> CObject:        # [] operator
     """
     Str l[r]
     return `r`'th character of Str `l`
@@ -1768,7 +1768,7 @@ def str_get(l, r):              # [] operator
     return _new_pobj(l.getclass(), l.value[r.getvalue()])
 
 @pyfunc
-def str_split(this, sep=None, limit=None):
+def str_split(this, sep=None, limit=None) -> CObject:
     """
     Return a List of the words in the string,
     using sep as the delimiter string (default to `null` -- any whitespace).
@@ -1784,14 +1784,14 @@ def str_split(this, sep=None, limit=None):
     return wrap(this.value.split(sep, limit))
 
 @pyfunc
-def str_ends_with(this, suff):
+def str_ends_with(this, suff) -> CObject:
     """
     Return `true` if `this` ends with the suffix `suff`, `false` otherwise.
     """
     return mkbool(this.value.endswith(suff.getvalue()))
 
 @pyfunc
-def str__join(this, arg):
+def str__join(this, arg) -> CObject:
     """
     Concatenate any number of strings.
 
@@ -1802,42 +1802,42 @@ def str__join(this, arg):
                      this.value.join(unwrap(arg)))
 
 @pyfunc
-def str_ord(this):
+def str_ord(this) -> CObject:
     """
     Return the Unicode code point for a one-character string `this`
     """
     return mknumber(ord(this.value)) # XXX getstr
 
 @pyfunc
-def str_starts_with(this, pref):
+def str_starts_with(this, pref) -> CObject:
     """
     Return `true` if `this` starts with prefix `pref, `false` otherwise.
     """
     return mkbool(this.value.startswith(pref.getvalue()))
 
 @pyfunc
-def str_str(this):
+def str_str(this) -> CObject:
     """
     Identity method
     """
     return this                 # identity
 
 @pyfunc
-def str_strip(this):
+def str_strip(this) -> CObject:
     """
     Return a copy of the string with leading and trailing whitespace removed.
     """
     return _new_pobj(this.getclass(), this.value.strip()) # XXX getstr
 
 @pyfunc
-def str_to_float(this):
+def str_to_float(this) -> CObject:
     """
     Convert string to a floating point Number
     """
     return mknumber(float(this.value))
 
 @pyfunc
-def str_to_int(this, base=None):
+def str_to_int(this, base=None) -> CObject:
     """
     Convert string to integer Number.
     Int `base` defaults to zero (accept 0xXXX, 0oOOO, 0bBBB).
@@ -1849,7 +1849,7 @@ def str_to_int(this, base=None):
     return mknumber(int(this.value, base))
 
 @pyfunc
-def str_to_number(this):
+def str_to_number(this) -> CObject:
     """
     Convert string to a Number
     """
@@ -1860,7 +1860,7 @@ def str_to_number(this):
 
 # static methods (plain function)
 @pyfunc
-def str_chr(i):
+def str_chr(i) -> CObject:
     """
     Return a Unicode string of one character with ordinal i; 0 <= i <= 0x10ffff
     """
@@ -1897,14 +1897,14 @@ Str.setprop('chr', str_chr)
 ################ Null
 
 @pyfunc
-def null_str(this):
+def null_str(this) -> CObject:
     """
     to_string/repr method for Null Class: returns "null"
     """
     return mkstr("null")
 
 @pyfunc
-def null_call(this, *args):
+def null_call(this, *args) -> CObject:
     """
     `(` method for `null` value (fatal error)
     """
@@ -1920,7 +1920,7 @@ Null.setprop(const.BINOPS, _mkdict({
 ################ Nullish
 
 @pyfunc
-def nullish_getprop(l, r):
+def nullish_getprop(l, r) -> CObject:
     """
     `.` method for Nullish (null, undefined) values.
     Fatal error if unknown property.
@@ -1938,7 +1938,7 @@ def nullish_getprop(l, r):
     return val
 
 @pyfunc
-def nullish_setprop(l, r, value):
+def nullish_setprop(l, r, value) -> None:
     """
     Nullish Object setprop method/operator
     """
@@ -1959,7 +1959,7 @@ Nullish.setprop(const.LHSOPS, _mkdict({
 ################ Bool
 
 @pyfunc
-def bool_str(this):
+def bool_str(this) -> CObject:
     """
     return Str representation: "true" or "false"
     """
@@ -1974,7 +1974,7 @@ Bool.setprop(const.METHODS, _mkdict({
     'repr': bool_str
 }))
 
-def mkbool(val):
+def mkbool(val) -> CObject:
     """
     convert Python truthiness
     to language true or false Object
@@ -2012,7 +2012,7 @@ def unwrap(x):
     return x
 
 @pyfunc
-def pyobj_getprop(l, r):
+def pyobj_getprop(l, r) -> CObject:
     """
     PyObject `.` binop -- proxies to Python object getattr
     """
@@ -2029,14 +2029,14 @@ def pyobj_getprop(l, r):
     return wrap(v)
 
 @pyfunc
-def pyobj_props(this):
+def pyobj_props(this) -> CObject:
     """
     return dir() of wrapped Python object
     """
     return wrap(dir(this.value))
 
 @pyfunc
-def pyobj_getitem(l, r):
+def pyobj_getitem(l, r) -> CObject:
     """
     PyObject `[` binop
     """
@@ -2044,7 +2044,7 @@ def pyobj_getitem(l, r):
     return wrap(v)
 
 @pyfunc
-def pyobj_call(this, *args):
+def pyobj_call(this, *args) -> CObject:
     a2 = [unwrap(x) for x in args]
     ret = this.value(*a2)
     return wrap(ret) # may create another PyObject!
@@ -2066,7 +2066,7 @@ PyObject.setprop(const.BINOPS, _mkdict({
 ################ PyIterator
 
 @pyfunc
-def pyiterator_iter(this):
+def pyiterator_iter(this) -> CObject:
     """
     Returns `this.`
 
@@ -2076,7 +2076,7 @@ def pyiterator_iter(this):
     return this
 
 @pyvmfunc
-def pyiterator_next(vm, this, finished):
+def pyiterator_next(vm: vmx.VM, this, finished) -> CObject:
     """
     Returns next value; calls `finished`
     (a block leave label or `return` Continuation)
@@ -2240,7 +2240,7 @@ def modinfo_load_vmx(this, fname):
     return CClosure(code, mod.scope)
 
 @pyfunc
-def modinfo_assemble(this, tree, srcfile):
+def modinfo_assemble(this, tree: CObject, srcfile: CObject):
     """
     Assemble List of Lists representing VM code.
     `tree`: List of Lists.
