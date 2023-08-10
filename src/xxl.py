@@ -96,4 +96,5 @@ classes.classes_init(argv=argv, parser_vmx=parser)
 
 mod, boot = classes.new_module(fname=fname, main=True)
 
+assert boot is not None         # for mypy
 vmx.run(boot=boot, scope=mod.scope, stats=stats, trace=trace, xcept=xcept)
