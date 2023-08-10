@@ -244,7 +244,10 @@ def xxl__tree(t: classes.CObject) -> classes.CObject:
 # NOTE: used to do string concatenation rather than list building.
 #       not clear that on average this is any better
 
-def format_instr(instr: List[Any], indent: str = '') -> List[str]:
+Instr = List[Any]
+Code = List[Instr]
+
+def format_instr(instr: Instr, indent: str = '') -> List[str]:
     """
     helper for xxl_vtree
     format one instruction (Python list)
@@ -265,7 +268,7 @@ def format_instr(instr: List[Any], indent: str = '') -> List[str]:
     ret.append(']')
     return ret
 
-def format_code(code: List[Any], indent: str = '') -> List[str]:
+def format_code(code: Code, indent: str = '') -> List[str]:
     """
     helper for xxl_vtree
     takes Python list of instructions (Python lists)
@@ -280,7 +283,7 @@ def format_code(code: List[Any], indent: str = '') -> List[str]:
     ret.append("]")
     return ret
 
-def trim_where(code, fname: str) -> None:
+def trim_where(code: Code, fname: str) -> None:
     """
     helper for xxl_vtree, assemble
     `code` is Python list of lists: ***MODIFIED IN PLACE!!!***
@@ -289,7 +292,7 @@ def trim_where(code, fname: str) -> None:
     if not fname:
         return
     fnamelen = len(fname) + 1   # remove "fname:"
-    def helper(c) -> None:
+    def helper(c: Code) -> None:
         for instr in c:
             if instr[0].startswith(fname):
                 instr[0] = instr[0][fnamelen:]
@@ -342,7 +345,7 @@ def obj2python_json(x: classes.CObject) -> Any:
         for attr in ['where', 'arity', 'value']:
             r.append(clean1(x.getprop(attr)))
         for attr in ['first', 'second', 'third']:
-            if attr not in x.props:
+            if not x.hasprop(attr):
                 break
             r.append(clean1(x.getprop(attr)))
         return r
