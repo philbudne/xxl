@@ -64,7 +64,7 @@ is a language CObject, and not just any Python object.
 
 # Python
 import os
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 # XXL:
 import xxlobj
@@ -153,7 +153,7 @@ class CObject:
     def setprop(self, prop: str, value: "CObject") -> None:
         self.props[prop] = value
 
-    def getvalue(self) -> "CObject":
+    def getvalue(self) -> Any:
         raise UError("not a Python valued Object") # ValueError?!
 
     def __str__(self) -> str:
@@ -175,7 +175,7 @@ class CPObject(CObject):
         super().__init__(this_class)
         self.value = None       # set by init method and/or _new_pobj
 
-    def getvalue(self):
+    def getvalue(self) -> Any:
         return self.value
 
     def __str__(self) -> str:
