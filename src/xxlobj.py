@@ -260,8 +260,8 @@ def format_instr(instr: JInstr, indent: str = '') -> List[str]:
         return [indent, json.dumps(instr)]
 
     # here to handle "close" and "bccall" (instr[2] is a code list)
-    ret = [indent, '["', instr[0], '", "', op, '",\n', nindent]
     nindent = indent + " "
+    ret = [indent, '["', instr[0], '", "', op, '",\n', nindent]
     ret.extend(format_code(instr[2], nindent))
     if op == "close" and len(instr) >= 4 and instr[3]: # now with doc string!!
         ret.append(',\n')

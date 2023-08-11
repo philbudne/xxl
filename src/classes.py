@@ -535,7 +535,7 @@ def class_by_name(name):
     assert(__initialized)
     return classes_scope.lookup(name)
 
-def new_by_name(name, value) -> CObject:
+def new_by_name(name, value) -> CPObject:
     """
     create a new CPObject of class `name` w/ value `value`
     """

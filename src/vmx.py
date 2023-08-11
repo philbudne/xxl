@@ -176,7 +176,7 @@ class VM:
         self.pc = 0             # int: offset into code base
         self.ir: Optional[VMInstr0] = None # VMInstr: Instruction Register
         self.fp: Optional[Frame] = None # Frame: Frame pointer (for return)
-        self.temp: Optional[CObject] = None # holds new Dict/List
+        self.temp: Optional["classes.CPObject"] = None # holds new Dict/List
         self.stats = stats      # bool: enable timing
         self.trace = trace      # bool: enable tracing
 
@@ -465,6 +465,25 @@ class WrapInstr1(VMInstr1):
         # convert to CObject when code is loaded
         super().__init__(fn, where, classes.wrap(value))
 
+class IntInstr(VMInstr1):
+    """
+    base for VM instructions with one integer argument
+    """
+    value: int
+
+    def __init__(self, fn: str, where: str, value: int):
+        super().__init__(fn, where, value)
+
+
+class StrInstr(VMInstr1):
+    """
+    base for VM instructions with one string argument
+    """
+    value: str
+
+    def __init__(self, fn: str, where: str, value: str):
+        super().__init__(fn, where, value)
+
 ################
 
 @reginstr
@@ -632,19 +651,20 @@ class UnOpInstr(WrapInstr1):
         m.invoke(vm)            # XXX always create frame???
 
 @reginstr
-class CloseInstr(VMInstr1):
+class CloseInstr(VMInstr0):
     """
     create a Closure (from code + current scope)
     inst.value contains VM code (as Python list of VMInstrs)
     """
     name = "close"
-    __slots__ = ['doc']
+    __slots__ = ['value', 'doc']
     value: VMInstrs
 
     def __init__(self, fn: str, where: str,
                  value: VMInstrs,
                  doc: Optional[str] = None):
-        super().__init__(fn, where, convert_instrs(value, fn))
+        super().__init__(fn, where)
+        self.value = convert_instrs(value, fn)
         self.doc = doc
 
     def step(self, vm: "VM") -> None:
@@ -666,7 +686,7 @@ class BCCallInstr(CloseInstr):
         c.invoke(vm)
 
 @reginstr
-class CallInstr(VMInstr1):
+class CallInstr(IntInstr):
     """
     Calls CObject invoke method
         (CClosure, CPyFunc, CBoundMethod, CContinuation define this,
@@ -676,7 +696,6 @@ class CallInstr(VMInstr1):
     calls CObject.invoke(vm)
     """
     name = "call"
-    value: int
 
     def step(self, vm: "VM") -> None:
         nargs = self.value
@@ -754,7 +773,9 @@ class AppendInstr(VMInstr0):
     name = "append"
 
     def step(self, vm: "VM") -> None:
-        assert vm.temp
+        assert (vm.temp and
+                isinstance(vm.temp, classes.CPObject) and
+                isinstance(vm.temp.value, list))
         vm.temp.value.append(vm.ac)
 
 # No longer used for return statement (it no longer exists), BUT, is
@@ -785,7 +806,7 @@ class ExitInstr(VMInstr0):
         vm.run = False
 
 @reginstr
-class VarInstr(VMInstr1):
+class VarInstr(StrInstr):
     """
     declare a variable in current scope.
     Python string in self.value
@@ -813,15 +834,16 @@ class ArgsInstr(VMInstr0):
     name = "args"
 
     __slots__ = ['formals']
+    formals: ArgNames
 
-    def __init__(self, fn: str, where: str, formals: List[str]):
+    def __init__(self, fn: str, where: str, formals: ArgNames):
         super().__init__(fn, where)
         self.formals = formals
 
     def json(self) -> IJSON:
         return [self.fn_where(), self.name, self.formals]
 
-    def _bind_args(self, vm: "VM"):
+    def _bind_args(self, vm: "VM") -> None:
         """
         common code for ArgsInstr and Args2Instr
         """
@@ -848,7 +870,7 @@ class ArgsInstr(VMInstr0):
         """
         return list of str for arguments, for docs
         """
-        return self.value
+        return self.formals
 
 @reginstr
 class Args2Instr(ArgsInstr):
@@ -867,7 +889,7 @@ class Args2Instr(ArgsInstr):
 
     __slots__ = ['rest']
 
-    def __init__(self, fn: str, where: str, formals: List[str], rest: str):
+    def __init__(self, fn: str, where: str, formals: ArgNames, rest: str):
         super().__init__(fn, where, formals)
         self.rest = rest
 
@@ -886,10 +908,10 @@ class Args2Instr(ArgsInstr):
         """
         return list of str for arguments, for docs
         """
-        return self.args + ["..." + self.rest]
+        return self.formals + ["..." + self.rest]
 
 @reginstr
-class LScopeInstr(VMInstr1):
+class LScopeInstr(StrInstr):
     """
     first op executed in a scope closure with a leave label
     """
@@ -913,7 +935,7 @@ class UScopeInstr(VMInstr0):
         vm.scope = vm.scope.new_scope()
 
 @reginstr
-class StoreInstr(VMInstr1):
+class StoreInstr(StrInstr):
     """
     store AC in a variable
     self.value contains Python string for variable name
@@ -923,10 +945,11 @@ class StoreInstr(VMInstr1):
 
     def step(self, vm: "VM") -> None:
         assert vm.scope
+        assert vm.ac
         vm.scope.store(self.value, vm.ac)
 
 @reginstr
-class JrstInstr(VMInstr1):
+class JrstInstr(IntInstr):
     """
     Unconditional jump.
     sets PC (offset into code block) from self.value (Python int)
@@ -938,7 +961,7 @@ class JrstInstr(VMInstr1):
         vm.pc = self.value
 
 @reginstr
-class JumpNInstr(VMInstr1):
+class JumpNInstr(IntInstr):
     """
     Jump if true.
     If AC is truthy, sets PC (offset into code block) from self.value
@@ -951,7 +974,7 @@ class JumpNInstr(VMInstr1):
             vm.pc = self.value
 
 @reginstr
-class JumpEInstr(VMInstr1):
+class JumpEInstr(IntInstr):
     """
     Jump if true.
     If AC is falsey, sets PC (offset into code block) from self.value
@@ -964,7 +987,7 @@ class JumpEInstr(VMInstr1):
             vm.pc = self.value
 
 @reginstr
-class NewInstr(VMInstr1):
+class NewInstr(StrInstr):
     """
     for [ ... ] and { .... } sugar (from compiler) *ONLY*
     push VM TEMP register onto stack (so nestable)
@@ -1029,7 +1052,7 @@ def load_vm_json(fname: str) -> VMInstrs:
         # load list of instructions
         j = json.load(f)
 
-    return convert_instrs(j, metadata.get('fn'))
+    return convert_instrs(j, metadata.get('fn', '?'))
 
 ################
 
@@ -1040,10 +1063,11 @@ def assemble(tree: "classes.CObject", srcfile: "classes.CObject") -> VMInstrs:
     str `srcfile` source file name for trimming "where" fields
     """
     js = xxlobj.obj2python_json(tree) # get Python list of lists
-    xxlobj.trim_where(js, srcfile.value) # XXX getstr?
+    fn = srcfile.getvalue()           # XXX getstr?
+    xxlobj.trim_where(js, fn)
 
     # convert into Python list of Instrs (scope for type name lookup):
-    return convert_instrs(js, srcfile)
+    return convert_instrs(js, fn)
 
 ################
 
