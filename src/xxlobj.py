@@ -246,10 +246,10 @@ def xxl__tree(t: classes.CObject) -> classes.CObject:
 # NOTE: used to do string concatenation rather than list building.
 #       not clear that on average this is any better
 
-Instr = List[Any]
-Code = List[Instr]
+JInstr = List[Any]
+JCode = List[JInstr]
 
-def format_instr(instr: Instr, indent: str = '') -> List[str]:
+def format_instr(instr: JInstr, indent: str = '') -> List[str]:
     """
     helper for xxl_vtree
     format one instruction (Python list)
@@ -260,8 +260,8 @@ def format_instr(instr: Instr, indent: str = '') -> List[str]:
         return [indent, json.dumps(instr)]
 
     # here to handle "close" and "bccall" (instr[2] is a code list)
-    nindent = indent + " "
     ret = [indent, '["', instr[0], '", "', op, '",\n', nindent]
+    nindent = indent + " "
     ret.extend(format_code(instr[2], nindent))
     if op == "close" and len(instr) >= 4 and instr[3]: # now with doc string!!
         ret.append(',\n')
@@ -270,7 +270,7 @@ def format_instr(instr: Instr, indent: str = '') -> List[str]:
     ret.append(']')
     return ret
 
-def format_code(code: Code, indent: str = '') -> List[str]:
+def format_code(code: JCode, indent: str = '') -> List[str]:
     """
     helper for xxl_vtree
     takes Python list of instructions (Python lists)
@@ -285,7 +285,7 @@ def format_code(code: Code, indent: str = '') -> List[str]:
     ret.append("]")
     return ret
 
-def trim_where(code: Code, fname: str) -> None:
+def trim_where(code: JCode, fname: str) -> None:
     """
     helper for xxl_vtree, assemble
     `code` is Python list of lists: ***MODIFIED IN PLACE!!!***
@@ -294,7 +294,7 @@ def trim_where(code: Code, fname: str) -> None:
     if not fname:
         return
     fnamelen = len(fname) + 1   # remove "fname:"
-    def helper(c: Code) -> None:
+    def helper(c: JCode) -> None:
         for instr in c:
             if instr[0].startswith(fname):
                 instr[0] = instr[0][fnamelen:]

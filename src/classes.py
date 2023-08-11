@@ -949,7 +949,7 @@ def obj_hasprop(l, r) -> CObject:
     # XXX check r is Str
     return mkbool(l.hasprop(r.getvalue()))
 
-def find_op(obj: CObject, optype: str, op: CObject) -> CCallable:
+def find_op(obj: CObject, optype: str, op: CPObject) -> CCallable:
     """
     Utility (not method)
     `obj` is CObject
@@ -2276,7 +2276,7 @@ PyIterableObject = defclass(PClass, const.PYITERABLEOBJECT, [PyObject,PyIterable
     """)
 
 # XXX maybe take second arg PObject orig, and return if "value is orig.value"??
-def wrap(value) -> CObject:
+def wrap(value) -> CPObject:
     """
     wrap a Python `value` in a language CObject
 

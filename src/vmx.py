@@ -32,7 +32,7 @@ import sys                      # stderr
 import json
 import collections
 import time
-from typing import Any, Dict, List, NamedTuple, Optional, TextIO, Tuple, Type, Union, TYPE_CHECKING
+from typing import Any, Dict, List, NamedTuple, Optional, TextIO, Tuple, Type, Union, TYPE_CHECKING, cast
 
 import classes
 import xxlobj
@@ -43,12 +43,12 @@ if TYPE_CHECKING:
     from classes import CObject
 
 ArgNames = List[str]
-Code = List["VMInstr0"]
+VMInstrs = List["VMInstr0"]
 IJSON = List[Any]               # FIXME! Python JSON repr of instr
 IValue = Union[int, str, "CObject"] # instruction value
 
 class Frame(NamedTuple):
-     cb: Code                   # list of VMInstr
+     cb: VMInstrs                   # list of VMInstr
      pc: int                    # offset into cb
      scope: "Scope"
      fp: Optional["Frame"]
@@ -171,7 +171,7 @@ class VM:
         self.run = False
         self.ac: Optional["classes.CObject"] = None # CObject: Accumulator
         self.sp: SP = None      # Stack Pointer (value, next) tuples
-        self.cb: Optional[Code] = None # Code Base (Python list of VMInstr)
+        self.cb: Optional[VMInstrs] = None # Code Base (Python list of VMInstr)
         self.scope: Optional[Scope] = None # Scope: Current scope
         self.pc = 0             # int: offset into code base
         self.ir: Optional[VMInstr0] = None # VMInstr: Instruction Register
@@ -187,7 +187,7 @@ class VM:
         # consume directly.
         self.args: List["classes.CObject"] = []
 
-    def start(self, code: Code, scope: Scope) -> None:
+    def start(self, code: VMInstrs, scope: Scope) -> None:
         self.run = True         # cleared by 'exit' instr
         self.pc = 0
         self.cb = code
@@ -459,7 +459,7 @@ class WrapInstr1(VMInstr1):
     """
     base for VM Instructions with one argument, wrapped on input
     """
-    value: "classes.CObject"
+    value: "classes.CPObject"
 
     def __init__(self, fn: str, where: str, value: IValue):
         # convert to CObject when code is loaded
@@ -562,7 +562,7 @@ class BinOpInstr(WrapInstr1):
 
     def prof(self, vm: "VM", secs: float) -> None:
         super().prof(vm, secs)
-        op: str = self.value    # NOT a CObject!
+        op: str = cast(str,self.value.value) # getstr??
         if op not in vm.bop_count:
             vm.bop_time[op] = 0.0
             vm.bop_count[op] = 0
@@ -638,10 +638,11 @@ class CloseInstr(VMInstr1):
     inst.value contains VM code (as Python list of VMInstrs)
     """
     name = "close"
-    __slots__ = ['value', 'doc']
+    __slots__ = ['doc']
+    value: VMInstrs
 
     def __init__(self, fn: str, where: str,
-                 value: Code,
+                 value: VMInstrs,
                  doc: Optional[str] = None):
         super().__init__(fn, where, convert_instrs(value, fn))
         self.doc = doc
@@ -998,7 +999,7 @@ def convert_one_instr(i: List[str], fn: str) -> VMInstr0:
     # create new instruction instance
     return instr_class_by_name[op](fn, *i)
 
-def convert_instrs(il: IJSON, fn: str) -> Code:
+def convert_instrs(il: IJSON, fn: str) -> VMInstrs:
     """
     assemble a list of instructions in JSON form
     fn is filename
@@ -1007,7 +1008,7 @@ def convert_instrs(il: IJSON, fn: str) -> Code:
     return [convert_one_instr(x, fn) for x in il]
 
 # called by classes.new_module (w/ bootstrap.vmx) and ModInfo.load_vmx method
-def load_vm_json(fname: str) -> Code:
+def load_vm_json(fname: str) -> VMInstrs:
     with open(fname) as f:
         l = f.readline()
 
@@ -1033,7 +1034,7 @@ def load_vm_json(fname: str) -> Code:
 ################
 
 # helper for ModInfo.assemble
-def assemble(tree: "classes.CObject", srcfile: "classes.CObject") -> Code:
+def assemble(tree: "classes.CObject", srcfile: "classes.CObject") -> VMInstrs:
     """
     List of Lists `tree` of instructions to assemble
     str `srcfile` source file name for trimming "where" fields
