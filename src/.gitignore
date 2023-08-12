@@ -1,6 +1,6 @@
 __pycache__
 *~
-*.vmx
+?.vmx
 tested
 t
 pytest
@@ -12,3 +12,4 @@ notes
 classes.html
 .tmp.*
 .bootstrap
+venv
