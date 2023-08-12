@@ -668,6 +668,7 @@ class CloseInstr(VMInstr0):
         self.doc = doc
 
     def step(self, vm: "VM") -> None:
+        assert vm.scope
         vm.ac = classes.CClosure(self.value, vm.scope, self.doc)
 
     def json(self) -> IJSON:
@@ -682,6 +683,7 @@ class BCCallInstr(CloseInstr):
     name = "bccall"
 
     def step(self, vm: "VM") -> None:
+        assert vm.scope
         c = classes.CBClosure(self.value, vm.scope)
         c.invoke(vm)
 
@@ -970,6 +972,7 @@ class JumpNInstr(IntInstr):
     name = "jumpn"
 
     def step(self, vm: "VM") -> None:
+        assert vm.ac is not None
         if classes.is_true(vm.ac):
             vm.pc = self.value
 
@@ -983,6 +986,7 @@ class JumpEInstr(IntInstr):
     name = "jumpe"
 
     def step(self, vm: "VM") -> None:
+        assert vm.ac is not None
         if not classes.is_true(vm.ac):
             vm.pc = self.value
 

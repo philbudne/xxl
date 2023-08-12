@@ -328,8 +328,8 @@ def obj2python_json(x: classes.CObject) -> Any:
     *NOT* a general purpose JSON converter!!!
     """
 
-    value_classes = [classes.Number, classes.Str, classes.Bool, classes.Null]
-    iterable_classes = [classes.List]
+    value_classes = [classes.LCNumber, classes.LCStr, classes.LCBool, classes.LCNull]
+    iterable_classes = [classes.LCList]
     def clean1(x: classes.CObject) -> Any:
         """
         worker function
@@ -364,7 +364,7 @@ def xxl_pyimport(module: classes.CObject) -> classes.CObject:
 ################################################################
 
 def create_xxl_class(argv: List[str], parser_vmx: str) -> None:
-    XXLObject = classes.defclass(classes.Class, 'XXLObject', [classes.Object],
+    XXLObject = classes.defclass(classes.LCClass, 'XXLObject', [classes.LCObject],
                                  doc="Class for __xxl object")
 
     # NOTE! Everything a static method (evolved from simple object)
