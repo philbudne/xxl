@@ -1101,7 +1101,7 @@ def obj_instance_of(this: CObject, c: CObject) -> CObject:
     assert k is not None
     assert LCList is not None
     if subclass_of(k, [LCList]):
-        cl = cast(list, c.getvalue()) # .getlist
+        cl = cast(List[CObject], c.getvalue()) # .getlist
     else:
         cl = [c]                # make Python list
     return mkbool(instance_of(this, cl))

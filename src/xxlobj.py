@@ -120,7 +120,8 @@ def xxl__find_in_lib_path(fname: classes.CObject,
     return full path of file in current dir, or in XXL_LIB_PATH
     """
     if suffixes:
-        suff2 = [x.getvalue() for x in cast(List,suffixes.getvalue())]
+        suff2 = [x.getvalue()
+                 for x in cast(List[classes.CObject],suffixes.getvalue())]
     else:
         suff2 = []
     return classes.mkstr(find_in_lib_path(cast(str,fname.getvalue()), # XXX getstr?
