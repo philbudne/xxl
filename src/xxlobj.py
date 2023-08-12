@@ -181,7 +181,7 @@ def xxl__tokenizer(filename: classes.CObject,
         if not t:
             return classes.null_value
         where = "%s:%s:%s" % (fnstr, t.lineno, t.from_)
-        if t.type_ == 'number':
+        if isinstance(t.value, (int, float)):
             v = classes.mknumber(t.value)
         else:
             v = classes.mkstr(t.value)
