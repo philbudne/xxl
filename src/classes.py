@@ -53,12 +53,12 @@ If a language Class "ClassName" needs a Python class of it's own,
 "this" is used in pyfunc (Class methods) to show that the argument
 is a language CObject, and not just any Python object.
 
-"LCXyz" is a CObject for Language Class Xyz
-"CXyz" is a Python subclass of CObject
-"Xyz" is reserved for typing names!!!
-
 [some of the above probably DOESN'T belong in the docstring!!]
 """
+
+# LCXyz is a CObject for Language Class Xyz
+# CXyz is a Python subclass of CObject
+# (since Xyz is reserved for typing names!)
 
 # NOTE!!! For methods/ops use 'xxx' strings (make searching easier)
 
@@ -106,6 +106,10 @@ class UError(Exception):
 Cache = Dict[str, "CCallable"]
 
 class CObject:
+    """
+    Python class representing a language Object
+    """
+
     __slots__ = ['props', 'klass', 'cache']
     hasvalue = False
 
@@ -893,7 +897,8 @@ def obj_setprop(l: CObject, r: CObject, value: CObject) -> CObject:
 
 # NOTE! utility, not method
 # XXX return (obj, value) to avoid generating BoundMethod?
-def find_in_supers(l: CObject, r: CObject, default: CObject, caching: bool = True) -> CObject:
+def find_in_supers(l: CObject, r: CObject, default: CObject,
+                   caching: bool = True) -> CObject:
     """
     Breadth first search of superclass methods/properties;
     `l` is CObject, `r` is Str for method/property name.
@@ -2341,13 +2346,15 @@ LCModInfo.setprop(const.METHODS, _mkdict({
 
 ################################################################
 
-LCPyIteratorObject = defclass(LCPClass, const.PYITERATOROBJECT, [LCPyObject,LCPyIterator],
+LCPyIteratorObject = defclass(LCPClass, const.PYITERATOROBJECT,
+                              [LCPyObject,LCPyIterator],
                               doc="""
     Built-in Class for a wrapper around an arbitrary Python Object that is an iterator
     (has a __next__ method -- should also have __iter__ method).
     """)
 
-LCPyIterableObject = defclass(LCPClass, const.PYITERABLEOBJECT, [LCPyObject,LCPyIterable],
+LCPyIterableObject = defclass(LCPClass, const.PYITERABLEOBJECT,
+                              [LCPyObject,LCPyIterable],
                     doc="""
     Built-in Class for a wrapper around an arbitrary Python Object that is an iterable
     (has an __iter__ method -- an iterator factory).
@@ -2434,11 +2441,12 @@ def classes_init(argv: List[str], parser_vmx: str) -> None:
 ################################################################
 
 def def_wrappers(cname: str,
-                 ptype: Any,    # XXX
+                 ptype: type,    # ??
                  methods: List[Union[str, Tuple[str,str]]]) -> None:
     """
+    Define a language class as a wrapper around a Python class.
     str `cname` is XXL Class name.
-    Python type `ptype` is a Python class/type.
+    Python type `ptype`
     list `methods` is list of str and/or 2-tuple of str (pymeth, xxlmeth)
     """
     # find Class with cname, find or create methods Dict
