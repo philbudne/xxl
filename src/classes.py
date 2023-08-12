@@ -53,6 +53,10 @@ If a language Class "ClassName" needs a Python class of it's own,
 "this" is used in pyfunc (Class methods) to show that the argument
 is a language CObject, and not just any Python object.
 
+"LCXyz" is a CObject for Language Class Xyz
+"CXyz" is a Python subclass of CObject
+"Xyz" is reserved for typing names!!!
+
 [some of the above probably DOESN'T belong in the docstring!!]
 """
 
@@ -64,9 +68,10 @@ is a language CObject, and not just any Python object.
 
 # Python
 import os
+import types
+from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, Tuple, Union, cast
 
 # XXL:
-import scopes
 import xxlobj
 import const
 import vmx
@@ -79,11 +84,14 @@ XXL_DEBUG_BOOTSTRAP = os.getenv('XXL_DEBUG_BOOTSTRAP', None)
 CWD = os.getcwd()               # current working directory
 CWD_SEP = CWD + os.sep
 
-root_scope = scopes.Scope()
+root_scope = vmx.Scope()
 
-classes_scope = scopes.Scope(root_scope) # scope for "classes" internal Module
+classes_scope = vmx.Scope(root_scope) # scope for "classes" internal Module
 
 __initialized = False
+
+#PythonValue = Union[int, float, str, Dict, List, None, set, Iterable, Iterator]
+PythonValue = Any
 
 class UError(Exception):
     """
@@ -95,31 +103,33 @@ class UError(Exception):
 # All such Python classes should start with the letter "C"
 #       (the variable ClassName should point to the Class object of that name)
 
+Cache = Dict[str, "CCallable"]
+
 class CObject:
     __slots__ = ['props', 'klass', 'cache']
     hasvalue = False
 
-    def __init__(self, klass):
+    def __init__(self, klass: Optional["CObject"]):
         # klass may only be None when creating initial Class (Object)
-        self.setclass(klass)
-        self.props = {}
+        self.setclass(klass or self)
+        self.props: Dict[str, "CObject"] = {}
         # NOTE! cache only written for Class objects
         # (if per-object caching, including BoundMethods) is desired
         # need to keep a global serial number in each object, and increment it
         # to invalidate all cache entries.
-        self.cache = {}
+        self.cache: Cache = {}
 
-    def setclass(self, klass):
+    def setclass(self, klass: "CObject") -> "CObject":
         self.klass = klass
         return klass
 
-    def getclass(self):
+    def getclass(self) -> "CObject":
         """
         return CObject for object Class
         """
         return self.klass
 
-    def classname(self):
+    def classname(self) -> str:
         """
         return Python string for object class name; used in __repr__
         """
@@ -127,13 +137,15 @@ class CObject:
         if c is null_value:
             return "Unknown!"
 
-        n = c.getprop(const.NAME).getvalue()
-        if subclass_of(c, [Class]):
+        assert c is not None
+        n = c.getprop(const.NAME).getvalue() # XXX getstr??
+        assert isinstance(n, str)
+        if subclass_of(c, [LCClass]):
             return '%s: %s' % (n, self.getprop(const.NAME).getvalue())
 
         return n
 
-    def invoke(self, vm):
+    def invoke(self, vm: vmx.VM) -> None:
         # will raise UError if op not found:
         # NOTE!! find_op does not return BoundMethod
         #       (called 99.999% of time from XxxOpInstrs)
@@ -141,25 +153,25 @@ class CObject:
         vm.args.insert(0, self) # OK, another place where THIS is passed
         m.invoke(vm)
 
-    def hasprop(self, prop):
+    def hasprop(self, prop: str) -> bool:
         return prop in self.props
 
-    def delprop(self, prop):
+    def delprop(self, prop: str) -> None:
         self.props.pop(prop)
 
-    def getprop(self, prop):
+    def getprop(self, prop: str) -> "CObject":
         return self.props.get(prop, null_value)
 
-    def setprop(self, prop, value):
+    def setprop(self, prop: str, value: "CObject") -> None:
         self.props[prop] = value
 
-    def getvalue(self):
+    def getvalue(self) -> Any:
         raise UError("not a Python valued Object") # ValueError?!
 
-    def __str__(self):
+    def __str__(self) -> str:
         return repr(self)       # XXX ???
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<%s at %#x>' % (self.classname(), id(self))
 
 class CPObject(CObject):
@@ -168,55 +180,62 @@ class CPObject(CObject):
     (has a value property which contains a Python type)
     """
     __slots__ = ['value']
+    value: PythonValue
     hasvalue = True
 
-    def __init__(self, this_class):
-        ### XXX TEMP
+    def __init__(self, this_class: CObject):
         super().__init__(this_class)
         self.value = None       # set by init method and/or _new_pobj
 
-    def getvalue(self):
+    def getvalue(self) -> PythonValue:
         return self.value
 
-    def __str__(self):
+    def getint(self) -> int:
+        assert isinstance(self.value, int)
+        return self.value
+
+    def __str__(self) -> str:
         if self.value is None:
             return "null"
         if isinstance(self.value, bool):
             return str(self.value).lower()
         return str(self.value)
 
-    def __hash__(self):
-        if not self.value.__hash__:
+    def __hash__(self) -> int:
+        if not self.value.__hash__: # type: ignore[truthy-function, unused-ignore]
             # avoid error calling None!
             raise UError('%s not hashable' % self.classname())
-        return self.value.__hash__()
+        return self.value.__hash__() # type: ignore[no-any-return]
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         # XXX raise ValueError?
         return hasattr(other,'value') and self.value == other.value
 
-    def __lt__(self, other):    # need for sorted iterator
+    def __lt__(self, other: object) -> Any:  # need for sorted iterator
         # XXX raise ValueError?
+        assert isinstance(other, CObject)
         return self.value < other.getvalue()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """show wrapped value"""
         return '<%s: %s at %#x>' % \
             (self.classname(), repr(self.value), id(self))
 
 ################
 
+Args = List[str]
+
 class CCallable(CObject):
     """
     Base class for directly callable CObjects.
     """
-    def invoke(self, vm):
+    def invoke(self, vm: vmx.VM) -> None:
         raise Exception("invoke not overridden") # SNH -- Should Not Happen
 
-    def args(self):
+    def args(self) -> Args:
         raise Exception("args not overridden") # SNH
 
-    def defn(self):
+    def defn(self) -> str:
         raise Exception("defn not overridden") # SNH
 
 class CContinuation(CCallable):
@@ -226,15 +245,15 @@ class CContinuation(CCallable):
     """
     __slots__ = ['fp']
 
-    def __init__(self, fp):
-        self.klass = Continuation
+    def __init__(self, fp: vmx.Frame):
+        self.klass = LCContinuation
         self.props = {}
         self.fp = fp
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<Continuation: %s>" % self.defn()
 
-    def invoke(self, vm):
+    def invoke(self, vm: vmx.VM) -> None:
         l = len(vm.args)
         if l == 1:
             vm.ac = vm.args[0]  # return value
@@ -245,13 +264,13 @@ class CContinuation(CCallable):
             raise UError("Too many args (%d) to %r" % (len(vm.args), self))
         vm.restore_frame(self.fp) # ***JUST*** like ReturnInstr
 
-    def args(self):
+    def args(self) -> Args:
         """
         for __args method: return Python list of str argument names
         """
         return ["value"]
 
-    def defn(self):
+    def defn(self) -> str:
         """
         Return Python str for "definition" location.
 
@@ -260,7 +279,7 @@ class CContinuation(CCallable):
         """
         return vmx.fp_where(self.fp)
 
-    def backtrace(self):
+    def backtrace(self) -> List[str]:
         """
         Return Python list of str
         """
@@ -271,20 +290,21 @@ class CClosure(CCallable):
     A Callable instance backed by a Closure (VM code + scope)
     NOTE: opaque (no Class methods to expose innards) for now
     """
-    __slots__ = ['code', 'scope']
+    __slots__ = ['code', 'scope'] # XXX extend?
 
-    def __init__(self, code, scope, doc=None):
-        self.klass = Closure
+    def __init__(self, code: vmx.VMInstrs, scope: vmx.Scope,
+                 doc: Optional[str] = None):
+        self.klass = LCClosure
         self.props = {}
         self.code = code
         self.scope = scope
         # PLB: I _HATE_ the Python ternary
         self.setprop(const.DOC, doc and mkstr(doc) or null_value)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<Closure: %s>" % self.defn()
 
-    def invoke(self, vm):
+    def invoke(self, vm: vmx.VM) -> None:
         vm.save_frame(True)     # show=True
         # 'return' Continuation will be generated from FP
         #       by "args" Instr (first Instr in code)
@@ -293,10 +313,11 @@ class CClosure(CCallable):
         vm.scope = self.scope
         # NOTE! vm.args picked up by "args" opcode!
 
-    def args(self):
+    def args(self) -> Args:
+        assert isinstance(self.code[0], vmx.ArgsInstr)
         return self.code[0].args() # ask first VM Instr about args!!
 
-    def defn(self):
+    def defn(self) -> str:
         return self.code[0].fn_where() # ask first VM Instr about location!
 
 class CBClosure(CClosure):
@@ -306,10 +327,10 @@ class CBClosure(CClosure):
     not currently visible to user
     (unless flow control implemented by passing block closure pointers)
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<BClosure: %s>" % self.defn()
 
-    def invoke(self, vm):
+    def invoke(self, vm: vmx.VM) -> None:
         vm.save_frame(False)    # show=False
         # leave label Continuation will be generated from FP
         #       by ""[lu]scope" Instr (first Instr in code)
@@ -317,7 +338,7 @@ class CBClosure(CClosure):
         vm.cb = self.code
         vm.scope = self.scope
 
-    def args(self):
+    def args(self) -> Args:
         return [""]
 
     # inherit defn() from CClosure
@@ -333,24 +354,24 @@ class CBoundMethod(CCallable):
     """
     __slots__ = ['obj', 'method']
 
-    def __init__(self, obj, method):
-        self.klass = BoundMethod
+    def __init__(self, obj: CObject, method: CCallable):
+        self.klass = LCBoundMethod
         self.props = {}
         self.obj = obj
         self.method = method
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<BoundMethod: %s %s>" % (repr(self.obj), self.method)
 
-    def invoke(self, vm):
+    def invoke(self, vm: vmx.VM) -> None:
         # *this* is the main place "THIS" is explicitly passed!!!
         vm.args.insert(0, self.obj) # prepend saved "this" to arguments
         self.method.invoke(vm)      # returns value in AC
 
-    def args(self):
+    def args(self) -> Args:
         return self.method.args()[1:] # omit "this" arg
 
-    def defn(self):
+    def defn(self) -> str:
         return self.method.defn()
 
 # Calling Python functions (ie; primitive class methods) was orignally
@@ -360,29 +381,31 @@ class CPyFunc(CCallable):
     """
     A Callable instance backed by a Python function
     """
-    __slots__ = ['func', 'argfunc']
+    __slots__ = ['fun', 'argfunc']
 
-    def __init__(self, func, argfunc=None):
-        self.klass = PyFunc
+    def __init__(self,
+                 f: Callable,                         # PYTHON callable!
+                 argfunc: Optional[Callable] = None): # for docstring
+        self.klass = LCPyFunc
         self.props = {}
-        # detect pyfunc() calls on a pre-decorated function
-        if isinstance(func, CPyFunc):
-            # Python programming error, want Python backtrace:
-            raise Exception("double wrapping %s" % func.func)
-        self.func = func
-        self.argfunc = argfunc or func
+#        # detect pyfunc() calls on a pre-decorated function
+#        if isinstance(f, CPyFunc):
+#            # Python programming error, want Python backtrace:
+#            raise Exception(f"double wrapping {f.fun}")
+        self.fun = f
+        self.argfunc = argfunc or f
         # make sure PyFunc.__doc never shows through
-        self.setprop(const.DOC, _mkstr(func.__doc__ or ""))
+        self.setprop(const.DOC, _mkstr(f.__doc__ or ""))
 
-    def __repr__(self):
-        # was self.func.__name___
+    def __repr__(self) -> str:
+        # was self.fun.__name___
         return "<PyFunc: %s>" % self.defn()
 
-    def invoke(self, vm):
-        vm.ac = self.func(*vm.args)
+    def invoke(self, vm: vmx.VM) -> None:
+        vm.ac = self.fun(*vm.args)
         #assert(isinstance(vm.ac, CObject))
 
-    def __call__(self, *args):
+    def __call__(self, *args: Any) -> Any:
         """
         catch mistakenly calling a CPyFunc (decorated Python function)
         from another Python function.
@@ -390,7 +413,7 @@ class CPyFunc(CCallable):
         # Python programming error, want Python backtrace:
         raise Exception("Attempt to call %s" % self)
 
-    def args(self):
+    def args(self) -> Args:
         """
         For documentation: return Python list of str of arg names
         """
@@ -404,18 +427,18 @@ class CPyFunc(CCallable):
             args.append('...' + fas.varargs)
         return args
 
-    def defn(self):
+    def defn(self) -> str:
         """
         For documentation: NOT in "usual" format (includes name)
         (have separate "name" method??)
         """
-        co = self.func.__code__
+        co = self.fun.__code__
         fname = co.co_filename
         if fname.startswith(CWD_SEP): # trim CWD/ from file name
             fname = fname[len(CWD_SEP):]
-        return "%s:%s (%s)" % (fname, co.co_firstlineno, self.func.__name__)
+        return "%s:%s (%s)" % (fname, co.co_firstlineno, self.fun.__name__)
 
-def pyfunc(func):
+def pyfunc(func: Callable) -> "CPyFunc":
     """
     (decorator)
     Return a Python CObject with (Python) invoke method that runs Python code.
@@ -443,14 +466,14 @@ class CPyVMFunc(CPyFunc):
     """
     # __init__ method from PyFunc
 
-    def invoke(self, vm):
-        vm.args.insert(0, vm)   # prepend vm to arguments
+    def invoke(self, vm: vmx.VM) -> None:
+        vm.args.insert(0, cast(CObject,vm))   # prepend vm to arguments
         super().invoke(vm)
 
-    def args(self):
+    def args(self) -> Args:
         return super().args()[1:] # trim "vm" arg
 
-def pyvmfunc(func):
+def pyvmfunc(func: Callable) -> "CPyVMFunc":
     """
     decorator for Python functions that need pointer to VM
     """
@@ -462,15 +485,17 @@ class CPyIterator(CPObject):
     """
     wrapper around a Python iterator
     """
-    def __init__(self, iterator):
-        self.klass = PyIterator
+    value: Iterator[Any]
+
+    def __init__(self, iterator: Iterator[Any]):
+        self.klass = LCPyIterator
         self.props = {}
         self.value = iterator
 
-    def __str__(self):
+    def __str__(self) -> str:
         return repr(self)
 
-def pyiterator(iterator):
+def pyiterator(iterator: Iterator) -> CPyIterator:
     """
     Make a PyIterator from a Python iterator (has a __next__ method)
     """
@@ -479,7 +504,7 @@ def pyiterator(iterator):
 
 ################################################################
 
-def _new_pobj(this_class, arg):
+def _new_pobj(this_class: CObject, arg: PythonValue) -> CPObject:
     """
     FOR INTERNAL USE ONLY!!
     creates an interpreter Primitive Object of Class `this_class`
@@ -490,114 +515,123 @@ def _new_pobj(this_class, arg):
     o.value = arg
     return o
 
-def _mkdict(vals):
+def _mkdict(vals: Dict[str, CObject]) -> CPObject:
     """
     ONLY USE TO CONSTRUCT BASE TYPES!
     """
     nv = {_mkstr(k): v for k, v in vals.items()}
     if __initialized:
         return new_by_name('Dict', nv)
-    return _new_pobj(Dict, nv)
+    return _new_pobj(LCDict, nv)
 
-def _mklist(vals):
+def _mklist(vals: List[Any]) -> CObject:
     """
     ONLY USE TO CONSTRUCT BASE TYPES!
     """
     if __initialized:
         return new_by_name('List', vals)
-    return _new_pobj(List, vals)
+    assert _LCList is not None
+    return _new_pobj(_LCList, vals)
 
-def _mkstr(s):
+def _mkstr(s: str) -> CPObject:
     """
     ONLY USE TO CONSTRUCT BASE TYPES!
     see mkstr
     """
     if __initialized:           # doc strings
         return mkstr(s)
-    return _new_pobj(Str, s)
+    assert _LCStr
+    return _new_pobj(_LCStr, s)
 
-def _mkobj(props):
+def _mkobj(props: Dict[str, CObject]) -> CObject:
     """
     used to create lexer tokens
     """
-    o = CObject(Object)
+    o = CObject(LCObject)
     o.props.update(props)
     return o
 
 ################ use once __xxl.types initialized
 
-def class_by_name(name):
+def class_by_name(name: str) -> CObject:
     """
     look for class `name` in classes Module scope
     """
     assert(__initialized)
     return classes_scope.lookup(name)
 
-def new_by_name(name, value):
+def new_by_name(name: str, value: PythonValue) -> CPObject:
     """
     create a new CPObject of class `name` w/ value `value`
     """
     ty = class_by_name(name)
     return _new_pobj(ty, value)
 
-def mkstr(s):
+def mkstr(s: str) -> CPObject:
     """
     used to create Str from Python str, once up and running
     """
     return new_by_name('Str', s)
 
-def mknumber(n):
+def mknumber(n: Union[int, float]) -> CObject:
     """
     used to create Number from Python int/float, once up and running
     """
     assert(__initialized)
     return new_by_name('Number', n)
 
-def mkiterable(i):
+def mkiterable(i: Iterable[Any]) -> CObject:
     assert(__initialized)
     return new_by_name('PyIterable', i)
 
 ################
-null_value = None               # forward
 
-def subclass_of(this_class, bases):
+def subclass_of(this_class: CObject, bases: List[CObject]) -> bool:
     """
     test if Class `this_class` is a subclass of any Class in bases
     `this_class` is CObject for a Class
     `bases` is Python list of CObjects (of class or subclass Class)
     """
     visited = set()
-    def check(c):
+    def check(c: CObject) -> bool:
         visited.add(c)
         if c in bases:
             return True
         s = c.getprop(const.SUPERS)
         if s is null_value:
             return False
-        for x in s.getvalue():       # XXX check if List
+        for x in s.getvalue():       # XXX check if LCList
             if x not in visited and check(x):
                 return True
         return False
     return check(this_class)
 
-def instance_of(this, classes):
+def instance_of(this: CObject, classes: List[CObject]) -> bool:
     """
     test if `this` is an instance of any Class in `classes` list
     `this` is CObject
     `classes` is list of Classes (CObject instances of (subclasses of) Class)
     """
-    return subclass_of(this.getclass(), classes)
+    klass = this.getclass()
+    assert klass
+    return subclass_of(klass, classes)
 
 ################################################################
 
-# backpatch Classes when Str/List available:
+# backpatch Classes when Str/CList available:
 _saved_supers = {}
 _saved_names = {}
 _saved_docs = {}
-Str = None
-List = None
+LCStr: CObject
+LCList: CObject
+_LCStr: Optional[CObject] = None
+_LCList: Optional[CObject] = None
 
-def defclass(metaclass, name, supers=None, publish=True, doc=None):
+def defclass(metaclass: Optional[CObject],
+             name: str,
+             supers: Optional[List[CObject]] = None,
+             publish: bool = True,
+             doc: Optional[str] = None) -> CObject:
     """
     define a system Class
     `name` is Python string
@@ -607,7 +641,8 @@ def defclass(metaclass, name, supers=None, publish=True, doc=None):
     `supers` is Python list of superclass Class objects
     """
     class_obj = CObject(metaclass)
-    if Str:                     # Str class available?
+
+    if _LCStr:                  # Str class available?
         class_obj.setprop(const.NAME, _mkstr(name))
         class_obj.setprop(const.DOC, _mkstr(doc or ""))
     else:
@@ -615,7 +650,7 @@ def defclass(metaclass, name, supers=None, publish=True, doc=None):
         _saved_docs[class_obj] = doc or ""
 
     if supers:
-        if List:                # List class available?
+        if _LCList:             # CList class available?
             class_obj.setprop(const.SUPERS, _mklist(supers))
         else:
             _saved_supers[class_obj] = supers
@@ -626,73 +661,77 @@ def defclass(metaclass, name, supers=None, publish=True, doc=None):
     return class_obj
 
 # base metaclass
-Class = defclass(None, 'Class',
-                 doc="Base Metaclass, home of the default 'new' method")
+LCClass = defclass(None, 'Class',
+                   doc="Base Metaclass, home of the default 'new' method")
 
-Class.setclass(Class)             # circular! Class.new creates a new Class!
+LCClass.setclass(LCClass)   # circular! Class.new creates a new Class!
 # supers set to [Object] below
 
 # root Class; circular with "Class" metaclass, so defined second.
-Object = defclass(Class, 'Object', [],
-                  doc="Base Class") # root Class
+LCObject = defclass(LCClass, 'Object', [],
+                    doc="Base Class") # root Class
 
-Nullish = defclass(Class, 'Nullish', [],
-                   doc="Mixin for nullish classes.")
+LCNullish = defclass(LCClass, 'Nullish', [],
+                     doc="Mixin for nullish classes.")
 
-Undefined = defclass(Class, 'Undefined', [Nullish, Object],
-                     doc="Class for undefined value.")
+LCUndefined = defclass(LCClass, 'Undefined', [LCNullish, LCObject],
+                       doc="Class for undefined value.")
 
 ####
 # wrappers, with .value
 
 # metaclass for PObjects (creates Python CPObject)
-PClass = defclass(Class, 'PClass', [Class],
+LCPClass = defclass(LCClass, 'PClass', [LCClass],
                   doc="Metaclass for Primitive/Python value Classes")
 
 # Primitive Object Base Class
 # superclass (with .value) of Classes that are wrappers around Python classes
-PObject = defclass(PClass, 'PObject', [Object],
+LCPObject = defclass(LCPClass, 'PObject', [LCObject],
                    doc="Base class for Primitive/Python value Classes")
 
 # bootstrap.xxl defines static 'new' method
-Null = defclass(Class, 'Null', [Nullish, PObject],
+LCNull = defclass(LCClass, 'Null', [LCNullish, LCPObject],
                 doc="Built-in Class of `null` value")
 
 # bootstrap.xxl defines static 'new' method
-Bool = defclass(PClass, 'Bool', [PObject],
+LCBool = defclass(LCPClass, 'Bool', [LCPObject],
                 doc="Built-in Class for `true` and `false` values")
 
 # Pure Mixin
-Iterable = defclass(Class, 'Iterable', [],
-                    doc="Mixin for Classes that can be iterated over")
+LCIterable = defclass(LCClass, 'Iterable', [],
+                     doc="Mixin for Classes that can be iterated over")
 
 # created by mkiterable
-PyIterable = defclass(PClass, 'PyIterable', [PObject, Iterable],
-                      doc="""
-    Wrapper for Python 'iterable' Objects (Dict, List, Str);
+LCPyIterable = defclass(LCPClass, 'PyIterable', [LCPObject, LCIterable],
+                        doc="""
+    Wrapper for Python 'iterable' Objects (CDict, CList, Str);
     Also returned by Dict.items(), Dict.keys(), Dict.values(),
     Object.props(), static method PyIterable.range().
     """)
 
-List = defclass(PClass, 'List', [PyIterable],
-                doc="Built-in mutable sequence Class")
-Str = defclass(PClass, 'Str', [PyIterable],
-               doc="Built-in immutable Unicode string Class")
-Dict  = defclass(PClass, 'Dict', [PyIterable],
-                 doc="Built-in dictionary mapping Class")
-Set  = defclass(PClass, 'Set', [PyIterable],
-                doc="Built-in unordered collection of unique elements.")
+LCList = defclass(LCPClass, 'List', [LCPyIterable],
+                 doc="Built-in mutable sequence Class")
+_LCList = LCList
+
+LCStr = defclass(LCPClass, 'Str', [LCPyIterable],
+                 doc="Built-in immutable Unicode string Class")
+_LCStr = LCStr
+
+LCDict = defclass(LCPClass, 'Dict', [LCPyIterable],
+                  doc="Built-in dictionary mapping Class")
+LCSet  = defclass(LCPClass, 'Set', [LCPyIterable],
+                  doc="Built-in unordered collection of unique elements.")
 
 # non-iterable:
-Number = defclass(PClass, 'Number', [PObject],
-                  doc="Built-in int/float wrapper Class")
+LCNumber = defclass(LCPClass, 'Number', [LCPObject],
+                    doc="Built-in int/float wrapper Class")
 
-__initialized = True            # new_by_name for Dict, Str, List now safe
+__initialized = True            # new_by_name for Dict, Str, CList now safe
 
 ################
-# Str, List now exist:
+# Str, CList now exist:
 # set Class metaclass super list
-Class.setprop(const.SUPERS, _mklist([Object]))
+LCClass.setprop(const.SUPERS, _mklist([LCObject]))
 
 # do fixups for Strs and Lists in primitive Classes
 for klass, name in _saved_names.items():
@@ -705,49 +744,49 @@ for klass, doc in _saved_docs.items():
 # wrapper around CCallable: internal object w/ direct invoke methods
 #       (avoids binop lookup and List construction on each call)
 #       w/ __args and __defn methods
-Callable = defclass(Class, 'Callable', [Object],
-                    doc="""
+LCCallable = defclass(LCClass, 'Callable', [LCObject],
+                     doc="""
     Virtual base Class for built-in callable classes
     (BoundMethod, Continuation, PyFunc, PyVMFunc)
     """)
 
 # all backed by Python CXyZzy classes with invoke methods:
 # XXX use metaclass (CClass?) that prohibits user call of 'new' method?
-BoundMethod = defclass(Class, 'BoundMethod', [Callable],
-                       doc="Built-in Class for a method bound to an Object")
-Closure = defclass(Class, 'Closure', [Callable],
-                   doc="Built-in Class for a native function bound to a scope")
-Continuation = defclass(Class, 'Continuation', [Callable],
-                        doc="Built-in Class for a Continuation")
-PyFunc = defclass(Class, 'PyFunc', [Callable],
-                  doc="Built-in Class for function implemented in Python")
-PyVMFunc = defclass(Class, 'PyVMFunc', [Callable],
-                    doc="""
+LCBoundMethod = defclass(LCClass, 'BoundMethod', [LCCallable],
+                         doc="Built-in Class for a method bound to an Object")
+LCClosure = defclass(LCClass, 'Closure', [LCCallable],
+                     doc="Built-in Class for a native function bound to a scope")
+LCContinuation = defclass(LCClass, 'Continuation', [LCCallable],
+                          doc="Built-in Class for a Continuation")
+LCPyFunc = defclass(LCClass, 'PyFunc', [LCCallable],
+                    doc="Built-in Class for function implemented in Python")
+LCPyVMFunc = defclass(LCClass, 'PyVMFunc', [LCCallable],
+                      doc="""
    Built-in Class for function implemented in Python
    with access to VM internals
    """)
 
 
 # wrapper around a Python iterator (w/ next method)
-PyIterator = defclass(Class, 'PyIterator', [Object, Iterable],
+LCPyIterator = defclass(LCClass, 'PyIterator', [LCObject, LCIterable],
                       doc="Built-in Class for a wrapper around a Python iterator")
 
 ################
 
-null_value = _new_pobj(Null, None)
+null_value: CPObject = _new_pobj(LCNull, None)
 
-undef_value = CObject(Undefined)
+undef_value = CObject(LCUndefined)
 
 # create (only) instances of true/false (a doubleton)!
 # subclass Bool into True and False singleton Classes??
-true_value = _new_pobj(Bool, True)
-false_value = _new_pobj(Bool, False)
+true_value = _new_pobj(LCBool, True)
+false_value = _new_pobj(LCBool, False)
 
 ################
 
 # utility called by VM jumpn/jumpe: NOT a method/pyfunc
 # (had originally planned to have all Classes have an is_true method)
-def is_true(obj):
+def is_true(obj: CObject) -> bool:
     """
     return Python True/False for an object
     non-premature optimization:
@@ -755,14 +794,14 @@ def is_true(obj):
     """
     if obj is false_value or obj is null_value or obj is undef_value:
         return False
-    if obj.hasvalue and obj.value == 0:
+    if obj.hasvalue and getattr(obj, 'value') == 0:
         return False
     return True                 # not falsey
 
 ################ Object -- the base type for all instances and classes
 
 @pyfunc
-def obj_init(this_obj, *args):
+def obj_init(this_obj: CObject, *args: CObject) -> CObject:
     """
     default init method for Object class
     a fatal error if any arguments given
@@ -773,14 +812,14 @@ def obj_init(this_obj, *args):
     return null_value
 
 @pyfunc
-def obj_str(this):
+def obj_str(this: CObject) -> CObject:
     """
     default to_str method: should return a human-friendly string
     """
-    return mkstr(str(l))
+    return mkstr(str(this))
 
 @pyfunc
-def obj_props(this):
+def obj_props(this: CObject) -> CObject:
     """
     returns an Iterable for (String) property names
     of `this` Object
@@ -788,7 +827,7 @@ def obj_props(this):
     return mkiterable(this.props.keys())
 
 @pyfunc
-def obj_repr(this):
+def obj_repr(this: CObject) -> CObject:
     """
     Default Object string representation method
     (calls Python repr(this))
@@ -796,27 +835,27 @@ def obj_repr(this):
     return mkstr(repr(this))
 
 @pyfunc
-def obj_reprx(l):
+def obj_reprx(l: CObject) -> CObject:
     """
     for debug: show Class, and Python value (which may include id?)
     """
     return mkstr("<%s: %s>" % (l.classname(), repr(l)))
 
 @pyfunc
-def obj_ident(l, r):            # SNOBOL4 IDENT
+def obj_ident(l: CObject, r: CObject) -> CObject: # SNOBOL4 IDENT
     """
     Test if `l` and `r` refer to the same Object
     """
     return mkbool(l is r)
 
 @pyfunc
-def obj_differ(l, r):           # SNOBOL4 DIFFER
+def obj_differ(l: CObject, r: CObject) -> CObject: # SNOBOL4 DIFFER
     """
     Test if `l` and `r` refer to different Objects
     """
     return mkbool(l is not r)
 
-def _not(x):
+def _not(x: CObject) -> CObject:
     """
     not a pyfunc (may call at any time)
     takes CObject, returns CObject
@@ -825,7 +864,7 @@ def _not(x):
 
 # XXX do this in pobj_not? all other objects always true????
 @pyfunc
-def obj_not(x):
+def obj_not(x: CObject) -> CObject:
     """
     Object unary logical "not" operator; returns `true` if `x` is "falsey"
     (false, zero, null, or undefined)
@@ -833,7 +872,7 @@ def obj_not(x):
     return _not(x)
 
 @pyfunc
-def obj_delprop(this, name):
+def obj_delprop(this: CObject, name: CObject) -> CObject:
     """
     Delete property `name` from Object `this`
     (only effects `this` -- never Class or superclasses)
@@ -842,7 +881,7 @@ def obj_delprop(this, name):
     return null_value
 
 @pyfunc
-def obj_setprop(l, r, value):
+def obj_setprop(l: CObject, r: CObject, value: CObject) -> CObject:
     """
     Object setprop method/operator
     store `value` as `r` (String) property of object `l`
@@ -854,13 +893,15 @@ def obj_setprop(l, r, value):
 
 # NOTE! utility, not method
 # XXX return (obj, value) to avoid generating BoundMethod?
-def find_in_supers(l, r, default, caching=True):
+def find_in_supers(l: CObject, r: CObject, default: CObject, caching: bool = True) -> CObject:
     """
     Breadth first search of superclass methods/properties;
     `l` is CObject, `r` is Str for method/property name.
     """
     c = c0 = l.getclass()
-    rv = r.value                # XXX getstr?
+    assert c is not None
+    assert c0 is not None
+    rv = r.getvalue()           # XXX getstr?
 
     supers = c.getprop(const.SUPERS)
     q = []                      # queue
@@ -868,7 +909,7 @@ def find_in_supers(l, r, default, caching=True):
 
     while True:
         if supers is not null_value:
-            slist = supers.value        # .getvalue, expect List
+            slist = supers.getvalue() # .getvalue, expect List getlist??
             q.extend(slist)
             seen.update(slist)
 
@@ -879,15 +920,16 @@ def find_in_supers(l, r, default, caching=True):
 
         # NOTE!! doc.xxl also know that properties take precedence
         # over methods (would be moot w/ descriptors); search for MRO.
+        assert c is not None
         if c.hasprop(rv):
             return c.getprop(rv) # never BoundMethod
 
         methods = c.getprop(const.METHODS)
         if methods is not null_value:
-            m = methods.value.get(r, null_value) # Dict
+            m = methods.getvalue().get(r, null_value) # .getdict?
             if m is not null_value:
                 if caching:
-                    cache_line = '__method:' + r.value
+                    cache_line = '__method:' + r.getvalue()
                     c0.cache[cache_line] = m
                 return CBoundMethod(l, m)
 
@@ -897,7 +939,7 @@ def find_in_supers(l, r, default, caching=True):
 
 # NOTE! utility, not method
 # XXX return (obj, value) to avoid generating BoundMethod?
-def find_in_class(l, r, default):
+def find_in_class(l: CObject, r: CObject, default: CObject) -> CObject:
     """
     `r` is Str
     may return BoundMethod
@@ -906,6 +948,8 @@ def find_in_class(l, r, default):
     #           class methods, members, (read-only members)???
     #           all kept in "props"?!!!!!!
     c = l.getclass()
+    assert c is not None
+
     rv = r.getvalue()
     #print("find_in_class", repr(l), repr(r))
 
@@ -916,19 +960,21 @@ def find_in_class(l, r, default):
     cache_line = '__method:' + rv
     if cache_line in c.cache: # XXX change name?
         m = c.cache[cache_line]
+        assert isinstance(m, CCallable)
         return CBoundMethod(l, m)
 
     methods = c.getprop(const.METHODS)
     if methods is not null_value:
-        m = methods.value.get(r, null_value) # Dict
+        m = methods.getvalue().get(r, null_value) # .getdict?
         if m is not null_value:
             c.cache[cache_line] = m
+            assert isinstance(m, CCallable)
             return CBoundMethod(l, m)
 
     return find_in_supers(l, r, default)
 
 @pyfunc
-def obj_getprop(l, r):
+def obj_getprop(l: CObject, r: CObject) -> CObject:
     """
     Object getprop method/operator
     return `r` (String) property of object `l`
@@ -939,14 +985,14 @@ def obj_getprop(l, r):
     return find_in_class(l, r, undef_value) # may return BoundMethod
 
 @pyfunc
-def obj_hasprop(l, r):
+def obj_hasprop(l: CObject, r: CObject) -> CObject:
     """
     Return `true` if object `l` has own (Str) property `r` (not interited).
     """
     # XXX check r is Str
     return mkbool(l.hasprop(r.getvalue()))
 
-def find_op(obj, optype, op):
+def find_op(obj: CObject, optype: str, op: CPObject) -> CObject:
     """
     Utility (not method)
     `obj` is CObject
@@ -958,26 +1004,33 @@ def find_op(obj, optype, op):
     """
     #print("find_op", obj, repr(optype), repr(op))
     c = c0 = obj.getclass()
+    assert c is not None
+    assert c0 is not None
 
+    assert isinstance(op.value, str)
     cache_line = optype + op.value
     if cache_line in c.cache:
-        op = c.cache[cache_line]
-        return op
+        x = c.cache[cache_line]
+        return x
 
     q = []
     seen = set()
     seen.add(c)
     while True:
+        assert c is not None
         ops = c.props.get(optype, null_value) # getprop
         if ops is not null_value:
-            if op in ops.value: # getvalue, expect Dict
-                val = ops.getvalue()[op]
-                c0.cache[cache_line] = val
+            v = ops.getvalue()  # .getdict?
+            # XXX CCallable or PyObject??
+            vd = cast(Dict[CObject, CCallable], v)
+            if op in vd:
+                val = vd[op]    # get from op dict
+                c0.cache[cache_line] = val # save in cache
                 return val
 
         supers = c.props.get(const.SUPERS, null_value) # getprop
         if supers is not null_value:
-            for s in supers.value: # getvalue, expect List
+            for s in supers.getvalue(): # expect Python list
                 if s not in seen:
                     q.append(s)
                     seen.add(s)
@@ -991,7 +1044,7 @@ def find_op(obj, optype, op):
         const.OPDICT2ENGLISH.get(optype,optype), op, obj.classname()))
 
 @pyfunc
-def obj_get_in_supers(this, prop):
+def obj_get_in_supers(this: CObject, prop: CObject) -> CObject:
     """
     Object `..` operator; for calling superclass methods
     Looks for `prop` as property or method of superclasses of `this`;
@@ -1002,21 +1055,25 @@ def obj_get_in_supers(this, prop):
 # once upon a time class was stored as '__class' property,
 # but it was messy when cloning.
 @pyfunc
-def obj_getclass(this):
+def obj_getclass(this: CObject) -> CObject:
     """
     return Class for `this`
     """
-    return this.getclass()
+    k = this.getclass()
+    assert k is not None
+    return k
 
 @pyfunc
-def obj_setclass(this, klass):
+def obj_setclass(this: CObject, klass: CObject) -> CObject:
     """
     set Class for `this`!!
     """
-    return this.setclass(klass)
+    k = this.setclass(klass)
+    assert k is not None
+    return k
 
 @pyfunc
-def obj_as_class(this, klass):
+def obj_as_class(this: CObject, klass: CObject) -> CObject:
     """
     return an Object of Class `klass`, sharing properties with `this`.
     Use for calling superclass methods: `this.as_class(MyClass)..method`.
@@ -1027,7 +1084,7 @@ def obj_as_class(this, klass):
     return n
 
 @pyfunc
-def obj_call(l, *args):
+def obj_call(l: CObject, *args: CObject) -> None:
     """
     default Object `(` binop
     (fatal error)
@@ -1035,18 +1092,21 @@ def obj_call(l, *args):
     raise UError("%s does not have '(' binop" % l.classname())
 
 @pyfunc
-def obj_instance_of(this, c):
+def obj_instance_of(this: CObject, c: CObject) -> CObject:
     """
     return `true` if Object `this` is an instance of
-    Class (or List of Classes) `c`
+    Class (or CList of Classes) `c`
     """
-    if subclass_of(c.getclass(), [List]):
-        c = c.getvalue()             # get Python list
+    k = c.getclass()
+    assert k is not None
+    assert LCList is not None
+    if subclass_of(k, [LCList]):
+        cl = cast(List[CObject], c.getvalue()) # .getlist
     else:
-        c = [c]                 # make Python list
-    return mkbool(instance_of(this, c))
+        cl = [c]                # make Python list
+    return mkbool(instance_of(this, cl))
 
-Object.setprop(const.METHODS, _mkdict({
+LCObject.setprop(const.METHODS, _mkdict({
     const.INIT: obj_init,
     'getclass': obj_getclass,
     'setclass': obj_setclass,
@@ -1061,7 +1121,7 @@ Object.setprop(const.METHODS, _mkdict({
     'reprx': obj_reprx,
     # 'to_str' in bootstrap.xxl -- invokes repr.
 }))
-Object.setprop(const.BINOPS, _mkdict({
+LCObject.setprop(const.BINOPS, _mkdict({
     '.': obj_getprop,           # same as getprop method!!
     '..': obj_get_in_supers,
     '===': obj_ident,           # "is"
@@ -1070,17 +1130,17 @@ Object.setprop(const.BINOPS, _mkdict({
     '!=': obj_differ,           # ditto
     '(': obj_call,
 }))
-Object.setprop(const.UNOPS, _mkdict({
+LCObject.setprop(const.UNOPS, _mkdict({
     '!': obj_not,
 }))
-Object.setprop(const.LHSOPS, _mkdict({
+LCObject.setprop(const.LHSOPS, _mkdict({
     '.': obj_setprop                # same as setprop!!
 }))
 
 ################ Class -- base type for Classes (a MetaClass)
 
 @pyfunc
-def class_create(this_class, *args):
+def class_create(this_class: CObject, *args: CObject) -> CObject:
     """
     Default create method for `Class` (the base metaclass);
     Creates an empty instance of this_class (called from `Class.new`).
@@ -1088,7 +1148,7 @@ def class_create(this_class, *args):
     return CObject(this_class)
 
 @pyfunc
-def class_init(this_class, props):
+def class_init(this_class: CObject, props: CObject) -> CObject:
     """
     init method for meta-class "Class" -- used to create new Classes.
     `props` is Dict holding properties (see doc/creating-classes.md and
@@ -1112,7 +1172,7 @@ def class_init(this_class, props):
         this_class.props[ikey] = val # NOTE! stashes argument Dict value!!!
 
     if const.NAME not in this_class.props:
-        raise UError("Class.new requires '%s'"  % (metaclass, const.NAME))
+        raise UError("Class.new requires '%s'"  % const.NAME)
 
     # XXX complain if NAME doesn't start with a capitol letter??
 
@@ -1121,12 +1181,12 @@ def class_init(this_class, props):
 
     if const.SUPERS not in this_class.props:
         # XXX complain??
-        this_class.setprop(const.SUPERS, wrap([Object]))
+        this_class.setprop(const.SUPERS, wrap([LCObject]))
 
     return null_value
 
 @pyfunc
-def class_call(this_class, *args):
+def class_call(this_class: CObject, *args: CObject) -> None:
     """
     `(` binop for Class -- fatal error
     (but common mistake if you have Python fingers) --
@@ -1136,19 +1196,22 @@ def class_call(this_class, *args):
     raise UError("Called %s Class! Did you mean %s.new?" % (name, name))
 
 @pyfunc
-def class_subclass_of(this_class, c):
+def class_subclass_of(this_class: CObject, c: CObject) -> CObject:
     """
     Return `true` if Class `this_class` is a subclass of
-    Class (or List of Classes) `c`
+    Class (or CList of Classes) `c`
     """
-    if subclass_of(c.getclass(), List):
-        c = c.getvalue()        # XXX getlist
+    k = c.getclass()
+    assert k is not None
+    assert LCList is not None
+    if subclass_of(k, [LCList]):
+        cl = cast(List[CObject], c.getvalue()) # XXX .getlist
     else:
-        c = [c]                 # make Python list
-    return mkbool(subclass_of(this_class, c))
+        cl = [c]                # make Python list
+    return mkbool(subclass_of(this_class, cl))
 
 @pyfunc
-def class_clear_cache(this_class):
+def class_clear_cache(this_class: CObject) -> CObject:
     """
     Clear the per-Class cache of methods and operators.
     """
@@ -1157,7 +1220,7 @@ def class_clear_cache(this_class):
 
 # Class: a meta-class: all Classes are instances of a meta-class
 # (Class.new creates a new Class)
-Class.setprop(const.METHODS, _mkdict({
+LCClass.setprop(const.METHODS, _mkdict({
     # Class.new in bootstrap.vmx
     'clear_cache': class_clear_cache,
     const.CREATE: class_create,
@@ -1166,36 +1229,36 @@ Class.setprop(const.METHODS, _mkdict({
     'subclass_of': class_subclass_of
 }))
 
-Class.setprop(const.BINOPS, _mkdict({
+LCClass.setprop(const.BINOPS, _mkdict({
     '(': class_call
 }))
 
 ################ PClass -- metaclass for PObjects
 
 @pyfunc
-def pclass_create(this_class):
+def pclass_create(this_class: CObject) -> CObject:
     """
     'create' method for PClass metaclass
     makes an instance of this_class backed by a CPObject
-    used to create PClass subclass objects (Number, List, Dict, Bool, Null)
+    used to create PClass subclass objects (Number, CList, Dict, Bool, Null)
     """
     return CPObject(this_class)
 
-PClass.setprop(const.METHODS, _mkdict({
+LCPClass.setprop(const.METHODS, _mkdict({
    const.CREATE: pclass_create
 }))
 
 ################ generic methods for PObject
 
 @pyfunc
-def pobj_len(this):
+def pobj_len(this: CObject) -> CObject:
     """
-    returns length (of String, List or Dict)
+    returns length (of String, CList or Dict)
     """
-    return _new_pobj(Number, len(this.getvalue())) # XXX look up by name?
+    return _new_pobj(LCNumber, len(this.getvalue())) # XXX look up by name?
 
 @pyfunc
-def pobj_str(this):
+def pobj_str(this: CObject) -> CObject:
     """
     return human-friendly string representation of `this`
     (uses Python str function on value)
@@ -1203,7 +1266,7 @@ def pobj_str(this):
     return mkstr(str(this.getvalue()))
 
 @pyfunc
-def pobj_repr(this):
+def pobj_repr(this: CObject) -> CObject:
     """
     return less human-friendly string representation of `this`
     (use Python repr function on value)
@@ -1211,14 +1274,14 @@ def pobj_repr(this):
     return mkstr(repr(this.getvalue()))
 
 @pyfunc
-def pobj_reprx(this):
+def pobj_reprx(this: CObject) -> CObject:
     """
     for debug: show Class name, and Python repr
     """
     return mkstr("<%s: %s>" % (this.classname(), repr(this.getvalue())))
 
 @pyfunc
-def pobj_init(l, value):
+def pobj_init(l: CObject, value: CObject) -> None:
     """
     default PObject init method
     (fatal error)
@@ -1226,7 +1289,7 @@ def pobj_init(l, value):
     raise UError("{} missing init method".format(l.classname()))
 
 @pyfunc
-def pobj__init0(this, value):
+def pobj__init0(this: CObject, value: CObject) -> None:
     """
     default PObject init0 method
     (fatal error)
@@ -1234,7 +1297,7 @@ def pobj__init0(this, value):
     raise UError("{} missing init0 method".format(this.classname()))
 
 @pyfunc
-def pobj_ident(l, r):
+def pobj_ident(l: CPObject, r: CPObject) -> CObject:
     """
     Check if value of PObject `l`
     is the same Python Object
@@ -1243,7 +1306,7 @@ def pobj_ident(l, r):
     return mkbool(r.hasvalue and l.value is r.value)
 
 @pyfunc
-def pobj_differ(l, r):
+def pobj_differ(l: CPObject, r: CPObject) -> CObject:
     """
     Check if value of PObject `l`
     is not the same Python Object
@@ -1252,10 +1315,10 @@ def pobj_differ(l, r):
     return mkbool(r.hasvalue and l.value is not r.value)
 
 @pyfunc
-def pobj__format(this, fmt):
+def pobj__format(this: CObject, fmt: CObject) -> CObject:
     return mkstr(format(this.getvalue(), fmt.getvalue())) # XXX fmt.getstr()
 
-PObject.setprop(const.METHODS, _mkdict({
+LCPObject.setprop(const.METHODS, _mkdict({
     'repr': pobj_repr,
     'reprx': pobj_reprx,
     const.INIT: pobj_init,
@@ -1263,33 +1326,35 @@ PObject.setprop(const.METHODS, _mkdict({
     '__format': pobj__format
 }))
 
-PObject.setprop(const.BINOPS, _mkdict({
+LCPObject.setprop(const.BINOPS, _mkdict({
     '===': pobj_ident,
     '!==': pobj_differ,
     '==': pobj_ident,
     '!=': pobj_differ
 }))
 
-# common for List and Str
+# common for CList and Str
 @pyfunc
-def pobj_slice(this, start, end=None):
+def pobj_slice(this: CPObject, start: CObject, end: Optional[CObject] = None) -> CPObject:
     """
     return a subrange (slice) of `this`
     starting at position `start`
     ending at position `end` (defaults to remainder)
     """
     startv = start.getvalue()   # XXX getint?
+    v = cast(str, this.value)
     if end is not None:
         endv = end.getvalue()   # XXX getint?
-        ret = this.value[startv:endv]
+        ret = v[startv:endv]
     else:
-        ret = this.value[startv:]
-    return _new_pobj(this.getclass(), ret)
+        ret = v[startv:]
+    k = this.getclass()
+    return _new_pobj(k, ret)
 
 ################ Callable base class
 
 @pyfunc
-def callable__args(this):
+def callable__args(this: CCallable) -> CObject:
     """
     currently private/hidden (to create docs)
     returns formatted string for args (as if a native function) with parens
@@ -1297,14 +1362,14 @@ def callable__args(this):
     return mkstr("(%s)" % ", ".join(this.args()))
 
 @pyfunc
-def callable__defn(this):
+def callable__defn(this: CCallable) -> CObject:
     """
     currently private/hidden (to create docs)
     returns location (source file and line) of function definition
     """
     return mkstr(this.defn())
 
-Callable.setprop(const.METHODS, _mkdict({
+LCCallable.setprop(const.METHODS, _mkdict({
     '__args': callable__args,
     '__defn': callable__defn
 }))
@@ -1312,13 +1377,13 @@ Callable.setprop(const.METHODS, _mkdict({
 ################ Continuation
 
 @pyfunc
-def continuation__backtrace_list(this):
+def continuation__backtrace_list(this: CContinuation) -> CObject:
     """
-    return List of Str return locations on Continuation stack.
+    return CList of Str return locations on Continuation stack.
     """
     return wrap(this.backtrace())
 
-Continuation.setprop(const.METHODS, _mkdict({
+LCContinuation.setprop(const.METHODS, _mkdict({
     '__backtrace_list': continuation__backtrace_list
     # XXX have a visible method to print? replace xxl_backtrace??
 }))
@@ -1329,27 +1394,27 @@ Continuation.setprop(const.METHODS, _mkdict({
 # Iterable classes must implement "iter" (Interator factory)
 
 # for_each, each_for, map, map2 in bootstrap.xxl
-Iterable.setprop(const.METHODS, _mkdict({
+LCIterable.setprop(const.METHODS, _mkdict({
 }))
 
 ################ PyIterable
 
 # subclass of Iterable, PObject
-# superclass of List, Dict, Str, Set!
+# superclass of CList, Dict, Str, Set!
 # also created by mkiterable, used in:
 #       Dict.{item,key,value}s()
 #       Object.props()
 #       PyIterable.range()
 
 @pyfunc
-def pyiterable_iter(this):
+def pyiterable_iter(this: CObject) -> CObject:
     """
     Return forward iterator.
     """
     return pyiterator(iter(this.getvalue()))
 
 @pyfunc
-def pyiterable_reversed(this):
+def pyiterable_reversed(this: CObject) -> CObject:
     """
     Return reverse iterator.
     """
@@ -1357,14 +1422,16 @@ def pyiterable_reversed(this):
     return pyiterator(reversed(this.getvalue()))
 
 @pyfunc
-def pyiterable_sorted(this, reverse=false_value):
+def pyiterable_sorted(this: CPObject, reverse: CObject = false_value) -> CObject:
     """
-    Return sorted List of iterator values.
+    Return sorted CList of iterator values.
     `reverse` is Bool to sort in reverse order (defaults to `false`).
     """
-    return wrap(sorted(this.getvalue(), reverse=is_true(reverse)))
+    v = this.value
+    # XXX test for v.__iter__??
+    return wrap(sorted(v, reverse=is_true(reverse)))
 
-PyIterable.setprop(const.METHODS, _mkdict({
+LCPyIterable.setprop(const.METHODS, _mkdict({
     'iter': pyiterable_iter,
     'reversed': pyiterable_reversed,
     'sorted': pyiterable_sorted
@@ -1372,7 +1439,7 @@ PyIterable.setprop(const.METHODS, _mkdict({
 
 
 @pyfunc
-def pyiterable_range(*args):
+def pyiterable_range(*args: CPObject) -> CObject:
     """
     Static method:
     returns PyIterable for an integer range;
@@ -1382,39 +1449,44 @@ def pyiterable_range(*args):
     range(1,10): returns Iterable for 1..9;
     range(1,10,2): returns Iterable for odd numbers 1..9
     """
-    if len(args) == 1:
-        r = range(args[0].getvalue()) # XXX getint?
-    elif len(args) == 2:
-        r = range(args[0].getvalue(), args[1].getvalue()) # XXX getint?
-    elif len(args) == 3:
-        r = range(args[0].getvalue(), args[1].getvalue(), args[2].getvalue()) # XXX getint?
+    n = len(args)
+    if n < 1 or n > 3:
+        raise UError("range requires one to three arguments") 
+    a0 = args[0].getint()
+    if n == 1:
+        r = range(a0)
     else:
-        raise UError("range requires one to three arguments")
-
+        a1 = args[1].getint()
+        if n == 2:
+            r = range(a0, a1)
+        else:
+            r = range(a0, a1, args[2].getint())
     return mkiterable(r)
 
-PyIterable.setprop('range', pyiterable_range) # static method
+LCPyIterable.setprop('range', pyiterable_range) # static method
 
 ################ Dict
 
 @pyfunc
-def dict_putitem(l, r, value):
+def dict_putitem(l: CPObject, r: CObject, value: CObject) -> CObject:
     """
     `l[r] = value`
     """
-    l.value[r] = value
+    d = cast(Dict[CObject,CObject], l.value)
+    d[r] = value
     return value                # lhsop MUST return value
 
 @pyfunc
-def dict_getitem(l, r):
+def dict_getitem(l: CPObject, r: CObject) -> CObject:
     """
     `l[r]`
     """
-    ret = l.value.get(r, null_value)
-    return ret
+    d = cast(Dict[CObject,CObject], l.value)
+    v = d.get(r, null_value)
+    return v
 
 @pyfunc
-def dict__init0(this):
+def dict__init0(this: CPObject) -> CObject:
     """
     Called by Dict.init (in bootstrap.xxl).
     Dodges needing private metaclass for Dict.
@@ -1423,34 +1495,35 @@ def dict__init0(this):
     return null_value
 
 @pyfunc
-def dict_pop(obj, key):
+def dict_pop(obj: CPObject, key: CObject) -> CObject:
     """
     Remove Dict item with specified `key`.
     """
-    return obj.getvalue().pop(key)
+    d = cast(Dict[CObject, CObject],obj.value)
+    return d.pop(key)
 
 @pyfunc
-def dict_items(this):
+def dict_items(this: CObject) -> CObject:
     """
     Return PyIterable for [key, value] value pairs.
     """
     return mkiterable(this.getvalue().items())
 
 @pyfunc
-def dict_keys(this):
+def dict_keys(this: CObject) -> CObject:
     """
     Return PyIterable for Dict keys.
     """
     return mkiterable(this.getvalue().keys())
 
 @pyfunc
-def dict_values(this):
+def dict_values(this: CObject) -> CObject:
     """
     Return PyIterable for Dict values.
     """
     return mkiterable(this.getvalue().values())
 
-Dict.setprop(const.METHODS, _mkdict({
+LCDict.setprop(const.METHODS, _mkdict({
     '__init0': dict__init0,
     'items': dict_items,
     'keys': dict_keys,
@@ -1458,17 +1531,17 @@ Dict.setprop(const.METHODS, _mkdict({
     'pop': dict_pop,
     'values': dict_values,
 }))
-Dict.setprop(const.BINOPS, _mkdict({
+LCDict.setprop(const.BINOPS, _mkdict({
     '[': dict_getitem
 }))
-Dict.setprop(const.LHSOPS, _mkdict({
+LCDict.setprop(const.LHSOPS, _mkdict({
     '[': dict_putitem
 }))
 
 ################ List
 
 @pyfunc
-def list__init0(l):
+def list__init0(l: CPObject) -> CObject:
     """
     called by List.init (in bootstrap.xxl)
     Dodges needing private metaclass for List
@@ -1477,49 +1550,52 @@ def list__init0(l):
     return null_value
 
 @pyfunc
-def list_append(this, item):
+def list_append(this: CPObject, item: CObject) -> CObject:
     """
     append `item`.
     """
-    this.getvalue().append(item)
+    l = cast(List[CObject], this.value)
+    l.append(item)
     return null_value
 
 @pyfunc
-def list_pop(l, index=None):
+def list_pop(this: CPObject, index: Optional[CPObject] = None) -> CObject:
     """
     Remove and return item at `index` (default last).
     """
+    l = cast(List[CObject], this.value)
     if index is None:
-        return l.value.pop()
-    return l.value.pop(index.getvalue()) # XXX getnum
+        return l.pop()
+    return l.pop(index.getint())
 
 @pyfunc
-def list_get(l, r):
+def list_get(this: CPObject, item: CPObject) -> CObject:
     """
     `l[r]`
     """
-    # XXX check if integer
-    return l.value[r.getvalue()]
+    l = cast(List[CObject], this.value)
+    return l[item.getint()]
 
 @pyfunc
-def list_insert(l, index, object):
+def list_insert(this: CPObject, index: CPObject, object: CObject) -> CObject:
     """
     Insert `object` at `index` (0 is first, -1 is last); Returns `null`.
     """
-    l.value.insert(index.getvalue(), object)
+    l = cast(List[CObject], this.value)
+    l.insert(index.getint(), object)
     return null_value
 
 @pyfunc
-def list_put(l, r, value):
+def list_put(this: CPObject, r: CPObject, value: CObject) -> CObject:
     """
     `l[r] = value`
     """
-    # XXX check if integer
-    l.value[r.getvalue()] = value
+    l = cast(List[CObject], this.value)
+    l[r.getint()] = value
     return value		# lhsop MUST return value
 
 # str, repr, for_each, each_for, map, map2 from Iterable (in bootstrap.xxl)
-List.setprop(const.METHODS, _mkdict({
+LCList.setprop(const.METHODS, _mkdict({
     '__init0': list__init0,
     'append': list_append,
     'insert': list_insert,
@@ -1527,10 +1603,10 @@ List.setprop(const.METHODS, _mkdict({
     'pop': list_pop,
     'slice': pobj_slice,
 }))
-List.setprop(const.BINOPS, _mkdict({
+LCList.setprop(const.BINOPS, _mkdict({
     '[': list_get
 }))
-List.setprop(const.LHSOPS, _mkdict({
+LCList.setprop(const.LHSOPS, _mkdict({
     '[': list_put
 }))
 
@@ -1539,19 +1615,19 @@ List.setprop(const.LHSOPS, _mkdict({
 # XXX TEMP? replace with Int and Real?
 
 @pyfunc
-def neg(x):
+def neg(x: CObject) -> CPObject:
     """
     Return negative of `x`
     """
     return _new_pobj(x.getclass(), -x.getvalue())
 
 @pyfunc
-def add(l, r):
+def add(l: CPObject, r: CPObject) -> CPObject:
     """
     add `l` and `r`
     """
     lv = l.value
-    rv = r.getvalue()
+    rv = r.value
     if lv == 0:
         return r
     if rv == 0:
@@ -1559,23 +1635,23 @@ def add(l, r):
     return _new_pobj(l.getclass(), lv + rv)
 
 @pyfunc
-def sub(l, r):
+def sub(l: CPObject, r: CPObject) -> CPObject:
     """
     subtract `r` from `l`
     """
     lv = l.value
-    rv = r.getvalue()
+    rv = r.value
     if rv == 0:
         return l
     return _new_pobj(l.getclass(), lv - rv)
 
 @pyfunc
-def mul(l, r):
+def mul(l: CPObject, r: CPObject) -> CPObject:
     """
     multiply `l` and `r`
     """
     lv = l.value
-    rv = r.getvalue()
+    rv = r.value
     if lv == 1:
         return r
     if rv == 1:
@@ -1583,55 +1659,55 @@ def mul(l, r):
     return _new_pobj(l.getclass(), lv * rv)
 
 @pyfunc
-def div(l, r):
+def div(l: CPObject, r: CPObject) -> CPObject:
     """
     Divide `l` by `r`; always creates float.
     """
     lv = l.value
-    rv = r.getvalue()
+    rv = r.value
     if rv == 1:
         return l
     return _new_pobj(l.getclass(), lv / rv)
 
 @pyfunc
-def eq(l, r):
+def eq(l: CPObject, r: CObject) -> CObject:
     """
     return `true` if value of `l` is the same as value of `r`
     """
     # fail sliently if r is not PObject
-    return mkbool(r.hasvalue and l.value == r.value)
+    return mkbool(r.hasvalue and l.value == r.getvalue())
 
 @pyfunc
-def ne(l, r):
+def ne(l: CPObject, r: CObject) -> CObject:
     """
     return `true` if value of `l` is different from the value of `r`
     """
     # fail sliently if r is not PObject
-    return mkbool(r.hasvalue and l.value != r.value)
+    return mkbool(r.hasvalue and l.value != r.getvalue())
 
 @pyfunc
-def ge(l, r):
+def ge(l: CPObject, r: CPObject) -> CObject:
     """
     return `true` if value of `l` is >= the value of `r`
     """
     return mkbool(l.value >= r.getvalue())
 
 @pyfunc
-def lt(l, r):
+def lt(l: CPObject, r: CObject) -> CObject:
     """
     return `true` if value of `l` is < the value of `r`
     """
     return mkbool(l.value < r.getvalue())
 
 @pyfunc
-def le(l, r):
+def le(l: CPObject, r: CObject) -> CObject:
     """
     return `true` if value of `l` is <= the value of `r`
     """
     return mkbool(l.value <= r.getvalue())
 
 @pyfunc
-def gt(l, r):
+def gt(l: CPObject, r: CObject) -> CObject:
     """
     return `true` if value of `l` is > the value of `r`
     (implemented as `!(l <= r)`)
@@ -1639,7 +1715,7 @@ def gt(l, r):
     return mkbool(l.value > r.getvalue())
 
 @pyfunc
-def bitand(l, r):
+def bitand(l: CPObject, r: CObject) -> CObject:
     """
     return bitwise (binary) "and" (conjunction) of `l` and `r`
     """
@@ -1652,7 +1728,7 @@ def bitand(l, r):
     return _new_pobj(l.getclass(), lv & rv)
 
 @pyfunc
-def bitor(l, r):
+def bitor(l: CPObject, r: CObject) -> CObject:
     """
     return bitwise (binary) "or" (union) of `l` and `r`
     """
@@ -1665,14 +1741,14 @@ def bitor(l, r):
     return _new_pobj(l.getclass(), lv | rv)
 
 @pyfunc
-def bitnot(this):
+def bitnot(this: CObject) -> CObject:
     """
     return bitwise (binary) "not" (complement) of `this`
     """
     return _new_pobj(this.getclass(), ~this.getvalue())
 
 @pyfunc
-def num_to_float(this):
+def num_to_float(this: CObject) -> CObject:
     """
     If value is a float, return `this`
     If value is an int, return a new Number object
@@ -1682,33 +1758,33 @@ def num_to_float(this):
     return _new_pobj(this.getclass(), float(this.getvalue()))
 
 @pyfunc
-def num_to_int(this):
+def num_to_int(this: CPObject) -> CObject:
     """
     If value is an int, return `this`
     If value is a float, return a new Number object
     """
-    if isinstance(this.getvalue(), int):
+    if isinstance(this.value, int):
         return this
-    return _new_pobj(this.getclass(), int(this.getvalue()))
+    return _new_pobj(this.getclass(), int(this.value))
 
 @pyfunc
-def num_to_number(this):
+def num_to_number(this: CObject) -> CObject:
     """
     identity method; returns `this`
     """
     return this
 
-Number.setprop(const.METHODS, _mkdict({
+LCNumber.setprop(const.METHODS, _mkdict({
     'to_float': num_to_float,
     'to_int': num_to_int,
     'to_number': num_to_number,
 }))
 
-Number.setprop(const.UNOPS, _mkdict({
+LCNumber.setprop(const.UNOPS, _mkdict({
     '-': neg,
     '~': bitnot,                # Int only!!
 }))
-Number.setprop(const.BINOPS, _mkdict({
+LCNumber.setprop(const.BINOPS, _mkdict({
     '+': add,
     '-': sub,
     '*': mul,
@@ -1727,7 +1803,7 @@ Number.setprop(const.BINOPS, _mkdict({
 ################ Set
 
 @pyfunc
-def set__init0(this):
+def set__init0(this: CPObject) -> CObject:
     """
     Called by Set.init (in bootstrap.xxl).
     Dodges needing private metaclass for Set.
@@ -1735,7 +1811,7 @@ def set__init0(this):
     this.value = set()
     return null_value
 
-Set.setprop(const.METHODS, _mkdict({
+LCSet.setprop(const.METHODS, _mkdict({
     '__init0': set__init0,
     'len': pobj_len
 }))
@@ -1745,12 +1821,12 @@ Set.setprop(const.METHODS, _mkdict({
 ################ Str
 
 @pyfunc
-def str_concat(x, y):
+def str_concat(x: CPObject, y: CObject) -> CObject:
     """
     String concatenation
     """
-    xv = x.getvalue()                # XXX getstr
-    yv = y.getvalue()                # XXX getstr
+    xv = x.value                # XXX getstr
+    yv = y.getvalue()           # XXX getstr
     if xv == "":
         return y
     if yv == "":
@@ -1758,7 +1834,7 @@ def str_concat(x, y):
     return _new_pobj(x.getclass(), xv + yv)
 
 @pyfunc
-def str_get(l, r):              # [] operator
+def str_get(l: CPObject, r: CObject) -> CObject:        # [] operator
     """
     Str l[r]
     return `r`'th character of Str `l`
@@ -1767,32 +1843,34 @@ def str_get(l, r):              # [] operator
     return _new_pobj(l.getclass(), l.value[r.getvalue()])
 
 @pyfunc
-def str_split(this, sep=None, limit=None):
+def str_split(this: CPObject,
+              sep: Optional[CPObject] = None,
+              limit: Optional[CPObject] = None) -> CObject:
     """
-    Return a List of the words in the string,
+    Return a CList of the words in the string,
     using sep as the delimiter string (default to `null` -- any whitespace).
     Limit to `limit` return values (defaults to -1 -- no limit)
     """
     if sep is not None:
-        sep = sep.getvalue()         # XXX getstr
+        sep = sep.value         # XXX getstr
     if limit is None:
-        limit = -1
+        il = -1
     else:
-        limit = limit.getvalue()     # XXX getint
+        il = limit.getint()
     # will use current "Str" defn:
-    return wrap(this.value.split(sep, limit))
+    return wrap(this.value.split(sep, il))
 
 @pyfunc
-def str_ends_with(this, suff):
+def str_ends_with(this: CPObject, suff: CPObject) -> CObject:
     """
     Return `true` if `this` ends with the suffix `suff`, `false` otherwise.
     """
-    return mkbool(this.value.endswith(suff.getvalue()))
+    return mkbool(this.value.endswith(suff.value))
 
 @pyfunc
-def str__join(this, arg):
+def str__join(this: CPObject, arg: CPObject) -> CObject:
     """
-    Concatenate any number of strings.
+    Concatenate list of strings.
 
     The string whose method is called is inserted in between each given string.
     The result is returned as a new string.
@@ -1801,54 +1879,55 @@ def str__join(this, arg):
                      this.value.join(unwrap(arg)))
 
 @pyfunc
-def str_ord(this):
+def str_ord(this: CPObject) -> CObject:
     """
     Return the Unicode code point for a one-character string `this`
     """
     return mknumber(ord(this.value)) # XXX getstr
 
 @pyfunc
-def str_starts_with(this, pref):
+def str_starts_with(this: CPObject, pref: CPObject) -> CObject:
     """
     Return `true` if `this` starts with prefix `pref, `false` otherwise.
     """
-    return mkbool(this.value.startswith(pref.getvalue()))
+    return mkbool(this.value.startswith(pref.value))
 
 @pyfunc
-def str_str(this):
+def str_str(this: CPObject) -> CPObject:
     """
     Identity method
     """
     return this                 # identity
 
 @pyfunc
-def str_strip(this):
+def str_strip(this: CPObject) -> CPObject:
     """
     Return a copy of the string with leading and trailing whitespace removed.
     """
     return _new_pobj(this.getclass(), this.value.strip()) # XXX getstr
 
 @pyfunc
-def str_to_float(this):
+def str_to_float(this: CPObject) -> CObject:
     """
     Convert string to a floating point Number
     """
     return mknumber(float(this.value))
 
 @pyfunc
-def str_to_int(this, base=None):
+def str_to_int(this: CPObject,
+               base: Optional[CPObject] = None) -> CObject:
     """
     Convert string to integer Number.
     Int `base` defaults to zero (accept 0xXXX, 0oOOO, 0bBBB).
     """
     if base is None:
-        base = 0
+        ib = 0
     else:
-        base = base.getvalue()       # XXX getint
-    return mknumber(int(this.value, base))
+        ib = base.getint()
+    return mknumber(int(this.value, ib))
 
 @pyfunc
-def str_to_number(this):
+def str_to_number(this: CPObject) -> CObject:
     """
     Convert string to a Number
     """
@@ -1859,13 +1938,13 @@ def str_to_number(this):
 
 # static methods (plain function)
 @pyfunc
-def str_chr(i):
+def str_chr(i: CPObject) -> CPObject:
     """
     Return a Unicode string of one character with ordinal i; 0 <= i <= 0x10ffff
     """
-    return mkstr(chr(i.getvalue())) # XXX getint
+    return mkstr(chr(i.getint()))
 
-Str.setprop(const.METHODS, _mkdict({
+LCStr.setprop(const.METHODS, _mkdict({
     'ends_with': str_ends_with,
     '__join': str__join,
     'len': pobj_len,
@@ -1880,7 +1959,7 @@ Str.setprop(const.METHODS, _mkdict({
     'to_str': str_str,
     const.INIT: pobj_init
 }))
-Str.setprop(const.BINOPS, _mkdict({
+LCStr.setprop(const.BINOPS, _mkdict({
     '+': str_concat,
     '[': str_get,
     # XXX Orderable mixin?
@@ -1891,44 +1970,44 @@ Str.setprop(const.BINOPS, _mkdict({
     '>': gt,
     '<': lt,
 }))
-Str.setprop('chr', str_chr)
+LCStr.setprop('chr', str_chr)
 
 ################ Null
 
 @pyfunc
-def null_str(this):
+def null_str(this: CObject) -> CObject:
     """
     to_string/repr method for Null Class: returns "null"
     """
     return mkstr("null")
 
 @pyfunc
-def null_call(this, *args):
+def null_call(this: CObject, *args: CObject) -> CObject:
     """
     `(` method for `null` value (fatal error)
     """
     raise UError("'null' called")
 
-Null.setprop(const.METHODS, _mkdict({
+LCNull.setprop(const.METHODS, _mkdict({
     'repr': null_str
 }))
-Null.setprop(const.BINOPS, _mkdict({
+LCNull.setprop(const.BINOPS, _mkdict({
     '(': null_call
 }))
 
 ################ Nullish
 
 @pyfunc
-def nullish_getprop(l, r):
+def nullish_getprop(l: CPObject, r: CPObject) -> CObject:
     """
     `.` method for Nullish (null, undefined) values.
     Fatal error if unknown property.
 
     Allows all Object methods (JavaScript is stricter, Python is not).
     """
-    # XXX check is Str
-    if l.hasprop(r):
-        return l.getprop(r)
+    # XXX check r is Str
+    if l.hasprop(r.value):
+        return l.getprop(r.value)
 
     ILLEGAL_VALUE = nullish_getprop           # can NEVER be seen
     val = find_in_class(l, r, ILLEGAL_VALUE) # may return BoundMethod
@@ -1937,28 +2016,28 @@ def nullish_getprop(l, r):
     return val
 
 @pyfunc
-def nullish_setprop(l, r, value):
+def nullish_setprop(l: CPObject, r: CObject, value: CObject) -> None:
     """
     Nullish Object setprop method/operator
     """
     rv = r.getvalue()              # XXX must be Str
     raise UError("Cannot set property '%s' of %s" % (rv, l.classname()))
 
-Nullish.setprop(const.METHODS, _mkdict({
+LCNullish.setprop(const.METHODS, _mkdict({
     'getprop': nullish_getprop,
     'setprop': nullish_setprop
 }))
-Nullish.setprop(const.BINOPS, _mkdict({
+LCNullish.setprop(const.BINOPS, _mkdict({
     '.': nullish_getprop
 }))
-Nullish.setprop(const.LHSOPS, _mkdict({
+LCNullish.setprop(const.LHSOPS, _mkdict({
     '.': nullish_setprop
 }))
 
 ################ Bool
 
 @pyfunc
-def bool_str(this):
+def bool_str(this: CPObject) -> CObject:
     """
     return Str representation: "true" or "false"
     """
@@ -1969,11 +2048,11 @@ def bool_str(this):
 
 # XXX have own MetaClass "new" to return one of the doubleton values?
 # XXX subclass into True and False singleton classes????
-Bool.setprop(const.METHODS, _mkdict({
+LCBool.setprop(const.METHODS, _mkdict({
     'repr': bool_str
 }))
 
-def mkbool(val):
+def mkbool(val: Any) -> CObject:
     """
     convert Python truthiness
     to language true or false Object
@@ -1988,30 +2067,30 @@ def mkbool(val):
 # PyObjects are created by __xxl.pyimport("python_module")
 # and are proxy wrappers around generic/naive Python objects
 
-PyObject = defclass(PClass, const.PYOBJECT, [Object],
+LCPyObject = defclass(LCPClass, const.PYOBJECT, [LCObject],
                     doc="""
     Built-in Class for a wrapper around an arbitrary Python Object
     (returned by pyimport, or operations on PyObjects)
     """)
 
-def unwrap(x):
+def unwrap(x: CObject) -> Any:
     """
     recursively unwrap an Object, to pass to PyObject on call
     (Pythonify value)
     """
     if x.hasvalue:
-        x = x.value
-        if isinstance(x, list): # XXX handle any iterable?
-            return [unwrap(y) for y in x]
-        elif isinstance(x, dict): # XXX handle any mapping?
-            return {unwrap(key): unwrap(val) for key, val in x.items()} # keys Python
-        return x
+        xv = x.getvalue()
+        if isinstance(xv, list): # XXX handle any iterable?
+            return [unwrap(y) for y in xv]
+        elif isinstance(xv, dict): # XXX handle any mapping?
+            return {unwrap(key): unwrap(val) for key, val in xv.items()} # keys Python
+        return xv
     if x is undef_value:
         return None
     return x
 
 @pyfunc
-def pyobj_getprop(l, r):
+def pyobj_getprop(l: CPObject, r: CObject) -> CObject:
     """
     PyObject `.` binop -- proxies to Python object getattr
     """
@@ -2028,14 +2107,14 @@ def pyobj_getprop(l, r):
     return wrap(v)
 
 @pyfunc
-def pyobj_props(this):
+def pyobj_props(this: CPObject) -> CObject:
     """
     return dir() of wrapped Python object
     """
     return wrap(dir(this.value))
 
 @pyfunc
-def pyobj_getitem(l, r):
+def pyobj_getitem(l: CPObject, r: CObject) -> CObject:
     """
     PyObject `[` binop
     """
@@ -2043,18 +2122,17 @@ def pyobj_getitem(l, r):
     return wrap(v)
 
 @pyfunc
-def pyobj_call(this, *args):
+def pyobj_call(this: CPObject, *args: CPObject) -> CObject:
     a2 = [unwrap(x) for x in args]
     ret = this.value(*a2)
     return wrap(ret) # may create another PyObject!
 
 # searched AFTER wrapped Python object attrs
-PyObject.setprop(const.METHODS, _mkdict({
+LCPyObject.setprop(const.METHODS, _mkdict({
     const.INIT: pobj_init,
     'props': pyobj_props
 }))
-
-PyObject.setprop(const.BINOPS, _mkdict({
+LCPyObject.setprop(const.BINOPS, _mkdict({
     '.': pyobj_getprop,         # gets Python object attr!
     '[': pyobj_getitem,
     '(': pyobj_call,
@@ -2065,7 +2143,7 @@ PyObject.setprop(const.BINOPS, _mkdict({
 ################ PyIterator
 
 @pyfunc
-def pyiterator_iter(this):
+def pyiterator_iter(this: CPyIterator) -> CObject:
     """
     Returns `this.`
 
@@ -2075,7 +2153,7 @@ def pyiterator_iter(this):
     return this
 
 @pyvmfunc
-def pyiterator_next(vm, this, finished):
+def pyiterator_next(vm: vmx.VM, this: CPyIterator, finished: CCallable) -> CObject:
     """
     Returns next value; calls `finished`
     (a block leave label or `return` Continuation)
@@ -2091,7 +2169,7 @@ def pyiterator_next(vm, this, finished):
         finished.invoke(vm)     # alters VM state; RETURN IMMEDIATELY!
     return null_value
 
-PyIterator.setprop(const.METHODS, _mkdict({
+LCPyIterator.setprop(const.METHODS, _mkdict({
     'iter': pyiterator_iter,    # see above
     'next': pyiterator_next
 }))
@@ -2099,14 +2177,14 @@ PyIterator.setprop(const.METHODS, _mkdict({
 ################ Undefined
 
 @pyfunc
-def undef_str(this):
+def undef_str(this: CObject) -> CObject:
     """
     to_string/repr method for Undefined Class: returns `"undefined"`
     """
     return mkstr("undefined")
 
 @pyfunc
-def undef_call(this, *args):
+def undef_call(this: CPObject, *args: CObject) -> CObject:
     """
     `(` method for `undefined` value (fatal error).
     commonly happens when a bad method name is used,
@@ -2114,10 +2192,10 @@ def undef_call(this, *args):
     """
     raise UError("'undefined' called; bad method name?")
 
-Undefined.setprop(const.METHODS, _mkdict({
+LCUndefined.setprop(const.METHODS, _mkdict({
     'repr': undef_str
 }))
-Undefined.setprop(const.BINOPS, _mkdict({
+LCUndefined.setprop(const.BINOPS, _mkdict({
     '(': undef_call
 }))
 
@@ -2128,34 +2206,35 @@ Undefined.setprop(const.BINOPS, _mkdict({
 
 # XXX need ModuleClass metaclass (unless/until Scope objects visible!!)
 #       in order to allow .new
-Module = defclass(Class, 'Module', [Object],
-        doc="Built-in class for a Module (from import function)")
-Module.setprop('modules', _mkdict({})) # Class variable
+LCModule = defclass(LCClass, 'Module', [LCObject],
+                    doc="Built-in class for a Module (from import function)")
+LCModule.setprop('modules', _mkdict({})) # Class variable
 
 class CModule(CObject):
     __slots__ = ['scope', 'modinfo']
 
-    def __init__(self, scope):
-        super().__init__(Module)
+    def __init__(self, scope: vmx.Scope):
+        super().__init__(LCModule)
         self.scope = scope      # HIDDEN!
-        self.modinfo = None     # convenience; '__modinfo' should suffice
+        #self.modinfo = None     # convenience; '__modinfo' should suffice
         self.props = scope.get_vars() # XXX THWACK (stealing Scope dict)!!
 
 # ModInfo is the Class of the '__modinfo' variable inside each Module
 #       (meta-info about the module-- Module properties are the
 #        the contents of the Module namespace/Scope)
-ModInfo = defclass(Class, 'ModInfo', [Object],
+LCModInfo = defclass(LCClass, 'ModInfo', [LCObject],
                    doc="Built-in Class for __modinfo Objects (inside Modules)")
 
 # called from new_module -- should be modinfo_init (ModInfo.init method)?
-def new_modinfo(main, module, fname, parser_vmx=None):
+def new_modinfo(main: bool, module: CModule, fname: str,
+                parser_vmx: Optional[str] = None) -> CObject:
     """
     bool `main`
     CModule `module`
     str `fname`
     str `parser_vmx`
     """
-    mi = CObject(ModInfo)
+    mi = CObject(LCModInfo)
     mi.setprop(const.MODINFO_MAIN, mkbool(main)) # is main program
     mi.setprop(const.MODINFO_MODULE, module)     # pointer to Module
     if XXL_DEBUG_BOOTSTRAP:
@@ -2175,9 +2254,11 @@ def new_modinfo(main, module, fname, parser_vmx=None):
 #       xxlobj.py xxl__import (__xxl._import function)
 # XXX should be moduleclass_new?!!
 # XXX take optional bootstrap_vmx arg??
-def new_module(fname, main=False, parser_vmx=None):
+def new_module(fname: str,
+               main: bool = False,
+               parser_vmx: Optional[str] = None) -> Tuple[CModule, Optional[CClosure]]:
     """
-    `fname` is Python str (or None for internal Module)
+    `fname` is Python str (empty for internal Module)
     `main` is Python True for main program (from command line)
     `argv` is Python list of str (if main is True)
     `parser_vmx` is Python str for parser VMX file to use
@@ -2186,18 +2267,15 @@ def new_module(fname, main=False, parser_vmx=None):
     returns (CModule, None) if previously loaded (or internal Module)
     """
 
-    if fname:
-        sfname = mkstr(fname)
-    else:
-        sfname = []             # should not be used! illegal as dict key!
+    sfname = mkstr(fname)
 
-    md = Module.getprop('modules') # Module Dict/directory (Class variable)
+    md = LCModule.getprop('modules') # Module Dict/directory (Class variable)
     mdd = md.getvalue()            # module directory dict
 
     if fname and sfname in mdd:  # previously loaded?
         return mdd[sfname], None # yes; return it, no bootstrap needed
 
-    scope = scopes.Scope(root_scope) # create base scope for module
+    scope = vmx.Scope(root_scope) # create base scope for module
     mod = CModule(scope)
 
     scope.defvar(const.DOC, null_value)
@@ -2207,7 +2285,8 @@ def new_module(fname, main=False, parser_vmx=None):
         mdd[sfname] = mod   # save as previously loaded
 
     mi = new_modinfo(main=main, module=mod, fname=fname, parser_vmx=parser_vmx)
-    mod.modinfo = mi
+    #mod.modinfo = mi
+
     scope.defvar(const.MODINFO, mi) # make ModInfo visible in module namespace
 
     if fname is None:           # internal module?
@@ -2228,51 +2307,54 @@ def new_module(fname, main=False, parser_vmx=None):
 # (reading JSON and calling modinfo_assemble)
 # *BUT* load_vm_json has to exist to load the bootstrap anyway!
 @pyfunc
-def modinfo_load_vmx(this, fname):
+def modinfo_load_vmx(this: CObject, fname: CObject) -> CClosure:
     """
     Load compiled `.vmx` file;
     Returns Closure in __modinfo.module top level scope.
     """
     mod = this.getprop(const.MODINFO_MODULE) # XXX check return
+    assert isinstance(mod, CModule)
+
     code = vmx.load_vm_json(fname.getvalue()) # XXX getstr
     return CClosure(code, mod.scope)
 
 @pyfunc
-def modinfo_assemble(this, tree, srcfile):
+def modinfo_assemble(this: CObject, tree: CObject, srcfile: CObject) -> CClosure:
     """
     Assemble List of Lists representing VM code.
     `tree`: List of Lists.
     `srcfile`: source of code (for output only).
     Returns Closure in __modinfo.module top level scope.
     """
-    mod = this.getprop(const.MODINFO_MODULE) # XXX check
-    code = vmx.assemble(mod.scope, tree, srcfile)
+    code = vmx.assemble(tree, srcfile)
 
     # turn into Closure in scope
     #   (any variables created are globals):
+    mod = this.getprop(const.MODINFO_MODULE) # XXX check
+    assert isinstance(mod, CModule)
     return CClosure(code, mod.scope)
 
-ModInfo.setprop(const.METHODS, _mkdict({
+LCModInfo.setprop(const.METHODS, _mkdict({
     'load_vmx': modinfo_load_vmx,  # create Closure from .vmx file
     'assemble': modinfo_assemble # create Closure from List of inst. Lists
 }))
 
 ################################################################
 
-PyIteratorObject = defclass(PClass, const.PYITERATOROBJECT, [PyObject,PyIterator],
-                    doc="""
+LCPyIteratorObject = defclass(LCPClass, const.PYITERATOROBJECT, [LCPyObject,LCPyIterator],
+                              doc="""
     Built-in Class for a wrapper around an arbitrary Python Object that is an iterator
     (has a __next__ method -- should also have __iter__ method).
     """)
 
-PyIterableObject = defclass(PClass, const.PYITERABLEOBJECT, [PyObject,PyIterable],
+LCPyIterableObject = defclass(LCPClass, const.PYITERABLEOBJECT, [LCPyObject,LCPyIterable],
                     doc="""
     Built-in Class for a wrapper around an arbitrary Python Object that is an iterable
     (has an __iter__ method -- an iterator factory).
     """)
 
 # XXX maybe take second arg PObject orig, and return if "value is orig.value"??
-def wrap(value):
+def wrap(value: Any) -> CObject:
     """
     wrap a Python `value` in a language CObject
 
@@ -2316,17 +2398,17 @@ def wrap(value):
 
 ################################################################
 
-def defmodule(name, mod):
+def defmodule(name: str, mod: CModule) -> None:
     """
     declare an internal Module by name
     `name` is Python str
     `mod` is CModule
     """
     assert(isinstance(mod, CModule))
-    md = Module.getprop('modules') # module Dict
+    md = LCModule.getprop('modules') # module Dict
     md.getvalue()[mkstr(name)] = mod
 
-def classes_init(argv, parser_vmx):
+def classes_init(argv: List[str], parser_vmx: str) -> None:
     """
     call once on startup; initialize "root" scope, including __xxl object
     """
@@ -2336,14 +2418,14 @@ def classes_init(argv, parser_vmx):
     root_scope.defvar('false', false_value)
     root_scope.defvar('null', null_value)
     root_scope.defvar('undefined', undef_value)
-    root_scope.defvar('Class', Class)
+    root_scope.defvar('Class', LCClass)
 
     xxlobj.create_xxl_class(argv=argv, parser_vmx=parser_vmx)
 
     # UTTERLY VILE: either hide in a "make_internal_module"
     #   or do it more cleanly!!!!
     #   declare classes_module up top???????????
-    classes_module, _ = new_module(None)
+    classes_module, _ = new_module("")
     classes_module.scope = classes_scope # XXX YUK
     # NOTE: below crushes classes_module __modinfo!!!??? (do we care???)
     classes_module.props = classes_scope.vars # XXX XXX DOUBLY SO
@@ -2351,11 +2433,12 @@ def classes_init(argv, parser_vmx):
 
 ################################################################
 
-def def_wrappers(cname, ptype, methods):
+def def_wrappers(cname: str,
+                 ptype: Any,    # XXX
+                 methods: List[Union[str, Tuple[str,str]]]) -> None:
     """
     str `cname` is XXL Class name.
     Python type `ptype` is a Python class/type.
-    str `pmname` is Python method name
     list `methods` is list of str and/or 2-tuple of str (pymeth, xxlmeth)
     """
     # find Class with cname, find or create methods Dict
@@ -2364,7 +2447,7 @@ def def_wrappers(cname, ptype, methods):
         mdict = _mkdict({})
         c.setprop(const.METHODS, mdict)
     else:
-        mdict = c.getprop(const.METHODS)
+        mdict = cast(CPObject, c.getprop(const.METHODS))
 
     for pmname in methods:
         if isinstance(pmname, (list, tuple)):
@@ -2377,10 +2460,10 @@ def def_wrappers(cname, ptype, methods):
         except AttributeError:
             continue            # not in this version of Python
 
-        def def_wrapper(_pmname, _mname):
+        def def_wrapper(_pmname: str, _mname: str) -> None:
             # closure with private names, pmethod (not loop variables!)
             pmethod = getattr(ptype, _pmname)
-            def wrapper(*args):
+            def wrapper(*args: CObject) -> CObject:
                 return wrap(pmethod(*[unwrap(x) for x in args]))
             wrapper.__name__ = _mname # crock for CPyFunc.defn()
             pf = CPyFunc(wrapper, pmethod) # second arg crock for CPyFunc.args()

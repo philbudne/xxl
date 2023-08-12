@@ -28,9 +28,10 @@ import sys                      # sys.exit
 import json
 import importlib                # for pyimport
 
+from typing import Any, List, NoReturn, Optional, Union, cast
+
 # XXL:
 import classes
-import scopes
 import const
 import vmx
 
@@ -39,7 +40,7 @@ import vmx
 
 STR = (str, bytes)              # Python3
 
-def isstr(x):                   # XXX TEMP
+def isstr(x: Any) -> bool:      # XXX TEMP
     """
     return true if `x` is a Python string type
     """
@@ -48,7 +49,7 @@ def isstr(x):                   # XXX TEMP
 ################ debug:
 
 @classes.pyfunc
-def xxl_break(x=None):
+def xxl_break(x: Any = None) -> classes.CObject:
     """
     break to python debugger to debug VM
     argument (if any) available as `x`
@@ -57,7 +58,7 @@ def xxl_break(x=None):
     return classes.null_value
 
 @classes.pyvmfunc
-def xxl_backtrace(vm):
+def xxl_backtrace(vm: vmx.VM) -> classes.CObject:
     """
     print VM backtrace to stderr
     """
@@ -67,7 +68,7 @@ def xxl_backtrace(vm):
 ################
 
 @classes.pyfunc
-def xxl_uerror(msg):
+def xxl_uerror(msg: classes.CObject) -> NoReturn:
     raise classes.UError(msg)
 
 ################
@@ -80,8 +81,8 @@ DEBUG_LIB_PATH = False
 if DEBUG_LIB_PATH:
     print('XXL_LIB_PATH', XXL_LIB_PATH)
 
-def find_in_lib_path(fname, suffixes=[]):
-    def trydir(dir):
+def find_in_lib_path(fname: str, suffixes: List[str] = []) -> str:
+    def trydir(dir: Optional[str]) -> Optional[str]:
         if dir:
             path = os.path.join(dir,fname)
         else:
@@ -96,7 +97,7 @@ def find_in_lib_path(fname, suffixes=[]):
             p2 = path + suffix
             if DEBUG_LIB_PATH:
                 print('try', p2)
-            if os.path.exits(p2):
+            if os.path.exists(p2):
                 if DEBUG_LIB_PATH:
                     print(' found', p2)
                 return p2
@@ -113,22 +114,25 @@ def find_in_lib_path(fname, suffixes=[]):
     return fname                # fail on open attempt
 
 @classes.pyfunc
-def xxl__find_in_lib_path(fname, suffixes=None):
+def xxl__find_in_lib_path(fname: classes.CObject,
+                          suffixes: Optional[classes.CObject] = None) -> classes.CObject:
     """
     return full path of file in current dir, or in XXL_LIB_PATH
     """
     if suffixes:
-        suff2 = [x.getvalue() for x in suffixes.getvalue()] # XXX unwrap?
+        suff2 = [x.getvalue()
+                 for x in cast(List[classes.CObject],suffixes.getvalue())]
     else:
         suff2 = []
-    return classes.mkstr(find_in_lib_path(fname.getvalue(), suff2))
+    return classes.mkstr(find_in_lib_path(cast(str,fname.getvalue()), # XXX getstr?
+                                          suff2))
 
 ################
 
 DEBUG_IMPORT = False
 
 @classes.pyfunc
-def xxl__import(filename):
+def xxl__import(filename: classes.CObject) -> classes.CObject:
     """
     worker function for __xxl.import()
     (defined in bootstrap.xxl)
@@ -150,14 +154,16 @@ def xxl__import(filename):
 import jslex
 
 @classes.pyfunc
-def xxl__tokenizer(filename, prefix, suffix):
+def xxl__tokenizer(filename: classes.CObject,
+                   prefix: classes.CObject,
+                   suffix: classes.CObject) -> classes.CObject:
     """
     returns a token generator:
     returns Objects, and then null
     """
-    fnstr = filename.getvalue() # getstr()?
-    pstr = prefix.getvalue()    # getstr()?
-    sstr = suffix.getvalue()    # getstr()?
+    fnstr = cast(str, filename.getvalue()) # getstr()?
+    pstr = cast(str, prefix.getvalue())    # getstr()?
+    sstr = cast(str, suffix.getvalue())    # getstr()?
     if fnstr == '-':
         f = sys.stdin
         print("XXL/0")
@@ -171,12 +177,12 @@ def xxl__tokenizer(filename, prefix, suffix):
     # XXX wrap in a PyObject (create token as namedtuple, return as list?)
 
     @classes.pyfunc
-    def next():
+    def next() -> classes.CObject:
         t = tokenizer.next()    # jslex.Token object
         if not t:
             return classes.null_value
         where = "%s:%s:%s" % (fnstr, t.lineno, t.from_)
-        if t.type_ == 'number':
+        if isinstance(t.value, (int, float)):
             v = classes.mknumber(t.value)
         else:
             v = classes.mkstr(t.value)
@@ -190,18 +196,19 @@ def xxl__tokenizer(filename, prefix, suffix):
         return tok
 
     @classes.pyfunc
-    def pointer(line, pos):
-        tokenizer.pointer(line.getvalue(), pos.getvalue()) # XXX getint
+    def pointer(line: classes.CObject, pos: classes.CObject) -> classes.CObject:
+        tokenizer.pointer(cast(int, line.getvalue()), # XXX getint?
+                          cast(int, pos.getvalue())) # XXX getint?
         return classes.null_value
 
     @classes.pyfunc
-    def reset_prompt():
+    def reset_prompt() -> classes.CObject:
         tokenizer.reset_prompt()
         return classes.null_value
 
     @classes.pyfunc
-    def reset_tokenizer():
-        t = tokenizer.reset()
+    def reset_tokenizer() -> classes.CObject:
+        tokenizer.reset()
         return classes.null_value
 
     return classes.wrap([next, reset_prompt, pointer,
@@ -210,24 +217,25 @@ def xxl__tokenizer(filename, prefix, suffix):
 ################
 
 @classes.pyfunc
-def xxl_exit(status=None):
+def xxl_exit(status: Optional[classes.CObject] = None) -> NoReturn:
     """
     Exit the interpreter.
     `status` defaults to zero.
     """
+    xstatus: Union[str, int]
     if status is None:
-        status = 0
+        xstatus = 0
     else:
         try:
-            status = status.getvalue()
+            xstatus = status.getvalue()
         except:
-            status = repr(status)
-    sys.exit(status)
+            xstatus = repr(status)
+    sys.exit(xstatus)
 
 ################
 
 @classes.pyfunc
-def xxl__tree(t):
+def xxl__tree(t: classes.CObject) -> classes.CObject:
     """
     format JSON (returns Str) from AST of Symbols
     """
@@ -239,7 +247,10 @@ def xxl__tree(t):
 # NOTE: used to do string concatenation rather than list building.
 #       not clear that on average this is any better
 
-def format_instr(instr, indent=''):
+JInstr = List[Any]
+JCode = List[JInstr]
+
+def format_instr(instr: JInstr, indent: str = '') -> List[str]:
     """
     helper for xxl_vtree
     format one instruction (Python list)
@@ -260,7 +271,7 @@ def format_instr(instr, indent=''):
     ret.append(']')
     return ret
 
-def format_code(code, indent=''):
+def format_code(code: JCode, indent: str = '') -> List[str]:
     """
     helper for xxl_vtree
     takes Python list of instructions (Python lists)
@@ -275,7 +286,7 @@ def format_code(code, indent=''):
     ret.append("]")
     return ret
 
-def trim_where(code, fname):
+def trim_where(code: JCode, fname: str) -> None:
     """
     helper for xxl_vtree, assemble
     `code` is Python list of lists: ***MODIFIED IN PLACE!!!***
@@ -284,7 +295,7 @@ def trim_where(code, fname):
     if not fname:
         return
     fnamelen = len(fname) + 1   # remove "fname:"
-    def helper(c):
+    def helper(c: JCode) -> None:
         for instr in c:
             if instr[0].startswith(fname):
                 instr[0] = instr[0][fnamelen:]
@@ -295,14 +306,14 @@ def trim_where(code, fname):
 ################
 
 @classes.pyfunc
-def xxl__vtree(t, fname=classes.null_value):
+def xxl__vtree(t: classes.CObject, fname: classes.CObject = classes.null_value) -> classes.CObject:
     """
     pretty print a VM code tree (List of List) `t`; returns Str
     """
     t2 = obj2python_json(t)     # convert to list of list of str
 
     if fname and fname is not classes.null_value:
-        fn = fname.getvalue()
+        fn = cast(str, fname.getvalue()) # XXX getstr?
         trim_where(t2, fn)
 
     return classes.mkstr(''.join(format_code(t2)))
@@ -311,16 +322,16 @@ def xxl__vtree(t, fname=classes.null_value):
 # __xxl.tree (above) XXX replace with a Symbol.json method??
 # __xxl.vtree (above)
 # ModInfo.assemble (via vmx.assemble)
-def obj2python_json(x):
+def obj2python_json(x: classes.CObject) -> Any:
     """
     take AST (tree of parser Symbols) or List of VMCode (Lists)
     return as Python list of lists
     *NOT* a general purpose JSON converter!!!
     """
 
-    value_classes = [classes.Number, classes.Str, classes.Bool, classes.Null]
-    iterable_classes = [classes.List]
-    def clean1(x):
+    value_classes = [classes.LCNumber, classes.LCStr, classes.LCBool, classes.LCNull]
+    iterable_classes = [classes.LCList]
+    def clean1(x: classes.CObject) -> Any:
         """
         worker function
         """
@@ -337,7 +348,7 @@ def obj2python_json(x):
         for attr in ['where', 'arity', 'value']:
             r.append(clean1(x.getprop(attr)))
         for attr in ['first', 'second', 'third']:
-            if attr not in x.props:
+            if not x.hasprop(attr):
                 break
             r.append(clean1(x.getprop(attr)))
         return r
@@ -347,14 +358,14 @@ def obj2python_json(x):
 ################ "pyimport" returns a PyObject wrapper around a Python module
 
 @classes.pyfunc
-def xxl_pyimport(module):
+def xxl_pyimport(module: classes.CObject) -> classes.CObject:
     m = importlib.import_module(module.getvalue()) # XXX getstr?
     return classes.wrap(m)         # make PyObject
 
 ################################################################
 
-def create_xxl_class(argv, parser_vmx):
-    XXLObject = classes.defclass(classes.Class, 'XXLObject', [classes.Object],
+def create_xxl_class(argv: List[str], parser_vmx: str) -> None:
+    XXLObject = classes.defclass(classes.LCClass, 'XXLObject', [classes.LCObject],
                                  doc="Class for __xxl object")
 
     # NOTE! Everything a static method (evolved from simple object)
