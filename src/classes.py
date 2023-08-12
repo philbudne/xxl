@@ -103,6 +103,8 @@ class UError(Exception):
 # All such Python classes should start with the letter "C"
 #       (the variable ClassName should point to the Class object of that name)
 
+Cache = Dict[str, "CCallable"]
+
 class CObject:
     __slots__ = ['props', 'klass', 'cache']
     hasvalue = False
@@ -115,7 +117,7 @@ class CObject:
         # (if per-object caching, including BoundMethods) is desired
         # need to keep a global serial number in each object, and increment it
         # to invalidate all cache entries.
-        self.cache: Dict[str, "CCallable"] = {}
+        self.cache: Cache = {}
 
     def setclass(self, klass: "CObject") -> "CObject":
         self.klass = klass
@@ -958,6 +960,7 @@ def find_in_class(l: CObject, r: CObject, default: CObject) -> CObject:
     cache_line = '__method:' + rv
     if cache_line in c.cache: # XXX change name?
         m = c.cache[cache_line]
+        assert isinstance(m, CCallable)
         return CBoundMethod(l, m)
 
     methods = c.getprop(const.METHODS)
@@ -965,6 +968,7 @@ def find_in_class(l: CObject, r: CObject, default: CObject) -> CObject:
         m = methods.getvalue().get(r, null_value) # .getdict?
         if m is not null_value:
             c.cache[cache_line] = m
+            assert isinstance(m, CCallable)
             return CBoundMethod(l, m)
 
     return find_in_supers(l, r, default)
@@ -988,7 +992,7 @@ def obj_hasprop(l: CObject, r: CObject) -> CObject:
     # XXX check r is Str
     return mkbool(l.hasprop(r.getvalue()))
 
-def find_op(obj: CObject, optype: str, op: CPObject) -> CCallable:
+def find_op(obj: CObject, optype: str, op: CPObject) -> CObject:
     """
     Utility (not method)
     `obj` is CObject
@@ -1017,10 +1021,10 @@ def find_op(obj: CObject, optype: str, op: CPObject) -> CCallable:
         ops = c.props.get(optype, null_value) # getprop
         if ops is not null_value:
             v = ops.getvalue()  # .getdict?
-            vd = cast(Dict[CObject,CObject], v)
+            # XXX CCallable or PyObject??
+            vd = cast(Dict[CObject, CCallable], v)
             if op in vd:
                 val = vd[op]    # get from op dict
-                # XXX can see bare Python function here (math.pow)???
                 c0.cache[cache_line] = val # save in cache
                 return val
 
