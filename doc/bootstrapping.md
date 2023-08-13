@@ -9,6 +9,7 @@ Adding a new VM instruction:
 	"b.vmx" (generated using "a.vmx") will generate new instr
 	"c.vmx" (generated using "b.vmx") tests new instr
 4. replace parser.vmx with "c.vmx"
+   replace dist/parser.vmx with parser.vmx
 5. remove old instr from vmx.py if no longer used.
 
 Adding a new core language feature (not used in parser);
