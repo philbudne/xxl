@@ -44,8 +44,8 @@ the number of arguments to the instruction.
 Each instruction class must have a "name" property, so `reginstr` knows
 the name of the instruction to register for conversion to internal form.
 
-Because closures allow the repeated restoration of program flow/state
-to an arbitrary point saved in a call frame, all VM stacks (`SP, FP`,
+Because continuations allow the repeated restoration of program flow/state
+to an arbitrary point saved in a call frame, all VM stacks (`SP`, `FP`,
 and `SCOPE`) cannot be represented as arrays (or Python lists) of
 values.  Instead each new item pushed onto a stack contains a parent
 pointer, which must never be changed (`SP` and `FP` point to Python
@@ -54,7 +54,10 @@ a parent pointer tree, also called a "saguro" or "cactus" stack.  The
 term "spaghetti stack" has also been used, but is not topologically
 accurate.
 
-The virtual machine is stack based has the following registers:
+The virtual machine is stack based, and developed from ideas in
+Kent Dybvig's dissertation
+["Three Implementation Models for Scheme" (pdf)](https://legacy.cs.indiana.edu/~dyb/papers/3imp.pdf),
+and has the following registers:
 
 * `AC` -- Accumulator.
 * `SP` -- Stack Pointer to a "parent pointer" (saguro/cactus) stack.
@@ -73,10 +76,11 @@ The virtual machine is stack based has the following registers:
 	The `SCOPE` stack represents the nested "static" or "lexical"
 	function/block scopes in the source file.  Invocation of a Closure
 	sets `SCOPE` to the value in effect when/where the function was defined.
-* `FP` -- Frame Pointer.  Pointer to a cactus stack of tuples with the
-	return stack.  Each frame includes the current `CB, PC, SCOPE, FP,
-	FILENAME, "LINE:POS"` and a Bool indicating whether the frame
-	should be visible in an backtrace.
+* `FP` -- Frame Pointer.  Pointer to a cactus stack of NamedTuple
+	Frame objects with the return stack.  Each frame includes the
+	current `CB, PC, SCOPE, FP, FILENAME, "LINE:POS"` and a Bool
+	indicating whether the frame should be visible in an backtrace
+	(block closures are not visible).
 * `ARGS` -- a Python list of arguments for the next "call" instruction (*).
 * `TEMP` -- Holds pointer to a List, Dict, or Set object being built by
 	[] or {} syntax sugar (*).
@@ -85,7 +89,7 @@ The virtual machine is stack based has the following registers:
 valid between `call` and `args` instructions (or `clargs` and `args`
 instructions) for Closures.  The `TEMP` register is a "caller saves"
 register, with values saved on `SP` by `new` and restored by
-`pop_temp`.  The `IR` register is not saved in it's entirety (only the
+`pop_temp`.  The `IR` register is not saved in its entirety (only the
 filename and position information is saved, and those values are
 discarded when a frame is restored).
 
@@ -95,7 +99,7 @@ Instruction execution is as follows:
 * `IR.step(vm)` is called
 
 A call to a Closure pushes an tuple on the `FP` (cactus) stack:
-`FP ← (CB, PC, SCOPE, FP, IR.filename, IR.line_pos, visible)`,
+`FP ← Frame(CB, PC, SCOPE, FP, IR.filename, IR.line_pos, visible)`,
 where:
 * `visible` is `True` for function closures, and `False` for block closures.
 * the `PC` index is for the instruction after the call.
