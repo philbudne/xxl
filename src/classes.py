@@ -2233,12 +2233,6 @@ LCModInfo = defclass(LCClass, 'ModInfo', [LCObject],
 # called from new_module -- should be modinfo_init (ModInfo.init method)?
 def new_modinfo(main: bool, module: CModule, fname: str,
                 parser_vmx: Optional[str] = None) -> CObject:
-    """
-    bool `main`
-    CModule `module`
-    str `fname`
-    str `parser_vmx`
-    """
     mi = CObject(LCModInfo)
     mi.setprop(const.MODINFO_MAIN, mkbool(main)) # is main program
     mi.setprop(const.MODINFO_MODULE, module)     # pointer to Module
@@ -2261,11 +2255,11 @@ def new_modinfo(main: bool, module: CModule, fname: str,
 # XXX take optional bootstrap_vmx arg??
 def new_module(fname: str,
                main: bool = False,
-               parser_vmx: Optional[str] = None) -> Tuple[CModule, Optional[CClosure]]:
+               parser_vmx: Optional[str] = None
+               ) -> Tuple[CModule, Optional[CClosure]]:
     """
     `fname` is Python str (empty for internal Module)
     `main` is Python True for main program (from command line)
-    `argv` is Python list of str (if main is True)
     `parser_vmx` is Python str for parser VMX file to use
     returns (CModule, CClosure) if newly loaded module
         the Closure is the (bootstrap) code to populate the Module
@@ -2290,11 +2284,10 @@ def new_module(fname: str,
         mdd[sfname] = mod   # save as previously loaded
 
     mi = new_modinfo(main=main, module=mod, fname=fname, parser_vmx=parser_vmx)
-    #mod.modinfo = mi
 
     scope.defvar(const.MODINFO, mi) # make ModInfo visible in module namespace
 
-    if fname is None:           # internal module?
+    if not fname:               # internal module
         return mod, None
 
     bootstrap_vmx = xxlobj.find_in_lib_path(os.environ.get('XXL_BOOTSTRAP',
