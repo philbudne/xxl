@@ -35,17 +35,6 @@ import classes
 import const
 import vmx
 
-################################################################
-# functions
-
-STR = (str, bytes)              # Python3
-
-def isstr(x: Any) -> bool:      # XXX TEMP
-    """
-    return true if `x` is a Python string type
-    """
-    return isinstance(x, STR)
-
 ################ debug:
 
 @classes.pyfunc
