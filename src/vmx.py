@@ -72,7 +72,7 @@ def fp_where(fp: Frame) -> str:
     Return "filename:line:col" for stack frame
     """
     # gives CALLER location (from VM IR register at time of call)
-    return "%s:%s" % (fp.function, fp.where)
+    return f"{fp.function}:{fp.where}"
     # gives return location (PC incremented before call)
     #return fp.cb[fp.pc].fn_where()
 
@@ -136,7 +136,7 @@ class Scope:
             if name in s.vars:
                 return s.vars[name]
             s = s.parent
-        raise classes.UError("Unknown variable %s" % name) # SNH
+        raise classes.UError(f"Unknown variable {name}") # SNH
 
     # see note above "lookup" (compiler could tell us stuff)
     def store(self, name: str, val: "classes.CObject") -> "classes.CObject":
@@ -150,7 +150,7 @@ class Scope:
                 s.vars[name] = val
                 return val
             s = s.parent
-        raise classes.UError("Unknown variable %s" % name)
+        raise classes.UError(f"Unknown variable {name}")
 
     def get_vars(self) -> VarsDict:  # UGH! used by new_module
         return self.vars
@@ -354,7 +354,7 @@ class VM:
         Write return stack to stderr.
         """
         for return_location in fp_backtrace_list(self.fp):
-            sys.stderr.write(" called from %s\n" % return_location)
+            sys.stderr.write(f" called from {return_location}\n")
 
     def push(self, val: StackVal) -> None:
         """
@@ -392,8 +392,7 @@ def reginstr(inst_class: Type["VMInstr0"]) -> Type["VMInstr0"]:
     assert issubclass(inst_class, VMInstr0)
     name = inst_class.name
     if name in instr_class_by_name:
-        raise VMError("duplicate entry for %s instruction (%s)" %
-                      (name, inst_class))
+        raise VMError(f"duplicate entry for {name} instruction ({inst_class})")
     instr_class_by_name[name] = inst_class
     return inst_class           # unmodified class
 
@@ -413,7 +412,7 @@ class VMInstr0:
         """
         Return str with "filename:line:position"
         """
-        return "%s:%s" % (self.fn, self.where)
+        return f"{self.fn}:{self.where}"
 
     def json(self) -> IJSON:
         """
@@ -425,7 +424,8 @@ class VMInstr0:
         """
         Perform (execute) this instruction.
         """
-        raise VMError("'%s' has no step method" % type(self).__name__)
+        tn = type(self).__name__
+        raise VMError(f"'{tn}' has no step method")
 
     def prof(self, vm: "VM", secs: float) -> None:
         vm.op_count[self.name] += 1
@@ -1010,7 +1010,7 @@ class NewInstr(StrInstr):
         elif self.value == 'Set':
             vm.temp = classes.new_by_name(self.value, set())
         else:
-            VMError("new Instr unknown type %s" % self.value)
+            VMError(f"new Instr unknown type {self.value}")
 
 ################
 # convert Python list into XxxInstr(ruction) instances
@@ -1052,7 +1052,7 @@ def load_vm_json(fname: str) -> VMInstrs:
             raise classes.UError("bad vmx file")
         v = float(metadata['v'])
         if v < 1.0 or v >= 2.0:
-            raise classes.UError("unsupported vmx file version %s" % v)
+            raise classes.UError(f"unsupported vmx file version {v}")
 
         # load list of instructions
         j = json.load(f)

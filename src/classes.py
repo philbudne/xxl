@@ -145,7 +145,7 @@ class CObject:
         n = c.getprop(const.NAME).getvalue() # XXX getstr??
         assert isinstance(n, str)
         if subclass_of(c, [LCClass]):
-            return '%s: %s' % (n, self.getprop(const.NAME).getvalue())
+            return f'{n}: {self.getprop(const.NAME).getvalue()}'
 
         return n
 
@@ -176,7 +176,7 @@ class CObject:
         return repr(self)       # XXX ???
 
     def __repr__(self) -> str:
-        return '<%s at %#x>' % (self.classname(), id(self))
+        return f'<{self.classname()} at {id(self):#x}'
 
 class CPObject(CObject):
     """
@@ -208,7 +208,7 @@ class CPObject(CObject):
     def __hash__(self) -> int:
         if not self.value.__hash__: # type: ignore[truthy-function, unused-ignore]
             # avoid error calling None!
-            raise UError('%s not hashable' % self.classname())
+            raise UError(f'{self.classname()} not hashable')
         return self.value.__hash__() # type: ignore[no-any-return]
 
     def __eq__(self, other: object) -> bool:
@@ -222,8 +222,7 @@ class CPObject(CObject):
 
     def __repr__(self) -> str:
         """show wrapped value"""
-        return '<%s: %s at %#x>' % \
-            (self.classname(), repr(self.value), id(self))
+        return f'<{self.classname()}: {repr(self.value)} at {id(self):#x}>'
 
 ################
 
@@ -255,7 +254,7 @@ class CContinuation(CCallable):
         self.fp = fp
 
     def __repr__(self) -> str:
-        return "<Continuation: %s>" % self.defn()
+        return f"<Continuation: {self.defn()}>"
 
     def invoke(self, vm: vmx.VM) -> None:
         l = len(vm.args)
@@ -265,7 +264,7 @@ class CContinuation(CCallable):
             vm.ac = null_value  # XXX undefined??
         else:
             # before restore_frame, to show CALLER!!
-            raise UError("Too many args (%d) to %r" % (len(vm.args), self))
+            raise UError(f"Too many args ({len(vm.args)} to {self!r}")
         vm.restore_frame(self.fp) # ***JUST*** like ReturnInstr
 
     def args(self) -> Args:
@@ -306,7 +305,7 @@ class CClosure(CCallable):
         self.setprop(const.DOC, doc and mkstr(doc) or null_value)
 
     def __repr__(self) -> str:
-        return "<Closure: %s>" % self.defn()
+        return f"<Closure: {self.defn()}>"
 
     def invoke(self, vm: vmx.VM) -> None:
         vm.save_frame(True)     # show=True
@@ -332,7 +331,7 @@ class CBClosure(CClosure):
     (unless flow control implemented by passing block closure pointers)
     """
     def __repr__(self) -> str:
-        return "<BClosure: %s>" % self.defn()
+        return f"<BClosure: {self.defn()}>"
 
     def invoke(self, vm: vmx.VM) -> None:
         vm.save_frame(False)    # show=False
@@ -365,7 +364,7 @@ class CBoundMethod(CCallable):
         self.method = method
 
     def __repr__(self) -> str:
-        return "<BoundMethod: %s %s>" % (repr(self.obj), self.method)
+        return f"<BoundMethod: {repr(self.obj)} {self.method}>"
 
     def invoke(self, vm: vmx.VM) -> None:
         # *this* is the main place "THIS" is explicitly passed!!!
@@ -403,7 +402,7 @@ class CPyFunc(CCallable):
 
     def __repr__(self) -> str:
         # was self.fun.__name___
-        return "<PyFunc: %s>" % self.defn()
+        return f"<PyFunc: {self.defn()}>"
 
     def invoke(self, vm: vmx.VM) -> None:
         vm.ac = self.fun(*vm.args)
@@ -415,7 +414,7 @@ class CPyFunc(CCallable):
         from another Python function.
         """
         # Python programming error, want Python backtrace:
-        raise Exception("Attempt to call %s" % self)
+        raise Exception(f"Attempt to call {self}")
 
     def args(self) -> Args:
         """
@@ -440,7 +439,7 @@ class CPyFunc(CCallable):
         fname = co.co_filename
         if fname.startswith(CWD_SEP): # trim CWD/ from file name
             fname = fname[len(CWD_SEP):]
-        return "%s:%s (%s)" % (fname, co.co_firstlineno, self.fun.__name__)
+        return f"{fname}: {co.co_firstlineno} ({self.fun.__name__})"
 
 def pyfunc(func: Callable) -> "CPyFunc":
     """
@@ -811,8 +810,8 @@ def obj_init(this_obj: CObject, *args: CObject) -> CObject:
     a fatal error if any arguments given
     """
     if len(args) > 0:
-        raise UError("%s.%s takes no arguments" %
-                        (this_obj.classname(), const.INIT))
+        raise UError(f"{this_obj.classname()}.{const.INIT} takes no arguments")
+    
     return null_value
 
 @pyfunc
@@ -843,7 +842,7 @@ def obj_reprx(l: CObject) -> CObject:
     """
     for debug: show Class, and Python value (which may include id?)
     """
-    return mkstr("<%s: %s>" % (l.classname(), repr(l)))
+    return mkstr(f"<{l.classname()}: {repr(l)}>")
 
 @pyfunc
 def obj_ident(l: CObject, r: CObject) -> CObject: # SNOBOL4 IDENT
@@ -1045,8 +1044,8 @@ def find_op(obj: CObject, optype: str, op: CPObject) -> CObject:
         except IndexError:
             break
 
-    raise UError("%s %s for %s not found" % ( \
-        const.OPDICT2ENGLISH.get(optype,optype), op, obj.classname()))
+    optype = const.OPDICT2ENGLISH.get(optype,optype)
+    raise UError(f"{optype} {op} for {obj.classname()} not found")
 
 @pyfunc
 def obj_get_in_supers(this: CObject, prop: CObject) -> CObject:
@@ -1094,7 +1093,7 @@ def obj_call(l: CObject, *args: CObject) -> None:
     default Object `(` binop
     (fatal error)
     """
-    raise UError("%s does not have '(' binop" % l.classname())
+    raise UError(f"{l.classname()} does not have '(' binop")
 
 @pyfunc
 def obj_instance_of(this: CObject, c: CObject) -> CObject:
@@ -1173,11 +1172,11 @@ def class_init(this_class: CObject, props: CObject) -> CObject:
         ikey = const.CLASS_PROPS.get(kv)
         if not ikey:
             metaclassname = this_class.classname()
-            raise UError("Unknown %s property %s" % (metaclassname, key))
+            raise UError(f"Unknown {metaclassname} property {kv}")
         this_class.props[ikey] = val # NOTE! stashes argument Dict value!!!
 
     if const.NAME not in this_class.props:
-        raise UError("Class.new requires '%s'"  % const.NAME)
+        raise UError(f"Class.new requires '{const.NAME}'")
 
     # XXX complain if NAME doesn't start with a capitol letter??
 
@@ -1198,7 +1197,7 @@ def class_call(this_class: CObject, *args: CObject) -> None:
     tells you to use .new method!!
     """
     name = this_class.getprop(const.NAME).getvalue()
-    raise UError("Called %s Class! Did you mean %s.new?" % (name, name))
+    raise UError(f"Called {name} Class! Did you mean {name}.new?")
 
 @pyfunc
 def class_subclass_of(this_class: CObject, c: CObject) -> CObject:
@@ -1283,7 +1282,7 @@ def pobj_reprx(this: CObject) -> CObject:
     """
     for debug: show Class name, and Python repr
     """
-    return mkstr("<%s: %s>" % (this.classname(), repr(this.getvalue())))
+    return mkstr(f"<{this.classname()}: {this.getvalue()!r}>")
 
 @pyfunc
 def pobj_init(l: CObject, value: CObject) -> None:
@@ -1364,7 +1363,7 @@ def callable__args(this: CCallable) -> CObject:
     currently private/hidden (to create docs)
     returns formatted string for args (as if a native function) with parens
     """
-    return mkstr("(%s)" % ", ".join(this.args()))
+    return mkstr(f"({' '.join(this.args())})")
 
 @pyfunc
 def callable__defn(this: CCallable) -> CObject:
@@ -2017,7 +2016,7 @@ def nullish_getprop(l: CPObject, r: CPObject) -> CObject:
     ILLEGAL_VALUE = nullish_getprop           # can NEVER be seen
     val = find_in_class(l, r, ILLEGAL_VALUE) # may return BoundMethod
     if val is ILLEGAL_VALUE:
-        raise UError("unknown property '%s' of %s" % (r.value, l.classname()))
+        raise UError(f"unknown property '{r.value}' of {l.classname()}")
     return val
 
 @pyfunc
@@ -2026,7 +2025,7 @@ def nullish_setprop(l: CPObject, r: CObject, value: CObject) -> None:
     Nullish Object setprop method/operator
     """
     rv = r.getvalue()              # XXX must be Str
-    raise UError("Cannot set property '%s' of %s" % (rv, l.classname()))
+    raise UError(f"Cannot set property '{rv}' of {l.classname()}")
 
 LCNullish.setprop(const.METHODS, _mkdict({
     'getprop': nullish_getprop,
