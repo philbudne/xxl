@@ -165,7 +165,9 @@ class VM:
                  'scope', 'fp', 'temp', 'args',
                  # stats/trace:
                  'op_count', 'op_time', 'stats', 'trace',
-                 'bop_count', 'bop_time']
+                 'bop_count', 'bop_time',
+                 'lop_count', 'lop_time',
+                 'uop_count', 'uop_time']
 
     def __init__(self, stats: bool, trace: bool):
         # [dybvig VM register name]
@@ -268,10 +270,18 @@ class VM:
         # stats
         CDict = Dict[str, int]
         TDict = Dict[str, float]
+        # opcodes:
         self.op_count: CDict = {}
         self.op_time: TDict = {}
+        # binary operators
         self.bop_count: CDict = {}
         self.bop_time: TDict = {}
+        # LHS binops:
+        self.lop_count: CDict = {}
+        self.lop_time: TDict = {}
+        # unops:
+        self.uop_count: CDict = {}
+        self.uop_time: TDict = {}
 
         for op in instr_class_by_name.keys():
             self.op_count[op] = self.op_time[op] = 0
@@ -288,46 +298,33 @@ class VM:
             if trace:
                 print(ir, self.ac)
 
-        ttime = 0.0
-        tcount = 0
-        for op in instr_class_by_name:
-            ttime += self.op_time[op]
-            tcount += self.op_count[op]
-
         s = sys.stderr
-        print("insts", tcount, ttime, file=s)
 
-        for op in self.op_count:
-            pcount = 100*self.op_count[op]/tcount
-            ptime = 100*self.op_time[op]/ttime
-            # ratio of pct time spent to pct times called
-            # >1.0 means time hog
-            if pcount:
-                ratio = ptime/pcount
-            else:
-                ratio = 0
-            print(op, self.op_count[op], pcount, ptime, ratio, file=s)
+        def pr(what, times, counts):
+            ttime = 0.0
+            tcount = 0
+            for op in counts:
+                ttime += times[op]
+                tcount += counts[op]
 
-        print("", file=s)
-        bcount = 0
-        btime = 0.0
-        for op in self.bop_count:
-            bcount += self.bop_count[op]
-            btime += self.bop_time[op]
-        print("binops", bcount, btime, file=s)
+            print(what, tcount, ttime, file=s)
 
-        for op in self.bop_count:
-            pcount = 100 * self.bop_count[op] / bcount # percentage of calls
-            ptime = 100 * self.bop_time[op] / btime # percentage of time
+            for op in counts:
+                pcount = 100*counts[op]/tcount # pct of total insts
+                ptime = 100*times[op]/ttime    # pct of total time
+                # ratio of pct time spent to pct times called
+                # >1.0 means time hog
+                if pcount:
+                    ratio = ptime/pcount
+                else:
+                    ratio = 0
+                print(f"{op:10.10s} {counts[op]:>9} {pcount:7.3f} {ptime:7.3f} {ratio:6.3f}", file=s)
+            print("", file=s)
 
-            # ratio of pct time spent to pct times called
-            # >1.0 means time hog
-            if pcount:
-                ratio = ptime/pcount
-            else:
-                ratio = 0
-
-            print(op, self.bop_count[op], pcount, ptime, ratio, file=s)
+        pr("opcodes", self.op_time, self.op_count)
+        pr("binops", self.bop_time, self.bop_count)
+        pr("lhsops", self.lop_time, self.lop_count)
+        pr("unops", self.uop_time, self.uop_count)
 
     def dump_stack(self) -> None:
         """
@@ -635,6 +632,15 @@ class LHSOpInstr(WrapInstr1):
         m = classes.find_op(vm.ac, const.LHSOPS, self.value)
         m.invoke(vm)            # XXX always create frame???
 
+    def prof(self, vm: "VM", secs: float) -> None:
+        super().prof(vm, secs)
+        op: str = cast(str,self.value.value) # getstr??
+        if op not in vm.lop_count:
+            vm.lop_time[op] = 0.0
+            vm.lop_count[op] = 0
+        vm.lop_count[op] += 1
+        vm.lop_time[op] += secs
+
 @reginstr
 class UnOpInstr(WrapInstr1):
     """
@@ -651,6 +657,15 @@ class UnOpInstr(WrapInstr1):
         vm.args = [vm.ac]       # pass "this" object
         m = classes.find_op(vm.ac, const.UNOPS, self.value)
         m.invoke(vm)            # XXX always create frame???
+
+    def prof(self, vm: "VM", secs: float) -> None:
+        super().prof(vm, secs)
+        op: str = cast(str,self.value.value) # getstr??
+        if op not in vm.uop_count:
+            vm.uop_time[op] = 0.0
+            vm.uop_count[op] = 0
+        vm.uop_count[op] += 1
+        vm.uop_time[op] += secs
 
 @reginstr
 class CloseInstr(VMInstr0):
