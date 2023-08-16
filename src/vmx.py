@@ -250,11 +250,12 @@ class VM:
             acwid = int(cols * 3/8) - len(sep)
             irwid = min(cols - acwid - len(sep), 100)
             print(cols, acwid, irwid)
-            format = "%%%d.%ds%s%%.%ds" % (-irwid, irwid, sep, acwid)
+            format = f"%{-irwid}.{irwid}s{sep}%.{acwid}s"
         else:
             # output to file, width unavailable, or tiny
-            format = "%%s%s%%s" % sep
+            format = f"%s{sep}%s"
 
+        print("format", format)
         while self.run and self.cb:
             # NOTE! self.ir for debug.
             self.ir = ir = self.cb[self.pc] # instruction register
@@ -865,8 +866,9 @@ class ArgsInstr(VMInstr0):
 
     def step(self, vm: "VM") -> None:
         if len(vm.args) > len(self.formals):
-            raise classes.UError("too many arguments. got %d, expected %d" %
-                                 (len(vm.args), len(self.formals)))
+            v = len(vm.args)
+            f = len(self.formals)
+            raise classes.UError(f"too many arguments. got {v}, expected {f}")
         self._bind_args(vm)
 
     def args(self) -> ArgNames:
