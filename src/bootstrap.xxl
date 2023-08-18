@@ -405,7 +405,9 @@ if (true) {			// private variables
 	};
 
 	var __print = function (file, l) {
-	    file.write(" ".join(l.map(str)) + "\n");
+	    // XXX more efficient to write each separately????
+	    file.write(" ".join(l.map(str)));
+	    file.write("\n");
 	};
 
 	classes.XXLObject.print = function (...args) {
