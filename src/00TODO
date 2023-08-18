@@ -1,6 +1,8 @@
 *** BUG: can overwrite "const" values in a Module!!!
 	need descriptors (slots) ??
 
+use spread args for compiler errors/warnings/etc
+
 doc.xxl
 	change `thing` to <code>thing</code>
 	treat blank line as <p>
