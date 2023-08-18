@@ -307,8 +307,9 @@ class VM:
                 ttime += times[op]
                 tcount += counts[op]
 
-            print(what, tcount, ttime, file=s)
+            print(f"{what} {tcount} {ttime:.6f}s", file=s)
 
+            print(f"{'op':10.10s} {'count':>9} {'%count':>7.7s} {'%time':>7.7s} {'ratio':>6.6s}", file=s)
             for op in counts:
                 pcount = 100*counts[op]/tcount # pct of total insts
                 ptime = 100*times[op]/ttime    # pct of total time
