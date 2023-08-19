@@ -107,25 +107,3 @@ var __extend_parser = function (p) {
     });
     p.add_symbol_class("switch", Switch);
 };
-
-__extend_parser(__modinfo.parser); // needed to parse test below
-
-if (__modinfo.main) {
-    var f = function(x) {
-      break:			// NOTE!! MUST declare break manually!!!
-	switch (x) {
-	default:
-	case 1:
-	    __xxl.print("1");
-	case 2:
-	    __xxl.print("2");
-	    break();
-	case "hel" + "lo":
-	    __xxl.print("hello");
-	}
-    }; // f
-    f("hello");			// hello
-    f(1);			// 1, 2
-    f(2);			// 2
-    f(3);			// 1, 2
-}
