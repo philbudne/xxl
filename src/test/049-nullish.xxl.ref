@@ -1,0 +1,27 @@
+null is nullish
+null is nullish
+null is nullish
+undefined is nullish
+undefined is nullish
+undefined is nullish
+false
+false
+false
+0
+0
+0
+1
+1
+1
+true
+true
+true
+str
+str
+str
+null?.something is nullish
+null?.something is nullish
+null?.something is nullish
+undefined?.something is nullish
+undefined?.something is nullish
+undefined?.something is nullish

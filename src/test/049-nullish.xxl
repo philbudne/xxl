@@ -1,0 +1,35 @@
+// -*-js-*-
+
+__xxl.import("lib/ext/nullish.xxl");
+
+if (__modinfo.main) {
+    var try = function (x, y) {
+	__xxl.print(x ?? y);
+
+	__xxl.print(x ??= y);	// should return value
+	__xxl.print(x);		// and set variable
+    };
+
+    try(null, "null is nullish");
+    try(undefined, "undefined is nullish");
+
+    // things that are normally "falsey"
+    try(false, "ERROR");
+    try(0, "ERROR");
+
+    // things that are always "truthy"
+    try(1, "ERROR");
+    try(true, "ERROR");
+    try("str", "ERROR");
+
+    try(null?.zzz, "null?.something is nullish");
+    try(undefined?.zzz, "undefined?.something is nullish");
+
+    // make sure it's the right kind of nullish!
+    if (null?.zzz !== undefined) {
+	__xxl.print("ERROR: null?.something !== undefined");
+    }
+    if (undefined?.zzz !== undefined) {
+	__xxl.print("ERROR: undefined?.something !== undefined");
+    }
+}

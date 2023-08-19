@@ -1,1 +1,58 @@
-../lib/ext/do.xxl
+// -*-js-*-
+
+// import a parser extension
+__xxl.import("lib/ext/do.xxl");
+
+var x;
+var y;
+var i;
+
+__xxl.print("==== do ... while");
+i = 4;
+do {
+    __xxl.print(i);
+    i -= 1;
+} while (i > 0);
+
+__xxl.print("continue test");
+i = 4;
+do continue: {
+    __xxl.print(i);
+    i -= 1;
+    continue();
+    __xxl.print("here");
+} while (i > 0);
+
+__xxl.print("break test");
+i = 4;
+break:
+do {
+    __xxl.print(i);
+    i -= 1;
+    break();
+} while (i > 0);
+
+__xxl.print("==== do ... until");
+i = 4;
+do {
+    __xxl.print(i);
+    i -= 1;
+} until (i == 0);
+
+__xxl.print("continue test");
+i = 4;
+do continue: {
+    __xxl.print(i);
+    i -= 1;
+    continue();
+    __xxl.print("here");
+} until (i == 0);
+
+__xxl.print("break test");
+i = 4;
+break:
+do {
+    __xxl.print(i);
+    i -= 1;
+    break();
+} until (i == 0);
