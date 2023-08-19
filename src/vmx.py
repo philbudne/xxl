@@ -47,8 +47,8 @@ VMInstrs = List["VMInstr0"]
 IJSON = List[Any]               # FIXME! Python JSON repr of instr
 IValue = Union[int, str, "CObject"] # instruction value
 
-class Frame(NamedTuple):
-     cb: VMInstrs                   # list of VMInstr
+class Frame(NamedTuple):	# Immutable!
+     cb: VMInstrs               # list of VMInstr
      pc: int                    # offset into cb
      scope: "Scope"
      fp: Optional["Frame"]
@@ -172,14 +172,14 @@ class VM:
     def __init__(self, stats: bool, trace: bool):
         # [dybvig VM register name]
         self.run = False
-        self.ac: Optional["classes.CObject"] = None # [a] Accumulator
+        self.ac: "classes.CObject" = classes.null_value # [a] Accumulator
         self.sp: SP = None      # [s] Stack Pointer (value, next) tuples
         self.scope: Optional[Scope] = None # [e] Current scope
         self.pc: int = 0        # [x] offset into code base
         self.cb: VMInstrs = []  # Code Base (Python list of VMInstr)
         self.ir: Optional[VMInstr0] = None # VMInstr: Instruction Register
         self.fp: Optional[Frame] = None # Frame: Frame pointer (for return)
-        self.temp: Optional["classes.CPObject"] = None # holds new Dict/List
+        self.temp: "classes.CPObject" = classes.null_value # new Dict/List
         self.stats = stats      # bool: enable timing
         self.trace = trace      # bool: enable tracing
 
@@ -300,7 +300,7 @@ class VM:
 
         s = sys.stderr
 
-        def pr(what, times, counts):
+        def pr(what: str, times: TDict, counts: CDict) -> None:
             ttime = 0.0
             tcount = 0
             for op in counts:
@@ -574,7 +574,6 @@ class BinOpInstr(WrapInstr1):
     def step(self, vm: "VM") -> None:
         arg = vm.pop()
         # NOTE: find_op does not return BoundMethod:
-        assert vm.ac
         vm.args = [vm.ac, arg]  # explicitly pass "this" object
         m = classes.find_op(vm.ac, const.BINOPS, self.value)
         m.invoke(vm)            # XXX always create frame???
@@ -604,7 +603,6 @@ class BinOpLitInstr(BinOpInstr): # NOTE! inherits special "prof" method!
 
     def step(self, vm: "VM") -> None:
         # NOTE: find_op does not return BoundMethod:
-        assert vm.ac
         vm.args = [vm.ac, self.lit] # explicitly pass "this" object
         m = classes.find_op(vm.ac, const.BINOPS, self.value)
         m.invoke(vm)            # XXX always create frame???
@@ -628,7 +626,6 @@ class LHSOpInstr(WrapInstr1):
         arg1 = vm.pop()         # index or property
         arg2 = vm.pop()         # value to store
         # NOTE: find_op does not return BoundMethod:
-        assert vm.ac
         vm.args = [vm.ac, arg1, arg2] # explicitly pass "this" object
         m = classes.find_op(vm.ac, const.LHSOPS, self.value)
         m.invoke(vm)            # XXX always create frame???
@@ -654,7 +651,6 @@ class UnOpInstr(WrapInstr1):
 
     def step(self, vm: "VM") -> None:
         # NOTE: find_op does not return BoundMethod:
-        assert vm.ac
         vm.args = [vm.ac]       # pass "this" object
         m = classes.find_op(vm.ac, const.UNOPS, self.value)
         m.invoke(vm)            # XXX always create frame???
@@ -729,7 +725,6 @@ class CallInstr(IntInstr):
         # save_frame here, so same VM can be used for any invokes from 
         # Python code (and better tracebacks)?
         # CPyFunc (et al) would need to restore_frame at end of invoke method.
-        assert vm.ac
         vm.ac.invoke(vm)
 
 @reginstr
@@ -780,7 +775,6 @@ class Call0Instr(VMInstr0):
 
     def step(self, vm: "VM") -> None:
         #print("call0", vm.args)
-        assert vm.ac
         vm.ac.invoke(vm)
 
 @reginstr
@@ -793,8 +787,7 @@ class AppendInstr(VMInstr0):
     name = "append"
 
     def step(self, vm: "VM") -> None:
-        assert (vm.temp and
-                isinstance(vm.temp, classes.CPObject) and
+        assert (isinstance(vm.temp, classes.CPObject) and
                 isinstance(vm.temp.value, list))
         vm.temp.value.append(vm.ac)
 
@@ -966,7 +959,6 @@ class StoreInstr(StrInstr):
 
     def step(self, vm: "VM") -> None:
         assert vm.scope
-        assert vm.ac
         vm.scope.store(self.value, vm.ac)
 
 @reginstr
@@ -991,7 +983,6 @@ class JumpNInstr(IntInstr):
     name = "jumpn"
 
     def step(self, vm: "VM") -> None:
-        assert vm.ac is not None
         if classes.is_true(vm.ac):
             vm.pc = self.value
 
@@ -1005,7 +996,6 @@ class JumpEInstr(IntInstr):
     name = "jumpe"
 
     def step(self, vm: "VM") -> None:
-        assert vm.ac is not None
         if not classes.is_true(vm.ac):
             vm.pc = self.value
 
