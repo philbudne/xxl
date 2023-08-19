@@ -169,19 +169,17 @@ class VM:
                  'lop_count', 'lop_time',
                  'uop_count', 'uop_time']
 
-    def __init__(self, stats: bool, trace: bool):
+    def __init__(self, ac: "classes.CObject", cb: VMInstrs, scope: Scope):
         # [dybvig VM register name]
         self.run = False
-        self.ac: "classes.CObject" = classes.null_value # [a] Accumulator
-        self.sp: SP = None      # [s] Stack Pointer (value, next) tuples
-        self.scope: Optional[Scope] = None # [e] Current scope
-        self.pc: int = 0        # [x] offset into code base
-        self.cb: VMInstrs = []  # Code Base (Python list of VMInstr)
-        self.ir: Optional[VMInstr0] = None # VMInstr: Instruction Register
+        self.ac  = ac         # [a] Accumulator
+        self.sp: SP = None    # [s] Stack Pointer (value, next) tuples
+        self.scope = scope    # [e] Current scope
+        self.pc: int = 0      # [x] offset into code base
+        self.cb: VMInstrs = cb  # Code Base (Python list of VMInstr)
+        self.ir = self.cb[self.pc] # Instruction Register
         self.fp: Optional[Frame] = None # Frame: Frame pointer (for return)
         self.temp: "classes.CPObject" = classes.null_value # new Dict/List
-        self.stats = stats      # bool: enable timing
-        self.trace = trace      # bool: enable tracing
 
         # argument list from last call/method/op invocation
         # User defined functions (Python CClosure) pick up args with
@@ -190,15 +188,12 @@ class VM:
         # consume directly.
         self.args: List["classes.CObject"] = [] # [r]
 
-    def start(self, code: VMInstrs, scope: Scope) -> None:
+    def start(self, stats: bool, trace: bool) -> None:
         self.run = True         # cleared by 'exit' instr
-        self.pc = 0
-        self.cb = code
-        self.scope = scope
 
-        if self.stats:
-            return self._start_stats()
-        elif self.trace:
+        if stats:
+            return self._start_stats(trace)
+        elif trace:
             return self._start_trace()
 
         while self.run and self.cb:
@@ -266,7 +261,7 @@ class VM:
             irstr = str(ir)[1:-1] # remove []'s -- XXX remove quotes too???
             print(format % (irstr, str(self.ac)))
 
-    def _start_stats(self) -> None:
+    def _start_stats(self, trace: bool) -> None:
         # stats
         CDict = Dict[str, int]
         TDict = Dict[str, float]
@@ -285,7 +280,6 @@ class VM:
 
         for op in instr_class_by_name.keys():
             self.op_count[op] = self.op_time[op] = 0
-        trace = self.trace
         # XXX inside try, to catch SystemExit???
         # (so __xxl.exit() doesn't bypass stats)
         while self.run and self.cb:
@@ -342,9 +336,6 @@ class VM:
         #       would allow Python callees to use same VM???
         # called from CBClosure.invoke w/ show=False
         # XXX save self.args for backtraces??
-        assert self.cb is not None
-        assert self.scope is not None
-        assert self.ir is not None
         self.fp = Frame(self.cb, self.pc, self.scope, self.fp,
                         self.ir.fn, self.ir.where, show)
 
@@ -556,7 +547,6 @@ class LoadInstr(VMInstr1):
         super().__init__(fn, where, value)
 
     def step(self, vm: "VM") -> None:
-        assert vm.scope
         vm.ac = vm.scope.lookup(self.value)
 
 @reginstr
@@ -682,7 +672,6 @@ class CloseInstr(VMInstr0):
         self.doc = doc
 
     def step(self, vm: "VM") -> None:
-        assert vm.scope
         vm.ac = classes.CClosure(self.value, vm.scope, self.doc)
 
     def json(self) -> IJSON:
@@ -697,7 +686,6 @@ class BCCallInstr(CloseInstr):
     name = "bccall"
 
     def step(self, vm: "VM") -> None:
-        assert vm.scope
         c = classes.CBClosure(self.value, vm.scope)
         c.invoke(vm)
 
@@ -830,7 +818,6 @@ class VarInstr(StrInstr):
         # XXX maybe explicitly generate "load undefined",
         #       and remove assignment w/ initializer?
         vm.ac = classes.undef_value
-        assert vm.scope
         vm.scope.defvar(self.value, vm.ac)
 
 @reginstr
@@ -860,7 +847,6 @@ class ArgsInstr(VMInstr0):
         """
         common code for ArgsInstr and Args2Instr
         """
-        assert vm.scope
         assert vm.fp
         # NOTE: scope.func_scope() creates a cactus stack of scopes;
         #       defines 'return' as a Continuation to prev frame
@@ -915,7 +901,6 @@ class Args2Instr(ArgsInstr):
 
         # create List from remaining args
         l = classes.new_by_name('List', vm.args) # XXX want frozen?
-        assert vm.scope
         vm.scope.defvar(self.rest, l)  # declare as variable
 
     def args(self) -> ArgNames:
@@ -933,7 +918,6 @@ class LScopeInstr(StrInstr):
 
     def step(self, vm: "VM") -> None:
         # creates new scope, w/ named Continuation to leave it
-        assert vm.scope
         assert vm.fp
         vm.scope = vm.scope.labeled_scope(vm.fp, self.value)
 
@@ -945,7 +929,6 @@ class UScopeInstr(VMInstr0):
     name = "uscope"
 
     def step(self, vm: "VM") -> None:
-        assert vm.scope
         vm.scope = vm.scope.new_scope()
 
 @reginstr
@@ -958,7 +941,6 @@ class StoreInstr(StrInstr):
     name = "store"
 
     def step(self, vm: "VM") -> None:
-        assert vm.scope
         vm.scope.store(self.value, vm.ac)
 
 @reginstr
@@ -1084,7 +1066,6 @@ def assemble(tree: "classes.CObject", srcfile: "classes.CObject") -> VMInstrs:
 
 ################
 
-# XXX make a VM method?!!!
 def run(boot: "classes.CClosure",
         scope: Scope,
         stats: bool,
@@ -1094,7 +1075,6 @@ def run(boot: "classes.CClosure",
     cold start (from xxl.py)
     `boot` is Closure w/ bootstrap.vmx code for main module
     """
-    vm = VM(stats=stats, trace=trace)
 
     ExList = Tuple[Type[BaseException], ...]
     always_user_errors: ExList = (classes.UError,)
@@ -1107,12 +1087,12 @@ def run(boot: "classes.CClosure",
     else:
         user_errors += errors
 
-    vm.ac = boot                # Closure
-    b0 = [["0", "call0"],       # call Closure
+    b0 = [["0", "call0"],       # call Closure (in AC)
           ["1", "exit"]]        # quit VM
     code = convert_instrs(b0, "@boot0")
+    vm = VM(ac=boot, cb=code, scope=scope)
     try:
-        vm.start(code, scope)
+        vm.start(stats=stats, trace=trace)
     except SystemExit:          # from os.exit
         raise
     except internal_errors as e: # an internal error
