@@ -47,14 +47,14 @@ VMInstrs = List["VMInstr0"]
 IJSON = List[Any]               # FIXME! Python JSON repr of instr
 IValue = Union[int, str, "CObject"] # instruction value
 
-class Frame(NamedTuple):	# Immutable!
+class Frame(NamedTuple):    # Immutable for cactus stackery
+     # NOTE!!! restore_frame depends on order!!!
      cb: VMInstrs               # list of VMInstr
      pc: int                    # offset into cb
      scope: "Scope"
      fp: Optional["Frame"]
-     function: str
-     where: str
-     show: bool
+     ir: "VMInstr0"             # for filename & where
+     show: bool                 # block closure frames not visible
 
 # opcodes where inst[2] is code list, used in xxlobj.py:
 INST2CODE = ('close', 'bccall')
@@ -72,7 +72,7 @@ def fp_where(fp: Frame) -> str:
     Return "filename:line:col" for stack frame
     """
     # gives CALLER location (from VM IR register at time of call)
-    return f"{fp.function}:{fp.where}"
+    return f"{fp.ir.fn}:{fp.ir.where}"
     # gives return location (PC incremented before call)
     #return fp.cb[fp.pc].fn_where()
 
@@ -89,7 +89,7 @@ def fp_backtrace_list(fp: Optional[Frame]) -> List[str]:
     return ret
 
 StackVal = Any                  # XXX
-Stack = Tuple[StackVal, "SP"]
+Stack = Tuple[StackVal, "SP"]   # immutable for cactus stack!
 SP = Optional[Stack]
 
 VarsDict = Dict[str, "classes.CObject"]
@@ -336,8 +336,7 @@ class VM:
         #       would allow Python callees to use same VM???
         # called from CBClosure.invoke w/ show=False
         # XXX save self.args for backtraces??
-        self.fp = Frame(self.cb, self.pc, self.scope, self.fp,
-                        self.ir.fn, self.ir.where, show)
+        self.fp = Frame(self.cb, self.pc, self.scope, self.fp, self.ir, show)
 
     def backtrace(self) -> None: # XXX take file to write to?
         """
@@ -368,7 +367,7 @@ class VM:
         "return" using saved frame pointer
         helper used by ReturnInstr and CContinuation.invoke
         """
-        self.cb, self.pc, self.scope, self.fp, _, _, _ = fp
+        self.cb, self.pc, self.scope, self.fp, _, _ = fp
 
 ################################################################
 # VM instructions
