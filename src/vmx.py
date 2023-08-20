@@ -410,14 +410,14 @@ class VMInstr0:
         """
         return [self.fn_where(), self.name]
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         """
         Perform (execute) this instruction.
         """
         tn = type(self).__name__
         raise VMError(f"'{tn}' has no step method")
 
-    def prof(self, vm: "VM", secs: float) -> None:
+    def prof(self, vm: VM, secs: float) -> None:
         vm.op_count[self.name] += 1
         vm.op_time[self.name] += secs
 
@@ -484,7 +484,7 @@ class LitInstr(WrapInstr1):
     """
     name = "lit"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         vm.ac = self.value
 
 @reginstr
@@ -496,7 +496,7 @@ class PushLitInstr(LitInstr):
 
     # __init__ from LitInstr
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         vm.push(self.value)
 
 @reginstr
@@ -506,7 +506,7 @@ class PushInstr(VMInstr0):
     """
     name = "push"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         vm.push(vm.ac)
 
 @reginstr
@@ -517,7 +517,7 @@ class TempInstr(VMInstr0):
     """
     name = "temp"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         vm.ac = vm.temp
 
 @reginstr
@@ -529,7 +529,7 @@ class PopTempInstr(VMInstr0):
     """
     name = "pop_temp"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         vm.ac = vm.temp
         vm.temp = vm.pop()
 
@@ -546,7 +546,7 @@ class LoadInstr(VMInstr1):
     def __init__(self, fn: str, where: str, value: str):
         super().__init__(fn, where, value)
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         vm.ac = vm.scope.lookup(self.value)
 
 @reginstr
@@ -561,14 +561,14 @@ class BinOpInstr(WrapInstr1):
     """
     name = "binop"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         arg = vm.pop()
         # NOTE: find_op does not return BoundMethod:
         vm.args = [vm.ac, arg]  # explicitly pass "this" object
         m = classes.find_op(vm.ac, const.BINOPS, self.value)
         m.invoke(vm)            # XXX always create frame???
 
-    def prof(self, vm: "VM", secs: float) -> None:
+    def prof(self, vm: VM, secs: float) -> None:
         super().prof(vm, secs)
         op: str = cast(str,self.value.value) # getstr??
         if op not in vm.bop_count:
@@ -591,7 +591,7 @@ class BinOpLitInstr(BinOpInstr): # NOTE! inherits special "prof" method!
         # convert to Class when code is loaded
         self.lit = classes.wrap(lit)
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         # NOTE: find_op does not return BoundMethod:
         vm.args = [vm.ac, self.lit] # explicitly pass "this" object
         m = classes.find_op(vm.ac, const.BINOPS, self.value)
@@ -612,7 +612,7 @@ class LHSOpInstr(WrapInstr1):
     """
     name = "lhsop"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         arg1 = vm.pop()         # index or property
         arg2 = vm.pop()         # value to store
         # NOTE: find_op does not return BoundMethod:
@@ -620,7 +620,7 @@ class LHSOpInstr(WrapInstr1):
         m = classes.find_op(vm.ac, const.LHSOPS, self.value)
         m.invoke(vm)            # XXX always create frame???
 
-    def prof(self, vm: "VM", secs: float) -> None:
+    def prof(self, vm: VM, secs: float) -> None:
         super().prof(vm, secs)
         op: str = cast(str,self.value.value) # getstr??
         if op not in vm.lop_count:
@@ -639,13 +639,13 @@ class UnOpInstr(WrapInstr1):
     """
     name = "unop"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         # NOTE: find_op does not return BoundMethod:
         vm.args = [vm.ac]       # pass "this" object
         m = classes.find_op(vm.ac, const.UNOPS, self.value)
         m.invoke(vm)            # XXX always create frame???
 
-    def prof(self, vm: "VM", secs: float) -> None:
+    def prof(self, vm: VM, secs: float) -> None:
         super().prof(vm, secs)
         op: str = cast(str,self.value.value) # getstr??
         if op not in vm.uop_count:
@@ -671,7 +671,7 @@ class CloseInstr(VMInstr0):
         self.value = convert_instrs(value, fn)
         self.doc = doc
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         vm.ac = classes.CClosure(self.value, vm.scope, self.doc)
 
     def json(self) -> IJSON:
@@ -685,7 +685,7 @@ class BCCallInstr(CloseInstr):
     """
     name = "bccall"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         c = classes.CBClosure(self.value, vm.scope)
         c.invoke(vm)
 
@@ -701,7 +701,7 @@ class CallInstr(IntInstr):
     """
     name = "call"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         nargs = self.value
         vm.args = []
         while nargs > 0:
@@ -725,7 +725,7 @@ class ClearArgsInstr(VMInstr0):
     """
     name = "clargs"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         vm.args = []
 
 @reginstr
@@ -736,7 +736,7 @@ class PopArgInstr(VMInstr0):
     """
     name = "poparg"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         arg = vm.pop()          # pop argument
         #print("poparg", arg)
         vm.args.append(arg)
@@ -748,7 +748,7 @@ class SpreadArgInstr(VMInstr0):
     used for calls with spread arguments (...array)
     """
     name = "sprarg"
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         arg = vm.pop()            # pop argument
         #print("sparg", arg)
         vm.args.extend(arg.value) # XXX getlist
@@ -761,7 +761,7 @@ class Call0Instr(VMInstr0):
     """
     name = "call0"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         #print("call0", vm.args)
         vm.ac.invoke(vm)
 
@@ -774,7 +774,7 @@ class AppendInstr(VMInstr0):
     """
     name = "append"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         assert (isinstance(vm.temp, classes.CPObject) and
                 isinstance(vm.temp.value, list))
         vm.temp.value.append(vm.ac)
@@ -790,7 +790,7 @@ class ReturnInstr(VMInstr0):
     """
     name = "return"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         assert vm.fp
         vm.restore_frame(vm.fp)
 
@@ -802,7 +802,7 @@ class ExitInstr(VMInstr0):
     """
     name = "exit"               # XXX rename to "halt"???
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         #sys.stderr.write("exit\n")
         vm.run = False
 
@@ -814,7 +814,7 @@ class VarInstr(StrInstr):
     """
     name = "var"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         # XXX maybe explicitly generate "load undefined",
         #       and remove assignment w/ initializer?
         vm.ac = classes.undef_value
@@ -843,7 +843,7 @@ class ArgsInstr(VMInstr0):
     def json(self) -> IJSON:
         return [self.fn_where(), self.name, self.formals]
 
-    def _bind_args(self, vm: "VM") -> None:
+    def _bind_args(self, vm: VM) -> None:
         """
         common code for ArgsInstr and Args2Instr
         """
@@ -859,7 +859,7 @@ class ArgsInstr(VMInstr0):
                 val = classes.null_value # no: use null
             vm.scope.defvar(formal, val) # declare as variable
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         if len(vm.args) > len(self.formals):
             v = len(vm.args)
             f = len(self.formals)
@@ -896,7 +896,7 @@ class Args2Instr(ArgsInstr):
     def json(self) -> IJSON:
         return [self.fn_where(), self.name, self.formals, self.rest]
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         self._bind_args(vm)
 
         # create List from remaining args
@@ -916,7 +916,7 @@ class LScopeInstr(StrInstr):
     """
     name = "lscope"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         # creates new scope, w/ named Continuation to leave it
         assert vm.fp
         vm.scope = vm.scope.labeled_scope(vm.fp, self.value)
@@ -928,7 +928,7 @@ class UScopeInstr(VMInstr0):
     """
     name = "uscope"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         vm.scope = vm.scope.new_scope()
 
 @reginstr
@@ -940,7 +940,7 @@ class StoreInstr(StrInstr):
     """
     name = "store"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         vm.scope.store(self.value, vm.ac)
 
 @reginstr
@@ -952,7 +952,7 @@ class JrstInstr(IntInstr):
     """
     name = "jrst"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         vm.pc = self.value
 
 @reginstr
@@ -964,7 +964,7 @@ class JumpNInstr(IntInstr):
     """
     name = "jumpn"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         if classes.is_true(vm.ac):
             vm.pc = self.value
 
@@ -977,7 +977,7 @@ class JumpEInstr(IntInstr):
     """
     name = "jumpe"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         if not classes.is_true(vm.ac):
             vm.pc = self.value
 
@@ -991,7 +991,7 @@ class NewInstr(StrInstr):
     """
     name = "new"
 
-    def step(self, vm: "VM") -> None:
+    def step(self, vm: VM) -> None:
         vm.push(vm.temp)
         if self.value == 'Dict':
             vm.temp = classes.new_by_name(self.value, {})
