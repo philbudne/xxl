@@ -13,3 +13,4 @@ classes.html
 .tmp.*
 .bootstrap
 venv
+parser.vmx
