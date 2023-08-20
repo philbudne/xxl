@@ -1,7 +1,7 @@
 // -*-js-*-
 
 // The pre-compiled version of this file (bootstrap.vmx) is loaded
-// into every new module namespace [run from __xxl.import, below!].
+// into EVERY new module namespace [run from __xxl.import, below!].
 
 // First time loaded, defines native code methods and functions.
 // Always: Parses and executes source file (if any) one line at a time so that
@@ -427,7 +427,7 @@ if (true) {			// private variables
     } // main (once only)
 
     ////////////////////////////////////////////////////////////////
-    // always
+    // always: do the work of parsing/executing code in a new module
 
     var debug_boot;
     if (__modinfo.debug_bootstrap) { // from environment XXL_DEBUG_BOOTSTRAP
@@ -467,7 +467,7 @@ if (true) {			// private variables
 	debug_boot("using", parser_vmx);
 	var pm = __xxl.import(parser_vmx); // parser module
 	var p = pm.Parser.new();	   // make new Parser instance
-	__modinfo.parser = p;	// make visible to parser extensions
+	__modinfo.parser = p;	// make visible within module
 	debug_boot(__modinfo, __xxl, p);
 
 	p.start_parse(file);
