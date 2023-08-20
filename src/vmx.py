@@ -72,9 +72,7 @@ def fp_where(fp: Frame) -> str:
     Return "filename:line:col" for stack frame
     """
     # gives CALLER location (from VM IR register at time of call)
-    return f"{fp.ir.fn}:{fp.ir.where}"
-    # gives return location (PC incremented before call)
-    #return fp.cb[fp.pc].fn_where()
+    return fp.ir.fn_where()
 
 # called from VM.backtrace, CContinuation.backtrace
 def fp_backtrace_list(fp: Optional[Frame]) -> List[str]:
