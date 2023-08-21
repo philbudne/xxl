@@ -1,3 +1,10 @@
+Have side-directories for library code VMX files
+   and have import check for up-to-date vmx file
+
+Makefile: regenerate pratt.vmx, vmcode.vmx, ...
+
+Add dist/classes.md???
+
 *** BUG: can overwrite "const" values in a Module!!!
 	need descriptors (slots) ??
 
@@ -33,8 +40,6 @@ split Number into Float and Int??
 test if implementing VM as chain of if's (on ints)
 	instead step on Instr objects is faster
 	(enough to warrant delocalizing opcode info)
-
-split up parser.xxl (into pratt,xlparser,vmcode??)
 
 Make Scopes transparent??  Subclass of Dict??
 	__xxl.current_scope()??
