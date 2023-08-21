@@ -1,0 +1,222 @@
+var VMCode = Class.new({
+    name: "VMCode",
+    methods: {
+	init: function (this) {	// __init??
+	    this.code = [];
+	    this.lcount = 0;	// counts down for forward labels
+	    this.forward_refs = {}; // dict of lists of insn Lists for fixups
+	    this.DEST = 2;	// index into insn List for branch destination
+	},
+
+	finish: function (this, sym) {
+	    if (sym === null) {
+		// here from end of "gen" function, used by parser.xxl "main"
+		this.emit_exit(); // emits EOF "return"
+	    }
+	    else {
+		// no more return statement, it has ceased to be.
+		// BUT, here at end of closures (even functions which
+		// call their "return" continuation) *AND* blocks.
+		this.emit_return(sym);
+	    }
+	    return(this.code);
+	},
+	gen_push: function (this, symbol) {
+	    // evaluate "this" and push on stack (*may* crush AC)
+	    if (symbol.arity == "literal") {
+		this.emit_push_lit(symbol.value, symbol);
+	    }
+	    else {
+		symbol.gen(this);
+		this.emit_push(symbol);
+	    }
+	},
+	gen_stmts: function (this, stmts) { // generate code for list of stmts
+	    stmts.for_each(
+		function (item) {
+		    // call this.gen_stmt to emit optional "stmt" Instr
+		    // for breakpoint/trace/profiling??
+		    item.gen(this);
+		}
+	    );
+	},
+	_emit: function (this, op) { // worker method
+	    var p = this.peep;	     // one instruction peephole
+	    if (p) {
+		// omit "load x" after "store x"	(use after defn)
+		if (p[1] == "store" && op[1] == "load" && op[2] == p[2]) {
+		    //__xxl.error("dropping", op, "after", p);
+		    return();
+		}
+		// omit "store x" after "store x"	(x = x = y)
+		// omit "store x" after "load x"	(x = x)
+		// omit "load x" after "load x" (if store after load eliminated)
+		// replace "load x" if followed by "load y" (unlikely)
+		// drop anything after jrst or return (requires const prop)
+	    }
+	    this.code.append(op);
+	    this.peep = op;
+	},
+
+	//// per-opcode emit functions
+
+	emit_var: function (this, name, sym) {
+	    this._emit([sym.where, "var", name]);
+	},
+	emit_args: function (this, names, sym) {
+	    this._emit([sym.where, "args", names]);
+	},
+	emit_args2: function (this, names, rest, sym) {
+	    this._emit([sym.where, "args2", names, rest]);
+	},
+	emit_scope: function (this, leave_sym, sym) {
+	    if (leave_sym) {
+		this._emit([sym.where, "lscope", leave_sym.value]);
+	    }
+	    else {
+		this._emit([sym.where, "uscope"]);
+	    }
+	},
+	emit_load: function (this, name, sym) {
+	    this._emit([sym.where, "load", name]);
+	},
+	emit_store: function (this, name, sym) {
+	    this._emit([sym.where, "store", name]);
+	},
+	emit_lit: function (this, value, sym) {
+	    this._emit([sym.where, "lit", value]);
+	},
+	emit_push_lit: function (this, value, sym) {
+	    this._emit([sym.where, "push_lit", value]);
+	},
+	emit_push: function (this, sym) {
+	    this._emit([sym.where, "push"]);
+	},
+	emit_new: function (this, class, sym) {
+	    // push TEMP onto stack, create empty container, leave in TEMP
+	    this._emit([sym.where, "new", class]);
+	},
+	emit_temp: function (this, sym) {
+	    // load AC from TEMP
+	    this._emit([sym.where, "temp"]);
+	},
+	emit_pop_temp: function (this, sym) {
+	    // load AC from TEMP, restore TEMP from stack
+	    this._emit([sym.where, "pop_temp"]);
+	},
+	emit_return: function (this, sym) {
+	    // return from call, value in AC
+	    this._emit([sym.where, "return"]);
+	},
+	emit_exit: function (this) {
+	    // VM exit; return to "boot0" which contains exit instr
+	    this._emit(["EOF", "return"]);
+	},
+	emit_binop: function (this, op, sym) {
+	    // fetch and call binary operator "op" (constant)
+	    // for object in AC with two args: OBJ, RHS
+	    this._emit([sym.where, "binop", op]);
+	},
+	emit_unop: function (this, op, sym) {
+	    // fetch and call unary operator "op" (const)
+	    // for object in AC (no args)
+	    this._emit([sym.where, "unop", op]);
+	},
+	emit_lhsop: function (this, op, sym) {
+	    // fetch and call LHS operator "op" (const)
+	    // for object in AC w/ three args from stack: OBJ, RHS, VALUE
+	    this._emit([sym.where, "lhsop", op]);
+	},
+	emit_binop_lit: function (this, op, value, sym) {
+	    this._emit([sym.where, "binop_lit", op, value]);
+	},
+	emit_call: function (this, nargs, sym) {
+	    // call object in AC with nargs (constant) args on stack
+	    // call collects args in vm.args and calls AC.invoke(vm)
+	    this._emit([sym.where, "call", nargs]);
+	},
+	emit_close: function (this, code, sym) {
+	    // create closure
+	    // include function name (if any) in Closure object?!!
+	    this._emit([sym.where, "close", code, sym.doc]);
+	},
+	emit_bclose_call: function (this, vmcode, sym) {
+	    // create {} block closure and call
+	    this._emit([sym.where, "bccall", vmcode.finish(sym)]);
+	},
+	emit_append: function (this, sym) {
+	    // for [] List literal values
+	    this._emit([sym.where, "append"]);
+	},
+
+	// for calls w/ ...arg
+	emit_clargs: function (this, sym) {
+	    this._emit([sym.where, "clargs"]);
+	},
+	emit_poparg: function (this, sym) {
+	    this._emit([sym.where, "poparg"]);
+	},
+	emit_sprarg: function (this, sym) {
+	    this._emit([sym.where, "sprarg"]);
+	},
+	emit_call0: function (this, sym) {
+	    this._emit([sym.where, "call0"]);
+	},
+
+	// on PDP-10:
+	// JUMPN ac,x jumps if ac is non-zero
+	// JUMPE ac,x jumps if ac is equal to zero
+	// JUMP never jumps
+	// JUMPA always jumps, but...
+	// JRST (jump and restore (no) flags) is fastest unconditional branch.
+	emit_iftrue: function (this, label, sym) {
+	    this._emit_branch("jumpn", label, sym);
+	},
+	emit_ifnot: function (this, label, sym) {
+	    this._emit_branch("jumpe", label, sym);
+	},
+	emit_jrst: function (this, label, sym) {
+	    this._emit_branch("jrst", label, sym);
+	},
+
+	//// label management:
+	_emit_branch: function (this, instname, dest, sym) {
+	    // helper to emit a branch instruction
+	    // keeping fixups for forward refs
+
+	    // NOTE!!! label must be in this.DEST position:
+	    var inst = [sym.where, instname, dest];
+	    if (dest < 0) {		// forward ref?
+		this.forward_refs[dest].append(inst); // point to inst
+	    }
+	    this._emit(inst);
+	},
+	def_fwd_label: function (this) {
+	    // create a forward label (negative values)
+	    // references are fixed in "drop_fwd_label"
+	    this.lcount -= 1;
+	    this.forward_refs[this.lcount] = [];
+	    return(this.lcount);
+	},
+	drop_fwd_label: function (this, label) {
+	    // define location of a forward-defined label
+	    // do fixups on all references
+	    var dest = this.code.len();
+	    // XXX check if label in this.forward_refs?!
+	    this.forward_refs[label].for_each(
+		function (inst) {
+		    inst[this.DEST] = dest;	// patch destination
+		}
+	    );
+	    this.forward_refs.pop(label); // discard entry
+	    //__xxl.error("discarding peep", this.peep);
+	    this.peep = null;
+	},
+	get_off: function (this) {
+	    // return offset of next inst for backwards jump (loop) labels
+	    //__xxl.error("discarding peep", this.peep);
+	    this.peep = null;
+	    return(this.code.len());
+	}
+    } // methods
+});
