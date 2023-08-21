@@ -55,8 +55,6 @@
 // using the original (TDOP) parser as the starting point for some new
 // project!!
 
-// XXX split up?? All imported modules would need to be pre-compiled (vmx files)
-
 const __doc = "Extensible Parser/Compiler for XXL.";
 
 const VMCode = __xxl.import("vmcode.vmx").VMCode;
@@ -64,8 +62,6 @@ const VMCode = __xxl.import("vmcode.vmx").VMCode;
 const pratt = __xxl.import("pratt.vmx");
 
 
-// keep in parser.xxl?
-////////////////////////////////////////////////////////////////
 // subclass PrattParser for XXL/0
 // (smallest possible eXperimental/eXtensible Language)
 // "jokes":

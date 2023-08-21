@@ -1,3 +1,25 @@
+// not -*-js-*- ("it's only a model") but edit like it is.
+// Extensible Pratt parser
+// Blame: Phil Budne <phil _at_ regressive.org>
+
+// Changes Copyright © 2021,2023 Philip L. Budne
+
+// See parser.xxl for extensive top commentary
+
+////////////////
+// Adapted from:
+//  parse.js
+//  Parser for Simplified JavaScript written in Simplified JavaScript
+//  From Top Down Operator Precedence
+//  http://crockford.com/javascript/tdop/tdop.html
+//  https://github.com/douglascrockford/TDOP
+//  Douglas Crockford
+//  2021-05-04
+//  Public Domain
+//
+//  "This program makes frequent use of 'this' because I wrote it when I was young and foolish."
+////////////////
+
 const classes = __xxl.import("classes"); // SingletonClass
 
 const VMCode = __xxl.import("vmcode.vmx").VMCode;
