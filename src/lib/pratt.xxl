@@ -22,7 +22,7 @@
 
 const classes = __xxl.import("classes"); // SingletonClass
 
-const VMCode = __xxl.import("vmcode.vmx").VMCode;
+const vmcode_module = __xxl.import("vmcode.vmx");
 
 var PrattParser = Class.new({
     name: "PrattParser",
@@ -304,7 +304,7 @@ var PrattParser = Class.new({
 	init: function (this_parser) {
 	    var p = this_parser; // brevity, "this" clarity
 
-	    p.VMCode = VMCode; // for use by extensions
+	    p.VMCode = vmcode_module.VMCode; // for use by extensions
 
 	    p.symbol_classes = {}; // string to Symbol subclass
 

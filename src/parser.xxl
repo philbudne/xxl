@@ -57,8 +57,6 @@
 
 const __doc = "Extensible Parser/Compiler for XXL.";
 
-const VMCode = __xxl.import("vmcode.vmx").VMCode;
-
 const pratt = __xxl.import("pratt.vmx");
 
 
@@ -589,7 +587,7 @@ var Parser = Class.new({
 		    },
 		    gen: function (this, vmcode) {
 			// generate VM code for function:
-			var fcode = VMCode.new();
+			var fcode = p.VMCode.new();
 			// BEFORE ANY CALL/OP!! establish scope, pick up args
 			if (this.third) { // have ...rest argument?
 			    fcode.emit_args2(this.first, this.third, this);
@@ -677,7 +675,7 @@ var Parser = Class.new({
 		    },
 		    gen: function (this, vmcode) {
 			if (this.arity == "statement") { // { block }
-			    var bcode = VMCode.new(); // block closure code
+			    var bcode = p.VMCode.new(); // block closure code
 			    bcode.emit_scope(this.second, this);
 			    bcode.gen_stmts(this.first);
 			    // create block closure & invoke
@@ -830,7 +828,7 @@ var Parser = Class.new({
 		    },
 		    gen: function (this, vmcode) { // gen
 			// wrap entire statement in a closure w/ leave label
-			var lcode = VMCode.new();
+			var lcode = p.VMCode.new();
 			lcode.emit_scope(this.first, this);
 			this.second.gen(lcode); // vmcode.gen_stmt?
 			// create block closure and invoke
@@ -855,7 +853,7 @@ var Parser = Class.new({
 		    gen: function (this, vmcode) { // gen
 			// generate closure for body, w/ leave label, if any
 			var leave_sym = this.second.second;
-			var wcode = VMCode.new(); // code for block closure
+			var wcode = p.VMCode.new(); // code for block closure
 			wcode.emit_scope(leave_sym, this);
 			var top_branch_label = wcode.get_off();
 			this.first.gen(wcode); // condition
@@ -993,8 +991,8 @@ var Parser = Class.new({
 //	(again, since the compiler isn't being invoked)
 //	although you can always call __xxl.break in your program.
 
-var gen = function (stmts) {	// tree is list of top level stmts/exprs
-    var vmcode = VMCode.new();
+var gen = function (p, stmts) {	// tree is list of top level stmts/exprs
+    var vmcode = p.VMCode.new();
     vmcode.gen_stmts(stmts);
     return(vmcode.finish(null)); // emit final return
 }; // gen()
@@ -1038,7 +1036,7 @@ var compile = function (fname, output) {
     }
 
     // generate VM code (as List of instruction Lists)
-    var code = gen(asts);
+    var code = gen(p, asts);
 
     // create metadata line:
     var py_os = __xxl.pyimport("os");

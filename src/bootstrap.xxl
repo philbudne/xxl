@@ -488,7 +488,7 @@ if (true) {			// private variables
 	    }
 
 	    // generate VM code
-	    var vmcode = pm.VMCode.new();
+	    var vmcode = p.VMCode.new();
 	    ast.gen(vmcode);
 	    var insts = vmcode.finish(ast); // List of instruction Lists
 
