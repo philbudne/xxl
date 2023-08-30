@@ -329,10 +329,13 @@ class VM:
             t = t[1]
 
     def save_frame(self, show: bool = True) -> None:
-        # called from CClosure.invoke (always call before .invoke??)
-        #       would need to call restore_frame inside all .invoke methods??
-        #       would allow Python callees to use same VM???
-        # called from CBClosure.invoke w/ show=False
+        # called from CClosure.invoke w/ show=True
+        # and from CBClosure.invoke w/ show=False
+        #   Other callables don't leave a frame,
+        #   and don't show caller in vm.backtrace()
+        #   would need to call {save,restore}_frame
+        #   inside all other .invoke methods??
+
         # XXX save self.args for backtraces??
         self.fp = Frame(self.cb, self.pc, self.scope, self.fp, self.ir, show)
 
@@ -340,6 +343,8 @@ class VM:
         """
         Write return stack to stderr.
         """
+        # Called from xxl_backtrace and
+        # when run() catches a Python Exception (including xxl_uerror).
         for return_location in fp_backtrace_list(self.fp):
             sys.stderr.write(f" called from {return_location}\n")
 
@@ -707,8 +712,7 @@ class CallInstr(IntInstr):
             nargs -= 1
         #print("call", vm.args)
 
-        # save_frame here, so same VM can be used for any invokes from 
-        # Python code (and better tracebacks)?
+        # save_frame here (for better tracebacks?)
         # CPyFunc (et al) would need to restore_frame at end of invoke method.
         vm.ac.invoke(vm)
 

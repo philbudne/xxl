@@ -353,7 +353,7 @@ class CBoundMethod(CCallable):
     XXX bring back use of "method" opcode (or binop_lit_call?)
         as optimization which fetches method and calls invoke
         without creating a BoundMethod Object!!!???
-    NOTE: opaque (no Class methods to expose innards) for now
+    NOTE: opaque (no methods to expose innards) for now
     """
     __slots__ = ['obj', 'method']
 
@@ -405,8 +405,10 @@ class CPyFunc(CCallable):
         return f"<PyFunc: {self.defn()}>"
 
     def invoke(self, vm: vmx.VM) -> None:
+        #vm.save_frame(True)     # show=True
         vm.ac = self.fun(*vm.args)
         #assert(isinstance(vm.ac, CObject))
+        #vm.fp = vm.fp.fp
 
     def __call__(self, *args: Any) -> Any:
         """
