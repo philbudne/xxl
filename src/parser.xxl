@@ -436,7 +436,7 @@ var Parser = Class.new({
 			if (!p.check(")")) {
 			  leave_while:
 			    while (true) {
-				if (p.check("...")) {
+				if (p.check("...")) { // ...expr
 				    var arg = p.ctoken();
 				    p.advance();
 				    arg.first = p.expression(0);
