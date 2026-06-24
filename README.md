@@ -59,7 +59,7 @@ until further notice!!!*
 
 #### Tested under
 
-* CPython 3.7.9 (FreeBSD) and 3.8.10 (Linux).
+* CPython 3.10.12 (Linux), 3.11.15 (FreeBSD)
 * PyPy3 7.3.1 (set `PYTHONIOENCODING` to `utf8` to pass regression tests).
 
 #### Intended jokes
